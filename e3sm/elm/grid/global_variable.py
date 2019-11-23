@@ -1,0 +1,11 @@
+global sFilename_site_latlon
+global sFilename_clm_gridded_surfdata
+global sFilename_clm_gridded_domain
+global sFilename_clm_usrdat
+global dLatitude
+global dLongitude
+global dLongitude_min
+global dLongitude_max
+
+global sWorkspace_netcdf_out
+global set_natural_veg_frac_to_one

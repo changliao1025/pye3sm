@@ -1,0 +1,7 @@
+sWorkspace_home, /people/liao313
+sWorkspace_scratch, /pic/scratch/liao313
+sWorkspace_data, /people/liao313/data
+sModel, h2sc
+iYear_start, 1848
+iYear_end,  2012
+sVariable, DRAIN

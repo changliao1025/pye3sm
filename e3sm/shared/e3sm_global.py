@@ -1,0 +1,23 @@
+global iFlag_debug
+global iFlag_continue
+global iFlag_resubmit
+global iFlag_short
+global iCase_id
+global sCase
+global sFilename_clm_namelist
+global sModel
+global sDirectory_case
+global sDirectory_run
+global sCIME_directory
+global RES
+global COMPSET
+global PROJECT
+global MACH
+
+global iYear_start
+global iYear_end
+global sRegion
+global dConversion
+global sVariable
+global sFilename_mask
+global sFilename_mask
