@@ -10,13 +10,15 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system.define_global_variables import *          
+from eslib.system.define_global_variables import *    
+
+from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff      
 from eslib.toolbox.data.add_variable_to_netcdf import add_variable_to_netcdf
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
 
-def h2sc_add_optimal_parameter_to_surface_data_halfdegree():
+def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuration):
     nrow=360
     ncolumn=720
     #read data
@@ -29,28 +31,22 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree():
     if not os.path.exists(sWorkspace_analysis_wtd):
         os.makedirs(sWorkspace_analysis_wtd)  
     
-    sRecord = '240_261'
-    sFilename_in = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_netcdf
-    aDatasets = Dataset(sFilename_in)
-    netcdf_format = aDatasets.file_format
-    print(netcdf_format)
-    print("Print dimensions:")
-    print(aDatasets.dimensions.keys())
-    print("Print variables:")
-    print(aDatasets.variables.keys())
-    for sKey, aValue in aDatasets.variables.items():
-        if "optimal" == sKey:
-            aAnisotropy_optimal = (aValue[:]).data
-            continue
-    sFilename_old = '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_ne30np4_simyr2000_c190730.nc'
+    sRecord = '520_541'
+    sFilename_in = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
+    dummy = gdal_read_geotiff(sFilename_in)
+    aAnisotropy_optimal = dummy[0]
+    #we need to flip the data here
+    aAnisotropy_optimal = np.flip(aAnisotropy_optimal, 0) 
+        
+    sFilename_old = '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025.nc'
     
-    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_ne30np4_simyr2000_c190730_new.nc'
+    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025_new.nc'
     aData_in=aAnisotropy_optimal
     sVariable_in= 'anisotropy'
     sUnit_in= 'none'
-    iDimension_in = ngrid
+    aDimension_in = np.array([nrow,ncolumn])
 
-    add_variable_to_netcdf(sFilename_old, sFilename_new, aData_in, sVariable_in, sUnit_in, iDimension_in)
+    add_variable_to_netcdf(sFilename_old, sFilename_new, aData_in, sVariable_in, sUnit_in, aDimension_in)
 
     print('finished')
 if __name__ == '__main__':
