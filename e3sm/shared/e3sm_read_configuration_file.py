@@ -80,7 +80,7 @@ def e3sm_read_configuration_file(sFilename_configuration_in,iFlag_continue_in = 
     e3sm_global.sFilename_mask = sFilename_mask
     e3sm_global.sFilename_clm_namelist = sFilename_clm_namelist
 
-    sDirectory_case = sWorkspace_scratch + '/04model/h2sc/cases/'
+    sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash + sRegion + '/cases/'
     sDirectory_run = '/compyfs/liao313/e3sm_scratch'
     #sCIME_directory = sWorkspace_code + slash + 'fortran/e3sm/H2SC/cime/scripts'  
     sCIME_directory = sWorkspace_code + slash + 'fortran/e3sm/TRIGRID/cime/scripts' 

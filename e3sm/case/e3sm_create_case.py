@@ -227,7 +227,7 @@ if __name__ == '__main__':
     
     dHydraulic_anisotropy = 10.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 532
+    iCase = 551
 
     iFlag_debug = 0
     iFlag_continue = 0
@@ -235,16 +235,16 @@ if __name__ == '__main__':
 
     sCase =  sModel + "{:03d}".format(iCase)
 
-    sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash \
+    sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
         + 'cases' + slash + 'user_nl_clm_' + sCase
     ofs = open(sFilename_clm_namelist, 'w')    
     sCommand_out = "fsurdat = " + "'" \
-        + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc' + "'" + '\n'
+        + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_new.nc' + "'" + '\n'
     ofs.write(sCommand_out)
     sCommand_out = "use_h2sc = .true." + '\n'
-    ofs.write(sCommand_out)
+    #ofs.write(sCommand_out)
     sCommand_out = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
-    ofs.write(sCommand_out)
+    #ofs.write(sCommand_out)
     ofs.close()
     #write the clm namelist file
     e3sm_create_case(sFilename_configuration, iFlag_continue_in = iFlag_continue, iFlag_debug_in = iFlag_debug,\
