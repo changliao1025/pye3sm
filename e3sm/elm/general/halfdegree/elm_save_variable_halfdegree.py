@@ -45,7 +45,7 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iFlag_
     #sWorkspace_data = home + slash + 'data'
     sWorkspace_simulation = sWorkspace_scratch + slash + 'e3sm_scratch'
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
-        + sModel + slash + 'analysis'
+        + sModel + slash + sRegion + slash + 'analysis'
     if not os.path.isdir(sWorkspace_analysis):
         os.makedirs(sWorkspace_analysis)
     
@@ -150,7 +150,7 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iFlag_
                         aData = aData.reshape(nrow_new, ncolumn_new)      
                         aData = np.flip(aData, 0)    
                         dummy_index = np.where( aData == missing_value1 ) 
-                        aData[dummy_index]=missing_value
+                        aData[dummy_index] = missing_value
                         aGrid_data = aData
                     else:
 

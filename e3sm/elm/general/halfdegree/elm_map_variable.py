@@ -1,5 +1,5 @@
 
-
+#no longer used because we will use IDL for this step
 import os
 import sys
 
