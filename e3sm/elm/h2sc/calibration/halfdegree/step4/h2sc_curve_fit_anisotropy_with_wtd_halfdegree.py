@@ -216,13 +216,13 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
      #save qc matrix using the geotiff format
     sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tiff
     print(sFilename_tiff)
-    gdal_write_geotiff(sFilename_tiff, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
-     aQC, pSpatialRef)
+    gdal_write_geotiff(sFilename_tiff, aQC, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
+      pSpatialRef)
 
     sFilename_tiff = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
     print(sFilename_tiff)    
-    gdal_write_geotiff(sFilename_tiff, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
-     aAnisotropy_optimal, pSpatialRef)
+    gdal_write_geotiff(sFilename_tiff, aAnisotropy_optimal, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
+     pSpatialRef)
 
 
 
@@ -233,8 +233,7 @@ if __name__ == '__main__':
 
     sModel = 'h2sc'
     sRegion = 'global'
-    sFilename_configuration = sWorkspace_configuration  + slash + sModel + slash + sRegion + slash \
-        + slash + 'h2sc_configuration_zwt.txt' 
+    sFilename_configuration = sWorkspace_configuration  + slash + sModel + slash + sRegion + slash   + slash + 'h2sc_configuration_zwt.txt' 
     print(sFilename_configuration)
     iFlag_debug = 1
     if iFlag_debug == 1:
