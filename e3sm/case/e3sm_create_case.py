@@ -144,10 +144,10 @@ def e3sm_create_case(sFilename_configuration_in, iFlag_continue_in = None, iFlag
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()  
-        sCommand = sPython + ' ./xmlchange REST_OPTION=nyears,REST_N=1' + '\n'
-        sCommand = sCommand.lstrip()
-        p = subprocess.Popen(sCommand, shell= True)
-        p.wait()  
+        #sCommand = sPython + ' ./xmlchange REST_OPTION=nyears,REST_N=1' + '\n'
+        #sCommand = sCommand.lstrip()
+        #p = subprocess.Popen(sCommand, shell= True)
+        #p.wait()  
         sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=1979' + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
@@ -227,7 +227,7 @@ if __name__ == '__main__':
     
     dHydraulic_anisotropy = 10.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 551
+    iCase = 553
 
     iFlag_debug = 0
     iFlag_continue = 0
@@ -242,9 +242,9 @@ if __name__ == '__main__':
         + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_new.nc' + "'" + '\n'
     ofs.write(sCommand_out)
     sCommand_out = "use_h2sc = .true." + '\n'
-    #ofs.write(sCommand_out)
+    ofs.write(sCommand_out)
     sCommand_out = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
-    #ofs.write(sCommand_out)
+    ofs.write(sCommand_out)
     ofs.close()
     #write the clm namelist file
     e3sm_create_case(sFilename_configuration, iFlag_continue_in = iFlag_continue, iFlag_debug_in = iFlag_debug,\

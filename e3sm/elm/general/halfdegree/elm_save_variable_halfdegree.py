@@ -5,11 +5,11 @@ from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal #the default operator
 
+
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-         
+from eslib.system.define_global_variables import *     
 from eslib.gis.envi.envi_write_header import envi_write_header
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
@@ -18,14 +18,21 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iFlag_same_grid_in = None):
+def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_start_in = None, iYear_end_in = None, iFlag_same_grid_in = None):
     
     #extract information
     e3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index)       
     sModel  = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion        
-    iYear_start = e3sm_global.iYear_start
-    iYear_end = e3sm_global.iYear_end
+    sRegion = e3sm_global.sRegion      
+    if iYear_start_in is not None:        
+        iYear_start = iYear_start_in
+    else:       
+        iYear_start = e3sm_global.iYear_start
+    if iYear_end_in is not None:        
+        iYear_end = iYear_end_in
+    else:       
+        iYear_end = e3sm_global.iYear_end
+    
     if iFlag_same_grid_in is not None:        
         iFlag_same_grid = iFlag_same_grid_in
     else:       
@@ -151,7 +158,9 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iFlag_
                         aData = np.flip(aData, 0)    
                         dummy_index = np.where( aData == missing_value1 ) 
                         aData[dummy_index] = missing_value
+                        print(np.nanmax(aData))
                         aGrid_data = aData
+                       
                     else:
 
                         dummy_index = np.where( (aLongitude < 180 ) & ( aLatitude < 90 )  &(aData != missing_value1 ) )
@@ -180,9 +189,9 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iFlag_
 
                     pDimension_longitude = pFile.createDimension('lon', ncolumn_new) 
                     pDimension_latitude = pFile.createDimension('lat', nrow_new) 
-                    pVar = pFile.createVariable('wtd', 'f4', ('lat' , 'lon')) 
+                    pVar = pFile.createVariable(sVariable.lower(), 'f4', ('lat' , 'lon')) 
                     pVar[:] = aGrid_data
-                    pVar.description = 'Water table depth' 
+                    pVar.description = sVariable.lower()
                     pVar.unit = 'm' 
                     pFile.close()
     

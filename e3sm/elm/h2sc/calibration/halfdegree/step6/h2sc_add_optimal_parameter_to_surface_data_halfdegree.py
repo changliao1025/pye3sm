@@ -37,6 +37,8 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuratio
     aAnisotropy_optimal = dummy[0]
     #we need to flip the data here
     aAnisotropy_optimal = np.flip(aAnisotropy_optimal, 0) 
+    aMask = np.where(aAnisotropy_optimal == missing_value)
+    aAnisotropy_optimal[aMask] = np.nan
         
     sFilename_old = '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025.nc'
     
