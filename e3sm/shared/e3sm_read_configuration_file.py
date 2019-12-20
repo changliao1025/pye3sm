@@ -1,4 +1,6 @@
 import os, sys
+import datetime
+
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
@@ -11,7 +13,8 @@ sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash
 sys.path.append(sPath_e3sm_python)
 
 from e3sm.shared import e3sm_global
-
+pDate = datetime.datetime.today()
+sDate = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
 def e3sm_read_configuration_file(sFilename_configuration_in,iFlag_continue_in = None, iFlag_debug_in = None, \
     iFlag_short_in =None,\
@@ -45,7 +48,9 @@ def e3sm_read_configuration_file(sFilename_configuration_in,iFlag_continue_in = 
     else:       
         iCase_index = 0
     sCase_index = "{:03d}".format(iCase_index)
-    sCase = sModel + sCase_index
+    #important change here
+    
+    
 
     if sFilename_clm_namelist_in is not None:        
         sFilename_clm_namelist = sFilename_clm_namelist_in
