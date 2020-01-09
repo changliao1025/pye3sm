@@ -18,10 +18,10 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_start_in = None, iYear_end_in = None, iFlag_same_grid_in = None):
+def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_start_in = None, iYear_end_in = None, iFlag_same_grid_in = None, sDate_in = None):
     
     #extract information
-    e3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index)       
+    e3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index, sDate_in= sDate_in)       
     sModel  = e3sm_global.sModel
     sRegion = e3sm_global.sRegion      
     if iYear_start_in is not None:        

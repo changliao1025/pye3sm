@@ -2,7 +2,7 @@ global iFlag_debug
 global iFlag_continue
 global iFlag_resubmit
 global iFlag_short
-global iCase_id
+global iCase_index
 global sCase
 global sFilename_clm_namelist
 global sModel
@@ -20,4 +20,7 @@ global sRegion
 global dConversion
 global sVariable
 global sFilename_mask
-global sFilename_mask
+global sWorkspace_analysis
+global sWorkspace_case
+global sWorkspace_analysis_case
+global sWorkspace_simulation_case

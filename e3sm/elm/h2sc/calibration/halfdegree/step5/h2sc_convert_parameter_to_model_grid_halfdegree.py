@@ -9,15 +9,12 @@ from netCDF4 import Dataset #read netcdf
 #import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-#import global variable
 
 from eslib.system.define_global_variables import *
 
 
 #import 
 from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
-
-from eslib.toolbox.reader.read_configuration_file import read_configuration_file
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
@@ -51,10 +48,8 @@ def h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration_in):
             aDimension = [ 96, 144]
         else:
             pass
-    sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
-        + sModel + slash + 'analysis'
-    if not os.path.isdir(sWorkspace_analysis):
-        os.makedirs(sWorkspace_analysis)
+    sWorkspace_analysis = e3sm_global.sWorkspace_analysis
+   
 
     sWorkspace_analysis_wtd  = sWorkspace_analysis + slash + 'wtd'
     if not os.path.exists(sWorkspace_analysis_wtd):

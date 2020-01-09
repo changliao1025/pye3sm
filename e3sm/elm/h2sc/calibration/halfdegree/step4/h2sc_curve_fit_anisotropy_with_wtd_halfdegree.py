@@ -9,13 +9,11 @@ import argparse
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
-from mpl_toolkits.axes_grid1 import AxesGrid
 
 #import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
 from eslib.system.define_global_variables import *
 
 from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
@@ -33,7 +31,6 @@ from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_fil
 def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     
     e3sm_read_configuration_file(sFilename_configuration_in)       
-    
     
     iCase_start = 520
     iCase_end = 541
@@ -55,10 +52,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     sVariable  = e3sm_global.sVariable
 
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster        
-    sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
-        + sModel + slash + sRegion + slash + 'analysis'
-    if not os.path.isdir(sWorkspace_analysis):
-        os.makedirs(sWorkspace_analysis)
+    sWorkspace_analysis =e3sm_global.sWorkspace_analysis
 
     sWorkspace_analysis_wtd  = sWorkspace_analysis + slash + 'wtd'
     if not os.path.exists(sWorkspace_analysis_wtd):
@@ -77,22 +71,27 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     dY_origin = pWTD[4]
     dPixelWidth = pWTD[5]
     dMissing_value = missing_value
-    pSpatialRef = pWTD[8]
-        
+    pSpatialRef = pWTD[8]        
    
     #we need to match the case id with actual parameter space
     
     aCase = np.arange(iCase_start, iCase_end + 1, 1)
     sRecord = "{:0d}".format(iCase_start) + '_' + "{:0d}".format(iCase_end)
 
-    
+    aHydraulic_anisotropy_raw = np.array([0.1, 0.5, 1, 5, 10, 20,30, 40, 50, 60, 70, 80, 90, 100,\
+     150, 200, 250, 300, 400, 500, 1000, 2000] )     
+    aHydraulic_anisotropy = 1.0 / aHydraulic_anisotropy_raw
 
-    aHydraulic_anisotropy = [0.1, 0.5, 1, 5, 10, 20,30, 40, 50, 60, 70, 80, 90, 100,\
-     150, 200, 250, 300, 400, 500, 1000, 2000]  
-    
-    
+    aHydraulic_anisotropy = np.log10(aHydraulic_anisotropy)
     aAnisotropy_sort = np.sort(aHydraulic_anisotropy)
-      
+    dMin = -4
+    dMax = 1
+    x2 = np.arange(int(dMax-dMin+1))  + int(dMin)
+    
+    n = len(x2)
+    xtick_labels = np.full(n+1,'',dtype=object)
+    for i in range(n):
+        xtick_labels[i] =  r'$10^{{{}}}$'.format(int(x2[i])) 
     #sort it and also record the order
     aOrder  = np.argsort(aHydraulic_anisotropy)  
     aCase_sort = aCase[aOrder]
@@ -101,6 +100,8 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     nrow = 360
     ncolumn  = 720 
     aData_all = np.full((nCase, nrow, ncolumn),missing_value, dtype= float )
+
+    
     #iFlag_save_projection = 1
     for i in range(nCase):
         iCase = aCase_sort[i]
@@ -152,63 +153,72 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
 
                     fig = plt.figure(figsize=(12,9),  dpi=100 )
                     fig.set_figheight(9)
-                    fig.set_figwidth(12)                
+                    fig.set_figwidth(12)             
+                    ax = fig.add_axes([0.1, 0.5, 0.8, 0.4] )  
 
-                    axgr = AxesGrid(fig, 111,
-                                nrows_ncols=(1,1),
-                                axes_pad=0.6,    
-                                label_mode='')  # note the empty label_mode
-
-                    for i, ax in enumerate(axgr):                   
-                        ax.axis('on')   
-                        ax.set_aspect(4)
-                        ax.set_xmargin(0.05)
-                        ax.set_ymargin(0.10)
-                        ax.set_xlim(0, np.max(aHydraulic_anisotropy))
-                        ax.set_ylim(0, 80)
-                        ax.set_xticks(aAnisotropy_sort)
-                        ax.set_yticks(np.linspace(0, 100, 5))
-                        ax.set_xlabel('Anisotropy')
-                        ax.set_ylabel('WTD (m)')
-
-                        if(  np.min(aWtd) <= dWtd and dWtd <= np.max(aWtd)  ):
-                            aQC[iRow, iColumn] = 1
-                            #now we can the curve fitting
-                            #find the place where it is located
-                            #add it inside first
-                            #print(type(aWtd))
-                            aDummy = np.append(aWtd, dWtd )
-                            aDummy_sort = np.sort(aDummy)      
-                            iIndex = np.where( aDummy_sort == dWtd)
-                            A = ( aAnisotropy_sort[iIndex[0] - 1], aDummy_sort[iIndex[0] - 1])
-                            B = ( aAnisotropy_sort[iIndex[0]], aDummy_sort[iIndex[0] + 1])
-                            C = (0, dWtd)
-                            D = (aAnisotropy_sort[iIndex[0]] , dWtd)
-                            dummy = calculate_line_intersect_point(A, B, C, D)
-                            aAnisotropy_optimal[iRow, iColumn] = dummy[0]   
+                                                   
+                    ax.axis('on')   
+                    
+                    ax.set_xmargin(0.05)
+                    ax.set_ymargin(0.10)
+                    
+                    if(  np.min(aWtd) <= dWtd and dWtd <= np.max(aWtd)  ):
+                        aQC[iRow, iColumn] = 1
+                        #now we can the curve fitting
+                        #find the place where it is located
+                        #add it inside first
+                        #print(type(aWtd))
+                        aDummy = np.append(aWtd, dWtd )
+                        aDummy_sort = np.flip(np.sort(aDummy)      )
+                        iIndex = np.where( aDummy_sort == dWtd)
+                        A = ( aAnisotropy_sort[iIndex[0] - 1], aDummy_sort[iIndex[0] - 1])
+                        B = ( aAnisotropy_sort[iIndex[0]], aDummy_sort[iIndex[0] + 1])
+                        C = (dMin, dWtd)
+                        D = (dMax, dWtd)
+                        dummy = calculate_line_intersect_point(A, B, C, D)
+                        aAnisotropy_optimal[iRow, iColumn] =np.power(10.0, dummy[0]   )
+                    else:
+                        if( np.min(aWtd) > dWtd ):
+                            aAnisotropy_optimal[iRow, iColumn] =np.power(10.0,    aAnisotropy_sort[nCase -1]   )
+                            aQC[iRow, iColumn] = 2
                         else:
-                            if( np.min(aWtd) > dWtd ):
-                                aAnisotropy_optimal[iRow, iColumn] = aAnisotropy_sort[0]     
-                                aQC[iRow, iColumn] = 2
-                            else:
-                                aAnisotropy_optimal[iRow, iColumn] = aAnisotropy_sort[nCase -1]
-                                aQC[iRow, iColumn] = 3
-                        ax.set_title('Relationship between Anisotropy and Water Table Depth', loc='center')
-                        x1 = aAnisotropy_sort
-                        y1 = aWtd
-                        ax.plot( x1, y1, color = 'red', linestyle = '--' , marker="+", markeredgecolor='blue')
+                            aAnisotropy_optimal[iRow, iColumn] = np.power(10.0,aAnisotropy_sort[0] )
+                            aQC[iRow, iColumn] = 3
+                    ax.set_title('Relationship between Anisotropy and Water Table Depth', loc='center')
+                    x1 = aAnisotropy_sort
+                    y1 = aWtd
+                    ax.plot( x1, y1, color = 'red', linestyle = '--' , marker="+", markeredgecolor='blue' , label= 'Simulated WTD')
+                    
 
-                        #plot obs
+                    
+                    xlabel = 'Anisotropy' + ' (' +r'$ \frac{ K_{v}}{ k_{h}} $' + ')'
+                    
+                    
 
-                        x2 = [0, np.max(aHydraulic_anisotropy)]
-                        y2= [dWtd, dWtd]
-                        ax.plot( x2, y2, color = 'blue', linestyle = 'solid' )
+                    #plot obs
+                    x3 = [dMin,  dMax]
+                    y3= [dWtd, dWtd]
+                    ax.plot( x3, y3, color = 'blue', linestyle = 'solid' , label = 'Observed WTD')
+                    
 
-                        sFilename_png = sWorkspace_analysis_wtd + slash + 'wtd' + sRow + '_' + sColumn +    sExtension_png 
-                        plt.savefig(sFilename_png) #, bbox_inches = 'tight')
-                        #print(sFilename_png)
-                        #plt.show()
-                        plt.close('all')
+                    
+                    ax.grid(which='major', color='grey', linestyle='--', axis='y') 
+                    ax.set_ylabel('Water table depth (m)', fontsize=12)    
+
+                    dum = np.linspace(0, 100, 11)
+                    ax.set_xticks(x2)
+                    ax.set_yticks(dum)
+                    ax.set_xticklabels(xtick_labels)
+                    ax.set_xlabel(xlabel,fontsize=12 )
+                    ax.set_xlim(-3.4, 1.1)
+                    ax.set_ylim(0, 90)
+                    ax.set_aspect(aspect=0.02)
+                    ax.legend(bbox_to_anchor=(1.0,1.0), loc="upper right",fontsize=12)
+                    sFilename_png = sWorkspace_analysis_wtd + slash + 'wtd' + sRow + '_' + sColumn +    sExtension_png 
+                    plt.savefig(sFilename_png, bbox_inches = 'tight')
+                    #print(sFilename_png)
+                    #plt.show()
+                    plt.close('all')
 
 
 
@@ -237,7 +247,7 @@ if __name__ == '__main__':
     print(sFilename_configuration)
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iCase = 199       
+           
    
         h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration)
     else:

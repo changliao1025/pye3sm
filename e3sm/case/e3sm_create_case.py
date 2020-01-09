@@ -5,13 +5,12 @@ import subprocess
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-from eslib.system import define_global_variables
+
 from eslib.system.define_global_variables import *
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
-from e3sm.shared.e3sm_global import *
 
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
@@ -227,7 +226,7 @@ if __name__ == '__main__':
     
     dHydraulic_anisotropy = 10.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 553
+    iCase = 1
 
     iFlag_debug = 0
     iFlag_continue = 0
@@ -239,12 +238,12 @@ if __name__ == '__main__':
         + 'cases' + slash + 'user_nl_clm_' + sCase
     ofs = open(sFilename_clm_namelist, 'w')    
     sCommand_out = "fsurdat = " + "'" \
-        + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_new.nc' + "'" + '\n'
+        + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
     ofs.write(sCommand_out)
     sCommand_out = "use_h2sc = .true." + '\n'
-    ofs.write(sCommand_out)
+    #ofs.write(sCommand_out)
     sCommand_out = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
-    ofs.write(sCommand_out)
+    #ofs.write(sCommand_out)
     ofs.close()
     #write the clm namelist file
     e3sm_create_case(sFilename_configuration, iFlag_continue_in = iFlag_continue, iFlag_debug_in = iFlag_debug,\

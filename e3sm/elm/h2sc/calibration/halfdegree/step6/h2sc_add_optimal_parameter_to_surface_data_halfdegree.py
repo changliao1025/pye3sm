@@ -17,15 +17,13 @@ from eslib.toolbox.data.add_variable_to_netcdf import add_variable_to_netcdf
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
-
-def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuration):
+from e3sm.shared import e3sm_global
+from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuration_in):
     nrow=360
     ncolumn=720
-    #read data
-    sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
-        + sModel + slash + sRegion + slash + 'analysis'
-    if not os.path.isdir(sWorkspace_analysis):
-        os.makedirs(sWorkspace_analysis)
+    e3sm_read_configuration_file(sFilename_configuration_in)
+    sWorkspace_analysis = e3sm_global.sWorkspace_analysis
 
     sWorkspace_analysis_wtd  = sWorkspace_analysis + slash + 'wtd'
     if not os.path.exists(sWorkspace_analysis_wtd):
@@ -42,7 +40,7 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuratio
         
     sFilename_old = '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025.nc'
     
-    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025_new.nc'
+    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025_log10.nc'
     aData_in=aAnisotropy_optimal
     sVariable_in= 'anisotropy'
     sUnit_in= 'none'
