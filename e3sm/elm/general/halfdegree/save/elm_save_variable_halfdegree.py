@@ -49,18 +49,13 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_
     dConversion = e3sm_global.dConversion   
     sVariable  = e3sm_global.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster
-    #sWorkspace_data = home + slash + 'data'
-    sWorkspace_simulation = sWorkspace_scratch + slash + 'e3sm_scratch'
-    sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
-        + sModel + slash + sRegion + slash + 'analysis'
-    if not os.path.isdir(sWorkspace_analysis):
-        os.makedirs(sWorkspace_analysis)
-    
+   
+    sCase = e3sm_global.sCase
     #we only need to change the case number, all variables will be processed one by one
     
-    sCase = e3sm_global.sCase
-    sWorkspace_simulation_case = sWorkspace_simulation + slash + sCase + slash + 'run'
-    sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
+    
+    sWorkspace_simulation_case_run = se3sm_global.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
     
     if not os.path.exists(sWorkspace_analysis_case):
         os.makedirs(sWorkspace_analysis_case)

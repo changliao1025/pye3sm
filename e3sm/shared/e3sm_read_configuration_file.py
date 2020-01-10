@@ -1,12 +1,9 @@
 import os, sys
 import datetime
-
-
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from eslib.system.define_global_variables import *
-
 from eslib.toolbox.reader.read_configuration_file import read_configuration_file
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
@@ -55,7 +52,7 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
         iCase_index = iCase_index_in
     else:
         iCase_index = 0
-        sCase_index = "{:03d}".format(iCase_index)
+    sCase_index = "{:03d}".format(iCase_index)
         #important change here
 
     sCase = sModel + sDate + sCase_index
@@ -64,8 +61,6 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in
     else:
-        #sFilename_clm_namelist = 'user_nl_clm'
-
         sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash \
             + 'cases' + slash + 'user_nl_clm'
 
@@ -118,7 +113,10 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
         os.makedirs(sWorkspace_analysis)
 
     e3sm_global.sWorkspace_analysis = sWorkspace_analysis
+    e3sm_global.sWorkspace_cases = sDirectory_case
     e3sm_global.sWorkspace_case = sDirectory_case + slash + sCase
     e3sm_global.sWorkspace_simulation_case = sDirectory_run + slash + sCase
+    e3sm_global.sWorkspace_simulation_case_run = sDirectory_run + slash + sCase + slash +'run'
+    e3sm_global.sWorkspace_simulation_case_build = sDirectory_run + slash + sCase + slash +'build'
     e3sm_global.sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
     return

@@ -21,6 +21,9 @@ global dConversion
 global sVariable
 global sFilename_mask
 global sWorkspace_analysis
+global sWorkspace_cases
 global sWorkspace_case
 global sWorkspace_analysis_case
 global sWorkspace_simulation_case
+global sWorkspace_simulation_case_build
+global sWorkspace_simulation_case_run
