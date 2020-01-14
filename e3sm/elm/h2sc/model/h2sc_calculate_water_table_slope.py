@@ -11,7 +11,7 @@ dDistance_in = 50000  /2.
 ninterval = 10
 
 aElevation1 =   np.arange(ninterval) * 200 - 300
-aElevation2 =   np.arange(ninterval) * 210 - 200
+aElevation2 =   np.arange(ninterval) * 220 - 200
 print(aElevation1)
 print(aElevation2)
 
@@ -64,8 +64,8 @@ for i in range(ninterval):
     x=np.array([0, dDistance_in])
     
     y = x * A1 + B1
-    ax.set_xlabel('Distance unit: m', fontsize=10)
-    ax.set_ylabel('Elevation unit: m', fontsize=10)
+    ax.set_xlabel('Distance (m)', fontsize=10)
+    ax.set_ylabel('Elevation (m)', fontsize=10)
     
     fmt = '%.1E' # Format you want the ticks, e.g. '40%'
     xticks = mtick.FormatStrFormatter(fmt)
@@ -90,21 +90,40 @@ for i in range(ninterval):
     ax.text(0.06* dDistance_in, aElevation1[i], "Seepage face", color ='green', rotation = trans_angle)
     iFlag_once = 1 
 
-    if(  (aElevation2[i]  - dRatio0 * dThickness_critical_zone_in) > (aElevation1[i])   ):
-        A3 =  (aElevation2[i]  - dRatio0 * dRatio1 * dThickness_critical_zone_in -aElevation1[i] ) / dDistance_in
-    else:
-        A3 =  (aElevation2[i]  - dRatio2 * dElevation_difference -aElevation1[i] ) / dDistance_in
+    #if(  (aElevation2[i]  - dRatio0 * dThickness_critical_zone_in) > (aElevation1[i])   ):
+    #    A3 =  (aElevation2[i]  - dRatio0 * dRatio1 * dThickness_critical_zone_in -aElevation1[i] ) / dDistance_in
+    #else:
+    #    A3 =  (aElevation2[i]  - dRatio2 * dElevation_difference -aElevation1[i] ) / dDistance_in
         #y5 =  A3 * x5 + B3 
         #when x5 = 0 B3= surface elevation
+
+    A3 = ( dRatio2 ) * (aElevation2[i]  -aElevation1[i] ) / dDistance_in
+
     B3 = aElevation1[i]
     C3 = dDistance_in
     D3 = A3 * C3 + B3
     #left range
     dRange0 = dThickness_critical_zone_in
     dRange1 = dThickness_critical_zone_in + A3 * C3
-  
+  #right range
     dRange2 = dElevation_difference
     dRange3 = aElevation2[i] - D3    
+
+#draw transition 
+    G34 = (B3-B4) / (A4-A3)
+    H34 = A4 * G34 + B4
+    if(G34 < dDistance_in):
+        x=np.array([0, G34])
+        y = x * A3 + B3
+        ax.plot(x,y, 'brown',label ='Water table transition')
+        x= np.array([G34, dDistance_in])
+        y = x * A3 + B3
+        ax.plot(x,y, 'brown', linestyle='--' )
+    else:
+        x=np.array([0, dDistance_in])
+        y = x * A3 + B3
+        ax.plot(x,y, 'brown',label ='Water table transition')
+        
 
     for j in range(ndrop):
         dHeight1 = aHeight1[j]
@@ -189,15 +208,38 @@ for i in range(ninterval):
         #plot part
         x_1 = [0, G12]
         y_1 = [H12, H12]
-        x_2 = np.array([G12, dDistance_in])
-        y_2 = x_2 * A2 + B2
-        if iFlag_once == 1:
-            ax.plot(x_2,y_2, 'green', label ='Water table with seepage')
-            ax.plot(x_1,y_1, 'green', linestyle='--')
+        #intersect as well
+        G24 = (B2-B4) / (A4-A2)
+        H24 = A4 * G24 + B4
+        if(G24 < dDistance_in):
+            x_2 = np.array([G12, G24])
+            y_2 = x_2 * A2 + B2
+            x_22 = np.array([G24, dDistance_in])
+            y_22 = x_22 * A2 + B2 
+            if iFlag_once == 1:
+                ax.plot(x_1,y_1, 'green', linestyle='--')
+                ax.plot(x_2,y_2, 'green', label ='Water table with seepage')
+                ax.plot(x_22,y_22, 'green', linestyle='--')
             
-        else:
-            ax.plot(x_2,y_2, 'green')
-            ax.plot(x_1,y_1, 'green', linestyle='--')
+            else:
+                ax.plot(x_1,y_1, 'green', linestyle='--')
+                ax.plot(x_2,y_2, 'green')
+                ax.plot(x_22,y_22, 'green', linestyle='--')
+                
+        else: 
+            x_2 = np.array([G12, dDistance_in])
+            y_2 = x_2 * A2 + B2
+            if iFlag_once == 1:
+                ax.plot(x_1,y_1, 'green', linestyle='--')
+                ax.plot(x_2,y_2, 'green', label ='Water table with seepage')
+            else:
+                ax.plot(x_1,y_1, 'green', linestyle='--')
+                ax.plot(x_2,y_2, 'green')
+                
+
+        
+        
+        
         iFlag_once = 0    
         
         

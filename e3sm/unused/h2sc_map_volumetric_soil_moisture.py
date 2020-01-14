@@ -31,7 +31,7 @@ missing_value = -9999.0
 sExtension_nc = '.nc'
 sExtension_envi ='.dat'
 sExtension_header ='.hdr'
-sExtension_tiff = '.tif'
+sExtension_tif = '.tif'
 sExtension_png = '.png'
 #local
 sModel = 'h2sc'

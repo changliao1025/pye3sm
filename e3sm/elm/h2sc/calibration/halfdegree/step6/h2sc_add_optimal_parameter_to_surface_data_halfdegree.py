@@ -30,7 +30,7 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuratio
         os.makedirs(sWorkspace_analysis_wtd)  
     
     sRecord = '520_541'
-    sFilename_in = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
+    sFilename_in = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
     dummy = gdal_read_geotiff(sFilename_in)
     aAnisotropy_optimal = dummy[0]
     #we need to flip the data here

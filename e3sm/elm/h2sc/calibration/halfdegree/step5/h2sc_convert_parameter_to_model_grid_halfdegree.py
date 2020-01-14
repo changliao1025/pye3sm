@@ -59,7 +59,7 @@ def h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration_in):
     
     
 
-    sFilename_parameter = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
+    sFilename_parameter = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
     dummy = gdal_read_geotiff(sFilename_parameter)
     aAnisotropy_optimal = dummy[0]
     #extract the effective data from the matrix

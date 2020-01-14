@@ -18,7 +18,7 @@ missing_value = -9999.0 #used to save binary
 sExtension_nc = '.nc'
 sExtension_envi ='.dat'
 sExtension_header ='.hdr'
-sExtension_tiff = '.tif'
+sExtension_tif = '.tif'
 
 def vsfm_save_drainage(sFilename_configuration_in, iCase_in):
     sModel = 'vsfm'
@@ -157,9 +157,9 @@ def vsfm_save_drainage(sFilename_configuration_in, iCase_in):
                         + sVariable.lower() + slash + 'dat'
                     if not os.path.exists(sWorkspace_variable_dat):
                         os.makedirs(sWorkspace_variable_dat)
-                    sWorkspace_variable_tiff = sWorkspace_analysis_case + slash + sVariable.lower() + slash +   'tiff'
-                    if not os.path.exists(sWorkspace_variable_tiff):
-                        os.makedirs(sWorkspace_variable_tiff)
+                    sWorkspace_variable_tif = sWorkspace_analysis_case + slash + sVariable.lower() + slash +   'tiff'
+                    if not os.path.exists(sWorkspace_variable_tif):
+                        os.makedirs(sWorkspace_variable_tif)
 
                     sFilename_envi = sWorkspace_variable_dat + slash + sVariable.lower() + sYear + sMonth +     sExtension_envi
                     a = np.flip(grid_z3, 0)
@@ -175,7 +175,7 @@ def vsfm_save_drainage(sFilename_configuration_in, iCase_in):
                     driver = gdal.GetDriverByName( sFormat )
 
                     #Output to new format
-                    sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower() + sYear + sMonth +    sExtension_tiff
+                    sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMonth +    sExtension_tif
                     dst_ds = driver.CreateCopy( sFilename_tiff, src_ds, 0 )
 
                     #Properly close the datasets to flush to disk

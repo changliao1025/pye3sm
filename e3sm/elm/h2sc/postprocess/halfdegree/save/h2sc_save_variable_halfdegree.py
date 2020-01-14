@@ -14,7 +14,7 @@ from eslib.system.define_global_variables import *
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
-from e3sm.elm.general.halfdegree.elm_save_variable_halfdegree import elm_save_variable_halfdegree
+from e3sm.elm.general.halfdegree.save.elm_save_variable_halfdegree import elm_save_variable_halfdegree
 
 
 def h2sc_save_variable_halfdegree(sFilename_configuration, \
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     iYear_start = 1990
     iYear_end = 2008
 
-    sVariable = 'zwt'
+    sVariable = 'wt_slp'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
 

@@ -83,7 +83,7 @@ def h2sc_convert_parameter_to_model_grid(sFilename_configuration_in):
     grid_x, grid_y = np.meshgrid(longitude, latitude)
     dummy_co = (grid_x, grid_y)
 
-    sFilename_parameter = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
+    sFilename_parameter = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
     dummy = gdal_read_geotiff(sFilename_parameter)
     aAnisotropy_optimal = dummy[0]
     #extract the effective data from the matrix

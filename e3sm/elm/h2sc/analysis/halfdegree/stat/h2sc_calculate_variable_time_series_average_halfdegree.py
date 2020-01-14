@@ -71,8 +71,8 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
     nrow = 360
     aData_all = np.full( (nts, nrow, ncolumn), missing_value, dtype = float)
     iIndex = 0 
-    sWorkspace_variable_tiff = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tiff'
-    sFilename_out = sWorkspace_variable_tiff + slash + sVariable.lower() +  sCase + '000' + sExtension_tiff
+    sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tiff'
+    sFilename_out = sWorkspace_variable_tif + slash + sVariable.lower() +  sCase + '000' + sExtension_tif
     iFlag_first_time = 1 
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
@@ -82,7 +82,7 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
             sMonth = str(iMonth).zfill(2)
     
             #read raster data
-            sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower() + sYear + sMonth + sExtension_tiff
+            sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMonth + sExtension_tif
             if os.path.isfile(sFilename_tiff):
                 pass
             else:

@@ -19,6 +19,8 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
                                  iFlag_short_in =None,\
                                  iFlag_resubmit_in = None, \
                                  iCase_index_in = None, \
+                                 iYear_start_in = None,\
+                                 iYear_end_in = None,\
                                  sFilename_clm_namelist_in = None, \
                                  sDate_in = None):
 
@@ -56,21 +58,28 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
         #important change here
 
     sCase = sModel + sDate + sCase_index
-
+    if iYear_start_in is not None:
+        iYear_start = iYear_start_in
+    else:
+        iYear_start =int(config['iYear_start'])
+    if iYear_end_in is not None:
+        iYear_end = iYear_end_in
+    else:
+        iYear_end = int(config['iYear_end'] )
 
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in
     else:
-        sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash \
+        sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
+            + sModel + slash \
             + 'cases' + slash + 'user_nl_clm'
 
-    iYear_start = int(config['iYear_start'])
-    iYear_end = int(config['iYear_end'] )
     dConversion = float(config['dConversion'])
 
 
     sFilename_mask = sWorkspace_data + slash \
-        + sModel + slash + sRegion + slash + 'raster' + slash + 'dem' + slash \
+        + sModel + slash + sRegion + slash \
+            + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
 
     e3sm_global.iFlag_continue = iFlag_continue
@@ -84,15 +93,18 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
     e3sm_global.sRegion = sRegion
     e3sm_global.iYear_start = iYear_start
     e3sm_global.iYear_end = iYear_end
+    e3sm_global.nmonth= (iYear_end-iYear_start+1)*12
     e3sm_global.dConversion = dConversion
 
     e3sm_global.sFilename_mask = sFilename_mask
     e3sm_global.sFilename_clm_namelist = sFilename_clm_namelist
 
-    sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash + sRegion + '/cases/'
+    sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash \
+        + sRegion + '/cases/'
     sDirectory_run = '/compyfs/liao313/e3sm_scratch'
     #sCIME_directory = sWorkspace_code + slash + 'fortran/e3sm/H2SC/cime/scripts'
-    sCIME_directory = sWorkspace_code + slash + 'fortran/e3sm/TRIGRID/cime/scripts'
+    sCIME_directory = sWorkspace_code + slash \
+        + 'fortran/e3sm/TRIGRID/cime/scripts'
     #RES='ne30_oEC'
     RES = 'r05_r05'
     COMPSET='ICLM45'   #modified  for compy IMCLM45

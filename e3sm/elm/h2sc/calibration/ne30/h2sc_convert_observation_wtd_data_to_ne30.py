@@ -167,7 +167,7 @@ def h2sc_convert_observation_wtd_data_to_ne30():
     driver = gdal.GetDriverByName( sFormat )
     #Output to new format
     sFilename_tiff = sWorkspace_data + slash + sModel + slash + 'raster' + slash \
-        + 'wtd' + slash  + sVariable.lower()  + sExtension_tiff
+        + 'wtd' + slash  + sVariable.lower()  + sExtension_tif
     dst_ds = driver.CreateCopy( sFilename_tiff, src_ds, 0 )
     #Properly close the datasets to flush to disk
     dst_ds = None

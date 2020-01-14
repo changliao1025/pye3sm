@@ -54,7 +54,7 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_
     #we only need to change the case number, all variables will be processed one by one
     
     
-    sWorkspace_simulation_case_run = se3sm_global.sWorkspace_simulation_case_run
+    sWorkspace_simulation_case_run = e3sm_global.sWorkspace_simulation_case_run
     sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
     
     if not os.path.exists(sWorkspace_analysis_case):
@@ -110,7 +110,7 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_
             sMonth = str(iMonth).zfill(2)
     
             sDummy = '.clm2.h0.' + sYear + '-' + sMonth + sExtension_netcdf
-            sFilename = sWorkspace_simulation_case + slash + sCase + sDummy
+            sFilename = sWorkspace_simulation_case_run + slash + sCase + sDummy
     
             #read before modification
     
@@ -196,9 +196,9 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_
                             + sVariable.lower() + slash + 'dat'
                         if not os.path.exists(sWorkspace_variable_dat):
                             os.makedirs(sWorkspace_variable_dat)
-                        sWorkspace_variable_tiff = sWorkspace_analysis_case + slash + sVariable.lower() + slash + 'tiff'
-                        if not os.path.exists(sWorkspace_variable_tiff):
-                            os.makedirs(sWorkspace_variable_tiff)
+                        sWorkspace_variable_tif = sWorkspace_analysis_case + slash + sVariable.lower() + slash + 'tif'
+                        if not os.path.exists(sWorkspace_variable_tif):
+                            os.makedirs(sWorkspace_variable_tif)
 
                         sFilename_envi = sWorkspace_variable_dat + slash + sVariable.lower() + sYear + sMonth + sExtension_envi
 
@@ -214,7 +214,7 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, iYear_
                         driver = gdal.GetDriverByName( sFormat )
 
                         #Output to new format
-                        sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower() + sYear + sMonth + sExtension_tiff
+                        sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMonth + sExtension_tif
                         dst_ds = driver.CreateCopy( sFilename_tiff, src_ds, 0 )
 
                         #Properly close the datasets to flush to disk

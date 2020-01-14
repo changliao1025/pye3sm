@@ -64,7 +64,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
 
     #read wtd 
     sFilename_in = sWorkspace_data + slash + sModel + slash + sRegion+ slash + 'raster' + slash \
-    + 'wtd' + slash  + 'wtd_halfdegree'  + sExtension_tiff
+    + 'wtd' + slash  + 'wtd_halfdegree'  + sExtension_tif
     pWTD = gdal_read_geotiff(sFilename_in)
     aWTD_obs = pWTD[0]
     dX_origin = pWTD[3]
@@ -113,17 +113,14 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
 
         #read the average file   
         #read the average file   
-        sWorkspace_variable_tiff = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tiff'
-        sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower() + sCase + '000' + sExtension_tiff
+        sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tiff'
+        sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sCase + '000' + sExtension_tif
         if os.path.isfile(sFilename_tiff):
             pass
         else:
             print('file does not exist')
             exit
         pWTD = gdal_read_geotiff(sFilename_tiff)
-          
-                
-        #if(iFlag_save_projection == 1):
                    
         aImage = pWTD[0]
         aData_all[i, :,: ] = aImage   
@@ -224,12 +221,12 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
 
     #save qc matrix using the geotiff format
      #save qc matrix using the geotiff format
-    sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tiff
+    sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tif
     print(sFilename_tiff)
     gdal_write_geotiff(sFilename_tiff, aQC, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
       pSpatialRef)
 
-    sFilename_tiff = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
+    sFilename_tiff = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
     print(sFilename_tiff)    
     gdal_write_geotiff(sFilename_tiff, aAnisotropy_optimal, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
      pSpatialRef)

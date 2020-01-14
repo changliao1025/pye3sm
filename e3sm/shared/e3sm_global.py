@@ -16,6 +16,7 @@ global MACH
 
 global iYear_start
 global iYear_end
+global nmonth
 global sRegion
 global dConversion
 global sVariable

@@ -22,7 +22,7 @@ from toolbox.reader.gdal_read_tiff import gdal_read_tiff
 missing_value = -9999.0
 sExtension_envi ='.dat'
 sExtension_header ='.hdr'
-sExtension_tiff = '.tif'
+sExtension_tif = '.tif'
 sExtension_jpg ='.jpg'
 dConversion =1.0
 sVariable = 'zwt'
@@ -89,7 +89,7 @@ aMask = np.where(aEle0 == missing_value)
 
 #read wtd 
 sFilename_tiff = sWorkspace_data + slash + sModel + slash + 'raster' + slash \
-    + 'wtd' + slash  + 'wtd'  + sExtension_tiff
+    + 'wtd' + slash  + 'wtd'  + sExtension_tif
 
 pWTD = gdal_read_tiff(sFilename_tiff)
 aWTD = pWTD[0]
@@ -121,8 +121,8 @@ for i in range( nrow ):
             for iCase in range(iCase_start, iCase_end+1):
                 sCase = "{:0d}".format(iCase)
                 sWorkspace_analysis_case = sWorkspace_analysis + slash + sModel + sCase
-                sWorkspace_variable_tiff = sWorkspace_analysis_case + slash + sVariable.lower() + slash + 'tiff'
-                sFilename_wtd_sim = sWorkspace_variable_tiff + slash + sVariable.lower() + sYear + sMonth + sExtension_tiff
+                sWorkspace_variable_tif = sWorkspace_analysis_case + slash + sVariable.lower() + slash + 'tiff'
+                sFilename_wtd_sim = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMonth + sExtension_tif
                 pWTD = gdal_read_tiff(sFilename_wtd_sim)
                 dummy = pWTD[0]
                 #display image to check
