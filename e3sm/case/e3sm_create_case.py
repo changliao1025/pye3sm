@@ -262,7 +262,7 @@ if __name__ == '__main__':
                      iFlag_continue_in = iFlag_continue,\
                      iFlag_debug_in = iFlag_debug,\
                      iFlag_resubmit_in = iFlag_resubmit ,\
-                         iFlag_short_in = iFlag_short, \
+                     iFlag_short_in = iFlag_short, \
                      iCase_index_in = iCase,  \
-                        # sDate_in= sDate,\
-                     sFilename_clm_namelist_in = sFilename_clm_namelist                         )
+                    # sDate_in= sDate,\
+                     sFilename_clm_namelist_in = sFilename_clm_namelist )
