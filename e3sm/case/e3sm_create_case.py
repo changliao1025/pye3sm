@@ -18,7 +18,8 @@ def e3sm_create_case(sFilename_configuration_in,\
      iFlag_continue_in = None, \
          iFlag_debug_in = None,\
                      iFlag_resubmit_in=None,\
-                          iFlag_short_in=None, \
+                         iFlag_short_in=None, \
+                        
                               iCase_index_in = None, \
                      sFilename_clm_namelist_in = None, \
                          sDate_in =None):
@@ -236,12 +237,13 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 3
+    iCase = 5
 
     iFlag_debug = 0
+    iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 1
-    sDate = '20200109'
+    sDate = '20200113'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
@@ -250,7 +252,7 @@ if __name__ == '__main__':
     sCommand_out = "fsurdat = " + "'" \
         + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
     ofs.write(sCommand_out)
-    sCommand_out = "use_h2sc = .false." + '\n'
+    sCommand_out = "use_h2sc = .true." + '\n'
     ofs.write(sCommand_out)
     sCommand_out = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
     ofs.write(sCommand_out)
@@ -260,6 +262,7 @@ if __name__ == '__main__':
                      iFlag_continue_in = iFlag_continue,\
                      iFlag_debug_in = iFlag_debug,\
                      iFlag_resubmit_in = iFlag_resubmit ,\
+                         iFlag_short_in = iFlag_short, \
                      iCase_index_in = iCase,  \
-                     sFilename_clm_namelist_in = sFilename_clm_namelist,\
-                         sDate_in= sDate)
+                        # sDate_in= sDate,\
+                     sFilename_clm_namelist_in = sFilename_clm_namelist                         )

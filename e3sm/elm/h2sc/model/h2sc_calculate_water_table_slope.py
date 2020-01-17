@@ -18,13 +18,15 @@ print(aElevation2)
 dThickness_critical_zone_in = 50.0
 #dHeight1 = 40.0
 #dHeight2= - 40
-ndrop = 5 
+ndrop = 9
 aHeight1 =   np.arange(ndrop) * 10 + 10
-aHeight2 =   np.arange(ndrop) * 10 + 10
+aHeight1 =   (np.arange(ndrop) + 1)*  dThickness_critical_zone_in / (ndrop+1)
+#aHeight2 =   np.arange(ndrop) * 10 + 10
+
 dRatio0 = 0.5
 dRatio1 = 0.5
 dRatio2 = 0.5
-dRatio3 = 0.5
+dRatio3 = 1.1
 
 X, Y = np.meshgrid(aElevation1, aElevation2)
 aLength = np.full( (ninterval,ninterval), 0.0, dtype=float)
@@ -34,6 +36,7 @@ aLength = np.full( (ninterval,ninterval), 0.0, dtype=float)
     #print(math.atan( (i+1.0)/ ninterval) - math.atan(i /ninterval) )
 
 for i in range(ninterval):
+    aHeight2 =   (np.arange(ndrop)+1) * (aElevation2[i]-aElevation1[i]) /(ndrop+1)
     print(aElevation1[i] ,aElevation2[i] )
     #elevation difference reference
     dummy0 = (aElevation2[i] - (aElevation1[i] ) ) 
@@ -157,9 +160,13 @@ for i in range(ninterval):
         #=========================================
         dWt2 = aElevation1[i] + dHeight2
         dDummy4 = dHeight2 / dRange2
-        dDummy4 = pow( dDummy4, dRatio3)
-        dDummy5 = dRange3 * dDummy4
-        D2 = D3 + dDummy5
+        #dDummy4 = dHeight2 / ( aElevation2[i]-dWt2)
+        dDummy5 = pow( dDummy4, dRatio3)
+        #dDummy5 = pow( dDummy4, 2)
+        dDummy6 = dRange3 * dDummy5
+        #dDummy6 =  ( aElevation2[i]-dWt2) * dDummy5
+        D2 = D3 + dDummy6
+        #D2 = dWt2 + dDummy6
                 
         H12 = dWt2 
         #H12 = A1 * G12 + B1
@@ -185,7 +192,8 @@ for i in range(ninterval):
         #intersect between two watertable
         G25 = (B2-B5) / (A5-A2)
         H25 = A5 * G25 + B5
-        print(G45, G24, G25)
+        #print(G45, G24, G25)
+        print(A4, A1, A2, A3, A5)
         
         
         ci = 'C' + str(j)
@@ -247,6 +255,6 @@ for i in range(ninterval):
         #plt.show()
     ax.legend()
     print("=============")    
-        #plt.savefig( 'slope_' +  "{:.0f}".format(dHeight1) +'_' + "{:.0f}".format(dHeight2) +  '_' + str(i).zfill(2) + '.png')
+        #plt.savefig( 'slope_' +  "{:.0f}".format(dHeight1) +'_' +"{:.0f}".format(dHeight2) +  '_' +   str(i).zfill(2) +'.png')
     plt.savefig( 'slope_' + str(i).zfill(2) + str(j).zfill(2)+ '.png')
 
