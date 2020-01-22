@@ -37,7 +37,7 @@ iFlag_continue = 0
 iFlag_resubmit = 1
 iFlag_short = 0
 sDate = '20200117'
-for i in range(ncase):
+for i in range(20,ncase):
     #call the create case function
 
     dHydraulic_anisotropy = aHydraulic_anisotropy[i]
