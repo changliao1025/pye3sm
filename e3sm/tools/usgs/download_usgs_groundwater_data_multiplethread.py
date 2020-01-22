@@ -21,7 +21,7 @@ from e3sm.shared import e3sm_global
 sModel = 'h2sc'
 sRegion = 'global'
 sWorkspace_data_usgs_site = '/qfs/people/liao313/data/h2sc/global/auxiliary/usgs_site'
-sWorkspace_analysis_case = sWorkspace_models + slash + sModel + slash + sRegion + slash + 'usgs_groundwater2'
+sWorkspace_analysis_case = sWorkspace_models + slash + sModel + slash + sRegion + slash + 'usgs_groundwater_multithread'
 if not os.path.exists(sWorkspace_analysis_case):
     os.makedirs(sWorkspace_analysis_case)
 
@@ -46,6 +46,7 @@ def download_usgs_groundwater_data_parallel(sFilename):
     pData = text_reader_string(sFilename, iSkipline_in = 32, cDelimiter_in ='\t', ncolumn_in = 12)
     aSiteId = pData[:, 1]
     nsite = len(aSiteId)
+    #sSite = ','.join('{:s}'.format(sSiteId) for sSiteId in aSiteId)
     #get all sites in this file
     for iSite in range(nsite):
         sSiteId= aSiteId[iSite]
@@ -53,7 +54,7 @@ def download_usgs_groundwater_data_parallel(sFilename):
 
         #print(sSiteId)
         sUrl = sString_left + sSiteId + sString_right
-        #search for data using the site id and other filters
+            #search for data using the site id and other filters
         try: 
             pResponse = urllib.request.urlopen(sUrl)
             bHtml = pResponse.read()
@@ -68,12 +69,20 @@ def download_usgs_groundwater_data_parallel(sFilename):
             #print(e.read())
             pass
             
-
+def download_usgs_groundwater_data_parallel_wrapper(i):
+    sFilname = aFilename[i]
+    download_usgs_groundwater_data_parallel(sFilename)
 
     return
 if __name__ == '__main__':
-    #download_usgs_groundwater_data()
-    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--start", help = "the id of the e3sm case",
+                        type = int)
+    parser.add_argument("--end", help = "the id of the e3sm case",
+                        type = int)
+    args = parser.parse_args()
+    iStart = args.start
+    iEnd = args.end
     
     sRegax = sWorkspace_data_usgs_site + slash + '*' + sExtension_txt
 
@@ -86,6 +95,10 @@ if __name__ == '__main__':
 
     print(nFile)
     pool = mp.Pool(mp.cpu_count())
-    results = pool.map(download_usgs_groundwater_data_parallel,[sFilename for sFilename in aFilename])
+
+    iJob = 1 
+    aIndex_range = np.arange(iStart, iEnd)
+
+    results = pool.map(download_usgs_groundwater_data_parallel_wrapper,[i for i in aIndex_range])
 
     pool.close()

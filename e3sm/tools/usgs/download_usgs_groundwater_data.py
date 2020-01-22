@@ -48,33 +48,34 @@ def download_usgs_groundwater_data():
         if not os.path.exists(sFolder):
             os.makedirs(sFolder)
         else:   
-            continue
+            pass
             
         #read individual file 
         pData = text_reader_string(sFilename, iSkipline_in = 32, cDelimiter_in ='\t', ncolumn_in =12)
         aSiteId = pData[:, 1]
         nsite = len(aSiteId)
+        sSite = ','.join('{:s}'.format(sSiteId) for sSiteId in aSiteId)
         #get all sites in this file
-        for iSite in range(nsite):
-            sSiteId= aSiteId[iSite]
-            sFilename_site = sFolder + slash + sSiteId
+        #for iSite in range(nsite):
+        #    sSiteId= aSiteId[iSite]
+        #    sFilename_site = sFolder + slash + sSiteId
 
-            #print(sSiteId)
-            sUrl = sString_left + sSiteId + sString_right
+        sUrl = sString_left + sSite + sString_right
+        print(sUrl)
             #search for data using the site id and other filters
-            try: 
-                pResponse = urllib.request.urlopen(sUrl)
-                bHtml = pResponse.read()
-                #save as a rdb file #save the result into a file
-                sFilename_out = sFolder + slash + sSiteId +  sExtension_txt
-                print(sFilename_out)
-                pFile = open(sFilename_out,"w")  #write mode 
-                pFile.write(bHtml.decode("utf-8") ) 
-                pFile.close() 
-            except urllib.error.URLError as e:
-                #print(e.code)
-                #print(e.read())
-                pass
+        try: 
+            pResponse = urllib.request.urlopen(sUrl)
+            bHtml = pResponse.read()
+            #save as a rdb file #save the result into a file
+            sFilename_out = sFolder + slash + sRow + '_' + sColumn +  sExtension_txt
+            print(sFilename_out)
+            pFile = open(sFilename_out,"w")  #write mode 
+            pFile.write(bHtml.decode("utf-8") ) 
+            pFile.close() 
+        except urllib.error.URLError as e:
+            print(e.code)
+            #print(e.read())
+            pass
             
 
 

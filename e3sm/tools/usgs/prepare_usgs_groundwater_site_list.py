@@ -48,7 +48,7 @@ sString2 = '&startDT=1980-01-01&endDT=2010-12-31&siteType=GW&siteStatus=all&hasD
 sUrl_test = 'http://waterservices.usgs.gov/nwis/site/?format=rdb&bBox=-83.000000,36.500000,-81.000000,38.500000&startDT=1980-01-01&endDT=2010-12-31&siteType=GW&siteStatus=all&hasDataTypeCd=gw'
 
 j = int((-83-(-180)) / 0.5)
-i = int((90-36.5) /0.5)
+i = int((90-36.5) / 0.5)
 
 def prepare_usgs_groundwater_site_list():
 
