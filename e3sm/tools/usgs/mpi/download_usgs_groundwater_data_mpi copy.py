@@ -10,15 +10,9 @@ import multiprocessing as mp
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-
 from eslib.system.define_global_variables import *
 from eslib.toolbox.reader.text_reader_string import text_reader_string
-from eslib.toolbox.reader.read_configuration_file import read_configuration_file
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-
-from e3sm.shared import e3sm_global
 
 sModel = 'h2sc'
 sRegion = 'global'

@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "/people/liao313/.conda/envs/gdal/bin/python",
+    "python.pythonPath": "/qfs/people/liao313/.conda/envs/mpienv/bin/python",
     "python.formatting.provider": "yapf"
 }

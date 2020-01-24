@@ -1,5 +1,6 @@
 import os, sys
 import datetime
+import argparse
 import urllib.request
 import numpy as np
 import glob
@@ -21,9 +22,12 @@ from e3sm.shared import e3sm_global
 sModel = 'h2sc'
 sRegion = 'global'
 sWorkspace_data_usgs_site = '/qfs/people/liao313/data/h2sc/global/auxiliary/usgs_site'
-sWorkspace_analysis_case = sWorkspace_models + slash + sModel + slash + sRegion + slash + 'usgs_groundwater_multithread'
+sWorkspace_analysis_case = sWorkspace_models + slash + sModel + slash + sRegion + slash + 'usgs_groundwater_pool'
 if not os.path.exists(sWorkspace_analysis_case):
-    os.makedirs(sWorkspace_analysis_case)
+    try: 
+        os.makedirs(sWorkspace_analysis_case)
+    except:
+        pass 
 
 test= 'https://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites=425549072312601&startDT=1980-01-01&endDT=1999-12-31'
 sString_left = 'https://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites='
@@ -40,7 +44,10 @@ def download_usgs_groundwater_data_parallel(sFilename):
     #create a folder for this location as well
     sFolder = sWorkspace_analysis_case + slash + sRow + '_' + sColumn
     if not os.path.exists(sFolder):
-        os.makedirs(sFolder)
+        try:
+            os.makedirs(sFolder)
+        except:
+            pass
         
     #read individual file 
     pData = text_reader_string(sFilename, iSkipline_in = 32, cDelimiter_in ='\t', ncolumn_in = 12)
@@ -75,28 +82,26 @@ def download_usgs_groundwater_data_parallel_wrapper(i):
 
     return
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--start", help = "the id of the e3sm case",
-                        type = int)
-    parser.add_argument("--end", help = "the id of the e3sm case",
-                        type = int)
-    args = parser.parse_args()
-    iStart = args.start
-    iEnd = args.end
-    
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument("--start", help = "the id of the e3sm case",
+    #                    type = int)
+    #parser.add_argument("--end", help = "the id of the e3sm case",
+    #                    type = int)
+    #args = parser.parse_args()
+    #iStart = args.start
+    #iEnd = args.end
+    iStart=0
+    iEnd=100
     sRegax = sWorkspace_data_usgs_site + slash + '*' + sExtension_txt
-
     aFilename=[]
     for sFilename  in glob.glob(sRegax):
         aFilename.append(sFilename)
-    aFilename.sort() 
-    
+    aFilename.sort()     
     nFile = len(aFilename)    
-
     print(nFile)
     pool = mp.Pool(mp.cpu_count())
 
-    iJob = 1 
+    
     aIndex_range = np.arange(iStart, iEnd)
 
     results = pool.map(download_usgs_groundwater_data_parallel_wrapper,[i for i in aIndex_range])
