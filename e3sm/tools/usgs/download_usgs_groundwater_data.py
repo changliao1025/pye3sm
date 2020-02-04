@@ -24,7 +24,7 @@ sWorkspace_analysis_case = sWorkspace_models + slash + sModel + slash + sRegion 
 if not os.path.exists(sWorkspace_analysis_case):
     os.makedirs(sWorkspace_analysis_case)
 
-test= 'https://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites=425549072312601&startDT=1980-01-01&endDT=1999-12-31'
+sUrl_test = 'https://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites=425549072312601&startDT=1980-01-01&endDT=1999-12-31'
 sString_left = 'https://waterservices.usgs.gov/nwis/gwlevels/?format=rdb&sites='
 sString_right = '&startDT=1980-01-01&endDT=2010-12-31'
 def download_usgs_groundwater_data(sFilename):
@@ -67,10 +67,8 @@ def download_usgs_groundwater_data(sFilename):
             #print(e.code)
             #print(e.read())
             pass
-            
-
-
     return
+    
 if __name__ == '__main__':
     iStart=0
     iEnd=100

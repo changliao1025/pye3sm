@@ -61,22 +61,14 @@ def prepare_usgs_groundwater_site_list():
     #pFile = open(sFilename_test,"w")#write mode 
     #pFile.write(html.decode("utf-8") ) 
     #pFile.close() 
-
     
     for iRow in np.arange(1, nrow+1, 1): 
-        sRow = "{:03d}".format(iRow)      
-         
+        sRow = "{:03d}".format(iRow)               
         for iColumn in np.arange(1, ncolumn+1, 1): 
-
             sColumn = "{:03d}".format(iColumn)
             #define the lower and upper boundary
-
             x = aLongitude[ iRow -1, iColumn-1 ]
-            y = aLatitude[iRow-1, iColumn-1] 
-
-            
-
-            
+            y = aLatitude[iRow-1, iColumn-1]  
             dLongitude_left = x -0.5 * dResolution 
             dLongitude_right = x + 0.5 * dResolution 
             dLatitude_bottom = y - 0.5 * dResolution 
@@ -90,11 +82,8 @@ def prepare_usgs_groundwater_site_list():
             #
             sUrl = sString1 + sBox + sString2
             dummy = sColumn+ ',' + sRow+ ','+sUrl + '\n'
-            print(dummy)
-            
-     
-            try: 
-                
+            print(dummy)  
+            try:                 
                 pResponse = urllib.request.urlopen(sUrl)
                 bHtml = pResponse.read()
                 #save as a rdb file 
