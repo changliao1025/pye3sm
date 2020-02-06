@@ -15,25 +15,36 @@ from eslib.system.define_global_variables import *
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
-from e3sm.elm.general.halfdegree.elm_save_variable_halfdegree import elm_save_variable_halfdegree
+from e3sm.elm.general.halfdegree.save.elm_save_variable_halfdegree import elm_save_variable_halfdegree
 
 
 def elm_save_variable_wrap(iCase_index):   
     sCase = "{:0d}".format(iCase_index)   
-    elm_save_variable_halfdegree(sFilename_configuration, iCase_index)
+    elm_save_variable_halfdegree(sFilename_configuration, iCase_index,\
+         iYear_start_in = 1980, \
+            iYear_end_in = 2008,  \
+         iFlag_same_grid_in=1, sDate_in=sDate)
 
 if __name__ == '__main__':
-
+    parser = argparse.ArgumentParser()        
+    parser.add_argument("--iIndex_start", help = "the path",   type = int)      
+    parser.add_argument("--iIndex_end", help = "the path",   type = int)          
+    pArgs = parser.parse_args()       
+    iIndex_start = pArgs.iIndex_start
+    iIndex_end = pArgs.iIndex_end
     sModel = 'h2sc'
     sRegion = 'global'
-    #start loop
-    iCase_index_start = 288
-    iCase_index_end = 288
-
+    
+    sDate = '20200117'
     sVariable = 'ZWT'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
             + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
     
+    #start loop
+    #iIndex_start =1
+    #iIndex_end =1
+    iCase_index_start = iIndex_start
+    iCase_index_end = iIndex_end
 
 
     #iCase_index_start = int (config['iCase_index_start'] )
@@ -41,20 +52,10 @@ if __name__ == '__main__':
 
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-    iFlag_debug = 1
-    if iFlag_debug == 1:
-
-
         #iCase_index = 240       
-        for iCase_index in (aCase_index):
-            sCase = "{:03d}".format(iCase_index)
-            elm_save_variable_wrap(iCase_index)
-    else:
-
-        num_cores = multiprocessing.cpu_count()
-        print(num_cores)     
-        if( num_cores > len(aCase_index)):
-            num_cores = len(aCase_index)
-        results = Parallel(n_jobs=num_cores)(delayed(elm_save_variable_wrap)(iCase_index) for iCase_index in aCase_index)
+    for iCase_index in (aCase_index):
+        sCase = "{:03d}".format(iCase_index)
+        elm_save_variable_wrap(iCase_index)
+    
     
     print('finished')

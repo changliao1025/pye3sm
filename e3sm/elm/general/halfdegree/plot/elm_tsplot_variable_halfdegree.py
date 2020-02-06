@@ -1,8 +1,8 @@
 import os, sys
 
 import numpy as np
-from scipy.interpolate import griddata  #generate grid
-from netCDF4 import Dataset  #read netcdf
+
+
 import datetime
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
@@ -65,7 +65,10 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
 
     iFlag_optional = 1
 
-    aVariable = np.full( e3sm_global.nmonth, missing_value, dtype=float )
+    #aVariable = np.full( e3sm_global.nmonth, missing_value, dtype=float )
+    nrow =360
+    ncolumn = 720
+    aVariable_total = np.full( (e3sm_global.nmonth, nrow,ncolumn), np.nan, dtype=float )
     dates = list()
     nyear = iYear_end - iYear_start + 1
     for iYear in range(iYear_start, iYear_end+1):
@@ -73,6 +76,9 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             dSimulation = datetime.datetime(iYear, iMonth, 15)
             dates.append(dSimulation )
             iStress = 1
+    
+
+
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear)  #str(iYear).zfill(4)
 
@@ -87,12 +93,12 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
 
             if os.path.exists(sFilename):
                 print("Yep, I can read that file: " + sFilename)
+
             else:
                 print(sFilename)
-                print(
-                    "Nope, the path doesn't reach your file. Go research filepath in python"
-                )
-                quit()
+                print(                    "Nope, the path doesn't reach your file. Go research filepath in python"                )
+                #quit()
+                continue
 
 
             #read
@@ -101,25 +107,45 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             aData = pDate[0]
             nan_index = np.where(aData == missing_value)
             aData[nan_index] = np.nan
-            #aVariable[iStress-1]=np.max(aData)
-            dummy2 = aData[94, 117]
-            #dummy2 = np.nanmean(aData)
-            aVariable[iStress-1]= dummy2
+            
+            
+            
+            aVariable_total[iStress-1, :,:]= aData
             iStress = iStress + 1
 
 
-#plot
-    sFilename_out = sWorkspace_analysis_case + slash + 'wtd_tsplot_global_site.png'
+    #plot
+    sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
+    if not os.path.exists(sWorkspace_analysis_case_variable):
+        os.makedirs(sWorkspace_analysis_case_variable)
+    sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'tsplot_grid'
+    if not os.path.exists(sWorkspace_analysis_case_grid):
+        os.makedirs(sWorkspace_analysis_case_grid)
 
     sLabel_Y =r'Water table depth (m)'
     sLabel_legend = 'Simulated water table depth'
-    plot_time_series_data_monthly(dates, aVariable,\
-                                  sFilename_out,\
-                                  sTitle_in = '', \
-                                  sLabel_Y_in= sLabel_Y,\
-                                  sLabel_legend_in = sLabel_legend, \
-                                  iSize_X_in = 12,\
-                                  iSize_Y_in = 5)
+    for iRow in np.arange(1, nrow+1, 10): 
+        sRow = "{:03d}".format(iRow)               
+        for iColumn in np.arange(1, ncolumn+1, 10): 
+            sColumn = "{:03d}".format(iColumn)
+
+            sGrid =  sRow + '_' +sColumn
+            
+            sFilename_out = sWorkspace_analysis_case_grid + slash + 'wtd_tsplot_' + sGrid +'.png'
+
+
+            aVariable= aVariable_total[:, iRow-1, iColumn-1]
+            if np.isnan(aVariable).all():
+                pass
+            else:
+            
+                plot_time_series_data_monthly(dates, aVariable,\
+                                          sFilename_out,\
+                                          sTitle_in = '', \
+                                          sLabel_Y_in= sLabel_Y,\
+                                          sLabel_legend_in = sLabel_legend, \
+                                          iSize_X_in = 12,\
+                                          iSize_Y_in = 5)
 
     print("finished")
 

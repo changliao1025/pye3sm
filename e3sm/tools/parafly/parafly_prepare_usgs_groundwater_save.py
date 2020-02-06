@@ -16,26 +16,19 @@ def usgs_prepare_parafly():
     sWorkspace_groundwater_data = '/compyfs/liao313/04model/h2sc/global/usgs_groundwater_mpi'
     sWorkspace_groundwater_analysis = '/compyfs/liao313/04model/h2sc/global/analysis/usgs/groundwater'
     sWorkspace_groundwater_analysis_qc = '/compyfs/liao313/04model/h2sc/global/analysis/usgs/groundwater_qc'
-    if not os.path.exists(sWorkspace_groundwater_analysis_qc):
-        os.makedirs(sWorkspace_groundwater_analysis_qc)
+   
   
-    aFolder = os.listdir(sWorkspace_groundwater_data)       
+    aFolder = os.listdir(sWorkspace_groundwater_analysis_qc)       
     aFolder.sort()
     nFolder = len(aFolder)
 
 
-    #sWorkspace_groundwater_analysis_flat = '/compyfs/liao313/04model/h2sc/global/analysis/usgs/groundwater_flat'
-    #sRegax = sWorkspace_groundwater_analysis_flat  + slash + '*' + sExtension_txt
-    #aFilename = glob.glob(sRegax)   
-    #aFilename.sort()
-    #nFile = len(aFilename)
-    
     
     sWorkspace_groundwater_analysis_parafly =  '/qfs/people/liao313/jobs/h2sc/global/preprocess/usgs/groundwater/parafly'
     if not os.path.exists(sWorkspace_groundwater_analysis_parafly):
         os.makedirs(sWorkspace_groundwater_analysis_parafly)
-    sBasename_parafly = 'groundwater_qc_parafly.ini'
-    sBasename_job = 'groundwater_qc_parafly.job'
+    sBasename_parafly = 'groundwater_save_parafly.ini'
+    sBasename_job = 'groundwater_save_parafly.job'
     sFilename_parafly = sWorkspace_groundwater_analysis_parafly +  slash + sBasename_parafly
     
     ofs =  open(sFilename_parafly,"w")  #write mode 
@@ -44,7 +37,7 @@ def usgs_prepare_parafly():
     nTask_remaining = nFolder
     nTask = ncore_per_node
     nChunkPerTask = nTask_remaining // nTask 
-    sFilename_python = '/people/liao313/workspace/python/e3sm/e3sm_python/e3sm/tools/usgs/qc/filter_usgs_groundwater_data_with_qc.py'
+    sFilename_python = '/people/liao313/workspace/python/e3sm/e3sm_python/e3sm/tools/usgs/analysis/save_usgs_groundwater_data.py'
     
     for iRank in range(nTask):
         if iRank == 0:
@@ -60,7 +53,7 @@ def usgs_prepare_parafly():
     
     ofs.close()
     sDirectory_job = sWorkspace_groundwater_analysis_parafly
-    sJob_name = 'para_qc'
+    sJob_name = 'para_save'
     iWalltime = 24
     
     slurm_prepare_job_script_parafly(        sDirectory_job, \

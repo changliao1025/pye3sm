@@ -3,9 +3,9 @@
 
 import os, sys
 import argparse
-import subprocess
+
 import numpy as np
-import multiprocessing
+
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
@@ -31,20 +31,33 @@ def h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
                                    sDate_in = sDate_in)
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()        
+    parser.add_argument("--iIndex_start", help = "the path",   type = int)      
+    parser.add_argument("--iIndex_end", help = "the path",   type = int)          
+    pArgs = parser.parse_args()       
+    iIndex_start = pArgs.iIndex_start
+    iIndex_end = pArgs.iIndex_end
 
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200108'
-    iCase_index = 4
+    sDate = '20200117'
 
-    iYear_start = 1990
+    #iIndex_start = 6
+    #iIndex_end = 6
+
+    iYear_start = 1980
     iYear_end = 2008
 
     sVariable = 'zwt'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
+    iCase_index_start = iIndex_start
+    iCase_index_end = iIndex_end
+    aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-    h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
+        #iCase_index = 240       
+    for iCase_index in (aCase_index):
+        h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
                                     iCase_index,\
                                     iYear_start_in = iYear_start, \
                                     iYear_end_in =iYear_end,\
