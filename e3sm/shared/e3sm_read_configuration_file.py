@@ -14,20 +14,28 @@ pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
 def e3sm_read_configuration_file(sFilename_configuration_in,\
+                                iFlag_branch_in = None, \
                                  iFlag_continue_in = None, \
                                  iFlag_debug_in = None, \
                                  iFlag_short_in =None,\
                                  iFlag_resubmit_in = None, \
                                  iCase_index_in = None, \
                                  iYear_start_in = None,\
-                                 iYear_end_in = None,\
-                                 sFilename_clm_namelist_in = None, \
-                                 sDate_in = None):
+                                 iYear_end_in = None, \
+                                 iYear_data_start_in = None,\
+                                iYear_data_end_in = None, \
+                                 sDate_in = None,\
+                                 sFilename_clm_namelist_in = None,\
+                                sFilename_datm_namelist_in = None):
 
     config = read_configuration_file(sFilename_configuration_in)
     sModel = config['sModel']
     sRegion = config['sRegion']
     sVariable = config['sVariable']
+    if iFlag_branch_in is not None:
+        iFlag_branch = iFlag_branch_in
+    else:
+        iFlag_branch = 0
     if iFlag_continue_in is not None:
         iFlag_continue = iFlag_continue_in
     else:
@@ -66,6 +74,14 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
         iYear_end = iYear_end_in
     else:
         iYear_end = int(config['iYear_end'] )
+    if iYear_data_start_in is not None:
+        iYear_data_start = iYear_data_start_in
+    else:
+        iYear_data_start =int(config['iYear_data_start'])
+    if iYear_data_end_in is not None:
+        iYear_data_end = iYear_data_end_in
+    else:
+        iYear_data_end = int(config['iYear_data_end'] )
 
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in
@@ -81,7 +97,7 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
         + sModel + slash + sRegion + slash \
             + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
-
+    e3sm_global.iFlag_branch = iFlag_branch
     e3sm_global.iFlag_continue = iFlag_continue
     e3sm_global.iFlag_debug = iFlag_debug
     e3sm_global.iFlag_resubmit = iFlag_resubmit
@@ -93,7 +109,10 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
     e3sm_global.sRegion = sRegion
     e3sm_global.iYear_start = iYear_start
     e3sm_global.iYear_end = iYear_end
-    e3sm_global.nmonth= (iYear_end-iYear_start+1)*12
+    e3sm_global.iYear_data_start = iYear_data_start
+    e3sm_global.iYear_data_end = iYear_data_end
+    e3sm_global.nYear = iYear_end-iYear_start+1
+    e3sm_global.nmonth= e3sm_global.nYear  * 12
     e3sm_global.dConversion = dConversion
 
     e3sm_global.sFilename_mask = sFilename_mask

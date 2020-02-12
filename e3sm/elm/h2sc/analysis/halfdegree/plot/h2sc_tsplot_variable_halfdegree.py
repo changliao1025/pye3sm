@@ -42,8 +42,8 @@ if __name__ == '__main__':
     sRegion = 'global'
     sDate = '20200117'
 
-    #iIndex_start = 6
-    #iIndex_end = 6
+    #iIndex_start = 1
+    #iIndex_end = 1
 
     iYear_start = 1980
     iYear_end = 2008

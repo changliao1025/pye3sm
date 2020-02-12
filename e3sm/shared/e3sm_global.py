@@ -1,4 +1,5 @@
 global iFlag_debug
+global iFlag_branch
 global iFlag_continue
 global iFlag_resubmit
 global iFlag_short
@@ -16,6 +17,8 @@ global MACH
 
 global iYear_start
 global iYear_end
+global iYear_data_start
+global iYear_data_end
 global nmonth
 global sRegion
 global dConversion
