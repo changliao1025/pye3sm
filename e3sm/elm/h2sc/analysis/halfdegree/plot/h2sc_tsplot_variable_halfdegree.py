@@ -1,9 +1,9 @@
 #this script should be run using Python 2.7.8 instead of Python 3
 #module load python/2.7.8
+#maybe I was wrong? 20200305 Chang Liao (chang.liao@pnnl.gov)
 
 import os, sys
 import argparse
-
 import numpy as np
 
 
@@ -31,19 +31,23 @@ def h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
                                    sDate_in = sDate_in)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()        
-    parser.add_argument("--iIndex_start", help = "the path",   type = int)      
-    parser.add_argument("--iIndex_end", help = "the path",   type = int)          
-    pArgs = parser.parse_args()       
-    iIndex_start = pArgs.iIndex_start
-    iIndex_end = pArgs.iIndex_end
-
+    iFlag_debug = 0
+    if iFlag_debug == 1:
+        iIndex_start = 1
+        iIndex_end = 1
+    else:
+        parser = argparse.ArgumentParser()        
+        parser.add_argument("--iIndex_start", help = "the path",   type = int)      
+        parser.add_argument("--iIndex_end", help = "the path",   type = int)          
+        pArgs = parser.parse_args()       
+        iIndex_start = pArgs.iIndex_start
+        iIndex_end = pArgs.iIndex_end
+    
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200117'
+    sDate = '20200212'
 
-    #iIndex_start = 1
-    #iIndex_end = 1
+    
 
     iYear_start = 1980
     iYear_end = 2008

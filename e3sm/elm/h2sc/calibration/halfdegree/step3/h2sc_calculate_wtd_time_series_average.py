@@ -12,9 +12,6 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.elm.general.halfdegree.h2sc_calculate_variable_time_series_average_halfdegree import h2sc_calculate_variable_time_series_average_halfdegree
 
 
-
-
-
 def h2sc_calculate_wtd_time_series_average_wrap(iCase_index):
     #for iCase in aCase:
     #    #call the create case function

@@ -11,7 +11,7 @@ from eslib.toolbox.slurm.parafly.prepare_parafly_slurm_job_script import prepare
 def parafly_tsplot_elm_variable():
 
     iIndex_start = 1
-    iIndex_end = 24
+    iIndex_end = 25
     nThread = 24
 
     sWorkspace_groundwater_analysis_parafly =  '/qfs/people/liao313/jobs/h2sc/global/postprocess/parafly'
@@ -24,6 +24,8 @@ def parafly_tsplot_elm_variable():
     sFilename_parafly = sWorkspace_groundwater_analysis_parafly + slash + sBasename_parafly
     sFilename_python = '/people/liao313/workspace/python/e3sm/e3sm_python/e3sm/elm/h2sc/analysis/halfdegree/plot/h2sc_tsplot_variable_halfdegree.py'
 
+    sFilename_python = '/people/liao313/workspace/python/e3sm/e3sm_python/e3sm/elm/h2sc/analysis/halfdegree/plot/h2sc_tsplot_variable_halfdegree.py'
+
     prepare_parafly_python_command_file(iIndex_start, iIndex_end,\
     nThread, \
     sFilename_parafly, \
@@ -34,7 +36,7 @@ def parafly_tsplot_elm_variable():
     prepare_parafly_slurm_job_script(sBasename_job, \
         sBasename_parafly, \
         sDirectory_job, \
-        iWalltime_in = 24, \
+        iWalltime_in = 20, \
         nNode_in = 1, \
         nThread_in=24, \
         sJob_name_in ='elm_parafly',\

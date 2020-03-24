@@ -1,8 +1,5 @@
 import os, sys
-
 import numpy as np
-
-
 import datetime
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
@@ -141,6 +138,7 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             
                 plot_time_series_data_monthly(dates, aVariable,\
                                           sFilename_out,\
+                                          iReverse_Y_in = 1, \
                                           sTitle_in = '', \
                                           sLabel_Y_in= sLabel_Y,\
                                           sLabel_legend_in = sLabel_legend, \

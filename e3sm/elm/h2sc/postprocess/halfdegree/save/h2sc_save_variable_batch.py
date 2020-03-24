@@ -23,26 +23,27 @@ def elm_save_variable_wrap(iCase_index):
     elm_save_variable_halfdegree(sFilename_configuration, iCase_index,\
          iYear_start_in = 1980, \
             iYear_end_in = 2008,  \
-         iFlag_same_grid_in=1, sDate_in=sDate)
+         iFlag_same_grid_in = 1,\
+              sDate_in = sDate)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()        
-    parser.add_argument("--iIndex_start", help = "the path",   type = int)      
-    parser.add_argument("--iIndex_end", help = "the path",   type = int)          
-    pArgs = parser.parse_args()       
-    iIndex_start = pArgs.iIndex_start
-    iIndex_end = pArgs.iIndex_end
+    #parser = argparse.ArgumentParser()        
+    #parser.add_argument("--iIndex_start", help = "the path",   type = int)      
+    #parser.add_argument("--iIndex_end", help = "the path",   type = int)          
+    #pArgs = parser.parse_args()       
+    #iIndex_start = pArgs.iIndex_start
+    #iIndex_end = pArgs.iIndex_end
     sModel = 'h2sc'
     sRegion = 'global'
     
-    sDate = '20200117'
+    sDate = '20200212'
     sVariable = 'ZWT'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
             + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
     
     #start loop
-    #iIndex_start =1
-    #iIndex_end =1
+    iIndex_start =1
+    iIndex_end = 1
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
 

@@ -39,6 +39,7 @@ def usgs_prepare_parafly():
     nChunkPerTask = nTask_remaining // nTask 
     sFilename_python = '/people/liao313/workspace/python/e3sm/e3sm_python/e3sm/tools/usgs/analysis/tsplot_usgs_groundwater_data.py'
     
+    
     for iRank in range(nTask):
         if iRank == 0:
             pRange = range( (nTask-1) * nChunkPerTask + iIndex_start, iIndex_end + 1)    
@@ -53,12 +54,12 @@ def usgs_prepare_parafly():
     
     ofs.close()
     sDirectory_job = sWorkspace_groundwater_analysis_parafly
-    sJob_name = 'para_save'
-    iWalltime = 24
+    sJob_name = 'parafly_tsplot'
+    iWalltime = 20
     
-    slurm_prepare_job_script_parafly(        sDirectory_job, \
+    slurm_prepare_job_script_parafly( sDirectory_job, \
         sBasename_job, \
-            sBasename_parafly, \
+        sBasename_parafly, \
         sJob_name, \
         iWalltime, \
         nNode_in = 1, \
