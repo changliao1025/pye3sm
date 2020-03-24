@@ -74,10 +74,10 @@ def e3sm_create_case(sFilename_configuration_in,\
     sRunname = sSimname + slash + 'run'
 
     nYear = e3sm_global.nYear
-    sYear =  "{:03d}".format(nYear)
-    sYear_start = "{:03d}".format(e3sm_global.iYear_start)
-    sYear_data_start = "{:03d}".format(e3sm_global.iYear_data_start)
-    sYear_data_end = "{:03d}".format(e3sm_global.iYear_data_end)
+    sYear =  "{:04d}".format(nYear)
+    sYear_start = "{:04d}".format(e3sm_global.iYear_start)
+    sYear_data_start = "{:04d}".format(e3sm_global.iYear_data_start)
+    sYear_data_end = "{:04d}".format(e3sm_global.iYear_data_end)
 
     if (iFlag_short ==1 ):
         sQueue = 'short'

@@ -18,7 +18,7 @@ from eslib.system.define_global_variables import *
 
 from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
 from eslib.gis.gdal.gdal_write_geotiff import gdal_write_geotiff
-from eslib.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
+#from eslib.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
@@ -32,11 +32,9 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     
     e3sm_read_configuration_file(sFilename_configuration_in)       
     
-    iCase_start = 520
-    iCase_end = 541
+
 
     sModel  = e3sm_global.sModel     
-   
 
     print('The following model is processed: ', sModel)
     if( sModel == 'h2sc'):
@@ -50,6 +48,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     dConversion = 1.0
    
     sVariable  = e3sm_global.sVariable
+    print(sVariable)
 
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster        
     sWorkspace_analysis =e3sm_global.sWorkspace_analysis
@@ -74,18 +73,22 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     pSpatialRef = pWTD[8]        
    
     #we need to match the case id with actual parameter space
-    
-    aCase = np.arange(iCase_start, iCase_end + 1, 1)
-    sRecord = "{:0d}".format(iCase_start) + '_' + "{:0d}".format(iCase_end)
+    aHydraulic_anisotropy_exp = np.arange(-3,3.1,0.25)
+    aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
+    print(aHydraulic_anisotropy)
 
-    aHydraulic_anisotropy_raw = np.array([0.1, 0.5, 1, 5, 10, 20,30, 40, 50, 60, 70, 80, 90, 100,\
-     150, 200, 250, 300, 400, 500, 1000, 2000] )     
-    aHydraulic_anisotropy = 1.0 / aHydraulic_anisotropy_raw
+#start loop
+    ncase = len(aHydraulic_anisotropy)
+    aCase = np.arange(ncase) + 1
+    sDate = '20200212'
+    iYear_start = 1989
+    iYear_end = 2008
+    sRecord = sDate
 
-    aHydraulic_anisotropy = np.log10(aHydraulic_anisotropy)
-    aAnisotropy_sort = np.sort(aHydraulic_anisotropy)
-    dMin = -4
-    dMax = 1
+    nTS = 20 * 12 #20 year
+  
+    dMin = -3
+    dMax = 3
     x2 = np.arange(int(dMax-dMin+1))  + int(dMin)
     
     n = len(x2)
@@ -93,37 +96,43 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     for i in range(n):
         xtick_labels[i] =  r'$10^{{{}}}$'.format(int(x2[i])) 
     #sort it and also record the order
-    aOrder  = np.argsort(aHydraulic_anisotropy)  
-    aCase_sort = aCase[aOrder]
+    
     #now let's start the for loop
-    nCase = len(aCase_sort)
+    
     nrow = 360
     ncolumn  = 720 
-    aData_all = np.full((nCase, nrow, ncolumn),missing_value, dtype= float )
+    aData_all = np.full((ncase, nTS, nrow, ncolumn),missing_value, dtype= float )
 
     
     #iFlag_save_projection = 1
-    for i in range(nCase):
-        iCase = aCase_sort[i]
-        dAnisotropy = aAnisotropy_sort[i]
+    for iCase in range(1, 5):# ncase+1):
+        
+        dAnisotropy = aHydraulic_anisotropy[iCase -1]
 
         #construct the case direction
-        sCase = sModel + "{:0d}".format(iCase)
+        sCase = sModel + sDate + "{:03d}".format(iCase)
         sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
+  
+        sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tif'
+        print(sWorkspace_variable_tif)
+        j = 0 
+        for iYear in range(iYear_start,iYear_end + 1):
+            sYear =  "{:04d}".format(iYear)
+            for iMonth in range(1,13):
+                sMonth =  "{:02d}".format(iMonth)
+                sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() \
+                    + sYear + sMonth +  sExtension_tif
+                if os.path.isfile(sFilename_tiff):
+                    pass
+                else:
+                    print('file does not exist: ' + sFilename_tiff)
+                    exit
+                pWTD = gdal_read_geotiff(sFilename_tiff)
 
-        #read the average file   
-        #read the average file   
-        sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tiff'
-        sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sCase + '000' + sExtension_tif
-        if os.path.isfile(sFilename_tiff):
-            pass
-        else:
-            print('file does not exist')
-            exit
-        pWTD = gdal_read_geotiff(sFilename_tiff)
-                   
-        aImage = pWTD[0]
-        aData_all[i, :,: ] = aImage   
+                aImage = pWTD[0]
+
+                aData_all[iCase -1, j :,: ] = aImage   
+                j = j + 1
 
     #extract line by line
     aQC = np.full((nrow, ncolumn),missing_value, dtype= int )
@@ -137,10 +146,10 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
            for iColumn  in range(ncolumn):
                 sColumn =  "{:03d}".format(iColumn)
                 #extract data
-                aWtd = aData_all[: , iRow, iColumn]
+                aWtd = aData_all[: , :,iRow, iColumn]
 
                 #check nan value
-                if(missing_value in aWtd):
+                if(missing_value in aWtd[0, :]):
                     #this might be an ocean grid
                      pass
                 else:
@@ -159,46 +168,46 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
                     ax.set_xmargin(0.05)
                     ax.set_ymargin(0.10)
                     
-                    if(  np.min(aWtd) <= dWtd and dWtd <= np.max(aWtd)  ):
-                        aQC[iRow, iColumn] = 1
-                        #now we can the curve fitting
-                        #find the place where it is located
-                        #add it inside first
-                        #print(type(aWtd))
-                        aDummy = np.append(aWtd, dWtd )
-                        aDummy_sort = np.flip(np.sort(aDummy)      )
-                        iIndex = np.where( aDummy_sort == dWtd)
-                        A = ( aAnisotropy_sort[iIndex[0] - 1], aDummy_sort[iIndex[0] - 1])
-                        B = ( aAnisotropy_sort[iIndex[0]], aDummy_sort[iIndex[0] + 1])
-                        C = (dMin, dWtd)
-                        D = (dMax, dWtd)
-                        dummy = calculate_line_intersect_point(A, B, C, D)
-                        aAnisotropy_optimal[iRow, iColumn] =np.power(10.0, dummy[0]   )
-                    else:
-                        if( np.min(aWtd) > dWtd ):
-                            aAnisotropy_optimal[iRow, iColumn] =np.power(10.0,    aAnisotropy_sort[nCase -1]   )
-                            aQC[iRow, iColumn] = 2
-                        else:
-                            aAnisotropy_optimal[iRow, iColumn] = np.power(10.0,aAnisotropy_sort[0] )
-                            aQC[iRow, iColumn] = 3
+                    #if(  np.min(aWtd) <= dWtd and dWtd <= np.max(aWtd)  ):
+                    #    aQC[iRow, iColumn] = 1
+                    #    #now we can the curve fitting
+                    #    #find the place where it is located
+                    #    #add it inside first
+                    #    #print(type(aWtd))
+                    #    aDummy = np.append(aWtd, dWtd )
+                    #    aDummy_sort = np.flip(np.sort(aDummy)      )
+                    #    iIndex = np.where( aDummy_sort == dWtd)
+                    #    A = ( aAnisotropy_sort[iIndex[0] - 1], aDummy_sort[iIndex[0] - 1])
+                    #    B = ( aAnisotropy_sort[iIndex[0]], aDummy_sort[iIndex[0] + 1])
+                    #    C = (dMin, dWtd)
+                    #    D = (dMax, dWtd)
+                    #    dummy = calculate_line_intersect_point(A, B, C, D)
+                    #    aAnisotropy_optimal[iRow, iColumn] =np.power(10.0, dummy[0]   )
+                    #else:
+                    #    if( np.min(aWtd) > dWtd ):
+                    #        aAnisotropy_optimal[iRow, iColumn] =np.power(10.0,\
+                    #                aAnisotropy_sort[nCase -1]   )
+                    #        aQC[iRow, iColumn] = 2
+                    #    else:
+                    #        aAnisotropy_optimal[iRow, iColumn] = np.power(10.0,aAnisotropy_sort[0] )
+                    #        aQC[iRow, iColumn] = 3
                     ax.set_title('Relationship between Anisotropy and Water Table Depth', loc='center')
-                    x1 = aAnisotropy_sort
-                    y1 = aWtd
-                    ax.plot( x1, y1, color = 'red', linestyle = '--' , marker="+", markeredgecolor='blue' , label= 'Simulated WTD')
-                    
-
+                    #x1 = aAnisotropy_sort
+                    #y1 = aWtd
+                    #ax.plot( x1, y1, color = 'red', linestyle = '--' , marker="+", markeredgecolor='blue' , label= 'Simulated WTD')#[aWtd[0,:],aWtd[1,:],aWtd[2,:],aWtd[3,:]], 
+                   
+                    ax.boxplot( list(aWtd[0:5]), \
+                        positions = aHydraulic_anisotropy_exp[0:5],patch_artist=True ,\
+                            boxprops=dict(facecolor= 'lightblue') )
                     
                     xlabel = 'Anisotropy' + ' (' +r'$ \frac{ K_{v}}{ k_{h}} $' + ')'
                     
-                    
-
                     #plot obs
                     x3 = [dMin,  dMax]
+                    #x3 = [1,  7]
                     y3= [dWtd, dWtd]
                     ax.plot( x3, y3, color = 'blue', linestyle = 'solid' , label = 'Observed WTD')
-                    
-
-                    
+                
                     ax.grid(which='major', color='grey', linestyle='--', axis='y') 
                     ax.set_ylabel('Water table depth (m)', fontsize=12)    
 
@@ -207,10 +216,10 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
                     ax.set_yticks(dum)
                     ax.set_xticklabels(xtick_labels)
                     ax.set_xlabel(xlabel,fontsize=12 )
-                    ax.set_xlim(-3.4, 1.1)
-                    ax.set_ylim(0, 90)
+                    ax.set_xlim(-3.5, 3.5)
+                    ax.set_ylim(85, 0)
                     ax.set_aspect(aspect=0.02)
-                    ax.legend(bbox_to_anchor=(1.0,1.0), loc="upper right",fontsize=12)
+                    ax.legend(bbox_to_anchor=(1.0,1.0), loc="lower right",fontsize=12)
                     sFilename_png = sWorkspace_analysis_wtd + slash + 'wtd' + sRow + '_' + sColumn +    sExtension_png 
                     plt.savefig(sFilename_png, bbox_inches = 'tight')
                     #print(sFilename_png)
@@ -220,16 +229,19 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
 
 
     #save qc matrix using the geotiff format
-     #save qc matrix using the geotiff format
-    sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tif
-    print(sFilename_tiff)
-    gdal_write_geotiff(sFilename_tiff, aQC, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
-      pSpatialRef)
-
-    sFilename_tiff = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
-    print(sFilename_tiff)    
-    gdal_write_geotiff(sFilename_tiff, aAnisotropy_optimal, ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
-     pSpatialRef)
+    #save qc matrix using the geotiff format
+    #sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tif
+    #print(sFilename_tiff)
+    #gdal_write_geotiff(sFilename_tiff, aQC, ncolumn, nrow, \
+    #    dX_origin, dY_origin, dPixelWidth, dMissing_value,\
+    #  pSpatialRef)
+#
+    #sFilename_tiff = sWorkspace_analysis_wtd + slash + 'optimal' \
+    #    + sRecord + sExtension_tif
+    #print(sFilename_tiff)    
+    #gdal_write_geotiff(sFilename_tiff, aAnisotropy_optimal, \
+    #    ncolumn, nrow, dX_origin, dY_origin, dPixelWidth, dMissing_value,\
+    # pSpatialRef)
 
 
 
