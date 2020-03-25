@@ -2,6 +2,7 @@
 import os #operate folder
 import sys
 import numpy as np
+from itertools import product
 from netCDF4 import Dataset #it maybe be replaced by gdal 
 #maybe not needed
 from osgeo import gdal #the default operator
@@ -105,35 +106,44 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
 
     
     #iFlag_save_projection = 1
-    for iCase in range(1, 5):# ncase+1):
-        
-        dAnisotropy = aHydraulic_anisotropy[iCase -1]
+    #for iCase in range(1,  ncase+1):
+    #    print('reading case', iCase)
+    #    #dAnisotropy = aHydraulic_anisotropy[iCase -1]
+    #    #construct the case direction
+    #    sCase = sModel + sDate + "{:03d}".format(iCase)
+    #    sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
+    #    sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tif'
+    #    #print(sWorkspace_variable_tif)
+    #    j = 0 
+    #    for iYear in range(iYear_start,iYear_end + 1):
+    #        sYear =  "{:04d}".format(iYear)
+    #        for iMonth in range(1,13):
+    #            sMonth =  "{:02d}".format(iMonth)
+    #            sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() \
+    #                + sYear + sMonth +  sExtension_tif
+    #            if os.path.isfile(sFilename_tiff):
+    #                pWTD = gdal_read_geotiff(sFilename_tiff)
+    #                
+    #                aData_all[iCase -1, j :,: ] = pWTD[0]   
+    #                j = j + 1
+    #            else:
+    #                print('file does not exist: ' + sFilename_tiff)
+    #                exit
 
-        #construct the case direction
+    for iCase, iYear, iMonth in product(range(1, ncase + 1), range(iYear_start,iYear_end + 1), range(1,13)):    
         sCase = sModel + sDate + "{:03d}".format(iCase)
         sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
-  
         sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tif'
-        print(sWorkspace_variable_tif)
-        j = 0 
-        for iYear in range(iYear_start,iYear_end + 1):
-            sYear =  "{:04d}".format(iYear)
-            for iMonth in range(1,13):
-                sMonth =  "{:02d}".format(iMonth)
-                sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() \
+        sYear =  "{:04d}".format(iYear)
+        sMonth =  "{:02d}".format(iMonth)
+        sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() \
                     + sYear + sMonth +  sExtension_tif
-                if os.path.isfile(sFilename_tiff):
-                    pass
-                else:
-                    print('file does not exist: ' + sFilename_tiff)
-                    exit
-                pWTD = gdal_read_geotiff(sFilename_tiff)
+        pWTD = gdal_read_geotiff(sFilename_tiff)
+        print(sFilename_tiff)
+        aData_all[iCase -1, (iYear- iYear_start) * 12 + iMonth - 1 :,: ] = pWTD[0]
+        pWTD = None
 
-                aImage = pWTD[0]
-
-                aData_all[iCase -1, j :,: ] = aImage   
-                j = j + 1
-
+    print('finished reading data')
     #extract line by line
     aQC = np.full((nrow, ncolumn),missing_value, dtype= int )
     aAnisotropy_optimal = np.full((nrow, ncolumn), missing_value, dtype= float )
@@ -141,15 +151,19 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     if (iFlag_debug == 1 ):
         pass
     else:
-        for iRow in range(nrow):
+        for iRow in range(0, nrow, 10):
            sRow =  "{:03d}".format(iRow)
-           for iColumn  in range(ncolumn):
+           for iColumn  in range(0, ncolumn, 10):
                 sColumn =  "{:03d}".format(iColumn)
                 #extract data
-                aWtd = aData_all[: , :,iRow, iColumn]
+                aWtd = aData_all[: , :, iRow, iColumn]
 
                 #check nan value
-                if(missing_value in aWtd[0, :]):
+                #if(missing_value in aWtd[0, :]):
+                dummy_index = np.where( aWtd == -9999 ) 
+                aWtd[dummy_index]=np.nan
+                if np.isnan(aWtd).all():
+               
                     #this might be an ocean grid
                      pass
                 else:
