@@ -3,14 +3,17 @@ import os , sys
 import numpy as np
 from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
-from osgeo import gdal #the default operator
+from osgeo import gdal, osr #the default operator
 
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from eslib.system.define_global_variables import *     
-from eslib.gis.envi.envi_write_header import envi_write_header
+#from eslib.gis.envi.envi_write_header import envi_write_header
+from eslib.gis.gdal.write.gdal_write_envi_file_multiple_band import gdal_write_envi_file_multiple_band
+
+from eslib.gis.gdal.write.gdal_write_geotiff_multiple_band import gdal_write_geotiff_multiple_band
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
@@ -110,6 +113,28 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
     
     iFlag_optional = 1 
 
+    #save netcdf
+    sWorkspace_variable_netcdf = sWorkspace_analysis_case + slash \
+        + sVariable.lower() + slash + 'netcdf'
+    if not os.path.exists(sWorkspace_variable_netcdf):
+        os.makedirs(sWorkspace_variable_netcdf)
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash \
+                            + sVariable.lower() + slash + 'dat'
+    if not os.path.exists(sWorkspace_variable_dat):
+        os.makedirs(sWorkspace_variable_dat)
+    sWorkspace_variable_tif = sWorkspace_analysis_case + slash \
+        + sVariable.lower() + slash + 'tif'
+    if not os.path.exists(sWorkspace_variable_tif):
+        os.makedirs(sWorkspace_variable_tif)
+        
+    sFilename_output = sWorkspace_variable_netcdf + slash + sVariable.lower() +  sExtension_netcdf
+    pFile = Dataset(sFilename_output, 'w', format='NETCDF4') 
+    pDimension_longitude = pFile.createDimension('lon', ncolumn_new) 
+    pDimension_latitude = pFile.createDimension('lat', nrow_new) 
+
+    nmonth = (iYear_end - iYear_start +1) * 12
+    aGrid_stack= np.full((nmonth, nrow_new, ncolumn_new), -9999.0, dtype= float)
+    i=0
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
     
@@ -182,59 +207,49 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
                     #save output
                     aGrid_data[aMask] = missing_value
 
-                    #save netcdf
-                    sWorkspace_variable_netcdf = sWorkspace_analysis_case + slash \
-                        + sVariable.lower() + slash + 'netcdf'
-                    if not os.path.exists(sWorkspace_variable_netcdf):
-                        os.makedirs(sWorkspace_variable_netcdf)
-                    sFilename_output = sWorkspace_variable_netcdf + slash + sVariable.lower() + sYear + sMonth +  sExtension_netcdf
-                    pFile = Dataset(sFilename_output, 'w', format='NETCDF4') 
-
-                    pDimension_longitude = pFile.createDimension('lon', ncolumn_new) 
-                    pDimension_latitude = pFile.createDimension('lat', nrow_new) 
-                    pVar = pFile.createVariable(sVariable.lower(), 'f4', ('lat' , 'lon')) 
+                    sDummy = sVariable.lower() + sYear + sMonth
+                    pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
                     pVar[:] = aGrid_data
-                    pVar.description = sVariable.lower()
+                    pVar.description = sDummy
                     pVar.unit = 'm' 
-                    pFile.close()
-    
-                    if(iFlag_optional ==1):
-    
-                        sWorkspace_variable_dat = sWorkspace_analysis_case + slash \
-                            + sVariable.lower() + slash + 'dat'
-                        if not os.path.exists(sWorkspace_variable_dat):
-                            os.makedirs(sWorkspace_variable_dat)
-                        sWorkspace_variable_tif = sWorkspace_analysis_case + slash + sVariable.lower() + slash + 'tif'
-                        if not os.path.exists(sWorkspace_variable_tif):
-                            os.makedirs(sWorkspace_variable_tif)
-
-                        sFilename_envi = sWorkspace_variable_dat + slash + sVariable.lower() + sYear + sMonth + sExtension_envi
-
-                        aGrid_data.astype('float32').tofile(sFilename_envi)
-                        #write header
-                        sFilename_header = sWorkspace_variable_dat + slash + sVariable.lower() + sYear + sMonth + sExtension_header
-                        pHeaderParameters['sFilename'] = sFilename_header
-                        envi_write_header(sFilename_header, pHeaderParameters)
-
-                        #Open output format driver, see gdal_translate --formats for list
-                        src_ds = gdal.Open( sFilename_envi )
-                        sFormat = "GTiff"
-                        driver = gdal.GetDriverByName( sFormat )
-
-                        #Output to new format
-                        sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMonth + sExtension_tif
-                        dst_ds = driver.CreateCopy( sFilename_tiff, src_ds, 0 )
-
-                        #Properly close the datasets to flush to disk
-                        dst_ds = None
-                        src_ds = None
+                    iFlag_netcdf_first = 0
+                    
+                    if(iFlag_optional == 1):
+                        #stack data
+                        aGrid_stack[i, :,: ] =  aGrid_data
+                        i=i+1
                     break
                 else:
                     pass
     
     
-        print("finished")
+    #close netcdf file   
+    pFile.close()
+    #write envi and geotiff file
+    
+    pSpatial =osr.SpatialReference()
+    pSpatial.ImportFromEPSG(4326)
+    sFilename_envi = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
+
+    gdal_write_envi_file_multiple_band(sFilename_envi, aGrid_stack,\
+        float(pHeaderParameters['pixelSize']),\
+         float(pHeaderParameters['ULlon']),\
+              float(pHeaderParameters['ULlat']),\
+                  -9999.0, pSpatial)
+
+    sFilename_tif = sWorkspace_variable_tif + slash + sVariable.lower()  + sExtension_tif
+
+    gdal_write_geotiff_multiple_band(sFilename_tif, aGrid_stack,\
+        float(pHeaderParameters['pixelSize']),\
+         float(pHeaderParameters['ULlon']),\
+              float(pHeaderParameters['ULlat']),\
+                  -9999.0, pSpatial)
+
+
+    print("finished")
+
 if __name__ == '__main__':
+
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("iCase", help = "the id of the e3sm case",

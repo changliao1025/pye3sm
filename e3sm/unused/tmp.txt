@@ -1,21 +1,17 @@
-5.13332745671830
-8.10690126219402
-13.4061490294613
-22.4735683552583
-36.6550784521503
-61.4713268904412
-101.581496415962
-165.861928756421
-274.046487707165
-451.842332301298
-
-5.104676221
-8.06290322968570
-13.3438978386046
-22.4053003303798
-36.5508431102739
-61.5352326227399
-101.841997492340
-165.762912372459
-274.064456769849
-451.880378616999
+    sFormat = "ENVI"
+    driver = gdal.GetDriverByName( sFormat ) 
+    aGrid_data.astype('float32').tofile(sFilename_envi)
+    #write header
+    sFilename_header = sWorkspace_variable_dat + slash + sVariable.lower() + sYear + sMo+sExtension_header
+    pHeaderParameters['sFilename'] = sFilename_header
+    envi_write_header(sFilename_header, pHeaderParameters)
+    #Open output format driver, see gdal_translate --formats for list
+    src_ds = gdal.Open( sFilename_envi )
+    sFormat = "GTiff"
+    driver = gdal.GetDriverByName( sFormat )
+    #Output to new format
+    sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMo+sExtension_tif
+    dst_ds = driver.CreateCopy( sFilename_tiff, src_ds, 0 )
+    #Properly close the datasets to flush to disk
+    dst_ds = None
+    src_ds = None

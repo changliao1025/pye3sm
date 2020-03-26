@@ -3,7 +3,6 @@ import os #operate folder
 import sys
 import numpy as np
 from itertools import product
-from netCDF4 import Dataset #it maybe be replaced by gdal 
 #maybe not needed
 from osgeo import gdal #the default operator
 import argparse
@@ -16,9 +15,9 @@ sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
 from eslib.system.define_global_variables import *
-
-from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
-from eslib.gis.gdal.gdal_write_geotiff import gdal_write_geotiff
+from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from eslib.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
+from eslib.gis.gdal.write.gdal_write_geotiff import gdal_write_geotiff
 #from eslib.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
@@ -105,43 +104,28 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     aData_all = np.full((ncase, nTS, nrow, ncolumn),missing_value, dtype= float )
 
     
-    #iFlag_save_projection = 1
-    #for iCase in range(1,  ncase+1):
-    #    print('reading case', iCase)
-    #    #dAnisotropy = aHydraulic_anisotropy[iCase -1]
-    #    #construct the case direction
-    #    sCase = sModel + sDate + "{:03d}".format(iCase)
-    #    sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
-    #    sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tif'
-    #    #print(sWorkspace_variable_tif)
-    #    j = 0 
-    #    for iYear in range(iYear_start,iYear_end + 1):
-    #        sYear =  "{:04d}".format(iYear)
-    #        for iMonth in range(1,13):
-    #            sMonth =  "{:02d}".format(iMonth)
-    #            sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() \
-    #                + sYear + sMonth +  sExtension_tif
-    #            if os.path.isfile(sFilename_tiff):
-    #                pWTD = gdal_read_geotiff(sFilename_tiff)
-    #                
-    #                aData_all[iCase -1, j :,: ] = pWTD[0]   
-    #                j = j + 1
-    #            else:
-    #                print('file does not exist: ' + sFilename_tiff)
-    #                exit
-
-    for iCase, iYear, iMonth in product(range(1, ncase + 1), range(iYear_start,iYear_end + 1), range(1,13)):    
+    iFlag_save_projection = 1
+    for iCase in range(1,  ncase+1):
+        print('reading case', iCase)
+        #dAnisotropy = aHydraulic_anisotropy[iCase -1]
+        #construct the case direction
         sCase = sModel + sDate + "{:03d}".format(iCase)
         sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
         sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tif'
-        sYear =  "{:04d}".format(iYear)
-        sMonth =  "{:02d}".format(iMonth)
+        #print(sWorkspace_variable_tif)
+       
         sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() \
-                    + sYear + sMonth +  sExtension_tif
-        pWTD = gdal_read_geotiff(sFilename_tiff)
-        print(sFilename_tiff)
-        aData_all[iCase -1, (iYear- iYear_start) * 12 + iMonth - 1 :,: ] = pWTD[0]
-        pWTD = None
+             +  sExtension_tif
+        if os.path.isfile(sFilename_tiff):
+            pWTD = gdal_read_geotiff_multiple_band(sFilename_tiff)
+            
+            aData_all[iCase -1, : :,: ] = (pWTD[0])[9*12:,:,:]
+            
+        else:
+            print('file does not exist: ' + sFilename_tiff)
+            exit
+
+   
 
     print('finished reading data')
     #extract line by line
@@ -151,9 +135,9 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
     if (iFlag_debug == 1 ):
         pass
     else:
-        for iRow in range(0, nrow, 10):
+        for iRow in range(0, nrow, 1):
            sRow =  "{:03d}".format(iRow)
-           for iColumn  in range(0, ncolumn, 10):
+           for iColumn  in range(0, ncolumn, 1):
                 sColumn =  "{:03d}".format(iColumn)
                 #extract data
                 aWtd = aData_all[: , :, iRow, iColumn]
@@ -165,7 +149,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
                 if np.isnan(aWtd).all():
                
                     #this might be an ocean grid
-                     pass
+                    pass
                 else:
                     dWtd = aWTD_obs[iRow, iColumn]
                     #print(aWtd)
@@ -210,8 +194,10 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
                     #y1 = aWtd
                     #ax.plot( x1, y1, color = 'red', linestyle = '--' , marker="+", markeredgecolor='blue' , label= 'Simulated WTD')#[aWtd[0,:],aWtd[1,:],aWtd[2,:],aWtd[3,:]], 
                    
-                    ax.boxplot( list(aWtd[0:5]), \
-                        positions = aHydraulic_anisotropy_exp[0:5],patch_artist=True ,\
+                    ax.boxplot( list(aWtd), \
+                        positions = aHydraulic_anisotropy_exp,\
+                            patch_artist=True ,\
+                                widths=0.2, \
                             boxprops=dict(facecolor= 'lightblue') )
                     
                     xlabel = 'Anisotropy' + ' (' +r'$ \frac{ K_{v}}{ k_{h}} $' + ')'
@@ -223,17 +209,17 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in):
                     ax.plot( x3, y3, color = 'blue', linestyle = 'solid' , label = 'Observed WTD')
                 
                     ax.grid(which='major', color='grey', linestyle='--', axis='y') 
-                    ax.set_ylabel('Water table depth (m)', fontsize=12)    
+                    ax.set_ylabel('Water table depth (m)', fontsize=13)    
 
                     dum = np.linspace(0, 100, 11)
                     ax.set_xticks(x2)
                     ax.set_yticks(dum)
-                    ax.set_xticklabels(xtick_labels)
-                    ax.set_xlabel(xlabel,fontsize=12 )
-                    ax.set_xlim(-3.5, 3.5)
+                    ax.set_xticklabels(xtick_labels,fontsize=13)
+                    ax.set_xlabel(xlabel,fontsize=13 )
+                    ax.set_xlim(-3.25, 3.25)
                     ax.set_ylim(85, 0)
                     ax.set_aspect(aspect=0.02)
-                    ax.legend(bbox_to_anchor=(1.0,1.0), loc="lower right",fontsize=12)
+                    ax.legend(bbox_to_anchor=(1.0,0.0), loc="lower right",fontsize=14)
                     sFilename_png = sWorkspace_analysis_wtd + slash + 'wtd' + sRow + '_' + sColumn +    sExtension_png 
                     plt.savefig(sFilename_png, bbox_inches = 'tight')
                     #print(sFilename_png)
