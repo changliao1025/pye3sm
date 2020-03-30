@@ -306,9 +306,9 @@ if __name__ == '__main__':
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration.txt'
 
-    dHydraulic_anisotropy = 1.0
+    dHydraulic_anisotropy = 0.1
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 7
+    iCase = 1
 
     iFlag_debug = 0
     iFlag_branch = 0
@@ -317,33 +317,49 @@ if __name__ == '__main__':
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200210'
+    sDate = '20200329'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
         + 'cases' + slash + 'user_nl_clm_' + sCase
-    ofs = open(sFilename_clm_namelist, 'w')
-    sLine = "fsurdat = " + "'" \
-        + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
-    ofs.write(sLine)
-    sLine = "use_h2sc = .true." + '\n'
-    ofs.write(sLine)
-    sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
-    ofs.write(sLine)
-
     if (iFlag_initial !=1):
         #normal case,      
-        pass
-    else:
-        #this is a case that use existing restart file
-        sLine = "finidat = '/compyfs/liao313/e3sm_scratch/h2sc20200210002/run/h2sc20200210002.clm2.rh0.1981-01-01-00000.nc'"  + '\n'
+        ofs = open(sFilename_clm_namelist, 'w')
+        sCommand_out = "fsurdat = " + "'" \
+            + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
+        ofs.write(sCommand_out)
+        sLine = "use_h2sc = .true." + '\n'
         ofs.write(sLine)
-    ofs.close()
+        sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
+        ofs.write(sLine)
+        ofs.close()
+    else:
+        ofs = open(sFilename_clm_namelist, 'w')
+        sCommand_out = "fsurdat = " + "'" \
+            + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
+        ofs.write(sCommand_out)
+        sLine = "use_h2sc = .true." + '\n'
+        ofs.write(sLine)
+        sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
+        ofs.write(sLine)
+        #this is a case that use existing restart file
+        #be careful with the filename!!!
+        
+        #sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+        sCase_spinup = sModel + '20200328001'
 
-    sFilename_datm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
+        sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
+            + sCase_spinup + '/run/' \
+            + sCase_spinup +  ".clm2.rh0.1979-01-01-00000.nc'"  + '\n'
+        ofs.write(sLine)
+        ofs.close()
+
+    sFilename_datm_namelist = sWorkspace_scratch + slash \
+        + '04model' + slash + sModel + slash \
+        + sRegion + slash \
         + 'cases' + slash + 'user_nl_datm_' + sCase
 
-    if (iFlag_spinup ==1):        
+    if (iFlag_spinup ==1):
         #this is a case for spin up
         ofs = open(sFilename_datm_namelist, 'w')
         sLine = 'taxmode = "cycle", "cycle", "cycle"' + '\n'
@@ -352,16 +368,32 @@ if __name__ == '__main__':
         #no spin up needed
         pass
         
-
-    
     #write the clm namelist file
-    e3sm_create_case(sFilename_configuration,\
+    if (iFlag_spinup ==1):   
+        e3sm_create_case(sFilename_configuration, \
                     iFlag_branch_in= iFlag_branch, \
-                     iFlag_continue_in = iFlag_continue,\
-                     iFlag_debug_in = iFlag_debug,\
-                     iFlag_resubmit_in = iFlag_resubmit ,\
-                     iFlag_short_in = iFlag_short, \
-                     iCase_index_in = iCase,  \
-                     sDate_in= sDate,\
-                     sFilename_clm_namelist_in = sFilename_clm_namelist ,\
-                     sFilename_datm_namelist_in = sFilename_datm_namelist   )
+                    iFlag_continue_in = iFlag_continue, \
+                    iFlag_debug_in = iFlag_debug, \
+                    iFlag_resubmit_in = iFlag_resubmit, \
+                    iFlag_short_in = iFlag_short, \
+                    iCase_index_in = iCase, \
+                    iYear_end_in = 1978, \
+                    iYear_start_in = 1949, \
+                    iYear_data_end_in = 1988, \
+                    iYear_data_start_in = 1979, \
+                    sDate_in = sDate, \
+                    sFilename_clm_namelist_in = sFilename_clm_namelist, \
+                    sFilename_datm_namelist_in = sFilename_datm_namelist )
+    else:
+        e3sm_create_case(sFilename_configuration,\
+                    iFlag_continue_in = iFlag_continue, \
+                    iFlag_debug_in = iFlag_debug, \
+                    iFlag_resubmit_in = iFlag_resubmit, \
+                    iFlag_short_in = iFlag_short, \
+                    iCase_index_in = iCase, \
+                    iYear_end_in = 2008, \
+                    iYear_start_in = 1979, \
+                    iYear_data_end_in = 2008, \
+                    iYear_data_start_in = 1979, \
+                    sDate_in = sDate, \
+                    sFilename_clm_namelist_in = sFilename_clm_namelist )

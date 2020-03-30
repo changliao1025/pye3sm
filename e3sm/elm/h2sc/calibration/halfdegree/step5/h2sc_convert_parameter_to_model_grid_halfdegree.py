@@ -1,20 +1,13 @@
 #most likely needed packages
 import os #operate folder
 import sys
-
 import numpy as np
 from netCDF4 import Dataset #read netcdf
-
-
-#import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from eslib.system.define_global_variables import *
-
-
-#import 
-from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
+from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
@@ -28,14 +21,10 @@ def h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration_in):
     #get configuration
     e3sm_read_configuration_file(sFilename_configuration_in)
     
-    #extract information
+    sDate='20200212'
 
     
-    iCase_start = 520
-    iCase_end = 541
-
-    
-    sRecord = "{:0d}".format(iCase_start) + '_' + "{:0d}".format(iCase_end)
+    sRecord = sDate
     
     
     

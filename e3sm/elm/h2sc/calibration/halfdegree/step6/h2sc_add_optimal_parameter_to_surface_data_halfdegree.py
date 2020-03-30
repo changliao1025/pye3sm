@@ -12,7 +12,7 @@ sys.path.extend(sSystem_paths)
 #import global variable
 from eslib.system.define_global_variables import *    
 
-from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff      
+from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff      
 from eslib.toolbox.data.add_variable_to_netcdf import add_variable_to_netcdf
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
@@ -29,7 +29,7 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuratio
     if not os.path.exists(sWorkspace_analysis_wtd):
         os.makedirs(sWorkspace_analysis_wtd)  
     
-    sRecord = '520_541'
+    sRecord = '20200212'
     sFilename_in = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
     dummy = gdal_read_geotiff(sFilename_in)
     aAnisotropy_optimal = dummy[0]

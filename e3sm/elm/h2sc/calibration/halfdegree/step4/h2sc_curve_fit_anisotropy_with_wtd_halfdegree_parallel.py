@@ -171,7 +171,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
                 if iFlag_optimal ==1:
                     aWtd=aWtd.reshape((ncase, nTS))
                     aWtd2 = np.mean(aWtd, axis=1)
-                    if(  np.min(aWtd2) <= dWtd and dWtd <= np.max(aWtd2)  ):
+                    if( np.min(aWtd2) <= dWtd and dWtd <= np.max(aWtd2) ):
                         aQC[iRow-1, iColumn-1] = 1
                         aDummy = np.append(aWtd2, dWtd )
                         aDummy_sort = np.flip(np.sort(aDummy)  )
@@ -192,7 +192,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
                                 aHydraulic_anisotropy_exp[0] )
                             aQC[iRow-1, iColumn-1] = 3
     
-    if iFlag_optimal ==1:
+    if iFlag_optimal == 1:
 
         pSpatialRef =osr.SpatialReference()
         pSpatialRef.ImportFromEPSG(4326)
