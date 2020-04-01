@@ -15,12 +15,12 @@ from eslib.system.define_global_variables import *
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
-from e3sm.elm.general.halfdegree.save.elm_save_variable_halfdegree import elm_save_variable_halfdegree
+from e3sm.elm.general.halfdegree.map.elm_map_variable_halfdegree import elm_map_variable_halfdegree
 
 
-def elm_save_variable_wrap(iCase_index):   
+def elm_map_variable_wrap(iCase_index):   
     sCase = "{:0d}".format(iCase_index)   
-    elm_save_variable_halfdegree(sFilename_configuration, iCase_index,\
+    elm_map_variable_halfdegree(sFilename_configuration, iCase_index,\
          iYear_start_in = 1980, \
             iYear_end_in = 2008, \
          iFlag_same_grid_in = 1, \
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         #iCase_index = 240       
     for iCase_index in (aCase_index):
         sCase = "{:03d}".format(iCase_index)
-        elm_save_variable_wrap(iCase_index)
+        elm_map_variable_wrap(iCase_index)
     
     
     print('finished')

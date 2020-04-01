@@ -117,8 +117,8 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     iFlag_debug = 0
     xlabel = 'Anisotropy' + ' (' +r'$ \frac{ K_{v}}{k_{h}} $' + ')'
     x3 = [dMin,  dMax]
-    iFlag_plot = 0
-    iFlag_optimal = 1
+    iFlag_plot = 1
+    iFlag_optimal = 0
     print(iRow_start, iRow_end)
     for iRow in range(iRow_start, iRow_end+1, 1):
        sRow =  "{:03d}".format(iRow)
@@ -145,25 +145,30 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
                     ax.set_xmargin(0.05)
                     ax.set_ymargin(0.10)
                     ax.set_title('Relationship between Anisotropyand Water Table Depth', loc='center')
-                    ax.boxplot( list(aWtd), \
+                    bp = ax.boxplot( list(aWtd), \
                         positions = aHydraulic_anisotropy_exp,\
                         patch_artist=True ,\
                         widths=0.2, \
-                        boxprops=dict(facecolor= 'lightblue') )
+                        boxprops=dict(facecolor= 'lightblue'))
 
                     y3= [dWtd, dWtd]
-                    ax.plot( x3, y3, color = 'blue', linestyle ='solid' , label = 'Observed WTD')
+                    ln, = ax.plot( x3, y3, color = 'blue', \
+                        linestyle ='solid' , label = 'Observed WTD')
                     ax.grid(which='major', color='grey',linestyle='--', axis='y') 
                     ax.set_ylabel('Water table depth (m)',fontsize=13)    
                     dum = np.linspace(0, 100, 11)
                     ax.set_xticks(x2)
                     ax.set_yticks(dum)
-                    ax.set_xticklabels(xtick_labels,fontsize=13)
+                    ax.set_xticklabels(xtick_labels,fontsize=13 )
                     ax.set_xlabel(xlabel,fontsize=13 )
                     ax.set_xlim(-3.25, 3.25)
                     ax.set_ylim(85, 0)
                     ax.set_aspect(aspect=0.02)
-                    ax.legend(bbox_to_anchor=(1.0,0.0), loc="lower right",fontsize=14)
+                    ax.legend((ln, bp["boxes"][0]), ('Observed WTD', 'Simulated WTD'),\
+                         bbox_to_anchor=(1.0,0.0), loc="lower right",\
+                        fontsize=14)
+
+
                     sFilename_png = sWorkspace_analysis_wtd + slash+ 'wtd' + sRow + '_' + sColumn +   sExtension_png 
                     plt.savefig(sFilename_png, bbox_inches = 'tight')
                     plt.close('all')
@@ -206,13 +211,13 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
             + sRecord + sExtension_tif
         print(sFilename_tiff)    
         gdal_write_geotiff(sFilename_tiff, aAnisotropy_optimal, dPixelWidth,\
-             dX_origin, dY_origin,  dMissing_value,\
+             dX_origin, dY_origin,  dMissing_value, \
          pSpatialRef)
     print('finished')
 
 
 if __name__ == '__main__':
-    iFlag_debug = 1
+    iFlag_debug = 0
     if iFlag_debug == 0:
         parser = argparse.ArgumentParser()        
         parser.add_argument("--iIndex_start", help = "the path",   type = int)      
