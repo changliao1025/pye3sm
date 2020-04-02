@@ -24,6 +24,7 @@ global sRegion
 global dConversion
 global sVariable
 global sFilename_mask
+
 global sWorkspace_analysis
 global sWorkspace_cases
 global sWorkspace_case

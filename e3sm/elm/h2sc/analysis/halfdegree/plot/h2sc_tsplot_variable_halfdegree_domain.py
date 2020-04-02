@@ -15,15 +15,15 @@ from eslib.system.define_global_variables import *
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
-from e3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree import elm_tsplot_variable_halfdegree
+from e3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain import elm_tsplot_variable_halfdegree_domain
 
-def h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
+def h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
                                     iCase_index,\
                                     iYear_start_in = None, \
                                     iYear_end_in =None,\
                                     sDate_in = None):
 
-    elm_tsplot_variable_halfdegree(sFilename_configuration,\
+    elm_tsplot_variable_halfdegree_domain(sFilename_configuration,\
                                    iCase_index, \
                                    iFlag_same_grid_in = 1,\
                                    iYear_start_in = iYear_start_in,\
@@ -31,7 +31,7 @@ def h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
                                    sDate_in = sDate_in)
 
 if __name__ == '__main__':
-    iFlag_debug = 0
+    iFlag_debug = 1
     if iFlag_debug == 1:
         iIndex_start = 1
         iIndex_end = 1
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200212'
+    sDate = '20200329'
 
     
 
@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
         #iCase_index = 240       
     for iCase_index in (aCase_index):
-        h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
+        h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
                                     iCase_index,\
                                     iYear_start_in = iYear_start, \
                                     iYear_end_in =iYear_end,\

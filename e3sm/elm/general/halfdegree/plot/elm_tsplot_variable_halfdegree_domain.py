@@ -1,13 +1,14 @@
 import os, sys
 import numpy as np
+import numpy.ma as ma
 import datetime
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from eslib.system.define_global_variables import *
-from eslib.gis.envi.envi_write_header import envi_write_header
-from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
+from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 from eslib.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
 
 sPath_e3sm_python = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
@@ -16,8 +17,7 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
-
+def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
                                    iCase_index, \
                                    iYear_start_in = None,\
                                    iYear_end_in = None,\
@@ -61,12 +61,21 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
     sWorkspace_simulation_case_run =e3sm_global.sWorkspace_simulation_case_run
     sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
 
-    iFlag_optional = 1
-
-    
     nrow = 360
     ncolumn = 720
-    
+
+    #read basin mask
+    sWorkspace_data_auxiliary_basin = sWorkspace_data + slash + sModel + slash + sRegion + slash \
+        + 'auxiliary' + slash + 'basins' 
+    aBasin = ['amazon','congo','mississippi','yangtze']
+
+    nDomain = len(aBasin)
+    aMask = np.full( (nDomain, nrow, ncolumn), 0, dtype=int)
+    for i in range(nDomain):
+        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + aBasin[i] + slash + aBasin[i] + '.tif'
+        dummy = gdal_read_geotiff(sFilename_basin)
+        aMask[i, :,:] = dummy[0]
+
     dates = list()
     nyear = iYear_end - iYear_start + 1
     for iYear in range(iYear_start, iYear_end + 1):
@@ -74,7 +83,7 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             dSimulation = datetime.datetime(iYear, iMonth, 15)
             dates.append( dSimulation )
 
-    iStress = 1
+    nstress = nyear * nmonth
     
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
 
@@ -83,43 +92,50 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
 
     sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
 
-    aData_all = gdal_read_envi_file_multiple(sFilename)
+    aData_all = gdal_read_envi_file_multiple_band(sFilename)
     aVariable_total = aData_all[0]
 
 
-    #plot
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
-    sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'tsplot_grid'
-    if not os.path.exists(sWorkspace_analysis_case_grid):
-        os.makedirs(sWorkspace_analysis_case_grid)
+    sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + 'tsplot_domain'
+    if not os.path.exists(sWorkspace_analysis_case_domain):
+        os.makedirs(sWorkspace_analysis_case_domain)
 
     sLabel_Y =r'Water table depth (m)'
     sLabel_legend = 'Simulated water table depth'
-    for iRow in np.arange(1, nrow+1, 10): 
-        sRow = "{:03d}".format(iRow)               
-        for iColumn in np.arange(1, ncolumn+1, 10): 
-            sColumn = "{:03d}".format(iColumn)
+    for iDomain in np.arange(nDomain): 
+        
 
-            sGrid =  sRow + '_' +sColumn
-            
-            sFilename_out = sWorkspace_analysis_case_grid + slash + 'wtd_tsplot_' + sGrid +'.png'
+        sDomain = aBasin[iDomain]
+        sLabel_legend = sDomain.title()
+        sFilename_out = sWorkspace_analysis_case_domain + slash \
+            + 'wtd_tsplot_' + sDomain +'.png' 
 
-
-            aVariable= aVariable_total[:, iRow-1, iColumn-1]
-            if np.isnan(aVariable).all():
-                pass
-            else:
-            
-                plot_time_series_data_monthly(dates, aVariable,\
-                                          sFilename_out,\
-                                          iReverse_Y_in = 1, \
-                                          sTitle_in = '', \
-                                          sLabel_Y_in= sLabel_Y,\
-                                          sLabel_legend_in = sLabel_legend, \
-                                          iSize_X_in = 12,\
-                                          iSize_Y_in = 5)
+        dummy_mask0 = aMask[iDomain, :, :]
+        dummy_mask1 = np.reshape(dummy_mask0, (nrow, ncolumn))
+       
+        dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress, axis=0)
+        
+        aVariable0 = ma.masked_array(aVariable_total, mask= dummy_mask)
+        aVariable1 = aVariable0.reshape(nstress,nrow * ncolumn)
+        aVariable1[aVariable1 == -9999] = np.nan
+        aVariable = np.nanmean( aVariable1, axis=1)
+        print(np.min(aVariable), np.max(aVariable))
+        if np.isnan(aVariable).all():
+            pass
+        else:
+        
+            plot_time_series_data_monthly(dates, aVariable,\
+                                      sFilename_out,\
+                                      iReverse_Y_in = 1, \
+                                      sTitle_in = '', \
+                                      sLabel_Y_in= sLabel_Y,\
+                                      sLabel_legend_in = sLabel_legend, \
+                                          sMarker_in='.',\
+                                      iSize_X_in = 12,\
+                                      iSize_Y_in = 5)
 
     print("finished")
 

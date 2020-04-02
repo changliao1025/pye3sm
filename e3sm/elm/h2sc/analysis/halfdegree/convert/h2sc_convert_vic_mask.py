@@ -20,9 +20,9 @@ yres = (ymax - ymin) / float(nrow)
 pGeotransform2 = (xmin, xres, 0, ymax, 0, -yres)
 
 pSrs = osr.SpatialReference()  
-#pSrs.ImportFromEPSG(3857)                # WGS84 lat/long
-pSrs.ImportFromEPSG(4326)   
-longitude = np.arange(-179.75, 180., 0.5)
+             
+pSrs.ImportFromEPSG(4326)    # WGS84 lat/long
+longitude = np.arange(-179.75, 180, 0.5)
 latitude = np.arange(89.75, -90, -0.5)
 grid_x, grid_y = np.meshgrid(longitude, latitude)
 def h2sc_convert_vic_mask():
@@ -87,12 +87,6 @@ def h2sc_convert_vic_mask():
         #outdata.GetRasterBand(1).SetNoDataValue(-9999.0)##if you want these values transparent
         #outdata.FlushCache() ##saves to disk!!
         #outdata = None
-        
-       
-
-
-
-
 
 
 
