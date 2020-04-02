@@ -42,7 +42,7 @@ if __name__ == '__main__':
     sRegion = 'global'
     
     sDate = '20200329'
-    sVariable = 'ZWT'
+    sVariable = 'drainage'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
             + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
     

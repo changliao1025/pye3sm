@@ -105,11 +105,8 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             nan_index = np.where(aData == missing_value)
             aData[nan_index] = np.nan
             
-            
-            
             aVariable_total[iStress-1, :,:]= aData
             iStress = iStress + 1
-
 
     #plot
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
