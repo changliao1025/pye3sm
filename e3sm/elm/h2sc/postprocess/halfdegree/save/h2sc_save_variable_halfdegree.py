@@ -22,7 +22,7 @@ def h2sc_save_variable_halfdegree(sFilename_configuration, \
                                   iYear_start_in = None, \
                                   iYear_end_in =None,\
                                   sDate_in = None):
-    sCase = "{:0d}".format(iCase_index)
+
     elm_save_variable_halfdegree(sFilename_configuration,\
                                  iCase_index, \
                                  iFlag_same_grid_in=1,\
@@ -34,13 +34,15 @@ if __name__ == '__main__':
 
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200113'
+    
+    sDate = '20200404'
     iCase_index = 1
     
-    iYear_start = 1990
+    iYear_start = 1980
     iYear_end = 2008
-
-    sVariable = 'wt_slp'
+    #sVariable = 'ZWT'
+    #sVariable = 'wt_slp'
+    sVariable = 'sur_slp'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
 

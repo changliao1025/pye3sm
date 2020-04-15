@@ -15,24 +15,26 @@ from eslib.system.define_global_variables import *
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
-from e3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain import elm_tsplot_variable_halfdegree_domain
+from e3sm.elm.general.halfdegree.plot.elm_scatterplot_variable_halfdegree import elm_scatterplot_variable_halfdegree
 
-def h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
+def h2sc_scatterplot_variable_halfdegree(sFilename_configuration_x, \
+    sFilename_configuration_y,\
                                     iCase_index,\
                                     iYear_start_in = None, \
                                     iYear_end_in =None,\
-                                        iYear_subset_start_in = None, \
-                                    iYear_subset_end_in = None,\
-                                    sDate_in = None):
+                                    sDate_in = None,\
+                                    sLabel_x_in=None,\
+                                        sLabel_y_in=None):
 
-    elm_tsplot_variable_halfdegree_domain(sFilename_configuration,\
+    elm_scatterplot_variable_halfdegree(sFilename_configuration_x,\
+        sFilename_configuration_y,\
                                    iCase_index, \
                                    iFlag_same_grid_in = 1,\
                                    iYear_start_in = iYear_start_in,\
                                    iYear_end_in = iYear_end_in,\
-                                       iYear_subset_start_in = iYear_subset_start_in, \
-                                    iYear_subset_end_in =iYear_subset_end_in,\
-                                   sDate_in = sDate_in)
+                                   sDate_in = sDate_in, \
+                                   sLabel_x_in = sLabel_x_in, \
+                                       sLabel_y_in= sLabel_y_in)
 
 if __name__ == '__main__':
     iFlag_debug = 1
@@ -49,31 +51,40 @@ if __name__ == '__main__':
     
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200408'
-
-    
+    sDate = '20200404'
 
     iYear_start = 1980
     iYear_end = 2008
 
-    sVariable = 'drainage'
-    #sVariable = 'wt_slp'
-    sVariable='zwt'
-    sFilename_configuration = sWorkspace_configuration + slash \
-        + sModel + slash \
+    sVariable = 'sur_slp'
+    sFilename_configuration_x = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
+
+    sLabel_x = 'Surface slope (radian)'
+
+    sVariable = 'zwt'
+    sFilename_configuration_y = sWorkspace_configuration + slash + sModel + slash \
+        + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
+
+    
+    sLabel_y = 'Water table depth (m)'
+
+
+
+
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
         #iCase_index = 240       
     for iCase_index in (aCase_index):
-        h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
+        h2sc_scatterplot_variable_halfdegree(sFilename_configuration_x, \
+            sFilename_configuration_y,\
                                     iCase_index,\
                                     iYear_start_in = iYear_start, \
                                     iYear_end_in =iYear_end,\
-                                    iYear_subset_start_in = 1990, \
-                                    iYear_subset_end_in =2008,\
-                                    sDate_in= sDate)
+                                    sDate_in= sDate, \
+                                        sLabel_x_in = sLabel_x, \
+                                            sLabel_y_in = sLabel_y)
 
     print('finished')

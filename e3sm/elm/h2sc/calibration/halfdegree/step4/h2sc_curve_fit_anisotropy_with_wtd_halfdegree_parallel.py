@@ -75,6 +75,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
    
     #we need to match the case id with actual parameter space
     aHydraulic_anisotropy_exp = np.arange(-3,3.1,0.25)
+    aHydraulic_anisotropy_exp = np.arange(-3,0.1,0.25)
     aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
     print(aHydraulic_anisotropy)
 
@@ -88,6 +89,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     nTS = 20 * 12 #20 year
     dMin = -3
     dMax = 3
+    dMax = 0
     x2 = np.arange(int(dMax-dMin+1))  + int(dMin)
     
     n = len(x2)
@@ -99,6 +101,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
 
     iFlag_save_projection = 1
     for iCase in range(1,  ncase+1):
+    #for iCase in range(1,  4+1):
         print('reading case', iCase)
         sCase = sModel + sDate + "{:03d}".format(iCase)
         sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
@@ -144,7 +147,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
                     ax.axis('on')   
                     ax.set_xmargin(0.05)
                     ax.set_ymargin(0.10)
-                    ax.set_title('Relationship between Anisotropyand Water Table Depth', loc='center')
+                    ax.set_title('Relationship between Anisotropy and Water Table Depth', loc='center')
                     bp = ax.boxplot( list(aWtd), \
                         positions = aHydraulic_anisotropy_exp,\
                         patch_artist=True ,\
@@ -161,7 +164,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
                     ax.set_yticks(dum)
                     ax.set_xticklabels(xtick_labels,fontsize=13 )
                     ax.set_xlabel(xlabel,fontsize=13 )
-                    ax.set_xlim(-3.25, 3.25)
+                    ax.set_xlim(dMin -0.25, dMax + 0.25)
                     ax.set_ylim(85, 0)
                     ax.set_aspect(aspect=0.02)
                     ax.legend((ln, bp["boxes"][0]), ('Observed WTD', 'Simulated WTD'),\

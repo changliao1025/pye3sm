@@ -7,7 +7,7 @@ sys.path.extend(sSystem_paths)
 
 from eslib.system.define_global_variables import *
 from eslib.gis.envi.envi_write_header import envi_write_header
-from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
+from eslib.gis.gdal.read.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
 from eslib.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
 
 sPath_e3sm_python = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'

@@ -10,6 +10,10 @@ from eslib.system.define_global_variables import *
 from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 from eslib.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
+from eslib.visual.plot.plot_time_series_data_monthly_fill import plot_time_series_data_monthly_fill
+from eslib.visual.plot.plot_time_series_data_monthly_fill_with_zoom import plot_time_series_data_monthly_fill_with_zoom
+
+from eslib.toolbox.data.remove_outliers import remove_outliers
 
 sPath_e3sm_python = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
@@ -21,6 +25,8 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
                                    iCase_index, \
                                    iYear_start_in = None,\
                                    iYear_end_in = None,\
+                                       iYear_subset_start_in = None, \
+                                    iYear_subset_end_in = None,\
                                    iFlag_same_grid_in = None,\
                                    sDate_in = None):
 
@@ -46,6 +52,15 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
         iFlag_same_grid = iFlag_same_grid_in
     else:
         iFlag_same_grid = 0
+
+    if iYear_subset_start_in is not None:
+        iYear_subset_start = iYear_subset_start_in
+    else:
+        iYear_subset_start = iYear_start
+    if iYear_subset_end_in is not None:
+        iYear_subset_end = iYear_subset_end_in
+    else:
+        iYear_subset_end = iYear_end
 
     print('The following model is processed: ', sModel)
     if (sModel == 'h2sc'):
@@ -84,8 +99,13 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
             dates.append( dSimulation )
 
     nstress = nyear * nmonth
+
+    subset_index = np.arange( (iYear_subset_start-iYear_start)* 12,(iYear_subset_end-iYear_start)* 12, 1 )
+    dates=np.array(dates)
+    dates_subset = dates[subset_index]
+    nstress_subset= len(dates_subset)
     
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +  slash + 'dat'
 
    
     #read the stack data
@@ -94,6 +114,7 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
 
     aData_all = gdal_read_envi_file_multiple_band(sFilename)
     aVariable_total = aData_all[0]
+    aVariable_total_subset = aVariable_total[subset_index,:,:]
 
 
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
@@ -104,36 +125,56 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
         os.makedirs(sWorkspace_analysis_case_domain)
 
     sLabel_Y =r'Water table depth (m)'
-    sLabel_legend = 'Simulated water table depth'
+    #sLabel_Y =r'Drainge (mm/day)'
+    #sLabel_Y =r'Water table slope (radian)'
+    #sLabel_legend = 'Simulated water table depth'
     for iDomain in np.arange(nDomain): 
         
 
         sDomain = aBasin[iDomain]
         sLabel_legend = sDomain.title()
         sFilename_out = sWorkspace_analysis_case_domain + slash \
-            + 'wtd_tsplot_' + sDomain +'.png' 
+            + sVariable + '_tsplot_' + sDomain +'.png' 
 
         dummy_mask0 = aMask[iDomain, :, :]
         dummy_mask1 = np.reshape(dummy_mask0, (nrow, ncolumn))
+        dummy_mask1 = 1 - dummy_mask1
+
        
-        dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress, axis=0)
+        dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress_subset, axis=0)
         
-        aVariable0 = ma.masked_array(aVariable_total, mask= dummy_mask)
-        aVariable1 = aVariable0.reshape(nstress,nrow * ncolumn)
-        aVariable1[aVariable1 == -9999] = np.nan
-        aVariable = np.nanmean( aVariable1, axis=1)
-        print(np.min(aVariable), np.max(aVariable))
+        aVariable0 = ma.masked_array(aVariable_total_subset, mask= dummy_mask)
+        aVariable1 = aVariable0.reshape(nstress_subset,nrow * ncolumn)
+        #aVariable1[aVariable1 == -9999] = np.nan
+        #aVariable2 = np.nanmean( aVariable1, axis=1)
+        #aVariable3 = np.nanmin( aVariable1, axis=1)
+        #aVariable4 = np.nanmax( aVariable1, axis=1)
+        aVariable2 = np.full(nstress_subset, -9999, dtype=float)
+        aVariable3 = np.full(nstress_subset, -9999, dtype=float)
+        aVariable4 = np.full(nstress_subset, -9999, dtype=float)
+        for iStress in range(nstress_subset):
+            dummy = aVariable1[iStress, :]
+            dummy = dummy[dummy.mask == False]
+
+            #remove outlier
+            #dummy = remove_outliers(dummy[np.where(dummy != -9999)], 0.1)
+            aVariable2[iStress] = np.nanmean(dummy)
+            aVariable3[iStress] = np.nanmin(dummy)
+            aVariable4[iStress] = np.nanmax(dummy)
+
+
+        aVariable = np.array(  [[aVariable4], [aVariable2], [aVariable3] ] )
         if np.isnan(aVariable).all():
             pass
         else:
         
-            plot_time_series_data_monthly(dates, aVariable,\
+            plot_time_series_data_monthly_fill(dates_subset, aVariable,\
                                       sFilename_out,\
                                       iReverse_Y_in = 1, \
                                       sTitle_in = '', \
                                       sLabel_Y_in= sLabel_Y,\
                                       sLabel_legend_in = sLabel_legend, \
-                                          sMarker_in='.',\
+                                      sMarker_in='+',\
                                       iSize_X_in = 12,\
                                       iSize_Y_in = 5)
 

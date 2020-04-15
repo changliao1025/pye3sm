@@ -22,8 +22,8 @@ sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
 
 
 
-aHydraulic_anisotropy = np.arange(-3,3.1,0.25)
-aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy)
+aHydraulic_anisotropy_exp = np.arange(-3,0.1,0.25)
+aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
 print(aHydraulic_anisotropy)
 
 #start loop
@@ -35,8 +35,8 @@ iFlag_spinup = 0
 iFlag_continue = 0
 iFlag_resubmit = 0
 iFlag_short = 0
-sDate_spinup = '20200211'
-sDate = '20200212'
+sDate_spinup = '20200409'
+sDate = '20200413'
 for iCase in range(1,ncase + 1):
     #call the create case function
     dHydraulic_anisotropy = aHydraulic_anisotropy[iCase-1]
@@ -74,7 +74,8 @@ for iCase in range(1,ncase + 1):
         #this is a case that use existing restart file
         #be careful with the filename!!!
         
-        sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+        #sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+        sCase_spinup = 'h2sc20200409001'
 
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
             + sCase_spinup + '/run/' + sCase_spinup +  ".clm2.rh0.1979-01-01-00000.nc'"  + '\n'

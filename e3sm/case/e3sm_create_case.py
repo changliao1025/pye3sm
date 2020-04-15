@@ -106,11 +106,11 @@ def e3sm_create_case(sFilename_configuration_in,\
             p.wait()
 
         #remove run directory
-        if (os.path.exists(sRunname)):
-            sCommand = 'rm -rf '  + sRunname
-            print(sCommand)
-            p = subprocess.Popen(sCommand, shell= True)
-            p.wait()
+        #if (os.path.exists(sRunname)):
+        #    sCommand = 'rm -rf '  + sRunname
+        #    print(sCommand)
+        #    p = subprocess.Popen(sCommand, shell= True)
+        #    p.wait()
 
         #create case
         print(sCIME_directory)
@@ -310,6 +310,7 @@ if __name__ == '__main__':
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
     iCase = 1
 
+    iFlag_default = 0
     iFlag_debug = 0
     iFlag_branch = 0
     iFlag_initial = 1
@@ -317,7 +318,7 @@ if __name__ == '__main__':
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200329'
+    sDate = '20200413'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
@@ -328,8 +329,12 @@ if __name__ == '__main__':
         sCommand_out = "fsurdat = " + "'" \
             + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
         ofs.write(sCommand_out)
-        sLine = "use_h2sc = .true." + '\n'
-        ofs.write(sLine)
+        if (iFlag_default ==1 ):
+            pass
+        else:
+            sLine = "use_h2sc = .true." + '\n'
+            ofs.write(sLine)
+            
         sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
         ofs.write(sLine)
         ofs.close()
@@ -338,15 +343,18 @@ if __name__ == '__main__':
         sCommand_out = "fsurdat = " + "'" \
             + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
         ofs.write(sCommand_out)
-        sLine = "use_h2sc = .true." + '\n'
-        ofs.write(sLine)
+        if (iFlag_default ==1 ):
+            pass
+        else:
+            sLine = "use_h2sc = .true." + '\n'
+            ofs.write(sLine)
         sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
         ofs.write(sLine)
         #this is a case that use existing restart file
         #be careful with the filename!!!
         
         #sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
-        sCase_spinup = sModel + '20200328001'
+        sCase_spinup = sModel + '20200409001'
 
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
             + sCase_spinup + '/run/' \
@@ -364,6 +372,7 @@ if __name__ == '__main__':
         ofs = open(sFilename_datm_namelist, 'w')
         sLine = 'taxmode = "cycle", "cycle", "cycle"' + '\n'
         ofs.write(sLine)
+        ofs.close()
     else:
         #no spin up needed
         pass

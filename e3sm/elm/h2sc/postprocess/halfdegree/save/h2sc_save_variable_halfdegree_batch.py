@@ -18,8 +18,8 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.elm.general.halfdegree.save.elm_save_variable_halfdegree import elm_save_variable_halfdegree
 
 
-def elm_save_variable_wrap(iCase_index):   
-    sCase = "{:0d}".format(iCase_index)   
+def h2sc_save_variable_wrap(iCase_index):   
+    
     elm_save_variable_halfdegree(sFilename_configuration, iCase_index,\
          iYear_start_in = 1980, \
             iYear_end_in = 2008, \
@@ -41,9 +41,13 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     
-    sDate = '20200329'
-    sVariable = 'drainage'
-    sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
+    sDate = '20200408'
+    sVariable='ZWT'
+    #sVariable = 'wt_slp'
+    
+    #sVariable = 'drainage'
+    sFilename_configuration = sWorkspace_configuration + slash + \
+        sModel + slash \
             + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
     
     #start loop
@@ -56,8 +60,8 @@ if __name__ == '__main__':
 
         #iCase_index = 240       
     for iCase_index in (aCase_index):
-        sCase = "{:03d}".format(iCase_index)
-        elm_save_variable_wrap(iCase_index)
+        
+        h2sc_save_variable_wrap(iCase_index)
     
     
     print('finished')
