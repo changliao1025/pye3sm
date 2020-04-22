@@ -1,3 +1,4 @@
+import os
 import math
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -26,6 +27,7 @@ aHeight1 =   (np.arange(ndrop) + 1)*  dThickness_critical_zone_in / (ndrop+1)
 dRatio0 = 0.5
 dRatio1 = 0.5
 dRatio2 = 0.5
+dRatio2 = 0.25  #//
 dRatio3 = 1.1
 
 X, Y = np.meshgrid(aElevation1, aElevation2)
@@ -256,5 +258,10 @@ for i in range(ninterval):
     ax.legend()
     print("=============")    
         #plt.savefig( 'slope_' +  "{:.0f}".format(dHeight1) +'_' +"{:.0f}".format(dHeight2) +  '_' +   str(i).zfill(2) +'.png')
-    plt.savefig( 'slope_' + str(i).zfill(2) + str(j).zfill(2)+ '.png')
+    print('__file__:    ', __file__)
+    print('basename:    ', os.path.basename(__file__))
+    print('dirname:     ', os.path.dirname(__file__))
+
+    sFilename = os.path.dirname(__file__) + '/slope_' + str(i).zfill(2) + str(j).zfill(2)+ '.png'
+    plt.savefig(sFilename )
 

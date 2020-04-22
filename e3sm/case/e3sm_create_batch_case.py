@@ -20,9 +20,7 @@ sRegion ='global'
 sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
                + sRegion + slash + 'h2sc_configuration.txt' 
 
-
-
-aHydraulic_anisotropy_exp = np.arange(-3,0.1,0.25)
+aHydraulic_anisotropy_exp = np.arange(-2,0.3,0.25)
 aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
 print(aHydraulic_anisotropy)
 
@@ -36,7 +34,7 @@ iFlag_continue = 0
 iFlag_resubmit = 0
 iFlag_short = 0
 sDate_spinup = '20200409'
-sDate = '20200413'
+sDate = '20200417'
 for iCase in range(1,ncase + 1):
     #call the create case function
     dHydraulic_anisotropy = aHydraulic_anisotropy[iCase-1]

@@ -1,9 +1,7 @@
-import subprocess
-
-def bash_command(cmd):
-    subprocess.Popen(cmd, shell=True) #, executable='/bin/bash')
-def bash_command2(cmd):
-    subprocess.Popen(['/bin/bash', '-c', cmd])
-bash_command2('a="Apples and oranges" && echo "${a/oranges/grapes}"')
-
+import matplotlib.pyplot as plt
+import numpy as np
+a = np.arange(5)
+b = a + 1
+plt.plot(a,b)
+plt.show()
 

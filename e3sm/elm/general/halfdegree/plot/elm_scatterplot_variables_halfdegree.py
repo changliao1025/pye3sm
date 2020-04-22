@@ -8,7 +8,7 @@ sys.path.extend(sSystem_paths)
 from eslib.system.define_global_variables import *
 from eslib.gis.envi.envi_write_header import envi_write_header
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
-from eslib.visual.plot.scatter_plot_data import scatter_plot_data
+from eslib.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
 sPath_e3sm_python = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
@@ -16,12 +16,18 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def elm_scatterplot_variable_halfdegree(sFilename_configuration_x_in,\
+def elm_scatterplot_variables_halfdegree(sFilename_configuration_x_in,\
                                     sFilename_configuration_y_in, \
                                    iCase_index, \
                                    iYear_start_in = None,\
                                    iYear_end_in = None,\
                                    iFlag_same_grid_in = None,\
+                                        dMin_x_in = None, \
+    dMax_x_in = None, \
+    dMin_y_in = None, \
+    dMax_y_in = None, \
+    dSpace_x_in = None, \
+    dSpace_y_in = None, \
                                    sDate_in = None, \
                                        sLabel_x_in = None, \
                                        sLabel_y_in = None,\
@@ -119,13 +125,23 @@ def elm_scatterplot_variable_halfdegree(sFilename_configuration_x_in,\
     good_index = np.where(  (x != missing_value)&(y != missing_value)  ) 
     x= x[good_index]
     y= y[good_index]
+
+    good_index = np.where(  (x > 0.001)&(y < 40)  ) 
+    x= x[good_index]
+    y= y[good_index]
+
     sFilename_out = sWorkspace_analysis_case_grid + slash + sVariable_x + '-' + sVariable_y + '_scatterplot.png'
 
-    scatter_plot_data(x, y,\
+    scatter_plot_data_density(x, y,\
                                           sFilename_out,\
-                                     
                                           iSize_x_in = 8,\
                                           iSize_y_in = 8, \
+                                              dMin_x_in = dMin_x_in, \
+    dMax_x_in = dMax_x_in, \
+    dMin_y_in = dMin_y_in, \
+    dMax_y_in = dMax_y_in, \
+    dSpace_x_in = dSpace_x_in, \
+    dSpace_y_in = dSpace_y_in, \
                                           sTitle_in = '', \
                                           sLabel_x_in= sLabel_x_in,\
                                           sLabel_y_in= sLabel_y_in,\

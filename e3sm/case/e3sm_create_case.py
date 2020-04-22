@@ -82,12 +82,12 @@ def e3sm_create_case(sFilename_configuration_in,\
     if (iFlag_short ==1 ):
         sQueue = 'short'
         sWalltime = '2:00:00'        
-        sNode = '-10'
-        sYear = '1'
+        sNode = '-40'
+        sYear = '2'
     else:
         sQueue = 'slurm'
-        sWalltime = '30:00:00'        
-        sNode = '-40'
+        sWalltime = '24:00:00'        
+        sNode = '-20'
         sYear = '30'
 
     if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit
@@ -306,19 +306,19 @@ if __name__ == '__main__':
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration.txt'
 
-    dHydraulic_anisotropy = 0.1
+    dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 1
+    iCase = 2
 
     iFlag_default = 0
     iFlag_debug = 0
     iFlag_branch = 0
-    iFlag_initial = 1
-    iFlag_spinup = 0
+    iFlag_initial = 0
+    iFlag_spinup = 1
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200413'
+    sDate = '20200418'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
