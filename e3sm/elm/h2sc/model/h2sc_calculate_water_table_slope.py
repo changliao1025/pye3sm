@@ -24,11 +24,10 @@ aHeight1 =   np.arange(ndrop) * 10 + 10
 aHeight1 =   (np.arange(ndrop) + 1)*  dThickness_critical_zone_in / (ndrop+1)
 #aHeight2 =   np.arange(ndrop) * 10 + 10
 
-dRatio0 = 0.5
-dRatio1 = 0.5
-dRatio2 = 0.5
-dRatio2 = 0.25  #//
-dRatio3 = 1.1
+dRatio0 = 0.5  #for bedrock slope
+dRatio1 = 0.25  #for transition slope
+dRatio2 = 1.1 #above seepage
+dRatio3 =1.0 #below transition
 
 X, Y = np.meshgrid(aElevation1, aElevation2)
 aLength = np.full( (ninterval,ninterval), 0.0, dtype=float)
@@ -95,14 +94,9 @@ for i in range(ninterval):
     ax.text(0.06* dDistance_in, aElevation1[i], "Seepage face", color ='green', rotation = trans_angle)
     iFlag_once = 1 
 
-    #if(  (aElevation2[i]  - dRatio0 * dThickness_critical_zone_in) > (aElevation1[i])   ):
-    #    A3 =  (aElevation2[i]  - dRatio0 * dRatio1 * dThickness_critical_zone_in -aElevation1[i] ) / dDistance_in
-    #else:
-    #    A3 =  (aElevation2[i]  - dRatio2 * dElevation_difference -aElevation1[i] ) / dDistance_in
-        #y5 =  A3 * x5 + B3 
-        #when x5 = 0 B3= surface elevation
+    
 
-    A3 = ( dRatio2 ) * (aElevation2[i]  -aElevation1[i] ) / dDistance_in
+    A3 = ( dRatio1 ) * (aElevation2[i]  -aElevation1[i] ) / dDistance_in
 
     B3 = aElevation1[i]
     C3 = dDistance_in
@@ -138,7 +132,7 @@ for i in range(ninterval):
         #water table below minimal elevation
         dWt1 =  aElevation1[i] - dHeight1        
         dDummy1 = dHeight1 / dThickness_critical_zone_in
-        dDummy1 = pow( dDummy1, 1)
+        dDummy1 = pow( dDummy1, dRatio3)
         dDummy2 = dRange1 * dDummy1
 
 
@@ -163,7 +157,7 @@ for i in range(ninterval):
         dWt2 = aElevation1[i] + dHeight2
         dDummy4 = dHeight2 / dRange2
         #dDummy4 = dHeight2 / ( aElevation2[i]-dWt2)
-        dDummy5 = pow( dDummy4, dRatio3)
+        dDummy5 = pow( dDummy4, dRatio2)
         #dDummy5 = pow( dDummy4, 2)
         dDummy6 = dRange3 * dDummy5
         #dDummy6 =  ( aElevation2[i]-dWt2) * dDummy5

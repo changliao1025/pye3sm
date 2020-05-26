@@ -29,7 +29,7 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(sFilename_configuratio
     if not os.path.exists(sWorkspace_analysis_wtd):
         os.makedirs(sWorkspace_analysis_wtd)  
     
-    sRecord = '20200212'
+    sRecord = '20200420'
     sFilename_in = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
     dummy = gdal_read_geotiff(sFilename_in)
     aAnisotropy_optimal = dummy[0]

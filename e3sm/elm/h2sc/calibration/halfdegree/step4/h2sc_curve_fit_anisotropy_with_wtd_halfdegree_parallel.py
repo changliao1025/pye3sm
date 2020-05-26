@@ -74,22 +74,23 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     pSpatialRef = pWTD[8]        
    
     #we need to match the case id with actual parameter space
-    aHydraulic_anisotropy_exp = np.arange(-3,3.1,0.25)
-    aHydraulic_anisotropy_exp = np.arange(-3,0.1,0.25)
+    #aHydraulic_anisotropy_exp = np.arange(-3,3.1,0.25)
+    #aHydraulic_anisotropy_exp = np.arange(-3,0.1,0.25)
+    aHydraulic_anisotropy_exp = np.arange(-2,0.3,0.25)
     aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
     print(aHydraulic_anisotropy)
 
     ncase = len(aHydraulic_anisotropy)
     aCase = np.arange(ncase) + 1
-    sDate = '20200212'
+    sDate = '20200420'
     iYear_start = 1989
     iYear_end = 2008
     sRecord = sDate
 
     nTS = 20 * 12 #20 year
-    dMin = -3
-    dMax = 3
-    dMax = 0
+    dMin = -2.5
+    dMax = 0.5
+    #dMax = 0
     x2 = np.arange(int(dMax-dMin+1))  + int(dMin)
     
     n = len(x2)
@@ -120,8 +121,8 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     iFlag_debug = 0
     xlabel = 'Anisotropy' + ' (' +r'$ \frac{ K_{v}}{k_{h}} $' + ')'
     x3 = [dMin,  dMax]
-    iFlag_plot = 1
-    iFlag_optimal = 0
+    iFlag_plot = 0
+    iFlag_optimal = 1
     print(iRow_start, iRow_end)
     for iRow in range(iRow_start, iRow_end+1, 1):
        sRow =  "{:03d}".format(iRow)
@@ -220,7 +221,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
 
 
 if __name__ == '__main__':
-    iFlag_debug = 0
+    iFlag_debug = 1
     if iFlag_debug == 0:
         parser = argparse.ArgumentParser()        
         parser.add_argument("--iIndex_start", help = "the path",   type = int)      
@@ -234,7 +235,7 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     
-    sDate = '20200212'
+    sDate = '20200420'
     sVariable = 'ZWT'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
             + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt

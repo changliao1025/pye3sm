@@ -16,7 +16,7 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def elm_scatterplot_variables_halfdegree(sFilename_configuration_x_in,\
+def elm_scatterplot_density_halfdegree_by_variables(sFilename_configuration_x_in,\
                                     sFilename_configuration_y_in, \
                                     iCase_index, \
                                     iYear_start_in = None,\
@@ -29,9 +29,9 @@ def elm_scatterplot_variables_halfdegree(sFilename_configuration_x_in,\
                                     dSpace_x_in = None, \
                                     dSpace_y_in = None, \
                                     sDate_in = None, \
-                                    sLabel_x_in = None, \
-                                    sLabel_y_in = None,\
-                                    sLabel_legend_in =None, \
+                                       sLabel_x_in = None, \
+                                       sLabel_y_in = None,\
+                                           sLabel_legend_in =None, \
                                        ):
 
     #extract information

@@ -35,15 +35,15 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     
-    sDate = '20200413'
-    iCase_index = 1
+    sDate = '20200421'
+    iCase_index = 7
     
     iYear_start = 1980
     iYear_end = 2008
     sVariable = 'ZWT'
-    sVariable = 'wt_slp'
+    #sVariable = 'wt_slp'
     #sVariable = 'sur_slp'
-    sVariable = 'QDRAI_top'
+    #sVariable = 'QDRAI_top'
     #sVariable = 'DRARI_h2sc'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt

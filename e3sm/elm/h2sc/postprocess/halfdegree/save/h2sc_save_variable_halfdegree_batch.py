@@ -37,15 +37,15 @@ if __name__ == '__main__':
         iIndex_end = pArgs.iIndex_end
     else:
         iIndex_start = 1
-        iIndex_end = 1
+        iIndex_end = 6
     sModel = 'h2sc'
     sRegion = 'global'
     
-    sDate = '20200408'
-    sVariable='ZWT'
-    #sVariable = 'wt_slp'
-    
-    #sVariable = 'drainage'
+    sDate = '20200421'
+    #sVariable='ZWT'
+    #sVariable = 'wt_slp'    
+    sVariable = 'drainage'
+    #sVariable = 'sur_slp'
     sFilename_configuration = sWorkspace_configuration + slash + \
         sModel + slash \
             + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt

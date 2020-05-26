@@ -60,7 +60,7 @@ if __name__ == '__main__':
     
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200413'
+    sDate = '20200421'
 
     iYear_start = 1980
     iYear_end = 2008

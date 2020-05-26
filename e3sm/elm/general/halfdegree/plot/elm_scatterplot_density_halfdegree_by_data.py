@@ -16,8 +16,9 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def elm_scatterplot_variables_halfdegree(sFilename_configuration_x_in,\
-                                    sFilename_configuration_y_in, \
+def elm_scatterplot_density_halfdegree_by_data(sFilename_configuration_in,\
+                                    aData_all_x,\
+                                    aDate_all_y, \
                                     iCase_index, \
                                     iYear_start_in = None,\
                                     iYear_end_in = None,\
@@ -29,13 +30,13 @@ def elm_scatterplot_variables_halfdegree(sFilename_configuration_x_in,\
                                     dSpace_x_in = None, \
                                     dSpace_y_in = None, \
                                     sDate_in = None, \
-                                    sLabel_x_in = None, \
-                                    sLabel_y_in = None,\
-                                    sLabel_legend_in =None, \
+                                       sLabel_x_in = None, \
+                                       sLabel_y_in = None,\
+                                           sLabel_legend_in =None, \
                                        ):
 
     #extract information
-    e3sm_read_configuration_file(sFilename_configuration_x_in,\
+    e3sm_read_configuration_file(sFilename_configuration_in,\
                                  iCase_index_in = iCase_index, \
                                  iYear_start_in = iYear_start_in,\
                                  iYear_end_in = iYear_end_in,\
@@ -65,15 +66,7 @@ def elm_scatterplot_variables_halfdegree(sFilename_configuration_x_in,\
             aDimension = [96, 144]
         else:
             pass
-    dConversion = e3sm_global.dConversion
-    sVariable_x = e3sm_global.sVariable.lower()
- 
-    e3sm_read_configuration_file(sFilename_configuration_y_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
-    sVariable_y = e3sm_global.sVariable.lower()
+    
     sCase = e3sm_global.sCase
     sWorkspace_simulation_case_run =e3sm_global.sWorkspace_simulation_case_run
     sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
@@ -84,23 +77,6 @@ def elm_scatterplot_variables_halfdegree(sFilename_configuration_x_in,\
     nrow = 360
     ncolumn = 720
     
-    
-    
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable_x.lower() +    slash + 'dat'
-    #read the stack data
-
-    sFilename_x = sWorkspace_variable_dat + slash + sVariable_x.lower()  + sExtension_envi
-
-    aData_all_x = gdal_read_envi_file_multiple_band(sFilename_x)
-    aVariable_x = aData_all_x[0]
-
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable_y.lower() +    slash + 'dat'
-    #read the stack data
-
-    sFilename_y = sWorkspace_variable_dat + slash + sVariable_y.lower()  + sExtension_envi
-
-    aData_all_y = gdal_read_envi_file_multiple_band(sFilename_y)
-    aVariable_y = aData_all_y[0]
 
 
     #plot

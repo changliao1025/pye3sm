@@ -89,8 +89,10 @@ def h2sc_convert_vic_mask():
                                  (grid_x, grid_y), method='nearest')
        
 
-        #aGrid_data = ndimage.binary_dilation(aGrid_data).astype(
-         #   aGrid_data.dtype)
+        aGrid_data = ndimage.binary_dilation(aGrid_data).astype(aGrid_data.dtype)
+        aGrid_data = ndimage.binary_erosion(aGrid_data, iterations =1).astype(
+            aGrid_data.dtype)
+
         outdata = pDriver.Create(sFilename_out, ncolumn, nrow, 1, gdal.GDT_Float32)
         outdata.SetGeoTransform( pGeotransform )##sets same geotransform as input
         ##sets same projection as input

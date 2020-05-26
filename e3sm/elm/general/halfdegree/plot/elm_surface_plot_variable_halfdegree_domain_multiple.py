@@ -24,23 +24,23 @@ from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration_in,\
-                                   iCase_index, \
-                                   iYear_start_in = None,\
-                                   iYear_end_in = None,\
-                                       iYear_subset_start_in = None, \
-                                    iYear_subset_end_in = None,\
-                                   iFlag_same_grid_in = None,\
-                                        dMin_x_in = None, \
-                                          dMax_x_in = None, \
-    dMin_z_in = None, \
-    dMax_z_in = None, \
-    dSpace_x_in = None, \
-    dSpace_z_in = None, \
-                                   sDate_in = None,\
-                                       sLabel_x_in=None,\
-                                           sLabel_y_in=None,\
-                                       sLabel_z_in = None,\
-                                           sTitle_in =None):
+                                                         iCase_index, \
+                                                         iYear_start_in = None,\
+                                                         iYear_end_in = None,\
+                                                         iYear_subset_start_in = None, \
+                                                         iYear_subset_end_in = None,\
+                                                         iFlag_same_grid_in = None,\
+                                                         dMin_x_in = None, \
+                                                         dMax_x_in = None, \
+                                                         dMin_z_in = None, \
+                                                         dMax_z_in = None, \
+                                                         dSpace_x_in = None, \
+                                                         dSpace_z_in = None, \
+                                                         sDate_in = None,\
+                                                         sLabel_x_in=None,\
+                                                         sLabel_y_in=None,\
+                                                         sLabel_z_in = None,\
+                                                         sTitle_in =None):
 
     #extract information
     e3sm_read_configuration_file(sFilename_configuration_in,\
@@ -82,18 +82,18 @@ def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration
             aDimension = [96, 144]
         else:
             pass
-    dConversion = e3sm_global.dConversion
-    sVariable = e3sm_global.sVariable.lower()
-    sCase = e3sm_global.sCase
-    sWorkspace_simulation_case_run =e3sm_global.sWorkspace_simulation_case_run
-    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
+        dConversion = e3sm_global.dConversion
+        sVariable = e3sm_global.sVariable.lower()
+        sCase = e3sm_global.sCase
+        sWorkspace_simulation_case_run =e3sm_global.sWorkspace_simulation_case_run
+        sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
 
     nrow = 360
     ncolumn = 720
 
     #read basin mask
     sWorkspace_data_auxiliary_basin = sWorkspace_data + slash + sModel + slash + sRegion + slash \
-        + 'auxiliary' + slash + 'basins' 
+        + 'auxiliary' + slash + 'basins'
     aBasin = ['amazon','congo','mississippi','yangtze']
 
     nDomain = len(aBasin)
@@ -116,10 +116,10 @@ def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration
     dates=np.array(dates)
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
-    
+
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +  slash + 'dat'
 
-   
+
     #read the stack data
 
     sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
@@ -132,44 +132,44 @@ def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
-    sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + '3dtsplot'
+        sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + '3dtsplot'
     if not os.path.exists(sWorkspace_analysis_case_domain):
         os.makedirs(sWorkspace_analysis_case_domain)
 
-    
+
     #attach dem first
 
     longitude = np.arange(-179.75, 180, 0.5)
     latitude = np.arange(89.75, -90, -0.5)
     grid_x, grid_y = np.meshgrid(longitude, latitude)
-    for iDomain in np.arange(nDomain): 
+    for iDomain in np.arange(nDomain):
         aData_all=[]
         sDomain = aBasin[iDomain]
         sLabel_legend = sDomain.title()
-        
+
 
         dummy_mask0 = aMask[iDomain, :, :]
         dummy_mask1 = np.reshape(dummy_mask0, (nrow, ncolumn))
         dummy_mask2 = 1 - dummy_mask1
 
-       
+
         dummy_mask = np.repeat(dummy_mask2[np.newaxis,:,:], nstress_subset, axis=0)
-        
+
         aVariable0 = ma.masked_array(aVariable_total_subset, mask= dummy_mask)
         aVariable1 = aVariable0.reshape(nstress_subset,nrow , ncolumn)
         aVariable2 = aVariable1[0:,:,:]
         aVariable2 = aVariable2[0].reshape(nrow , ncolumn)
-        
+
         aVariable3 = aVariable1[6:,:,:]
         aVariable3= aVariable3[0].reshape(nrow , ncolumn)
-        
-        
+
+
         sFilename_out = sWorkspace_analysis_case_domain + slash \
-            + sVariable +'_'+ sDomain + '_surface_plot_' +'.png' 
+            + sVariable +'_'+ sDomain + '_surface_plot_' +'.png'
 
     #region mesh
 
-        
+
         a = np.where(dummy_mask1==1)
         lat_min = np.min(a[0])
         lat_max = np.max(a[0])
@@ -183,29 +183,29 @@ def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration
         aData_y = grid_y[ lat_min:lat_max, lon_min:lon_max  ]
         #spring = np.full( ( size(aData_x) ) np.nan, dtype=float)
         #summer = np.full( ( size(aData_x) ) np.nan, dtype=float)
-        
+
         aData_all.append( aVariable2[ lat_min:lat_max, lon_min:lon_max  ])
         #aData_all.append( aVariable3[ lat_min:lat_max, lon_min:lon_max  ])
         print(np.min(aData_x), np.max(aData_x), np.min(aData_y), np.max(aData_y))
         surface_plot_data_monthly_maya(aData_x, \
-            aData_y,\
-            np.array(aData_all),\
-                                      sFilename_out,\
-                                      iReverse_z_in = 1, \
-                                              dMin_x_in = dMin_x_in, \
-                                    dMax_x_in = dMax_x_in, \
-                                    dMin_z_in = dMin_z_in, \
-                                    dMax_z_in = dMax_z_in, \
-                                    dSpace_x_in = dSpace_x_in, \
-                                    dSpace_z_in = dSpace_z_in, \
-                                      sTitle_in = sTitle_in, \
-                                         sLabel_x_in =sLabel_x_in,\
-                                              sLabel_y_in =sLabel_y_in,\
-                                      sLabel_z_in= sLabel_z_in,\
-                                      sLabel_legend_in = sLabel_legend, \
-                                      sMarker_in='+',\
-                                      iSize_x_in = 10,\
-                                      iSize_y_in = 5)
+                                       aData_y,\
+                                       np.array(aData_all),\
+                                       sFilename_out,\
+                                       iReverse_z_in = 1, \
+                                       dMin_x_in = dMin_x_in, \
+                                       dMax_x_in = dMax_x_in, \
+                                       dMin_z_in = dMin_z_in, \
+                                       dMax_z_in = dMax_z_in, \
+                                       dSpace_x_in = dSpace_x_in, \
+                                       dSpace_z_in = dSpace_z_in, \
+                                       sTitle_in = sTitle_in, \
+                                       sLabel_x_in =sLabel_x_in,\
+                                       sLabel_y_in =sLabel_y_in,\
+                                       sLabel_z_in= sLabel_z_in,\
+                                       sLabel_legend_in = sLabel_legend, \
+                                       sMarker_in='+',\
+                                       iSize_x_in = 10,\
+                                       iSize_y_in = 5)
 
     print("finished")
 

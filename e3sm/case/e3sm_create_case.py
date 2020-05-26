@@ -82,12 +82,12 @@ def e3sm_create_case(sFilename_configuration_in,\
     if (iFlag_short ==1 ):
         sQueue = 'short'
         sWalltime = '2:00:00'        
-        sNode = '-40'
+        sNode = '-20'
         sYear = '2'
     else:
         sQueue = 'slurm'
-        sWalltime = '24:00:00'        
-        sNode = '-20'
+        sWalltime = '10:00:00'        
+        sNode = '-40'
         sYear = '30'
 
     if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit
@@ -308,17 +308,17 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 2
+    iCase = 10  
 
-    iFlag_default = 0
+    iFlag_default = 1
     iFlag_debug = 0
     iFlag_branch = 0
     iFlag_initial = 0
     iFlag_spinup = 1
-    iFlag_short = 0
+    iFlag_short = 1
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200418'
+    sDate = '20200505'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
@@ -361,6 +361,20 @@ if __name__ == '__main__':
             + sCase_spinup +  ".clm2.rh0.1979-01-01-00000.nc'"  + '\n'
         ofs.write(sLine)
         ofs.close()
+    #mosart
+    #sFilename_rtm_namelist = sWorkspace_scratch + slash \
+    #    + '04model' + slash + sModel + slash \
+    #    + sRegion + slash \
+    #    + 'cases' + slash + 'user_nl_rtm_' + sCase
+    #ofs = open(sFilename_rtm_namelist, 'w')
+    #sLine = 'rtmhist_nhtfrq=0' + '\n'
+    #ofs.write(sLine)
+    #sLine = 'rtmhist_fincl1= "area"' + '\n'
+    #ofs.write(sLine)
+    #ofs.close()
+           
+
+
 
     sFilename_datm_namelist = sWorkspace_scratch + slash \
         + '04model' + slash + sModel + slash \
