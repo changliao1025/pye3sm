@@ -96,13 +96,24 @@ def h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration_in, \
 
     #plot kde distribution 
 
-    #remove nan
-    #obs
+    #now we will remove the high latitudes due to the frozen soil issue.
+    nCutoff = 15
+    iStart= int(nCutoff/0.5)
+    iEnd = 360 - iStart
+    #aWTD_obs = aWTD_obs[iStart:iEnd,:]
+
     aMask1 = np.where(aWTD_obs != missing_value)
     aData_a = aWTD_obs[aMask1]
     #sim
-    aMask1 = np.where(aVariable_all2 != missing_value)
+    #aVariable_all2 = aVariable_all2[iStart:iEnd,:]
+    aMask1 = np.where(aVariable_all2 != missing_value )
+
+
     aData_b = aVariable_all2[aMask1]
+    aMask2 = np.where( (aData_b < 8.8) | (aData_b >8.9) )    
+    aData_b = aData_b[aMask2]
+    
+
 
     sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'histogram'
     if not os.path.exists(sWorkspace_analysis_case_grid):

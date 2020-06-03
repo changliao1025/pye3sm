@@ -243,7 +243,7 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
         #plot and save
         aData_all = [aVariable3, aVariable6]
         sFilename_out = sWorkspace_analysis_case_domain + slash \
-            + sVariable +'_'+ sDomain + '_wtd_grace_tsplot_' +'.png'
+            + sVariable +'_'+ sDomain + '_wtd_grace_tsplot' +'.png'
 
       
         plot_time_series_data_monthly_multiple(aTime, aData_all, \
@@ -253,11 +253,11 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
                                   dMax_Y_in =1.3, \
                                   dMin_Y_in = -1.3, \
                                   dSpace_y_in=0.4,\
-                                  sLabel_Y_in = 'WTD', \
+                                  sLabel_Y_in = 'TWS variations (m)', \
                                 aColor_in = ['red', 'blue'],\
                                 aMarker_in = ['o','+'],\
                                     aLinestyle_in = ['dotted','dashed'],\
-                                  aLabel_legend_in = ['Simulation','GRACE'])
+                                  aLabel_legend_in = ['Simulation WTD','GRACE TWS'])
 
     
 

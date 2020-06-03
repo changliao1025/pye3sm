@@ -308,7 +308,7 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 10  
+    iCase = 2
 
     iFlag_default = 1
     iFlag_debug = 0
@@ -318,7 +318,7 @@ if __name__ == '__main__':
     iFlag_short = 1
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200505'
+    sDate = '20200506'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \

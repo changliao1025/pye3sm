@@ -29,13 +29,13 @@ print(aHydraulic_anisotropy)
 ncase = len(aHydraulic_anisotropy)
 iFlag_debug = 0
 iFlag_branch = 0
-iFlag_initial = 0
-iFlag_spinup = 1
+iFlag_initial = 1
+iFlag_spinup = 0
 iFlag_continue = 0
 iFlag_resubmit = 0
 iFlag_short = 0
-sDate_spinup = '20200419'
-sDate = '20200504'
+sDate_spinup = '20200504'
+sDate = '20200525'
 for iCase in range(1,ncase + 1):
     #call the create case function
     dHydraulic_anisotropy = aHydraulic_anisotropy[iCase-1]
@@ -73,8 +73,8 @@ for iCase in range(1,ncase + 1):
         #this is a case that use existing restart file
         #be careful with the filename!!!
         
-        #sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
-        sCase_spinup = 'h2sc20200409001'
+        sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+        #sCase_spinup = 'h2sc20200409001'
 
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
             + sCase_spinup + '/run/' + sCase_spinup +  ".clm2.rh0.1979-01-01-00000.nc'"  + '\n'
