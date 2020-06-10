@@ -5,7 +5,7 @@ import numpy.ma as ma
 import pandas as pd
 import datetime
 from jdcal import gcal2jd, jd2gcal
-
+import openpyxl
 import calendar
 import scipy.ndimage as ndimage
 from netCDF4 import Dataset #it maybe be replaced by gdal 
@@ -16,7 +16,7 @@ sys.path.extend(sSystem_paths)
 from eslib.system.define_global_variables import *
 from eslib.toolbox.reader.text_reader_string import text_reader_string
 from eslib.toolbox.date.dt2cal import dt2cal
-
+from eslib.toolbox.date.day_in_month import day_in_month
 
 from eslib.toolbox.data.remove_outliers import remove_outliers
 
@@ -58,28 +58,79 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     #also, there are several sites with missing value, we need a better way to present the data
 
     sFilename = sWorkspace_auxiliary + slash + 'situ' + slash + 'INPA-LBA_WellData_2001_2016.xlsx'
+    xl = pd.ExcelFile(sFilename)
+    aSheet = xl.sheet_names  # see all sheet names
+    #ss=openpyxl.load_workbook(sFilename)
+    #for sSheet in aSheet:
+    #    sSheet_new = sSheet.replace('\xad', '')
+    #    ss_sheet = ss[sSheet]
+    #    ss_sheet.title = sSheet_new
+    #ss.save(sFilename)
+    #sSheet = 'PZ_PR-10'
 
-    sSheet = 'PZ_PR-10'
-    print(sSheet)
-    df = pd.read_excel(sFilename, \
-            sheet_name=sSheet, \
-            header=None, \
-            skiprows=range(5), \
-            usecols='A,E')
-    df.columns = ['Date','WTD']
-    dummy1 = df['Date']
-    dummy2 = np.array(dummy1)
-    dummy3 = dt2cal(dummy2)
-    #aDate_obs = pd.to_datetime(np.array(dummy1))
-    nobs =len(dummy3)
-    aDate_obs=list()
-    for iObs in range(nobs):
-        dummy4= datetime.datetime(dummy3[iObs,0], dummy3[iObs,1], 15)
-        aDate_obs.append( dummy4 )
+    #now make a list of all the sheet
+    #xl = pd.ExcelFile(sFilename)
+    #aSheet = xl.sheet_names  # see all sheet names
+    aDate_host=list()
+    nyear = iYear_end - iYear_start + 1
+    for iYear in range(iYear_start, iYear_end + 1):
+        for iMonth in range(1,13):
+            dom = day_in_month(iYear, iMonth)
+            for iDay in range(1, dom+1):
+                dSimulation = datetime.datetime(iYear, iMonth, iDay)
+                aDate_host.append( dSimulation )
+    aDate_host=np.array(aDate_host)
+    nobs_host = len(aDate_host)
+    aData_host = np.full( (12,nobs_host), np.nan, dtype=float)
+    for iSheet in np.arange(1,13):
+        sSheet = aSheet[iSheet]
+        print(sSheet)
+        if sSheet == 'PZ_PT-07':
+            continue
+        if sSheet == 'PP03':
+            continue
+        if sSheet == 'PP2':
+            continue
+        if sSheet == 'PP01':
+            continue
+        df = pd.read_excel(sFilename, \
+                sheet_name=sSheet, \
+                header=None, \
+                skiprows=range(5), \
+                usecols='A,E')
+        df.columns = ['Date','WTD']
+        dummy1 = df['Date']
+        dummy2 = np.array(dummy1)
 
-   
-    dummy2 = df['WTD']
-    aWTD_obs = np.array(dummy2)  # mg/l
+        dummy3 = dt2cal(dummy2)
+        #aDate_obs = pd.to_datetime(np.array(dummy1))
+        nobs =len(dummy3)
+        aDate_obs=list()
+        for iObs in range(nobs):
+            dummy4= datetime.datetime(dummy3[iObs,0], dummy3[iObs,1],  dummy3[iObs,2])
+            aDate_obs.append( dummy4 )
+        aDate_obs= np.array(aDate_obs)
+        dummy5 = df['WTD']
+        aWTD_obs_dummy = np.array(dummy5)  # mg/l
+
+        #now fit the data inside the host
+
+        #the existing data is outside limit, 
+
+        dummy_index = aDate_obs-aDate_host[0]
+        #dummy_index1 = dummy_index[0].days
+        dummy_index1 = [x.days for x in dummy_index ]
+        dummy_index1 = np.array(dummy_index1)
+        dummy_index2 = np.where( dummy_index1 < nobs_host )
+
+        dummy_obs= aWTD_obs_dummy[dummy_index2]
+        dummy_index3 = dummy_index1[dummy_index2]
+        aData_host[iSheet-1, dummy_index3 ] = dummy_obs
+
+
+
+    #get the average
+    aWTD_obs = np.nanmean(aData_host, axis=0)
 
     #obs is at much high resolution, we need to plot twice
     aDate_sim = list()
@@ -125,9 +176,8 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     lRow = int( (90 - (dLatitude)) / 0.5 )
     aWTD_sim = aVariable_total_subset[:, lRow, lColumn]
 
-
     #plot time series 
-    aTime_all = [aDate_obs, aDate_sim_subset]
+    aTime_all = [aDate_host, aDate_sim_subset]
     aData_all = [aWTD_obs, aWTD_sim]
     sFilename_out = sWorkspace_analysis_case + slash \
             + sVariable +'_'+ 'amzone' + '_wtd_situ_tsplot' + '.png'
@@ -137,8 +187,7 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
                                       iReverse_Y_in=1,\
                                   iSize_X_in = 12, \
                                   iSize_Y_in = 5, \
-
-                                  dMax_Y_in =1.5, \
+                                  dMax_Y_in =3, \
                                   dMin_Y_in = 0, \
                                   dSpace_y_in=0.4,\
                                   sLabel_Y_in = 'Water table depth (m)', \
