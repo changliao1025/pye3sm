@@ -1,23 +1,15 @@
 import os, sys
 import argparse
 import numpy as np
-import numpy.ma as ma
 import pandas as pd
 import datetime
 from jdcal import gcal2jd, jd2gcal
 import openpyxl
-import calendar
-import scipy.ndimage as ndimage
-from netCDF4 import Dataset #it maybe be replaced by gdal 
-import matplotlib.pyplot as plt
-
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 from eslib.system.define_global_variables import *
-from eslib.toolbox.reader.text_reader_string import text_reader_string
 from eslib.toolbox.date.dt2cal import dt2cal
 from eslib.toolbox.date.day_in_month import day_in_month
-
 from eslib.toolbox.data.remove_outliers import remove_outliers
 
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
@@ -29,7 +21,6 @@ sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash
 sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
-
 
 def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration_in, \
                                                iCase_index,\
