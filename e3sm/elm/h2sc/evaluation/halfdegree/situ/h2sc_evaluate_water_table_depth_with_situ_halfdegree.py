@@ -121,6 +121,8 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
 
 
     #get the average
+    aWTD_obs_low = np.nanmin(aData_host, axis=0)
+    aWTD_obs_high = np.nanmax(aData_host, axis=0)
     aWTD_obs = np.nanmean(aData_host, axis=0)
 
     #obs is at much high resolution, we need to plot twice
@@ -168,24 +170,24 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     aWTD_sim = aVariable_total_subset[:, lRow, lColumn]
 
     #plot time series 
-    aTime_all = [aDate_host, aDate_sim_subset]
-    aData_all = [aWTD_obs, aWTD_sim]
+    aTime_all = [aDate_host,aDate_host,aDate_host, aDate_sim_subset]
+    aData_all = [aWTD_obs, aWTD_obs_low, aWTD_obs_high, aWTD_sim]
     sFilename_out = sWorkspace_analysis_case + slash \
             + sVariable +'_'+ 'amzone' + '_wtd_situ_tsplot' + '.png'
 
     plot_time_series_data_multiple_temporal_resolution(aTime_all, aData_all, \
                                   sFilename_out,\
-                                      iReverse_Y_in=1,\
+                                iReverse_Y_in=1,\
                                   iSize_X_in = 12, \
                                   iSize_Y_in = 5, \
-                                  dMax_Y_in =3, \
+                                  dMax_Y_in =5, \
                                   dMin_Y_in = 0, \
-                                  dSpace_y_in=0.4,\
+                                  dSpace_y_in=1.0,\
                                   sLabel_Y_in = 'Water table depth (m)', \
-                                aColor_in = ['red', 'blue'],\
-                                aMarker_in = ['o','+'],\
-                                    aLinestyle_in = ['dotted','dashed'],\
-                                  aLabel_legend_in = ['In situ','ELM simulated'])
+                                aColor_in = ['red', 'blue', 'yellow','black'],\
+                                #aMarker_in = ['o','+'],\
+                                    #aLinestyle_in = ['dotted','dashed'],\
+                                  aLabel_legend_in = ['In situ mean','In situ low', 'In situ high','ELM simulated'])
     return
 if __name__ == '__main__':
     iFlag_debug = 1
