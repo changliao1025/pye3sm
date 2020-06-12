@@ -47,7 +47,6 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     lColumn = int((dLongitude - (-180)) / 1.0 )
     lRow = int( (90 - (dLatitude)) / 1.0 )
     #read forcing
-<<<<<<< HEAD
     iYear_start1 = 2000
     iYear_end1 = 2008
     lJulian_start = gcal2jd(iYear_start1, 1, 1)
@@ -61,21 +60,6 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     aDate_host=list()
     nyear = iYear_end1 - iYear_start1 + 1
     for iYear in range(iYear_start1, iYear_end1 + 1):
-=======
-    iYear_start = 2000
-    iYear_end = 2008
-    lJulian_start = gcal2jd(iYear_start, 1, 1)
-    lJulian_end = gcal2jd(iYear_end, 12, 31)
-
-    ndays = int (lJulian_end[1] - lJulian_start[1] ) + 1
-    
-    nstress = ndays*8
-
-    #build date host
-    aDate_host=list()
-    nyear = iYear_end - iYear_start + 1
-    for iYear in range(iYear_start, iYear_end + 1):
->>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
         for iMonth in range(1,13):
             dom = day_in_month(iYear, iMonth, iFlag_leap_year_in=0)
             for iDay in range(1, dom+1):
