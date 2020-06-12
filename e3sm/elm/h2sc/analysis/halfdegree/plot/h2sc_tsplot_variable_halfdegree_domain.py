@@ -18,21 +18,21 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain import elm_tsplot_variable_halfdegree_domain
 
 def h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
-                                    iCase_index,\
-                                    iYear_start_in = None, \
-                                    iYear_end_in =None,\
-                                        iYear_subset_start_in = None, \
-                                    iYear_subset_end_in = None,\
-                                    sDate_in = None):
+                                           iCase_index,\
+                                           iYear_start_in = None, \
+                                           iYear_end_in =None,\
+                                           iYear_subset_start_in = None, \
+                                           iYear_subset_end_in = None,\
+                                           sDate_in = None):
 
     elm_tsplot_variable_halfdegree_domain(sFilename_configuration,\
-                                   iCase_index, \
-                                   iFlag_same_grid_in = 1,\
-                                   iYear_start_in = iYear_start_in,\
-                                   iYear_end_in = iYear_end_in,\
-                                       iYear_subset_start_in = iYear_subset_start_in, \
-                                    iYear_subset_end_in =iYear_subset_end_in,\
-                                   sDate_in = sDate_in)
+                                          iCase_index, \
+                                          iFlag_same_grid_in = 1,\
+                                          iYear_start_in = iYear_start_in,\
+                                          iYear_end_in = iYear_end_in,\
+                                          iYear_subset_start_in = iYear_subset_start_in, \
+                                          iYear_subset_end_in =iYear_subset_end_in,\
+                                          sDate_in = sDate_in)
 
 if __name__ == '__main__':
     iFlag_debug = 1
@@ -40,18 +40,18 @@ if __name__ == '__main__':
         iIndex_start = 1
         iIndex_end = 1
     else:
-        parser = argparse.ArgumentParser()        
-        parser.add_argument("--iIndex_start", help = "the path",   type = int)      
-        parser.add_argument("--iIndex_end", help = "the path",   type = int)          
-        pArgs = parser.parse_args()       
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--iIndex_start", help = "the path",   type = int)
+        parser.add_argument("--iIndex_end", help = "the path",   type = int)
+        pArgs = parser.parse_args()
         iIndex_start = pArgs.iIndex_start
         iIndex_end = pArgs.iIndex_end
-    
+
     sModel = 'h2sc'
     sRegion = 'global'
     sDate = '20200408'
 
-    
+
 
     iYear_start = 1980
     iYear_end = 2008
@@ -66,14 +66,14 @@ if __name__ == '__main__':
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-        #iCase_index = 240       
+        #iCase_index = 240
     for iCase_index in (aCase_index):
         h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
-                                    iCase_index,\
-                                    iYear_start_in = iYear_start, \
-                                    iYear_end_in =iYear_end,\
-                                    iYear_subset_start_in = 1990, \
-                                    iYear_subset_end_in =2008,\
-                                    sDate_in= sDate)
+                                               iCase_index,\
+                                               iYear_start_in = iYear_start, \
+                                               iYear_end_in =iYear_end,\
+                                               iYear_subset_start_in = 1990, \
+                                               iYear_subset_end_in =2008,\
+                                               sDate_in= sDate)
 
     print('finished')

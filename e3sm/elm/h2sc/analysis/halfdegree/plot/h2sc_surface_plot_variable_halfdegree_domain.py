@@ -87,12 +87,11 @@ if __name__ == '__main__':
                                                           iYear_end_in =iYear_end,\
                                                           iYear_subset_start_in = 2000, \
                                                           iYear_subset_end_in =2001,\
-    dMin_z_in = 0, \
+                                                          dMin_z_in = 0, \
                                                           dMax_z_in = 500, \
                                                           dSpace_z_in = 10, \
                                                           sDate_in= sDate, \
-
-                                        sLabel_x_in = 'Longitude',\
+                                                          sLabel_x_in = 'Longitude',\
                                                           sLabel_y_in = 'Latitude',\
                                                           sLabel_z_in = 'Water table depth (m)')
 

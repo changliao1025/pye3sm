@@ -7,7 +7,6 @@ sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from eslib.system.define_global_variables import *
-from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 from eslib.visual.histogram.histogram_plot import histogram_plot
@@ -17,8 +16,6 @@ sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash
 sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
-
-
 
 def h2sc_evaluate_drainage_halfdegree(sFilename_configuration_in, \
                                                iCase_index,\
@@ -105,7 +102,7 @@ def h2sc_evaluate_drainage_halfdegree(sFilename_configuration_in, \
         os.makedirs(sWorkspace_analysis_case_grid)
     sFilename_out = sWorkspace_analysis_case_grid + slash + sCase + '_drainage_histogram.png'
 
-    histogram_plot(  aData_b,\
+    histogram_plot( aData_b,\
             sFilename_out, \
             iSize_x_in = 12, \
             iSize_y_in = 5, \

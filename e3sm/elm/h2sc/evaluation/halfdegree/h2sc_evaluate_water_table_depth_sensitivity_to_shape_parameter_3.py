@@ -20,8 +20,7 @@ from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_configuration_in, \
-                                               aCase_index,\
-                                               aParameter,\
+                                               iCase_index,\
                                                iYear_start_in = None, \
                                                iYear_end_in =None,\
                                                dMin_in = None, \
@@ -35,7 +34,7 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
                                                aLabel_legend_in = None, \
                                                sTitle_in=None):
 
-    iCase_index = aCase_index[0]
+
     e3sm_read_configuration_file(sFilename_configuration_in,\
                                  iCase_index_in = iCase_index, \
                                  iYear_start_in = iYear_start_in,\
@@ -65,56 +64,79 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
     aMask1 = np.where(aEle0 != missing_value)
 
 
-    ncase = len(aCase_index)
-    for iCase in np.arange(1, ncase+1):
-        iCase_index = iCase
-        e3sm_read_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
+    sFilename_wtd = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'raster' + slash \
+    + 'wtd' + slash + 'wtd.tif'
+
+    pWTD = gdal_read_geotiff(sFilename_wtd)
+    aWTD_obs = pWTD[0]
 
 
+    #read simulated 
+    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
+    sVariable = e3sm_global.sVariable.lower()
+    sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
+    #read the stack data
 
-        #read simulated 
-        sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
-        sVariable = e3sm_global.sVariable.lower()
-        sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
-        sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
-        #read the stack data
-    
-        sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
-    
-        aData_all = gdal_read_envi_file_multiple_band(sFilename)
-        aVariable_all = aData_all[0]
-    
-        iYear_base = 1990
-        iYear_level = 2008
-        iMonth = 6
-    
-        i = (iYear_base-iYear_start) * 12 + iMonth-1 
-        j = (iYear_level-iYear_start) * 12 + iMonth-1
-    
-        #take average
-        aVariable_all1 = aVariable_all[ i:j,:,:]
-        aVariable_all2 = np.mean(  aVariable_all1, axis= 0 )
-    
-        #plot kde distribution 
-    
-        #remove nan
-        #obs
-        aMask1 = np.where(aWTD_obs != missing_value)
-        aData_a = aWTD_obs[aMask1]
-        #sim
-        aMask1 = np.where(aVariable_all2 != missing_value)
-        aData_b = aVariable_all2[aMask1]
-    
-        sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'histogram'
-        if not os.path.exists(sWorkspace_analysis_case_grid):
-            os.makedirs(sWorkspace_analysis_case_grid)
-        sFilename_out = sWorkspace_analysis_case_grid + slash + sCase + '_wtd_histogram.png'
+    sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
 
-    
+    aData_all = gdal_read_envi_file_multiple_band(sFilename)
+    aVariable_all = aData_all[0]
+
+    iYear_base = 1990
+    iYear_level = 2008
+    iMonth = 6
+
+    i = (iYear_base-iYear_start) * 12 + iMonth-1 
+    j = (iYear_level-iYear_start) * 12 + iMonth-1
+
+    #take average
+    aVariable_all1 = aVariable_all[ i:j,:,:]
+    aVariable_all2 = np.mean(  aVariable_all1, axis= 0 )
+
+    #plot kde distribution 
+
+    #remove nan
+    #obs
+    aMask1 = np.where(aWTD_obs != missing_value)
+    aData_a = aWTD_obs[aMask1]
+    #sim
+    aMask1 = np.where(aVariable_all2 != missing_value)
+    aData_b = aVariable_all2[aMask1]
+
+    sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'histogram'
+    if not os.path.exists(sWorkspace_analysis_case_grid):
+        os.makedirs(sWorkspace_analysis_case_grid)
+    sFilename_out = sWorkspace_analysis_case_grid + slash + sCase + '_wtd_histogram.png'
+
+    #histogram_plot( aData_a,\
+    #        sFilename_out, \
+    #        iSize_x_in = 12, \
+    #        iSize_y_in = 5, \
+    #        iDPI_in = 150, \
+    #        dMin_in = dMin_in, \
+    #        dMax_in = dMax_in, \
+    #        dMin_x_in = dMin_x_in, \
+    #        dMax_x_in = dMax_x_in, \
+    #        dSpace_x_in = dSpace_x_in, \
+    #        sLabel_x_in = sLabel_x_in, \
+    #        sLabel_y_in = sLabel_y_in, \
+    #        sTitle_in = sTitle_in)
+    histogram_plot_multiple( aData_a, aData_b,\
+            sFilename_out, \
+            iSize_x_in = 12, \
+            iSize_y_in = 5, \
+            iDPI_in = 150, \
+            dMin_in = dMin_in, \
+            dMax_in = dMax_in, \
+            dMin_x_in = dMin_x_in, \
+            dMax_x_in = dMax_x_in, \
+            dSpace_x_in = dSpace_x_in, \
+            
+            sLabel_x_in = sLabel_x_in, \
+            sLabel_y_in = sLabel_y_in, \
+            aLabel_legend_in = aLabel_legend_in, \
+            sTitle_in = sTitle_in)
     
 
     
