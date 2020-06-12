@@ -32,3 +32,4 @@ global sWorkspace_analysis_case
 global sWorkspace_simulation_case
 global sWorkspace_simulation_case_build
 global sWorkspace_simulation_case_run
+global sWorkspace_forcing

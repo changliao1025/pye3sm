@@ -11,10 +11,11 @@ from eslib.system.define_global_variables import *
 from eslib.toolbox.date.dt2cal import dt2cal
 from eslib.toolbox.date.day_in_month import day_in_month
 from eslib.toolbox.data.remove_outliers import remove_outliers
+from eslib.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
-from eslib.visual.timeseries.plot_time_series_data_multiple_temporal_resolution import plot_time_series_data_multiple_temporal_resolution
+from eslib.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_bound import plot_time_series_data_multiple_temporal_resolution_bound
 
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
@@ -23,19 +24,19 @@ from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration_in, \
-                                               iCase_index,\
-                                               iYear_start_in = None, \
-                                               iYear_end_in =None,\
-                                               dMin_in = None, \
-                                               dMax_in = None, \
-                                               dMin_x_in = None, \
-                                               dMax_x_in = None, \
-                                               dSpace_x_in = None, \
-                                               sDate_in = None, \
-                                               sLabel_x_in = None, \
-                                               sLabel_y_in = None, \
-                                               aLabel_legend_in = None, \
-                                               sTitle_in=None):
+                                                         iCase_index,\
+                                                         iYear_start_in = None, \
+                                                         iYear_end_in =None,\
+                                                         dMin_in = None, \
+                                                         dMax_in = None, \
+                                                         dMin_x_in = None, \
+                                                         dMax_x_in = None, \
+                                                         dSpace_x_in = None, \
+                                                         sDate_in = None, \
+                                                         sLabel_x_in = None, \
+                                                         sLabel_y_in = None, \
+                                                         aLabel_legend_in = None, \
+                                                         sTitle_in=None):
     e3sm_read_configuration_file(sFilename_configuration_in,\
                                  iCase_index_in = iCase_index, \
                                  iYear_start_in = iYear_start_in,\
@@ -85,10 +86,10 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
         if sSheet == 'PP01':
             continue
         df = pd.read_excel(sFilename, \
-                sheet_name=sSheet, \
-                header=None, \
-                skiprows=range(5), \
-                usecols='A,E')
+                           sheet_name=sSheet, \
+                           header=None, \
+                           skiprows=range(5), \
+                           usecols='A,E')
         df.columns = ['Date','WTD']
         dummy1 = df['Date']
         dummy2 = np.array(dummy1)
@@ -100,13 +101,13 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
         for iObs in range(nobs):
             dummy4= datetime.datetime(dummy3[iObs,0], dummy3[iObs,1],  dummy3[iObs,2])
             aDate_obs.append( dummy4 )
-        aDate_obs= np.array(aDate_obs)
-        dummy5 = df['WTD']
-        aWTD_obs_dummy = np.array(dummy5)  # mg/l
+            aDate_obs= np.array(aDate_obs)
+            dummy5 = df['WTD']
+            aWTD_obs_dummy = np.array(dummy5)  # mg/l
 
         #now fit the data inside the host
 
-        #the existing data is outside limit, 
+        #the existing data is outside limit,
 
         dummy_index = aDate_obs-aDate_host[0]
         #dummy_index1 = dummy_index[0].days
@@ -123,7 +124,7 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     #get the average
     aWTD_obs_low = np.nanmin(aData_host, axis=0)
     aWTD_obs_high = np.nanmax(aData_host, axis=0)
-    aWTD_obs = np.nanmean(aData_host, axis=0)
+    aWTD_obs_mean = np.nanmean(aData_host, axis=0)
 
     #obs is at much high resolution, we need to plot twice
     aDate_sim = list()
@@ -132,15 +133,15 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
         for iMonth in range(1,13):
             dSimulation = datetime.datetime(iYear, iMonth, 15)
             aDate_sim.append( dSimulation )
-    #do the subset
-    #convert date to juliday
+            #do the subset
+            #convert date to juliday
 
     lJulian_start = gcal2jd(iYear_start, 1, 1)
     iYear_subset_start = 2000
     iYear_subset_end = 2008
     iMonth = 1
     #select subset by date range
-    
+
 
     #read sim
     sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
@@ -150,7 +151,7 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     #read the stack data
 
     sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
-    subset_index_start = (iYear_subset_start-iYear_start) * 12 + iMonth-1 
+    subset_index_start = (iYear_subset_start-iYear_start) * 12 + iMonth-1
     subset_index_end = (iYear_subset_end+1-iYear_start) * 12 + iMonth-1
     subset_index = np.arange( subset_index_start,subset_index_end, 1 )
     aDate_sim = np.array(aDate_sim)
@@ -159,7 +160,7 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     sFilename
     aData_all = gdal_read_envi_file_multiple_band(sFilename)
     aVariable_all = aData_all[0]
-    
+
     aVariable_total_subset = aVariable_all[ subset_index,:,:]
 
     #pick the pixel by lat/lon
@@ -169,25 +170,26 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     lRow = int( (90 - (dLatitude)) / 0.5 )
     aWTD_sim = aVariable_total_subset[:, lRow, lColumn]
 
-    #plot time series 
-    aTime_all = [aDate_host,aDate_host,aDate_host, aDate_sim_subset]
-    aData_all = [aWTD_obs, aWTD_obs_low, aWTD_obs_high, aWTD_sim]
+    #plot time series
+    aWTD_obs = [aWTD_obs_low, aWTD_obs_mean,  aWTD_obs_high]
+    aTime_all = [aDate_host, aDate_sim_subset]
+    aData_all = [aWTD_obs, aWTD_sim]
     sFilename_out = sWorkspace_analysis_case + slash \
-            + sVariable +'_'+ 'amzone' + '_wtd_situ_tsplot' + '.png'
-
-    plot_time_series_data_multiple_temporal_resolution(aTime_all, aData_all, \
-                                  sFilename_out,\
-                                iReverse_Y_in=1,\
-                                  iSize_X_in = 12, \
-                                  iSize_Y_in = 5, \
-                                  dMax_Y_in =5, \
-                                  dMin_Y_in = 0, \
-                                  dSpace_y_in=1.0,\
-                                  sLabel_Y_in = 'Water table depth (m)', \
-                                aColor_in = ['red', 'blue', 'yellow','black'],\
-                                #aMarker_in = ['o','+'],\
-                                    #aLinestyle_in = ['dotted','dashed'],\
-                                  aLabel_legend_in = ['In situ mean','In situ low', 'In situ high','ELM simulated'])
+        + sVariable +'_'+ 'amzone' + '_wtd_situ_tsplot' + '.png'
+    aColor = create_diverge_rgb_color_hex(4, iFlag_reverse_in=1)
+    plot_time_series_data_multiple_temporal_resolution_bound(aTime_all, aData_all, \
+                                                             sFilename_out,\
+                                                             iReverse_Y_in=1,\
+                                                             iSize_X_in = 12, \
+                                                             iSize_Y_in = 5, \
+                                                             dMax_Y_in =5, \
+                                                             dMin_Y_in = 0, \
+                                                             dSpace_y_in=1.0,\
+                                                             sLabel_Y_in = 'Water table depth (m)', \
+                                                             aColor_in = [aColor[0:3], aColor[3]],\
+                                                             aMarker_in = [['o','.','*'],'+'],\
+                                                             aLinestyle_in = [['-','--','-.' ],'solid'],\
+                                                             aLabel_legend_in = [['In situ low','In situ mean','In situ high'],'ELM simulated'])
     return
 if __name__ == '__main__':
     iFlag_debug = 1
@@ -225,14 +227,13 @@ if __name__ == '__main__':
     #iCase_index = 1
     for iCase_index in (aCase_index):
         h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration,\
-         iCase_index,\
-                                                   iYear_start_in = iYear_start, \
-                                                   iYear_end_in =iYear_end,\
-                                                   dMin_in = 0, \
-                                                   dMax_in = 80, \
-                                                   sDate_in= sDate, \
-                                                sLabel_x_in=sLabel,\
-                                                #sLabel_y_in='Distribution [%]',\
-                                                   #aLabel_legend_in = aLabel_legend,\
+                                                             iCase_index,\
+                                                             iYear_start_in = iYear_start, \
+                                                             iYear_end_in =iYear_end,\
+                                                             dMin_in = 0, \
+                                                             dMax_in = 80, \
+                                                             sDate_in= sDate, \
+                                                             sLabel_x_in=sLabel,\
+                                                             #sLabel_y_in='Distribution [%]',\
+                                                             #aLabel_legend_in = aLabel_legend,\
                                                     )
-

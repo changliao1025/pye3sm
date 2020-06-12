@@ -77,7 +77,7 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
     if iYear_data_start_in is not None:
         iYear_data_start = iYear_data_start_in
     else:
-        iYear_data_start =int(config['iYear_data_start'])
+        iYear_data_start = int(config['iYear_data_start'])
     if iYear_data_end_in is not None:
         iYear_data_end = iYear_data_end_in
     else:
@@ -150,4 +150,6 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
     e3sm_global.sWorkspace_simulation_case_run = sDirectory_run + slash + sCase + slash +'run'
     e3sm_global.sWorkspace_simulation_case_build = sDirectory_run + slash + sCase + slash +'build'
     e3sm_global.sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
+
+    e3sm_global.sWorkspace_forcing = '/compyfs/inputdata/atm/datm7/gpcc/GPCC_noleap'
     return
