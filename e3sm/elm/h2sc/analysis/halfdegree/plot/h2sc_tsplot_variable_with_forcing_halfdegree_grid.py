@@ -9,10 +9,13 @@ sys.path.extend(sSystem_paths)
 
 from eslib.system.define_global_variables import *
 from eslib.toolbox.date.day_in_month import day_in_month
+<<<<<<< HEAD
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
 from eslib.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_two_y_axis import plot_time_series_data_multiple_temporal_resolution_two_y_axis
 
+=======
+>>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
 #import package
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
@@ -44,6 +47,7 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     lColumn = int((dLongitude - (-180)) / 1.0 )
     lRow = int( (90 - (dLatitude)) / 1.0 )
     #read forcing
+<<<<<<< HEAD
     iYear_start1 = 2000
     iYear_end1 = 2008
     lJulian_start = gcal2jd(iYear_start1, 1, 1)
@@ -57,6 +61,21 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     aDate_host=list()
     nyear = iYear_end1 - iYear_start1 + 1
     for iYear in range(iYear_start1, iYear_end1 + 1):
+=======
+    iYear_start = 2000
+    iYear_end = 2008
+    lJulian_start = gcal2jd(iYear_start, 1, 1)
+    lJulian_end = gcal2jd(iYear_end, 12, 31)
+
+    ndays = int (lJulian_end[1] - lJulian_start[1] ) + 1
+    
+    nstress = ndays*8
+
+    #build date host
+    aDate_host=list()
+    nyear = iYear_end - iYear_start + 1
+    for iYear in range(iYear_start, iYear_end + 1):
+>>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
         for iMonth in range(1,13):
             dom = day_in_month(iYear, iMonth, iFlag_leap_year_in=0)
             for iDay in range(1, dom+1):
@@ -77,6 +96,7 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
              #sMonth = STRING(iMonth, format = '(I02)')
             sMonth = "{:02d}".format(iMonth)
             sFilename = sWorkspace_forcing + slash + 'clmforc.princeton.GPCC.' + sYear+'-'+sMonth +'.nc'
+<<<<<<< HEAD
             aDatasets = Dataset(sFilename, 'r')
             #for sKey, aValue in aDatasets.variables.items():
             #    if "PRECTmms" == sKey:
@@ -109,6 +129,31 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     #be careful with the unit
     #kgm2s
     #1mms = 0.001 * 1 * 1 kg
+=======
+
+            aDatasets = Dataset(sFilename, 'r')
+            for sKey, aValue in aDatasets.variables.items():
+                if "PRECTmms" == sKey:
+                    aPrec_all = (aValue[:]).data
+                    break
+                
+            dom = day_in_month(iYear, iMonth, iFlag_leap_year_in = 0)
+            nts = dom * 8 #3 hour temporal resolution
+            for iTime_step in np.arange( 1, nts+1) :
+                #sTime_step = STRING(iTime_step, format = '(I03)')
+                aPrec = aPrec_all[ iTime_step-1,:, :]
+
+                #resample not needed, we can directly    extract
+                #shift
+                aPrec = np.roll(aPrec, 180, axis=1)
+
+                dummy=aPrec[lRow, lColumn]
+                aPrec_ts[iStress-1] = dummy
+                iStress=iStress+1
+
+
+
+>>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
 
     #read simulation
     aDate_sim = list()
@@ -126,6 +171,10 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     iMonth = 1
     #select subset by date range
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
     #read sim
     sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
     sVariable = e3sm_global.sVariable.lower()
@@ -152,6 +201,7 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     aWTD_sim = aVariable_total_subset[:, lRow, lColumn]
 
     #plot with two axis
+<<<<<<< HEAD
     aTime_all=[aDate_sim_subset, aDate_host]
     aData_all=[aWTD_sim, aPrec_ts]
     sFilename_out=sWorkspace_analysis_case + slash \
@@ -173,6 +223,9 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
                                   aLabel_legend_in = ['WTD','Prec'],\
                                   #sTitle_in = None)
     )
+=======
+
+>>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
     print('finished')
 
     return
@@ -180,7 +233,11 @@ if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
         iIndex_start = 1
+<<<<<<< HEAD
         iIndex_end = 7
+=======
+        iIndex_end = 1
+>>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -191,7 +248,11 @@ if __name__ == '__main__':
 
     sModel = 'h2sc'
     sRegion = 'global'
+<<<<<<< HEAD
     sDate = '20200421'
+=======
+    sDate = '20200413'
+>>>>>>> c00591bbe48d9ee257d3efe79496900f18f497f8
 
 
 
