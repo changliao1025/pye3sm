@@ -308,17 +308,18 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 2
+    iCase = 1
 
     iFlag_default = 1
     iFlag_debug = 0
     iFlag_branch = 0
-    iFlag_initial = 0
-    iFlag_spinup = 1
-    iFlag_short = 1
+    iFlag_initial = 1
+    iFlag_spinup = 0
+    iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200506'
+    sDate = '20200602'
+    sDate_spinup = '20200412'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
@@ -353,8 +354,8 @@ if __name__ == '__main__':
         #this is a case that use existing restart file
         #be careful with the filename!!!
         
-        #sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
-        sCase_spinup = sModel + '20200409001'
+        sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+        #sCase_spinup = sModel + '20200409001'
 
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
             + sCase_spinup + '/run/' \

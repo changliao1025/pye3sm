@@ -50,8 +50,6 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     lJulian_end = gcal2jd(iYear_end1, 12, 31)
 
     ndays = int (lJulian_end[1] - lJulian_start[1] ) + 1
-    
-    
 
     #build date host
     aDate_host=list()

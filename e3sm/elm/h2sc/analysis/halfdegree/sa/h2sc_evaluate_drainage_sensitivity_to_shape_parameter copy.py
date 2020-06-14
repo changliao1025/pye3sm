@@ -13,15 +13,13 @@ from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi
 from eslib.visual.histogram.histogram_plot import histogram_plot
 from eslib.visual.histogram.histogram_plot_multiple import histogram_plot_multiple
 
-
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
 sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_configuration_in, \
-                                               aCase_index,\
-                                               aParameter,\
+def h2sc_evaluate_drainage_sensitivity_to_shape_parameter(sFilename_configuration_in, \
+                                               aCase_index_in,\
                                                iYear_start_in = None, \
                                                iYear_end_in =None,\
                                                dMin_in = None, \
@@ -34,29 +32,23 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
                                                sLabel_y_in = None, \
                                                aLabel_legend_in = None, \
                                                sTitle_in=None):
-
-    iCase_index = aCase_index[0]
+    iCase_index = iCase
     e3sm_read_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
-
+                             iCase_index_in = iCase_index, \
+                             iYear_start_in = iYear_start_in,\
+                             iYear_end_in = iYear_end_in,\
+                             sDate_in= sDate_in)
+    sCase = e3sm_global.sCase
+    
     sModel = e3sm_global.sModel
     sRegion = e3sm_global.sRegion
-    sCase = e3sm_global.sCase
-    #read obs 
+    nCase = len(aCase_index)
+    aCase = np.full(nCase, '')
     sFilename_mask = sWorkspace_data + slash \
         + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
     #read in mask
     aDatasets = Dataset(sFilename_mask)
-    netcdf_format = aDatasets.file_format
-    print(netcdf_format)
-    print("Print dimensions:")
-    print(aDatasets.dimensions.keys())
-    print("Print variables:")
-    print(aDatasets.variables.keys())
     for sKey, aValue in aDatasets.variables.items():
         if "ele0" == sKey:
             aEle0 = (aValue[:]).data
@@ -64,55 +56,37 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
     aMask = np.where(aEle0 == missing_value)
     aMask1 = np.where(aEle0 != missing_value)
 
-
-    ncase = len(aCase_index)
-    for iCase in np.arange(1, ncase+1):
+    sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'tsplot'
+    if not os.path.exists(sWorkspace_analysis_case_grid):
+        os.makedirs(sWorkspace_analysis_case_grid)
+    sFilename_out = sWorkspace_analysis_case_grid + slash + sCase + '_wtd_sensitivity.png'
+    for iCase in np.arange(1, nCase+1):
         iCase_index = iCase
         e3sm_read_configuration_file(sFilename_configuration_in,\
                                  iCase_index_in = iCase_index, \
                                  iYear_start_in = iYear_start_in,\
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
-
-
-
+        sCase = e3sm_global.sCase
+        
         #read simulated 
+    
         sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
         sVariable = e3sm_global.sVariable.lower()
         sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
-        sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
+        sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +  slash + 'dat'
         #read the stack data
-    
+
         sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
-    
+
         aData_all = gdal_read_envi_file_multiple_band(sFilename)
         aVariable_all = aData_all[0]
-    
-        iYear_base = 1990
-        iYear_level = 2008
-        iMonth = 6
-    
-        i = (iYear_base-iYear_start) * 12 + iMonth-1 
-        j = (iYear_level-iYear_start) * 12 + iMonth-1
-    
-        #take average
-        aVariable_all1 = aVariable_all[ i:j,:,:]
-        aVariable_all2 = np.mean(  aVariable_all1, axis= 0 )
-    
-        #plot kde distribution 
-    
-        #remove nan
-        #obs
-        aMask1 = np.where(aWTD_obs != missing_value)
-        aData_a = aWTD_obs[aMask1]
+
         #sim
         aMask1 = np.where(aVariable_all2 != missing_value)
         aData_b = aVariable_all2[aMask1]
-    
-        sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'histogram'
-        if not os.path.exists(sWorkspace_analysis_case_grid):
-            os.makedirs(sWorkspace_analysis_case_grid)
-        sFilename_out = sWorkspace_analysis_case_grid + slash + sCase + '_wtd_histogram.png'
+
+        
 
     
     
@@ -155,10 +129,9 @@ if __name__ == '__main__':
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-        #iCase_index = 240
-    for iCase_index in (aCase_index):
-        h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration,\
-                                                   iCase_index,\
+    aCase_index=[]
+    h2sc_evaluate_drainage_sensitivity_to_shape_parameter(sFilename_configuration,\
+                                                   aCase_index,\
                                                    iYear_start_in = iYear_start, \
                                                    iYear_end_in =iYear_end,\
                                                    dMin_in = 0, \
