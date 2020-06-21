@@ -19,7 +19,7 @@ from eslib.toolbox.data.remove_outliers import remove_outliers
 
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
-from eslib.visual.timeseries.plot_time_series_data_monthly_multiple import plot_time_series_data_monthly_multiple
+from eslib.visual.timeseries.plot_time_series_data import plot_time_series_data
 
 
 sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
@@ -241,19 +241,20 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
         print('finished')
 
         #plot and save
+        aTime_all = [aTime, aTime]
         aData_all = [aVariable3, aVariable6]
         sFilename_out = sWorkspace_analysis_case_domain + slash \
             + sVariable +'_'+ sDomain + '_wtd_grace_tsplot' +'.png'
 
       
-        plot_time_series_data_monthly_multiple(aTime, aData_all, \
+        plot_time_series_data(aTime_all, aData_all, \
                                   sFilename_out,\
-                                  iSize_X_in = 12, \
-                                  iSize_Y_in = 5, \
-                                  dMax_Y_in =1.3, \
-                                  dMin_Y_in = -1.3, \
+                                  iSize_x_in = 12, \
+                                  iSize_y_in = 5, \
+                                  dMax_y_in =1.3, \
+                                  dMin_y_in = -1.3, \
                                   dSpace_y_in=0.4,\
-                                  sLabel_Y_in = 'TWS variations (m)', \
+                                  sLabel_y_in = 'TWS variations (m)', \
                                 aColor_in = ['red', 'blue'],\
                                 aMarker_in = ['o','+'],\
                                     aLinestyle_in = ['dotted','dashed'],\
@@ -279,6 +280,7 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     sDate = '20200421'
+    sDate = '20200602'
 
     iYear_start = 1980
     iYear_end = 2008

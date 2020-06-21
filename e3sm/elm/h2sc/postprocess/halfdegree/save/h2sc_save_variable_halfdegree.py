@@ -35,8 +35,8 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     
-    sDate = '20200421'
-    iCase_index = 7
+    sDate = '20200602'
+    iCase_index = 1
     
     iYear_start = 1980
     iYear_end = 2008

@@ -178,15 +178,15 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
                     #for attrname in aValue.ncattrs():
                     #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
                     aData = (aValue[:]).data                     
-                    print(aData)
+                    #print(aData)
                     missing_value1 = np.max(aData)           
                     if(iFlag_same_grid == 1 ): #no need to resample if there are the same grid
                         aData = aData.reshape(nrow_new, ncolumn_new)      
                         aData = np.flip(aData, 0)    
                         dummy_index = np.where( aData == missing_value1 ) 
                         aData[dummy_index] = missing_value
-                        print(np.nanmax(aData))
-                        print(aData)
+                        #print(np.nanmax(aData))
+                        #print(aData)
                         aGrid_data = aData
                        
                     else:

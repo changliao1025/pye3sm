@@ -74,7 +74,7 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
     sWorkspace_analysis_grid = sWorkspace_analysis_variable + slash + 'tsplot_sa'
     if not os.path.exists(sWorkspace_analysis_grid):
         os.makedirs(sWorkspace_analysis_grid)
-    sFilename_out = sWorkspace_analysis_grid + slash + 'amazon_wtd_sa'+'.png'
+    sFilename_out = sWorkspace_analysis_grid + slash + 'amazon_wtd_sa_' + sPrefix+'.png'
     #we build a multiple ts plot
     #build date
     aDate_sim = list()
@@ -129,6 +129,9 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
         aData_ts[iCase-1] = aVariable_all1
         
     #plot
+
+    
+
     aTime_all=[aDate_sim_subset, aDate_sim_subset, aDate_sim_subset]
     aData_all=aData_ts
     plot_time_series_data(aTime_all, aData_all, \
@@ -137,14 +140,14 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
                                   iReverse_y_in = 1, \
                                   iSize_x_in = None, \
                                   iSize_y_in = None, \
-                                  dMax_y_in =5, \
+                                  dMax_y_in =3, \
                                   dMin_y_in = 0, \
                                   dSpace_y_in=1,\
                                   aMarker_in =None,\
                                 aColor_in =None,\
                                 aLinestyle_in =None,\
                                   sLabel_y_in = None, \
-                                  aLabel_legend_in = None,\
+                                  aLabel_legend_in = aLabel_legend_in,\
                                   sTitle_in = None)
 
 
@@ -182,7 +185,7 @@ if __name__ == "__main__":
     sLabel = 'Water table depth (m)'
 
 
-    aLabel_legend = [  'Observed WTD','Simulated WTD' ]
+  
 
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
@@ -190,22 +193,26 @@ if __name__ == "__main__":
 
     #iCase_index = 240
     #for iCase_index in (aCase_index):
-    aCase_index=[1,2,3]
-    aParameter=[0.25, 0.5, 0.9]
+    #aCase_index=[5,6, 1]
+    #aParameter=[0.25, 0.75, 0.9]
+    #sPrefix  = 'K1'
+    aCase_index=[2,4, 3]
+    aParameter=[0.25, 0.5, 0.75]
+    sPrefix  = 'K2'
+    #build legend
+    
+    aLabel_legend=np.full( len(aParameter), '', dtype=object )
+
+    for i in np.arange( len(aParameter) ):
+        dummy= sPrefix + ' = ' + '{:0.2f}'.format(aParameter[i])
+        aLabel_legend[i]=dummy
+    
     h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_configuration,\
                                                    aCase_index,\
                                                        aParameter,\
                                                    iYear_start_in = iYear_start, \
                                                    iYear_end_in = iYear_end,\
-                                                   dMin_in = 0, \
-                                                   dMax_in = 80, \
-                                                   dMin_x_in = 0, \
-                                                   dMax_x_in = 60, \
-                                                   dSpace_x_in = 0.5, \
-                                                   sDate_in = sDate, \
-                                                sLabel_x_in = sLabel,\
-                                                #sLabel_y_in='Distribution [%]',\
-                                                   #aLabel_legend_in = aLabel_legend,\
-                                                   )
+                                                   sDate_in = sDate,\
+                                                   aLabel_legend_in = aLabel_legend )
 
     print('finished')
