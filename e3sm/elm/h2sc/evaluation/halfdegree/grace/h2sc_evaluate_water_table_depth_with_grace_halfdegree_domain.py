@@ -150,6 +150,8 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
     grace_date0 = dummy[:,0]
     grace_date1 = dummy[:,1]
     grace_date2 = dummy[:,2]
+    grace_date3 = dummy[:,3]
+    grace_date4 = dummy[:,4]
     aData_grace=np.full( (nstress_subset, nrow, ncolumn), -9999, dtype=float )
 
     #now process GRACE data
@@ -163,10 +165,10 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
             sYear = "{:04d}".format(iYear)
             sYear2 = sYear[2:4]
             sMonth =  "{:02d}".format(iMonth)
-            sMonth2 = calendar.month_abbr[1]
+            sMonth2 = calendar.month_abbr[iMonth]
             sDate  = sMonth2 + sYear2
             dummy_index = np.where( grace_date0 == sDate )
-            sDummy = grace_date1[dummy_index][0]
+            sDummy = grace_date4[dummy_index][0]
             sDummy1 = sDummy.strip()
             sDummy2 = sYear + sDummy1[5:8] + '-' + sYear + sDummy1[-3:]
             sFilename_grace = sWorkspace_grace + slash \
@@ -179,13 +181,14 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
             #resample the data because resolution is different
             aData_dummy1 = np.flip(aData_dummy0, 0)
             aData_dummy1 = np.roll(aData_dummy1, 180, axis=1) # right
+            
             #because the dimensions, we use simple way to resample
             
             aData_dummy2 = ndimage.zoom(aData_dummy1, 2, order=0)
             
             
             aData_dummy2[np.where(aData_dummy2==-99999)] = -9999
-            #aData_dummy2[np.where(aData_dummy2==-99999)] = np.nan
+            aData_dummy2[np.where(aData_dummy2==-9999)] = np.nan
             #plt.imshow(aData_dummy2)
             #plt.show()
             aData_grace[iStress - 1,:,:]=aData_dummy2
@@ -204,7 +207,7 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
         dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress_subset, axis=0)
         
         aVariable0 = ma.masked_array(aVariable_total_subset, mask= dummy_mask)
-        aVariable1 = aVariable0.reshape(nstress_subset,nrow , ncolumn)        
+        aVariable1 = aVariable0.reshape(nstress_subset, nrow , ncolumn)        
         #get reference lwe
         aVariable3 = np.full(nstress_subset, -9999, dtype=float)
         aVariable2_mean = np.mean(aVariable1, axis=0)
@@ -219,10 +222,12 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
     
         iStress = 1
         #apply mask
-        #aVariable4 = ma.masked_array(aData_grace, mask= dummy_mask)
-        aVariable4 = aData_grace
+        aVariable4 = ma.masked_array(aData_grace, mask= dummy_mask)
+        #aVariable4 = aData_grace
 
-        aVariable5 = aVariable4.reshape(nstress_subset,nrow , ncolumn)        
+        aVariable5 = aVariable4.reshape(nstress_subset, nrow, ncolumn)        
+        
+
         aVariable6 = np.full(nstress_subset, -9999, dtype=float)
        
         for iStress in range(1,nstress_subset+1):
@@ -230,9 +235,15 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
             #plt.imshow(dummy)
             #plt.show()
             #print(dummy)
-            #dummy1 = dummy[dummy.mask == False]
+            dummy1 = dummy[dummy.mask == False]
             dummy1[np.where(dummy1==-9999)] = np.nan
-            aVariable6[iStress-1] = np.nanmean(dummy[aX,aY])
+            
+            #aVariable6[iStress-1] = np.nanmean(dummy[aX,aY])
+            aVariable6[iStress-1] = np.nanmean(dummy1)
+            #use regional mean instead of grid
+
+
+            
             print(np.nanmax(dummy1))
 
         #now we can comparre
@@ -280,7 +291,7 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     sDate = '20200421'
-    sDate = '20200602'
+    #sDate = '20200602'
 
     iYear_start = 1980
     iYear_end = 2008
