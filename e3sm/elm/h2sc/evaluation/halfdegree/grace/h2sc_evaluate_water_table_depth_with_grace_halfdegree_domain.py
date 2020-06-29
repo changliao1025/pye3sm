@@ -253,7 +253,7 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
 
         #plot and save
         aTime_all = [aTime, aTime]
-        aData_all = [aVariable3, aVariable6]
+        aData_all = [-1.0*aVariable3, aVariable6]
         sFilename_out = sWorkspace_analysis_case_domain + slash \
             + sVariable +'_'+ sDomain + '_wtd_grace_tsplot' +'.png'
 
@@ -271,9 +271,6 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
                                     aLinestyle_in = ['dotted','dashed'],\
                                   aLabel_legend_in = ['Simulation WTD','GRACE TWS'])
 
-    
-
-    
 
 if __name__ == '__main__':
     iFlag_debug = 1
