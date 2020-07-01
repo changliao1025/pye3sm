@@ -40,14 +40,18 @@ if __name__ == '__main__':
     
     iYear_start = 1980
     iYear_end = 2008
+    #from now, to maintain consistancy, we will the same variable name for all processes.
     sVariable = 'ZWT'
     #sVariable = 'wt_slp'
     #sVariable = 'sur_slp'
     #sVariable = 'QDRAI_top'
     #sVariable = 'DRARI_h2sc'
-    #sVariable = 'qflx_evap_tot'
-    sVariable = 'RAIN'
-    sVariable = 'SNOW'
+    
+    #sVariable = 'RAIN'
+    #sVariable = 'SNOW'
+    #sVariable = 'QSOIL'
+    #sVariable = 'QVEGE'
+    sVariable = 'QVEGT'
     sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
 
