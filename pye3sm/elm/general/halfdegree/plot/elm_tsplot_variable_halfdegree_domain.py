@@ -21,6 +21,9 @@ sys.path.append(sPath_e3sm_python)
 from e3sm.shared import e3sm_global
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
+from e3sm.shared import pye3sm
+from e3sm.shared.pye3sm_read_configuration_file import pye3sm_read_configuration_file
+
 def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
                                    iCase_index, \
                                    iYear_start_in = None,\

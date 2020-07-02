@@ -1,0 +1,121 @@
+<file id="pest.xml" version="2.0">
+  <header>
+    This file is used to control the e3sm case.
+  </header>
+  <group id="system">
+    <entry id="sWorkspace_home" value="/qfs/people/liao313/">
+      <type>char</type>
+      <desc>
+        The home workspace
+      </desc>
+    </entry>
+    <entry id="sWorkspace_scratch" value="/pic/scratch/liao313/">
+      <type>char</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="sWorkspace_data" value="/data/">
+      <type>char</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+  </group>
+  
+
+  <group id="pye3sm">
+    <entry id="sPest_mode" value="estimation">
+      <type>char</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="npargp" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="npar" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="nobsgp" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="nobs" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="nprior" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="ntplfile" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="ninsfile" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="sWokspace_pest_configuration" value="/qfs/people/liao313/03configuration/maces/coastal/calibration/pest.xml">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+
+    <entry id="sWorkspace_pest" value="/qfs/people/liao313/03configuration/maces/coastal/calibration/">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sFilename_control" value="maces_pest.pst">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sFilename_instruction" value="maces_pest.ins">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sFilename_hydro_template" value="maces_hydro_pest.tpl">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sFilename_hydro_parameter" value="maces_hydro_pest.para">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sFilename_output" value="maces_pest.out">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+  </group>
+
+</file>
