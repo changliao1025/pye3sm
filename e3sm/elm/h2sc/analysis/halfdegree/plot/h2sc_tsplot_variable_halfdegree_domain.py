@@ -49,16 +49,22 @@ if __name__ == '__main__':
 
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200408'
+    sDate = '20200421'
 
 
 
     iYear_start = 1980
     iYear_end = 2008
 
-    sVariable = 'drainage'
+    #sVariable = 'drainage'
     #sVariable = 'wt_slp'
     sVariable='zwt'
+    #sVariable = 'RAIN'
+    #sVariable = 'SNOW'
+    #sVariable = 'QSOIL'
+    #sVariable = 'QVEGE'
+    sVariable = 'QVEGT'
+
     sFilename_configuration = sWorkspace_configuration + slash \
         + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt

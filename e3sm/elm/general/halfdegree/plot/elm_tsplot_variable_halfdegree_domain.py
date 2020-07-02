@@ -9,7 +9,7 @@ sys.path.extend(sSystem_paths)
 from eslib.system.define_global_variables import *
 from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
-from eslib.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
+from eslib.visual.plot.plot_time_series_data import plot_time_series_data
 from eslib.visual.plot.plot_time_series_data_monthly_fill import plot_time_series_data_monthly_fill
 from eslib.visual.plot.plot_time_series_data_monthly_fill_with_zoom import plot_time_series_data_monthly_fill_with_zoom
 
