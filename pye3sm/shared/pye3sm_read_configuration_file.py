@@ -3,38 +3,40 @@ import datetime
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.toolbox.reader.parse_xml_file import parse_xml_file
+from pyes.system.define_global_variables import *
+from pyes.toolbox.reader.parse_xml_file import parse_xml_file
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
+sys.path.append(sPath_pye3sm)
+print(sPath_pye3sm)
+print('Debug path:')
+print(sys.path)
 
-from e3sm.shared import pye3sm
+from pye3sm.shared.e3sm import pye3sm
 
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
 def pye3sm_read_configuration_file(sFilename_configuration_in,\
-                                iFlag_branch_in = None, \
-                                 iFlag_continue_in = None, \
-                                 iFlag_debug_in = None, \
-                                 iFlag_short_in =None,\
-                                 iFlag_resubmit_in = None, \
-                                 iCase_index_in = None, \
-                                 iYear_start_in = None,\
-                                 iYear_end_in = None, \
-                                 iYear_data_start_in = None,\
-                                iYear_data_end_in = None, \
-                                 sDate_in = None,\
-                                 sFilename_clm_namelist_in = None,\
-                                sFilename_datm_namelist_in = None):
+                                   iFlag_branch_in = None, \
+                                   iFlag_continue_in = None, \
+                                   iFlag_debug_in = None, \
+                                   iFlag_short_in =None,\
+                                   iFlag_resubmit_in = None, \
+                                   iCase_index_in = None, \
+                                   iYear_start_in = None,\
+                                   iYear_end_in = None, \
+                                   iYear_data_start_in = None,\
+                                   iYear_data_end_in = None, \
+                                   sDate_in = None,\
+                                   sFilename_clm_namelist_in = None,\
+                                   sFilename_datm_namelist_in = None):
 
+    #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
-    oE3SM = pye3sm(config)
 
-    sModel = config['sModel']
-    sRegion = config['sRegion']
-    sVariable = config['sVariable']
+
+
     if iFlag_branch_in is not None:
         iFlag_branch = iFlag_branch_in
     else:
@@ -46,16 +48,27 @@ def pye3sm_read_configuration_file(sFilename_configuration_in,\
     if iFlag_debug_in is not None:
         iFlag_debug = iFlag_debug_in
     else:
-        iFlag_debug = 'ss'
+        iFlag_debug = 0
 
     if iFlag_resubmit_in is not None:
         iFlag_resubmit = iFlag_resubmit_in
     else:
-        iFlag_resubmit = 'ss'
+        iFlag_resubmit = 0
     if iFlag_short_in is not None:
         iFlag_short = iFlag_short_in
     else:
         iFlag_short = 0
+
+    #update these controls
+    config['iFlag_branch'] = "{:01d}".format(iFlag_branch)
+    config['iFlag_continue'] = "{:01d}".format(iFlag_continue)
+    config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
+    config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
+    config['iFlag_short'] = "{:01d}".format(iFlag_short)
+
+    sModel = config['sModel']
+
+
     if sDate_in is not None:
         sDate = sDate_in
     else:
@@ -65,18 +78,20 @@ def pye3sm_read_configuration_file(sFilename_configuration_in,\
         iCase_index = iCase_index_in
     else:
         iCase_index = 0
-    sCase_index = "{:03d}".format(iCase_index)
+        sCase_index = "{:03d}".format(iCase_index)
         #important change here
-
+    config['iCase_index'] = "{:04d}".format(iCase_index)
     sCase = sModel + sDate + sCase_index
+    config['sCase'] = sCase
+
     if iYear_start_in is not None:
         iYear_start = iYear_start_in
     else:
-        iYear_start =int(config['iYear_start'])
+        iYear_start = int(config['iYear_start'])
     if iYear_end_in is not None:
         iYear_end = iYear_end_in
     else:
-        iYear_end = int(config['iYear_end'] )
+        iYear_end = int(config['iYear_end'])
     if iYear_data_start_in is not None:
         iYear_data_start = iYear_data_start_in
     else:
@@ -84,7 +99,22 @@ def pye3sm_read_configuration_file(sFilename_configuration_in,\
     if iYear_data_end_in is not None:
         iYear_data_end = iYear_data_end_in
     else:
-        iYear_data_end = int(config['iYear_data_end'] )
+        iYear_data_end = int(config['iYear_data_end'])
+
+
+    config['iYear_start'] =  "{:04d}".format(iYear_start)
+    config['iYear_end'] =  "{:04d}".format(iYear_end)
+    config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
+    config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
+    nYear =  iYear_end-iYear_start+1
+    config['nYear'] =  "{:03d}".format(nYear)
+    nMonth = nYear  * 12
+    config['nMonth']=  "{:04d}".format(nMonth)
+
+
+
+    sRegion = config['sRegion']
+    #sVariable = config['sVariable']
 
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in
@@ -93,73 +123,47 @@ def pye3sm_read_configuration_file(sFilename_configuration_in,\
             + sModel + slash \
             + 'cases' + slash + 'user_nl_clm'
 
-    dConversion = float(config['dConversion'])
-
+    #update mask if region changes
 
     sFilename_mask = sWorkspace_data + slash \
         + sModel + slash + sRegion + slash \
-            + 'raster' + slash + 'dem' + slash \
+        + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
-    e3sm_global.iFlag_branch = iFlag_branch
-    e3sm_global.iFlag_continue = iFlag_continue
-    e3sm_global.iFlag_debug = iFlag_debug
-    e3sm_global.iFlag_resubmit = iFlag_resubmit
-    e3sm_global.iFlag_short = iFlag_short
-    e3sm_global.sCase = sCase
-    e3sm_global.iCase_index = iCase_index
-    e3sm_global.sVariable = sVariable
-    e3sm_global.sModel = sModel
-    e3sm_global.sRegion = sRegion
-    e3sm_global.iYear_start = iYear_start
-    e3sm_global.iYear_end = iYear_end
-    e3sm_global.iYear_data_start = iYear_data_start
-    e3sm_global.iYear_data_end = iYear_data_end
-    e3sm_global.nYear = iYear_end-iYear_start+1
-    e3sm_global.nmonth= e3sm_global.nYear  * 12
-    e3sm_global.dConversion = dConversion
 
-    e3sm_global.sFilename_mask = sFilename_mask
-    e3sm_global.sFilename_clm_namelist = sFilename_clm_namelist
+    config['sFilename_mask'] = sFilename_mask
+    config['sFilename_clm_namelist'] = sFilename_clm_namelist
 
-    sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash \
-        + sRegion + '/cases/'
-    sDirectory_run = '/compyfs/liao313/e3sm_scratch'
-    #sCIME_directory = sWorkspace_code + slash + 'fortran/e3sm/H2SC/cime/scripts'
     sCIME_directory = sWorkspace_code + slash \
         + 'fortran/e3sm/TRIGRID/cime/scripts'
-    #RES='ne30_oEC'
-    RES = 'r05_r05'
-    COMPSET='ICLM45'   #modified  for compy IMCLM45
-    PROJECT='e3sm'
-    MACH = 'compy'
-
-    e3sm_global.sDirectory_case = sDirectory_case
-    e3sm_global.sDirectory_run = sDirectory_run
-    e3sm_global.sCIME_directory = sCIME_directory
-    e3sm_global.RES = RES
-    e3sm_global.COMPSET =COMPSET
-    e3sm_global.PROJECT =PROJECT
-    e3sm_global.MACH =sMachine
+    config['sCIME_directory'] = sCIME_directory
 
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
     if not os.path.isdir(sWorkspace_analysis):
         os.makedirs(sWorkspace_analysis)
 
-    e3sm_global.sWorkspace_analysis = sWorkspace_analysis
-    e3sm_global.sWorkspace_cases = sDirectory_case
-    e3sm_global.sWorkspace_case = sDirectory_case + slash + sCase
-    e3sm_global.sWorkspace_simulation_case = sDirectory_run + slash + sCase
-    e3sm_global.sWorkspace_simulation_case_run = sDirectory_run + slash + sCase + slash +'run'
-    e3sm_global.sWorkspace_simulation_case_build = sDirectory_run + slash + sCase + slash +'build'
-    e3sm_global.sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
+    config['sWorkspace_analysis'] = sWorkspace_analysis
 
-    e3sm_global.sWorkspace_forcing = '/compyfs/inputdata/atm/datm7/gpcc/GPCC_noleap'
-    return
+    #case setting
+    sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash \
+        + sRegion + '/cases/'
+    config['sWorkspace_cases'] = sDirectory_case
+    sDirectory_run = '/compyfs/liao313/e3sm_scratch'
+
+    config['sDirectory_case'] = sDirectory_case
+    config['sDirectory_run'] = sDirectory_run
+
+    config['sWorkspace_case'] = sDirectory_case + slash + sCase
+    config['sWorkspace_simulation_case'] = sDirectory_run + slash + sCase
+    config['sWorkspace_simulation_case_run'] = sDirectory_run + slash + sCase + slash +'run'
+    config['sWorkspace_simulation_case_build'] = sDirectory_run + slash + sCase + slash +'build'
+    config['sWorkspace_analysis_case'] = sWorkspace_analysis + slash + sCase
+
+
+    return config
 if __name__ == '__main__':
 
-    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/e3sm_python/e3sm/shared/e3sm.xml'
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     aParameter  = pye3sm_read_configuration_file(sFilename_e3sm_configuration)
-    print(aParameter)    
-    oPest = pye3sm(aParameter)
-    
+    print(aParameter)
+    oE3SM = pye3sm(aParameter)

@@ -10,10 +10,10 @@ import numpy as np
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
+from pyes.system.define_global_variables import *
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 from e3sm.elm.general.halfdegree.plot.elm_3dtsplot_variable_halfdegree_domain import elm_3dtsplot_variable_halfdegree_domain
 
 def h2sc_3dtsplot_variable_halfdegree_domain(sFilename_configuration, \

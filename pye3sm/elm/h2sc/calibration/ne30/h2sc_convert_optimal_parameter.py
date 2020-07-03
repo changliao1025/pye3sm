@@ -8,8 +8,8 @@ from osgeo import ogr, osr
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
-from eslib.system.define_global_variables import *
+from pyes.system import define_global_variables
+from pyes.system.define_global_variables import *
 def h2sc_convert_optimal_parameter():
     ngrid   = 48602
     sModel = 'h2sc'

@@ -10,12 +10,12 @@ import multiprocessing
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-from eslib.system.define_global_variables import *
-from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
+from pyes.system.define_global_variables import *
+from pyes.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 
@@ -27,8 +27,8 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
     else:
         iCase_index = 0
     e3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index)       
-    sModel  = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion     
+    sModel  = oE3SM.sModel
+    sRegion = oE3SM.sRegion     
     
     iYear_start = 2000
     iYear_end = 2008
@@ -46,7 +46,7 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
     
     dConversion = 1.0
    
-    sVariable  = e3sm_global.sVariable
+    sVariable  = oE3SM.sVariable
 
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster    
     
@@ -57,7 +57,7 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
     
     #we only need to change the case number, all variables will be processed one by one
     
-    sCase = e3sm_global.sCase
+    sCase = oE3SM.sCase
     
     sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
     

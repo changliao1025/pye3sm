@@ -19,11 +19,11 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
-from eslib.system.define_global_variables import *
+from pyes.system import define_global_variables
+from pyes.system.define_global_variables import *
 
 
-from eslib.gis.gdal.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
+from pyes.gis.gdal.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
 
 def fmt(x, pos):
     a, b = '{:.2e}'.format(x).split('e')

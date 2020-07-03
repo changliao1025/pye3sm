@@ -17,7 +17,7 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 
 
 
-sPath_library_python = sWorkspace_code +  slash + 'python' + slash + 'library' + slash + 'eslib_python'
+sPath_library_python = sWorkspace_code +  slash + 'python' + slash + 'library' + slash + 'pyes_python'
 print(sPath_library_python)
 sys.path.append(sPath_library_python)
 from envi.envi_raster_binary_to_2d_array import envi_raster_binary_to_2d_array

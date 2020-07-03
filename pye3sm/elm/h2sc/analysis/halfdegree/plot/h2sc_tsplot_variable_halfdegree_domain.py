@@ -10,12 +10,13 @@ import numpy as np
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
+from pyes.system.define_global_variables import *
 
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain import elm_tsplot_variable_halfdegree_domain
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_configuration_file
+from pye3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain import elm_tsplot_variable_halfdegree_domain
 
 def h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
                                            iCase_index,\
@@ -58,7 +59,7 @@ if __name__ == '__main__':
 
     #sVariable = 'drainage'
     #sVariable = 'wt_slp'
-    sVariable='zwt'
+    #sVariable='zwt'
     #sVariable = 'RAIN'
     #sVariable = 'SNOW'
     #sVariable = 'QSOIL'
@@ -72,7 +73,13 @@ if __name__ == '__main__':
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-        #iCase_index = 240
+    #iCase_index = 240
+    #sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+
+
+    aParameter  = pye3sm_read_configuration_file(sFilename_e3sm_configuration)
+    print(aParameter)
+    oE3SM = pye3sm(aParameter)
     for iCase_index in (aCase_index):
         h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
                                                iCase_index,\

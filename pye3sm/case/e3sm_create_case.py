@@ -6,11 +6,11 @@ import subprocess
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
+from pyes.system.define_global_variables import *
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
@@ -45,26 +45,26 @@ def e3sm_create_case(sFilename_configuration_in,\
         sFilename_clm_namelist_in = sFilename_clm_namelist_in, \
         sFilename_datm_namelist_in = sFilename_datm_namelist_in)
 
-    sDirectory_case = e3sm_global.sDirectory_case
-    sDirectory_run = e3sm_global.sDirectory_run
+    sDirectory_case = oE3SM.sDirectory_case
+    sDirectory_run = oE3SM.sDirectory_run
     #start
     #currently we only need to calibrate H2SC so I will not use advanced I/O
     #we will the same variables used by corresponding CIME python script
 
     sPython=''
-    sModel = e3sm_global.sModel #'h2sc'
-    sCase = e3sm_global.sCase
-    RES = e3sm_global.RES
-    COMPSET = e3sm_global.COMPSET
-    PROJECT = e3sm_global.PROJECT
-    MACH = e3sm_global.MACH
-    sCIME_directory = e3sm_global.sCIME_directory
+    sModel = oE3SM.sModel #'h2sc'
+    sCase = oE3SM.sCase
+    RES = oE3SM.RES
+    COMPSET = oE3SM.COMPSET
+    PROJECT = oE3SM.PROJECT
+    MACH = oE3SM.MACH
+    sCIME_directory = oE3SM.sCIME_directory
     #GIT_HASH=`git log -n 1 --format=%h`
-    iFlag_branch = e3sm_global.iFlag_branch
-    iFlag_debug = e3sm_global.iFlag_debug
-    iFlag_continue = e3sm_global.iFlag_continue
-    iFlag_resubmit = e3sm_global.iFlag_resubmit
-    iFlag_short = e3sm_global.iFlag_short
+    iFlag_branch = oE3SM.iFlag_branch
+    iFlag_debug = oE3SM.iFlag_debug
+    iFlag_continue = oE3SM.iFlag_continue
+    iFlag_resubmit = oE3SM.iFlag_resubmit
+    iFlag_short = oE3SM.iFlag_short
 
     sCasename = sDirectory_case  + sCase
     sJobname = sModel + sCase
@@ -73,11 +73,11 @@ def e3sm_create_case(sFilename_configuration_in,\
     sBldname = sSimname + slash + 'bld'
     sRunname = sSimname + slash + 'run'
 
-    nYear = e3sm_global.nYear
+    nYear = oE3SM.nYear
     sYear =  "{:04d}".format(nYear)
-    sYear_start = "{:04d}".format(e3sm_global.iYear_start)
-    sYear_data_start = "{:04d}".format(e3sm_global.iYear_data_start)
-    sYear_data_end = "{:04d}".format(e3sm_global.iYear_data_end)
+    sYear_start = "{:04d}".format(oE3SM.iYear_start)
+    sYear_data_start = "{:04d}".format(oE3SM.iYear_data_start)
+    sYear_data_end = "{:04d}".format(oE3SM.iYear_data_end)
 
     if (iFlag_short ==1 ):
         sQueue = 'short'

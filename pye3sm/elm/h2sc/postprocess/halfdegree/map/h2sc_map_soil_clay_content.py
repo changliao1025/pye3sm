@@ -4,21 +4,21 @@ from netCDF4 import Dataset
 from osgeo import gdal #the default operator
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-from eslib.system.define_global_variables import *
+from pyes.system.define_global_variables import *
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
-from eslib.gis.envi.envi_write_header import envi_write_header
+from pyes.gis.envi.envi_write_header import envi_write_header
 
-from e3sm.shared import e3sm_global
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_map_soil_clay_content(sFilename_configuration_in, iCase_index):
     #extract information
     e3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index)       
-    sModel  = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion   
+    sModel  = oE3SM.sModel
+    sRegion = oE3SM.sRegion   
     if( sModel == 'h2sc'):
         pass
     else:
@@ -26,8 +26,8 @@ def h2sc_map_soil_clay_content(sFilename_configuration_in, iCase_index):
             aDimension = [ 96, 144]
         else:
             pass 
-    dConversion = e3sm_global.dConversion   
-    sVariable  = e3sm_global.sVariable
+    dConversion = oE3SM.dConversion   
+    sVariable  = oE3SM.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster
     #sWorkspace_data = home + slash + 'data'
     sWorkspace_simulation = sWorkspace_scratch + slash + 'e3sm_scratch'
@@ -35,7 +35,7 @@ def h2sc_map_soil_clay_content(sFilename_configuration_in, iCase_index):
         + sModel + slash + sRegion + slash + 'analysis'
     if not os.path.isdir(sWorkspace_analysis):
         os.makedirs(sWorkspace_analysis)
-    sCase = e3sm_global.sCase
+    sCase = oE3SM.sCase
     sWorkspace_simulation_case = sWorkspace_simulation + slash + sCase + slash + 'run'
     sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
     
@@ -43,7 +43,7 @@ def h2sc_map_soil_clay_content(sFilename_configuration_in, iCase_index):
         os.makedirs(sWorkspace_analysis_case)
     
     #read in global 0.5 * 0.5 mask
-    sFilename_mask = e3sm_global.sFilename_mask
+    sFilename_mask = oE3SM.sFilename_mask
 
     aDatasets = Dataset(sFilename_mask)
     netcdf_format = aDatasets.file_format

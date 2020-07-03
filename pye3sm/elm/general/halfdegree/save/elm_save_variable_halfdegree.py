@@ -9,16 +9,16 @@ from osgeo import gdal, osr #the default operator
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *     
-#from eslib.gis.envi.envi_write_header import envi_write_header
-from eslib.gis.gdal.write.gdal_write_envi_file_multiple_band import gdal_write_envi_file_multiple_band
+from pyes.system.define_global_variables import *     
+#from pyes.gis.envi.envi_write_header import envi_write_header
+from pyes.gis.gdal.write.gdal_write_envi_file_multiple_band import gdal_write_envi_file_multiple_band
 
-from eslib.gis.gdal.write.gdal_write_geotiff_multiple_band import gdal_write_geotiff_multiple_band
+from pyes.gis.gdal.write.gdal_write_geotiff_multiple_band import gdal_write_geotiff_multiple_band
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import e3sm_global
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
@@ -32,16 +32,16 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
          iYear_start_in = iYear_start_in, \
     iYear_end_in = iYear_end_in, \
          sDate_in= sDate_in)       
-    sModel  = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion      
+    sModel  = oE3SM.sModel
+    sRegion = oE3SM.sRegion      
     if iYear_start_in is not None:        
         iYear_start = iYear_start_in
     else:       
-        iYear_start = e3sm_global.iYear_start
+        iYear_start = oE3SM.iYear_start
     if iYear_end_in is not None:        
         iYear_end = iYear_end_in
     else:       
-        iYear_end = e3sm_global.iYear_end
+        iYear_end = oE3SM.iYear_end
     
     if iFlag_same_grid_in is not None:        
         iFlag_same_grid = iFlag_same_grid_in
@@ -56,22 +56,22 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
             aDimension = [ 96, 144]
         else:
             pass    
-    dConversion = e3sm_global.dConversion   
-    sVariable  = e3sm_global.sVariable
+    dConversion = oE3SM.dConversion   
+    sVariable  = oE3SM.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster
    
-    sCase = e3sm_global.sCase
+    sCase = oE3SM.sCase
     #we only need to change the case number, all variables will be processed one by one
     
     
-    sWorkspace_simulation_case_run = e3sm_global.sWorkspace_simulation_case_run
-    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
+    sWorkspace_simulation_case_run = oE3SM.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
     
     if not os.path.exists(sWorkspace_analysis_case):
         os.makedirs(sWorkspace_analysis_case)
     
     #read in global 0.5 * 0.5 mask
-    sFilename_mask = e3sm_global.sFilename_mask
+    sFilename_mask = oE3SM.sFilename_mask
 
     aDatasets = Dataset(sFilename_mask)
     netcdf_format = aDatasets.file_format

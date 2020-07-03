@@ -11,20 +11,20 @@ import matplotlib.pyplot as plt
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.toolbox.reader.text_reader_string import text_reader_string
-from eslib.system.define_global_variables import *
-from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.toolbox.reader.text_reader_string import text_reader_string
+from pyes.system.define_global_variables import *
+from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
-from eslib.toolbox.data.remove_outliers import remove_outliers
+from pyes.toolbox.data.remove_outliers import remove_outliers
 
-from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
-from eslib.visual.timeseries.plot_time_series_data import plot_time_series_data
+from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_configuration_in, \
@@ -49,19 +49,19 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
 
-    sModel = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion
-    sCase = e3sm_global.sCase
+    sModel = oE3SM.sModel
+    sRegion = oE3SM.sRegion
+    sCase = oE3SM.sCase
     nrow = 360
     ncolumn = 720
     if iYear_start_in is not None:
         iYear_start = iYear_start_in
     else:
-        iYear_start = e3sm_global.iYear_start
+        iYear_start = oE3SM.iYear_start
     if iYear_end_in is not None:
         iYear_end = iYear_end_in
     else:
-        iYear_end = e3sm_global.iYear_end
+        iYear_end = oE3SM.iYear_end
     #read obs 
     sFilename_mask = sWorkspace_data + slash \
         + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
@@ -120,8 +120,8 @@ def h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_confi
     subset_index_end = (iYear_subset_end+1-iYear_start) * 12 + iMonth-1
 
     #read simulated 
-    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
-    sVariable = e3sm_global.sVariable.lower()
+    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+    sVariable = oE3SM.sVariable.lower()
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
     #read the stack data

@@ -1,4 +1,4 @@
-<file id="pest.xml" version="2.0">
+<file id="e3sm.xml" version="2.0">
   <header>
     This file is used to control the e3sm case.
   </header>
@@ -22,100 +22,215 @@
       </desc>
     </entry>
   </group>
-  
+
 
   <group id="pye3sm">
-    <entry id="sPest_mode" value="estimation">
-      <type>char</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="npargp" value="1">
+    <entry id="iFlag_debug" value="0">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    <entry id="npar" value="1">
+    <entry id="iFlag_branch" value="0">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    <entry id="nobsgp" value="1">
+    <entry id="iFlag_continue" value="0">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    <entry id="nobs" value="1">
+    <entry id="iFlag_resubmit" value="0">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    <entry id="nprior" value="1">
+    <entry id="iFlag_short" value="0">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    <entry id="ntplfile" value="1">
+    <entry id="iCase_index" value="0">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    <entry id="ninsfile" value="1">
+    <entry id="iYear_start" value="1980">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    <entry id="sWokspace_pest_configuration" value="/qfs/people/liao313/03configuration/maces/coastal/calibration/pest.xml">
+    <entry id="iYear_end" value="2008">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="iYear_data_start" value="1980">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="iYear_data_end" value="2008">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="nMonth" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="nYear" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="dConversion" value="1.0">
+      <type>float</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="RES" value="r05_r05"> 
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration RES='ne30_oEC'
+      </desc>
+    </entry>
+    <entry id="COMPSET" value="ICLM45">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-
-    <entry id="sWorkspace_pest" value="/qfs/people/liao313/03configuration/maces/coastal/calibration/">
+    <entry id="PROJECT" value="e3sm">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sFilename_control" value="maces_pest.pst">
+    <entry id="MACH" value="compy">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sFilename_instruction" value="maces_pest.ins">
+    <entry id="sCIME_directory" value="/qfs/people/liao313/workspace/fortran/e3sm/TRIGRID/cime/scripts">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sFilename_hydro_template" value="maces_hydro_pest.tpl">
+    <entry id="sWorkspace_cases" value="">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sFilename_hydro_parameter" value="maces_hydro_pest.para">
+    <entry id="sWorkspace_forcing" value="/compyfs/inputdata/atm/datm7/gpcc/GPCC_noleap">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sFilename_output" value="maces_pest.out">
+    <entry id="sModel" value="">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
+    <entry id="sRegion" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sCase" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sDirectory_case" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sDirectory_run" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sVariable" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sFilename_clm_namelist" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sFilename_mask" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sWorkspace_analysis" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    
+    <entry id="sWorkspace_case" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sWorkspace_analysis_case" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sWorkspace_simulation_case_run" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sWorkspace_simulation_case" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sWorkspace_simulation_case_build" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    
   </group>
 
 </file>

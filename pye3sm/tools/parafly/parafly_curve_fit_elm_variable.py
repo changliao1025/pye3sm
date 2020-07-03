@@ -1,11 +1,11 @@
 import os,sys
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-from eslib.system.define_global_variables import *
-from eslib.toolbox.slurm.parafly.prepare_parafly_python_command_file import prepare_parafly_python_command_file
-from eslib.toolbox.slurm.parafly.prepare_parafly_slurm_job_script import prepare_parafly_slurm_job_script
+from pyes.system.define_global_variables import *
+from pyes.toolbox.slurm.parafly.prepare_parafly_python_command_file import prepare_parafly_python_command_file
+from pyes.toolbox.slurm.parafly.prepare_parafly_slurm_job_script import prepare_parafly_slurm_job_script
 
-from eslib.toolbox.slurm.slurm_prepare_job_script_python import slurm_prepare_job_script_python
+from pyes.toolbox.slurm.slurm_prepare_job_script_python import slurm_prepare_job_script_python
 
 def parafly_curve_fit_elm_variable():
 

@@ -14,19 +14,19 @@ from osgeo import ogr, osr
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
-from eslib.system.define_global_variables import *
+from pyes.system import define_global_variables
+from pyes.system.define_global_variables import *
 
 sCIME_directory = sWorkspace_code + slash + 'fortran/e3sm/ACME/cime/scripts'    
 
 #import 
-from eslib.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
-from eslib.gis.gdal.gdal_write_geotiff import gdal_write_geotiff
-from eslib.toolbox.reader.read_configuration_file import read_configuration_file
+from pyes.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
+from pyes.gis.gdal.gdal_write_geotiff import gdal_write_geotiff
+from pyes.toolbox.reader.read_configuration_file import read_configuration_file
 
-from eslib.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+from pyes.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
 iMonth_start = 1
 iMonth_end = 12

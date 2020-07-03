@@ -3,17 +3,18 @@ import datetime
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.toolbox.reader.read_configuration_file import read_configuration_file
+from pyes.system.define_global_variables import *
+from pyes.toolbox.reader.read_configuration_file import read_configuration_file
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import e3sm_global
+from pye3sm.shared import pye3sm
+
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
-def e3sm_read_configuration_file(sFilename_configuration_in,\
+def pye3sm_read_configuration_file(sFilename_configuration_in,\
                                 iFlag_branch_in = None, \
                                  iFlag_continue_in = None, \
                                  iFlag_debug_in = None, \
@@ -97,26 +98,26 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
         + sModel + slash + sRegion + slash \
             + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
-    e3sm_global.iFlag_branch = iFlag_branch
-    e3sm_global.iFlag_continue = iFlag_continue
-    e3sm_global.iFlag_debug = iFlag_debug
-    e3sm_global.iFlag_resubmit = iFlag_resubmit
-    e3sm_global.iFlag_short = iFlag_short
-    e3sm_global.sCase = sCase
-    e3sm_global.iCase_index = iCase_index
-    e3sm_global.sVariable = sVariable
-    e3sm_global.sModel = sModel
-    e3sm_global.sRegion = sRegion
-    e3sm_global.iYear_start = iYear_start
-    e3sm_global.iYear_end = iYear_end
-    e3sm_global.iYear_data_start = iYear_data_start
-    e3sm_global.iYear_data_end = iYear_data_end
-    e3sm_global.nYear = iYear_end-iYear_start+1
-    e3sm_global.nmonth= e3sm_global.nYear  * 12
-    e3sm_global.dConversion = dConversion
+    oE3SM.iFlag_branch = iFlag_branch
+    oE3SM.iFlag_continue = iFlag_continue
+    oE3SM.iFlag_debug = iFlag_debug
+    oE3SM.iFlag_resubmit = iFlag_resubmit
+    oE3SM.iFlag_short = iFlag_short
+    oE3SM.sCase = sCase
+    oE3SM.iCase_index = iCase_index
+    oE3SM.sVariable = sVariable
+    oE3SM.sModel = sModel
+    oE3SM.sRegion = sRegion
+    oE3SM.iYear_start = iYear_start
+    oE3SM.iYear_end = iYear_end
+    oE3SM.iYear_data_start = iYear_data_start
+    oE3SM.iYear_data_end = iYear_data_end
+    oE3SM.nYear = iYear_end-iYear_start+1
+    oE3SM.nmonth= oE3SM.nYear  * 12
+    oE3SM.dConversion = dConversion
 
-    e3sm_global.sFilename_mask = sFilename_mask
-    e3sm_global.sFilename_clm_namelist = sFilename_clm_namelist
+    oE3SM.sFilename_mask = sFilename_mask
+    oE3SM.sFilename_clm_namelist = sFilename_clm_namelist
 
     sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash \
         + sRegion + '/cases/'
@@ -130,26 +131,26 @@ def e3sm_read_configuration_file(sFilename_configuration_in,\
     PROJECT='e3sm'
     MACH = 'compy'
 
-    e3sm_global.sDirectory_case = sDirectory_case
-    e3sm_global.sDirectory_run = sDirectory_run
-    e3sm_global.sCIME_directory = sCIME_directory
-    e3sm_global.RES = RES
-    e3sm_global.COMPSET =COMPSET
-    e3sm_global.PROJECT =PROJECT
-    e3sm_global.MACH =sMachine
+    oE3SM.sDirectory_case = sDirectory_case
+    oE3SM.sDirectory_run = sDirectory_run
+    oE3SM.sCIME_directory = sCIME_directory
+    oE3SM.RES = RES
+    oE3SM.COMPSET =COMPSET
+    oE3SM.PROJECT =PROJECT
+    oE3SM.MACH =sMachine
 
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
     if not os.path.isdir(sWorkspace_analysis):
         os.makedirs(sWorkspace_analysis)
 
-    e3sm_global.sWorkspace_analysis = sWorkspace_analysis
-    e3sm_global.sWorkspace_cases = sDirectory_case
-    e3sm_global.sWorkspace_case = sDirectory_case + slash + sCase
-    e3sm_global.sWorkspace_simulation_case = sDirectory_run + slash + sCase
-    e3sm_global.sWorkspace_simulation_case_run = sDirectory_run + slash + sCase + slash +'run'
-    e3sm_global.sWorkspace_simulation_case_build = sDirectory_run + slash + sCase + slash +'build'
-    e3sm_global.sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
+    oE3SM.sWorkspace_analysis = sWorkspace_analysis
+    oE3SM.sWorkspace_cases = sDirectory_case
+    oE3SM.sWorkspace_case = sDirectory_case + slash + sCase
+    oE3SM.sWorkspace_simulation_case = sDirectory_run + slash + sCase
+    oE3SM.sWorkspace_simulation_case_run = sDirectory_run + slash + sCase + slash +'run'
+    oE3SM.sWorkspace_simulation_case_build = sDirectory_run + slash + sCase + slash +'build'
+    oE3SM.sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
 
-    e3sm_global.sWorkspace_forcing = '/compyfs/inputdata/atm/datm7/gpcc/GPCC_noleap'
+    oE3SM.sWorkspace_forcing = '/compyfs/inputdata/atm/datm7/gpcc/GPCC_noleap'
     return

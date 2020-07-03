@@ -9,12 +9,12 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system.define_global_variables import *  
-from eslib.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file
+from pyes.system.define_global_variables import *  
+from pyes.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 

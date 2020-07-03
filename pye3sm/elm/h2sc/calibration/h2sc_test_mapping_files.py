@@ -13,9 +13,9 @@ from scipy.sparse import csr_matrix
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
-from eslib.system.define_global_variables import *
-from eslib.gis.envi.envi_write_header import envi_write_header
+from pyes.system import define_global_variables
+from pyes.system.define_global_variables import *
+from pyes.gis.envi.envi_write_header import envi_write_header
 
 sVariable = 'wtd'
 

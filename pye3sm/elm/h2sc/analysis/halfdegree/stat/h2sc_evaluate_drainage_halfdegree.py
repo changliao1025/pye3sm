@@ -6,15 +6,15 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
+from pyes.system.define_global_variables import *
 
-from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
-from eslib.visual.histogram.histogram_plot import histogram_plot
+from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.visual.histogram.histogram_plot import histogram_plot
 
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_evaluate_drainage_halfdegree(sFilename_configuration_in, \
@@ -41,9 +41,9 @@ def h2sc_evaluate_drainage_halfdegree(sFilename_configuration_in, \
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
 
-    sModel = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion
-    sCase = e3sm_global.sCase
+    sModel = oE3SM.sModel
+    sRegion = oE3SM.sRegion
+    sCase = oE3SM.sCase
     #read obs 
     sFilename_mask = sWorkspace_data + slash \
         + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
@@ -68,8 +68,8 @@ def h2sc_evaluate_drainage_halfdegree(sFilename_configuration_in, \
 
 
     #read simulated 
-    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
-    sVariable = e3sm_global.sVariable.lower()
+    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+    sVariable = oE3SM.sVariable.lower()
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
     #read the stack data

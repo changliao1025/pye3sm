@@ -6,7 +6,7 @@ from scipy.interpolate import griddata #generate grid
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
+from pyes.system.define_global_variables import *
 
 nrow = 360
 ncolumn = 720

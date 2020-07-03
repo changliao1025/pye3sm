@@ -6,13 +6,13 @@ from netCDF4 import Dataset #read netcdf
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.system.define_global_variables import *
+from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import e3sm_global
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 
@@ -37,7 +37,7 @@ def h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration_in):
             aDimension = [ 96, 144]
         else:
             pass
-    sWorkspace_analysis = e3sm_global.sWorkspace_analysis
+    sWorkspace_analysis = oE3SM.sWorkspace_analysis
    
 
     sWorkspace_analysis_wtd  = sWorkspace_analysis + slash + 'wtd'

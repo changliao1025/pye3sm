@@ -13,23 +13,23 @@ import matplotlib.pyplot as plt
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system.define_global_variables import *
-from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
-from eslib.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
-from eslib.gis.gdal.write.gdal_write_geotiff import gdal_write_geotiff
-from eslib.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
+from pyes.system.define_global_variables import *
+from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
+from pyes.gis.gdal.write.gdal_write_geotiff import gdal_write_geotiff
+from pyes.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import e3sm_global
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     iRow_start_in=None, iRow_end_in =None):
 
     e3sm_read_configuration_file(sFilename_configuration_in)
-    sModel  = e3sm_global.sModel   
+    sModel  = oE3SM.sModel   
     
     nrow = 360
     ncolumn  = 720 
@@ -52,10 +52,10 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
         iRow_end= nrow
 
     dConversion = 1.0
-    sVariable  = e3sm_global.sVariable
+    sVariable  = oE3SM.sVariable
     print(sVariable)
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster        
-    sWorkspace_analysis =e3sm_global.sWorkspace_analysis
+    sWorkspace_analysis =oE3SM.sWorkspace_analysis
 
     sWorkspace_analysis_wtd  = sWorkspace_analysis + slash + 'wtd'
     if not os.path.exists(sWorkspace_analysis_wtd):

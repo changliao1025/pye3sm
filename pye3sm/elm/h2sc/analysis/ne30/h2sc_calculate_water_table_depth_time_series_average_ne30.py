@@ -11,16 +11,16 @@ from joblib import Parallel, delayed
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
-from eslib.system.define_global_variables import *
+from pyes.system import define_global_variables
+from pyes.system.define_global_variables import *
 
-from eslib.toolbox.reader.read_configuration_file import read_configuration_file
+from pyes.toolbox.reader.read_configuration_file import read_configuration_file
 
 sDirectory_case = sWorkspace_scratch + '/03model/h2sc/cases/'
 sDirectory_run = '/compyfs/liao313/e3sm_scratch'  
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 from e3sm.elm.general.ne30.h2sc_calculate_variable_time_series_average_ne30 import h2sc_calculate_variable_time_series_average_ne30
 
 

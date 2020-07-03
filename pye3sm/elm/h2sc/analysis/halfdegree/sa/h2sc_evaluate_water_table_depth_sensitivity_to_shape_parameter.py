@@ -6,17 +6,17 @@ import datetime
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.system.define_global_variables import *
+from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
-from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
-from eslib.visual.timeseries.plot_time_series_data import plot_time_series_data
+from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_configuration_in, \
@@ -42,12 +42,12 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
 
-    sModel = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion
-    sCase = e3sm_global.sCase
-    sVariable = e3sm_global.sVariable
+    sModel = oE3SM.sModel
+    sRegion = oE3SM.sRegion
+    sCase = oE3SM.sCase
+    sVariable = oE3SM.sVariable
     #create folder for this variable
-    sWorkspace_analysis_variable = e3sm_global.sWorkspace_analysis + slash + sVariable.lower()
+    sWorkspace_analysis_variable = oE3SM.sWorkspace_analysis + slash + sVariable.lower()
     if not os.path.exists(sWorkspace_analysis_variable):
         os.makedirs(sWorkspace_analysis_variable)
     #read obs 
@@ -112,8 +112,8 @@ def h2sc_evaluate_water_table_depth_sensitivity_to_shape_parameter(sFilename_con
                                  sDate_in = sDate_in)
 
         #read simulated 
-        sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
-        sVariable = e3sm_global.sVariable.lower()
+        sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+        sVariable = oE3SM.sVariable.lower()
         sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
         sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
         #read the stack data

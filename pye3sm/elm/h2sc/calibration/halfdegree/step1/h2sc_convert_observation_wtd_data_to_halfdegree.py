@@ -9,21 +9,21 @@ from scipy.interpolate import griddata #generate grid
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.gis.envi.envi_write_header import envi_write_header
+from pyes.system.define_global_variables import *
+from pyes.gis.envi.envi_write_header import envi_write_header
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_convert_observation_wtd_data_to_halfdegree(sFilename_configuration_in):
     config = e3sm_read_configuration_file(sFilename_configuration_in)
-    sModel  = e3sm_global.sModel    
-    sRegion = e3sm_global.sRegion
+    sModel  = oE3SM.sModel    
+    sRegion = oE3SM.sRegion
     dConversion = 1.0
     sVariable = 'wtd'
-    sFilename_mask = e3sm_global.sFilename_mask
+    sFilename_mask = oE3SM.sFilename_mask
     sFilename_wtd = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'raster' + slash \
         + 'wtd' + slash + 'Global_wtd_lowres.nc'
 

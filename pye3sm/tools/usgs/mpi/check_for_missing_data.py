@@ -8,8 +8,8 @@ import urllib.request
 import time
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-from eslib.system.define_global_variables import *
-from eslib.toolbox.reader.text_reader_string import text_reader_string
+from pyes.system.define_global_variables import *
+from pyes.toolbox.reader.text_reader_string import text_reader_string
 
 def check_for_missing_data(iRank, pRange):
     if iRank == 0:

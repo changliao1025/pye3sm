@@ -5,15 +5,15 @@ import datetime
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.gis.envi.envi_write_header import envi_write_header
-from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
-from eslib.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
+from pyes.system.define_global_variables import *
+from pyes.gis.envi.envi_write_header import envi_write_header
+from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
-sPath_e3sm_python = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import e3sm_global
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_scatterplot_density_halfdegree_by_data(sFilename_configuration_in,\
@@ -42,16 +42,16 @@ def elm_scatterplot_density_halfdegree_by_data(sFilename_configuration_in,\
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
 
-    sModel = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion
+    sModel = oE3SM.sModel
+    sRegion = oE3SM.sRegion
     if iYear_start_in is not None:
         iYear_start = iYear_start_in
     else:
-        iYear_start = e3sm_global.iYear_start
+        iYear_start = oE3SM.iYear_start
     if iYear_end_in is not None:
         iYear_end = iYear_end_in
     else:
-        iYear_end = e3sm_global.iYear_end
+        iYear_end = oE3SM.iYear_end
 
     if iFlag_same_grid_in is not None:
         iFlag_same_grid = iFlag_same_grid_in
@@ -67,9 +67,9 @@ def elm_scatterplot_density_halfdegree_by_data(sFilename_configuration_in,\
         else:
             pass
     
-    sCase = e3sm_global.sCase
-    sWorkspace_simulation_case_run =e3sm_global.sWorkspace_simulation_case_run
-    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
+    sCase = oE3SM.sCase
+    sWorkspace_simulation_case_run =oE3SM.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
 
     iFlag_optional = 1
 

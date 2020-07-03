@@ -12,10 +12,10 @@ import multiprocessing
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
-from eslib.system.define_global_variables import *
+from pyes.system import define_global_variables
+from pyes.system.define_global_variables import *
             
-from eslib.toolbox.reader.read_configuration_file import read_configuration_file
+from pyes.toolbox.reader.read_configuration_file import read_configuration_file
 sModel = 'h2sc'
 sFilename_configuration = sWorkspace_scratch + slash + '03model' + slash \
              + sModel + slash + 'cases' + slash + 'h2sc_configuration_wtd' + sExtension_txt

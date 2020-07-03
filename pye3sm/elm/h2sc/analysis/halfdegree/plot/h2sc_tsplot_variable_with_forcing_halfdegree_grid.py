@@ -7,16 +7,16 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.toolbox.date.day_in_month import day_in_month
-from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.system.define_global_variables import *
+from pyes.toolbox.date.day_in_month import day_in_month
+from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
-from eslib.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_two_y_axis import plot_time_series_data_multiple_temporal_resolution_two_y_axis
+from pyes.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_two_y_axis import plot_time_series_data_multiple_temporal_resolution_two_y_axis
 
 #import package
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in,\
                                                       iCase_index,\
@@ -36,7 +36,7 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
 
-    sWorkspace_forcing = e3sm_global.sWorkspace_forcing
+    sWorkspace_forcing = oE3SM.sWorkspace_forcing
     #set up index
     #pick the pixel by lat/lon
     dLongitude = -60.2
@@ -125,8 +125,8 @@ def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in
     #select subset by date range
 
     #read sim
-    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
-    sVariable = e3sm_global.sVariable.lower()
+    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+    sVariable = oE3SM.sVariable.lower()
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
     #read the stack data

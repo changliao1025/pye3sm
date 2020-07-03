@@ -11,11 +11,11 @@ import argparse
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-from eslib.system.define_global_variables import *
-from eslib.toolbox.reader.text_reader_string import text_reader_string
+from pyes.system.define_global_variables import *
+from pyes.toolbox.reader.text_reader_string import text_reader_string
 
 
-from eslib.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
+from pyes.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
 
 
 def tsplot_usgs_groundwate_data(iIndex_start, iIndex_end):

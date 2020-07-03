@@ -6,16 +6,16 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.system.define_global_variables import *
+from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
-from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
-from eslib.visual.histogram.histogram_plot import histogram_plot
-from eslib.visual.histogram.histogram_plot_multiple import histogram_plot_multiple
+from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.visual.histogram.histogram_plot import histogram_plot
+from pyes.visual.histogram.histogram_plot_multiple import histogram_plot_multiple
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def h2sc_evaluate_drainage_sensitivity_to_shape_parameter(sFilename_configuration_in, \
@@ -38,10 +38,10 @@ def h2sc_evaluate_drainage_sensitivity_to_shape_parameter(sFilename_configuratio
                              iYear_start_in = iYear_start_in,\
                              iYear_end_in = iYear_end_in,\
                              sDate_in= sDate_in)
-    sCase = e3sm_global.sCase
+    sCase = oE3SM.sCase
     
-    sModel = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion
+    sModel = oE3SM.sModel
+    sRegion = oE3SM.sRegion
     nCase = len(aCase_index)
     aCase = np.full(nCase, '')
     sFilename_mask = sWorkspace_data + slash \
@@ -67,12 +67,12 @@ def h2sc_evaluate_drainage_sensitivity_to_shape_parameter(sFilename_configuratio
                                  iYear_start_in = iYear_start_in,\
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
-        sCase = e3sm_global.sCase
+        sCase = oE3SM.sCase
         
         #read simulated 
     
-        sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
-        sVariable = e3sm_global.sVariable.lower()
+        sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+        sVariable = oE3SM.sVariable.lower()
         sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
         sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +  slash + 'dat'
         #read the stack data

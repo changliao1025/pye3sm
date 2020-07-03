@@ -6,21 +6,21 @@ import datetime
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
-from eslib.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
-from eslib.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.system.define_global_variables import *
+from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
 
-from eslib.visual.surface.surface_plot_data_monthly_multiple import surface_plot_data_monthly_multiple
+from pyes.visual.surface.surface_plot_data_monthly_multiple import surface_plot_data_monthly_multiple
 
 
 
-from eslib.toolbox.data.remove_outliers import remove_outliers
+from pyes.toolbox.data.remove_outliers import remove_outliers
 
-sPath_e3sm_python = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
+sPath_pye3sm = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import e3sm_global
+from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration_in,\
@@ -49,16 +49,16 @@ def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration
                                  iYear_end_in = iYear_end_in,\
                                  sDate_in= sDate_in)
 
-    sModel = e3sm_global.sModel
-    sRegion = e3sm_global.sRegion
+    sModel = oE3SM.sModel
+    sRegion = oE3SM.sRegion
     if iYear_start_in is not None:
         iYear_start = iYear_start_in
     else:
-        iYear_start = e3sm_global.iYear_start
+        iYear_start = oE3SM.iYear_start
     if iYear_end_in is not None:
         iYear_end = iYear_end_in
     else:
-        iYear_end = e3sm_global.iYear_end
+        iYear_end = oE3SM.iYear_end
 
     if iFlag_same_grid_in is not None:
         iFlag_same_grid = iFlag_same_grid_in
@@ -82,11 +82,11 @@ def elm_surface_plot_variable_halfdegree_domain_multiple(sFilename_configuration
             aDimension = [96, 144]
         else:
             pass
-        dConversion = e3sm_global.dConversion
-        sVariable = e3sm_global.sVariable.lower()
-        sCase = e3sm_global.sCase
-        sWorkspace_simulation_case_run =e3sm_global.sWorkspace_simulation_case_run
-        sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
+        dConversion = oE3SM.dConversion
+        sVariable = oE3SM.sVariable.lower()
+        sCase = oE3SM.sCase
+        sWorkspace_simulation_case_run =oE3SM.sWorkspace_simulation_case_run
+        sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
 
     nrow = 360
     ncolumn = 720

@@ -9,7 +9,7 @@ from osgeo import gdal #the default operator
 
 
 
-sPath_library_python = sWorkspace_code +  slash + 'python' + slash + 'library' + slash + 'eslib_python'
+sPath_library_python = sWorkspace_code +  slash + 'python' + slash + 'library' + slash + 'pyes_python'
 print(sPath_library_python)
 sys.path.append(sPath_library_python)
 from envi.envi_write_header import envi_write_header

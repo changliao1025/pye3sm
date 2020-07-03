@@ -11,7 +11,7 @@ from scipy.interpolate import griddata #generate grid
 
 
 
-sPath_library_python = sWorkspace_code +  slash + 'python' + slash + 'library' + slash + 'eslib_python'
+sPath_library_python = sWorkspace_code +  slash + 'python' + slash + 'library' + slash + 'pyes_python'
 print(sPath_library_python)
 sys.path.append(sPath_library_python)
 

@@ -15,12 +15,12 @@ from scipy.sparse import csr_matrix
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
-from eslib.system import define_global_variables
-from eslib.system.define_global_variables import *
-from eslib.toolbox.reader.read_configuration_file import read_configuration_file
+from pyes.system import define_global_variables
+from pyes.system.define_global_variables import *
+from pyes.toolbox.reader.read_configuration_file import read_configuration_file
 
-from eslib.gis.envi.envi_write_header import envi_write_header
-from eslib.gis.gdal.gdal_save_envi_file import gdal_save_envi_file
+from pyes.gis.envi.envi_write_header import envi_write_header
+from pyes.gis.gdal.gdal_save_envi_file import gdal_save_envi_file
 
 dConversion =1.0
 sVariable = 'wtd'

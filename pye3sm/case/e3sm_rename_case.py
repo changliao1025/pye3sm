@@ -8,11 +8,11 @@ import glob
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
-from eslib.system.define_global_variables import *
+from pyes.system.define_global_variables import *
 
-sPath_e3sm_python = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_e3sm_python)
-from e3sm.shared import e3sm_global
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sys.path.append(sPath_pye3sm)
+from e3sm.shared import oE3SM
 
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
@@ -31,18 +31,18 @@ def e3sm_rename_case(sFilename_configuration_in, sDate, sDate_new, \
         iFlag_debug_in = iFlag_debug_in, iFlag_resubmit_in = iFlag_resubmit_in, iFlag_short_in= iFlag_short_in, \
         iCase_index_in = iCase_index_in, sFilename_clm_namelist_in = sFilename_clm_namelist_in)
     
-    sCase = e3sm_global.sCase
+    sCase = oE3SM.sCase
 
-    sWorkspace_case = e3sm_global.sWorkspace_case
-    sWorkspace_simulation_case = e3sm_global.sWorkspace_simulation_case
-    sWorkspace_analysis_case = e3sm_global.sWorkspace_analysis_case
-    sFilename_nl = e3sm_global.sDirectory_case + slash + 'user_nl_clm_' + e3sm_global.sCase
+    sWorkspace_case = oE3SM.sWorkspace_case
+    sWorkspace_simulation_case = oE3SM.sWorkspace_simulation_case
+    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+    sFilename_nl = oE3SM.sDirectory_case + slash + 'user_nl_clm_' + oE3SM.sCase
     
     sCase_new = sModel+sDate_new+ "{:03d}".format(iCase)
-    sWorkspace_case_new  = e3sm_global.sDirectory_case + slash + sCase_new
-    sWorkspace_simulation_case_new  = e3sm_global.sDirectory_run + slash + sCase_new
-    sWorkspace_analysis_case_new  = e3sm_global.sWorkspace_analysis + slash + sCase_new
-    sFilename_nl_new = e3sm_global.sDirectory_case + 'user_nl_clm_' + sCase_new
+    sWorkspace_case_new  = oE3SM.sDirectory_case + slash + sCase_new
+    sWorkspace_simulation_case_new  = oE3SM.sDirectory_run + slash + sCase_new
+    sWorkspace_analysis_case_new  = oE3SM.sWorkspace_analysis + slash + sCase_new
+    sFilename_nl_new = oE3SM.sDirectory_case + 'user_nl_clm_' + sCase_new
     
 
 
@@ -50,7 +50,7 @@ def e3sm_rename_case(sFilename_configuration_in, sDate, sDate_new, \
     #shutil.move(sWorkspace_case, sWorkspace_case_new)
 
     shutil.move(sFilename_nl, sFilename_nl_new)
-    sWorkspace_simulation_case_run = e3sm_global.sWorkspace_simulation_case_run
+    sWorkspace_simulation_case_run = oE3SM.sWorkspace_simulation_case_run
     sPatterns = [sCase+'*']
     sWorkspace_simulation_case_run='/compyfs/liao313/e3sm_scratch/h2sc20200402001/run'
     for sPattern in sPatterns:
