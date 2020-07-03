@@ -18,20 +18,12 @@ from pye3sm.shared.case import pycase
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
-def pye3sm_read_configuration_file(sFilename_configuration_in,\
+def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                    iFlag_branch_in = None, \
                                    iFlag_continue_in = None, \
                                    iFlag_debug_in = None, \
                                    iFlag_short_in =None,\
-                                   iFlag_resubmit_in = None, \
-                                   iCase_index_in = None, \
-                                   iYear_start_in = None,\
-                                   iYear_end_in = None, \
-                                   iYear_data_start_in = None,\
-                                   iYear_data_end_in = None, \
-                                   sDate_in = None,\
-                                   sFilename_clm_namelist_in = None,\
-                                   sFilename_datm_namelist_in = None):
+                                   iFlag_resubmit_in = None):
 
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
@@ -66,6 +58,35 @@ def pye3sm_read_configuration_file(sFilename_configuration_in,\
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
+
+
+
+    
+
+
+    sCIME_directory = sWorkspace_code + slash \
+        + 'fortran/e3sm/TRIGRID/cime/scripts'
+    config['sCIME_directory'] = sCIME_directory
+
+    
+    
+
+   
+
+
+    return config
+def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
+                                   iCase_index_in = None, \
+                                   iYear_start_in = None,\
+                                   iYear_end_in = None, \
+                                   iYear_data_start_in = None,\
+                                   iYear_data_end_in = None, \
+                                   sDate_in = None,\
+                                   sFilename_clm_namelist_in = None,\
+                                   sFilename_datm_namelist_in = None):
+    #read the default configuration
+    config = parse_xml_file(sFilename_configuration_in)
+
 
     sModel = config['sModel']
 
@@ -125,19 +146,12 @@ def pye3sm_read_configuration_file(sFilename_configuration_in,\
             + 'cases' + slash + 'user_nl_clm'
 
     #update mask if region changes
-
     sFilename_mask = sWorkspace_data + slash \
         + sModel + slash + sRegion + slash \
         + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
 
     config['sFilename_mask'] = sFilename_mask
-    config['sFilename_clm_namelist'] = sFilename_clm_namelist
-
-    sCIME_directory = sWorkspace_code + slash \
-        + 'fortran/e3sm/TRIGRID/cime/scripts'
-    config['sCIME_directory'] = sCIME_directory
-
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
     if not os.path.isdir(sWorkspace_analysis):
@@ -165,6 +179,10 @@ def pye3sm_read_configuration_file(sFilename_configuration_in,\
 if __name__ == '__main__':
 
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
-    aParameter  = pye3sm_read_configuration_file(sFilename_e3sm_configuration)
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+    aParameter  = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
     print(aParameter)
     oE3SM = pye3sm(aParameter)
+    aParameter  = pye3sm_read_case_configuration_file(sFilename_case_configuration)
+    print(aParameter)
+    oCase = pycase(aParameter)

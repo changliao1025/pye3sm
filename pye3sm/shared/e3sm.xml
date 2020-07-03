@@ -55,54 +55,8 @@
         The scratch workspace
       </desc>
     </entry>
-    <entry id="iCase_index" value="0">
-      <type>int</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="iYear_start" value="1980">
-      <type>int</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="iYear_end" value="2008">
-      <type>int</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="iYear_data_start" value="1980">
-      <type>int</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="iYear_data_end" value="2008">
-      <type>int</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="nMonth" value="0">
-      <type>int</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="nYear" value="0">
-      <type>int</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
-    <entry id="dConversion" value="1.0">
-      <type>float</type>
-      <desc>
-        The scratch workspace
-      </desc>
-    </entry>
+
+  
     <entry id="RES" value="r05_r05"> 
       <type>char</type>
       <desc>
@@ -133,60 +87,14 @@
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sWorkspace_cases" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
+   
     <entry id="sWorkspace_forcing" value="/compyfs/inputdata/atm/datm7/gpcc/GPCC_noleap">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sModel" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sRegion" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sCase" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sDirectory_case" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sDirectory_run" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sVariable" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sFilename_clm_namelist" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
+   
     <entry id="sFilename_mask" value="">
       <type>char</type>
       <desc>
@@ -199,37 +107,7 @@
         The workspace of pest calibration
       </desc>
     </entry>
-    
-    <entry id="sWorkspace_case" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sWorkspace_analysis_case" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sWorkspace_simulation_case_run" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sWorkspace_simulation_case" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
-    <entry id="sWorkspace_simulation_case_build" value="">
-      <type>char</type>
-      <desc>
-        The workspace of pest calibration
-      </desc>
-    </entry>
+   
     
   </group>
 

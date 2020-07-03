@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 
 class pycase(object):
     __metaclass__ = ABCMeta
-    aParameter={}
+    #aParameter={}
 
     
     iCase_index=0
@@ -23,7 +23,8 @@ class pycase(object):
     sCase=''
     sDate =''
     sVariable=''
-    sFilename_clm_namelist=''
+    sWorkspace_analysis=''
+    sWorkspace_cases=''
 
     
     sWorkspace_case=''
@@ -31,11 +32,12 @@ class pycase(object):
     sWorkspace_simulation_case=''
     sWorkspace_simulation_case_build=''
     sWorkspace_simulation_case_run=''
-    
+    sFilename_mask=''
+    sFilename_clm_namelist=''
 
     def __init__(self, aParameter):
         print('PEST model is being initialized')
-        self.aParameter = aParameter
+        #self.aParameter = aParameter
 
         #required with default variables
 
@@ -71,9 +73,11 @@ class pycase(object):
             self.sDate                = aParameter[ 'sDate']
         if 'sVariable' in aParameter:
             self.sVariable               = aParameter[ 'sVariable']
-        if 'sFilename_clm_namelist' in aParameter:
-            self.sFilename_clm_namelist      = aParameter[ 'sFilename_clm_namelist']
-       
+        
+        if 'sWorkspace_analysis' in aParameter:
+            self.sWorkspace_analysis       = aParameter[ 'sWorkspace_analysis']
+        if 'sWorkspace_cases' in aParameter:
+            self.sWorkspace_cases    = aParameter[ 'sWorkspace_cases']
        
         if 'sWorkspace_case' in aParameter:
             self.sWorkspace_case = aParameter[ 'sWorkspace_case']
@@ -86,6 +90,10 @@ class pycase(object):
             self.sWorkspace_simulation_case_build= aParameter[ 'sWorkspace_simulation_case_build']
         if 'sWorkspace_simulation_case_run' in aParameter:
             self.sWorkspace_simulation_case_run= aParameter[ 'sWorkspace_simulation_case_run']
+        if 'sFilename_mask' in aParameter:
+            self.sFilename_mask               = aParameter[ 'sFilename_mask']
+        if 'sFilename_clm_namelist' in aParameter:
+            self.sFilename_clm_namelist      = aParameter[ 'sFilename_clm_namelist']
      
 
         sCase_index = "{:03d}".format( self.iCase_index )

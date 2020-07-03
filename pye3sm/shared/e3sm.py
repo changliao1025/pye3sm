@@ -18,9 +18,8 @@ class pye3sm(object):
     sCIME_directory=''
    
     sWorkspace_forcing=''
-    sWorkspace_analysis=''
-    sWorkspace_cases=''
-    sFilename_mask=''
+    
+    
 
     def __init__(self, aParameter):
         print('PEST model is being initialized')
@@ -52,16 +51,12 @@ class pye3sm(object):
         
         if 'sCIME_directory' in aParameter:
             self.sCIME_directory    = aParameter[ 'sCIME_directory']
-        if 'sWorkspace_analysis' in aParameter:
-            self.sWorkspace_analysis       = aParameter[ 'sWorkspace_analysis']
-        if 'sWorkspace_cases' in aParameter:
-            self.sWorkspace_cases    = aParameter[ 'sWorkspace_cases']
+        
         
         if 'sWorkspace_forcing' in aParameter:
             self.sWorkspace_forcing= aParameter[ 'sWorkspace_forcing']
 
-        if 'sFilename_mask' in aParameter:
-            self.sFilename_mask               = aParameter[ 'sFilename_mask']
+        
         
 
        
