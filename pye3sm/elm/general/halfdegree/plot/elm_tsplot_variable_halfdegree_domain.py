@@ -10,35 +10,34 @@ from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 from pyes.visual.plot.plot_time_series_data import plot_time_series_data
-from pyes.visual.plot.plot_time_series_data_monthly_fill import plot_time_series_data_monthly_fill
-from pyes.visual.plot.plot_time_series_data_monthly_fill_with_zoom import plot_time_series_data_monthly_fill_with_zoom
+
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
 
-sPath_pye3sm = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-from e3sm.shared import pye3sm
-from e3sm.shared.pye3sm_read_configuration_file import pye3sm_read_configuration_file
+from pye3sm.shared import pye3sm
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_configuration_file
 
 def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
                                    iCase_index, \
                                    iYear_start_in = None,\
                                    iYear_end_in = None,\
-                                       iYear_subset_start_in = None, \
-                                    iYear_subset_end_in = None,\
+                                    iYear_subset_start_in = None, \
+                                iYear_subset_end_in = None,\
                                    iFlag_same_grid_in = None,\
                                    sDate_in = None):
 
     #extract information
-    e3sm_read_configuration_file(sFilename_configuration_in,\
+    aParameter = pye3sm_read_configuration_file(sFilename_configuration_in,\
                                  iCase_index_in = iCase_index, \
                                  iYear_start_in = iYear_start_in,\
                                  iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
+                                 sDate_in= sDate_in)    
+    oE3SM = pye3sm(aParameter)
+
 
     sModel = oE3SM.sModel
     sRegion = oE3SM.sRegion
@@ -171,7 +170,7 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
             pass
         else:
         
-            plot_time_series_data_monthly_fill(dates_subset, aVariable,\
+            plot_time_series_data(dates_subset, aVariable,\
                                       sFilename_out,\
                                       iReverse_Y_in = 1, \
                                       sTitle_in = '', \

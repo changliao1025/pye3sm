@@ -74,12 +74,12 @@ if __name__ == '__main__':
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
     #iCase_index = 240
-    #sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
 
 
-    aParameter  = pye3sm_read_configuration_file(sFilename_e3sm_configuration)
-    print(aParameter)
-    oE3SM = pye3sm(aParameter)
+    #aParameter  = pye3sm_read_configuration_file(sFilename_configuration)
+    #print(aParameter)
+    #oE3SM = pye3sm(aParameter)
     for iCase_index in (aCase_index):
         h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
                                                iCase_index,\

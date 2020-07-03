@@ -13,6 +13,7 @@ print('Debug path:')
 print(sys.path)
 
 from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
