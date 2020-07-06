@@ -68,11 +68,6 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         + 'fortran/e3sm/TRIGRID/cime/scripts'
     config['sCIME_directory'] = sCIME_directory
 
-    
-    
-
-   
-
 
     return config
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
@@ -82,6 +77,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                    iYear_data_start_in = None,\
                                    iYear_data_end_in = None, \
                                    sDate_in = None,\
+                                sVariable_in = None, \
                                    sFilename_clm_namelist_in = None,\
                                    sFilename_datm_namelist_in = None):
     #read the default configuration
@@ -95,15 +91,16 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sDate = sDate_in
     else:
         sDate = sDate_default
-        pass
+        
     if iCase_index_in is not None:
         iCase_index = iCase_index_in
     else:
         iCase_index = 0
-        sCase_index = "{:03d}".format(iCase_index)
+    sCase_index = "{:03d}".format(iCase_index)
         #important change here
     config['iCase_index'] = "{:04d}".format(iCase_index)
     sCase = sModel + sDate + sCase_index
+    config['sDate'] = sDate
     config['sCase'] = sCase
 
     if iYear_start_in is not None:
@@ -124,6 +121,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         iYear_data_end = int(config['iYear_data_end'])
 
 
+    if sVariable_in is not None:
+        sVariable = sVariable_in
+    else:
+        sVariable = config['iYear_start']
+
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
     config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
@@ -136,7 +138,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
 
     sRegion = config['sRegion']
-    #sVariable = config['sVariable']
+    config['sVariable'] = sVariable
 
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in

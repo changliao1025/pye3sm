@@ -34,6 +34,13 @@
         The scratch workspace
       </desc>
     </entry>
+<entry id="iFlag_same_grid" value="1">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    
     <entry id="nMonth" value="0">
       <type>int</type>
       <desc>
@@ -52,13 +59,13 @@
         The scratch workspace
       </desc>
     </entry>
-    <entry id="sModel" value="">
+    <entry id="sModel" value="h2sc">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    <entry id="sRegion" value="">
+    <entry id="sRegion" value="global">
       <type>char</type>
       <desc>
         The workspace of pest calibration

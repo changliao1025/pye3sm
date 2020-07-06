@@ -10,15 +10,17 @@ class pycase(object):
     iYear_end=0
     iYear_data_start=0
     iYear_data_end=0
+
+    iFlag_same_grid=1
     nmonth=0
-    dConversion=0.0
+    dConversion=1.0
 
   
     sDirectory_case=''
     sDirectory_run=''
    
-    sModel=''
-    sRegion=''
+    sModel='h2sc'
+    sRegion='global'
 
     sCase=''
     sDate =''
@@ -53,6 +55,9 @@ class pycase(object):
             self.iYear_data_start             = int(aParameter[ 'iYear_data_start'])
         if 'iYear_data_end' in aParameter:
             self.iYear_data_end             = int(aParameter[ 'iYear_data_end'])
+        if 'iFlag_same_grid' in aParameter:
+            self.iFlag_same_grid             = int(aParameter[ 'iFlag_same_grid'])
+            
         if 'nmonth' in aParameter:
             self.nmonth             = int(aParameter[ 'nmonth'])
         if 'dConversion' in aParameter:
@@ -63,9 +68,9 @@ class pycase(object):
         if 'sDirectory_run' in aParameter:
             self.sDirectory_run       = aParameter[ 'sDirectory_run' ]
       
-        if 'sModel' in aParameter:
+        if 'sModel' in aParameter and len(aParameter[ 'sModel']) > 1 :
             self.sModel                = aParameter[ 'sModel']
-        if 'sRegion' in aParameter:
+        if 'sRegion' in aParameter and len(aParameter[ 'sRegion']) > 1:
             self.sRegion               = aParameter[ 'sRegion']
         if 'sCase' in aParameter:
             self.sCase                = aParameter[ 'sCase']

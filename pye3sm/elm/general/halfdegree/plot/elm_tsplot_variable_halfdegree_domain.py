@@ -9,7 +9,7 @@ sys.path.extend(sSystem_paths)
 from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
-from pyes.visual.plot.plot_time_series_data import plot_time_series_data
+from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
@@ -18,9 +18,10 @@ sPath_pye3sm = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'py
 sys.path.append(sPath_pye3sm)
 
 
-from pye3sm.shared import pye3sm
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_configuration_file
-
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import  pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
                                    iCase_index, \
                                    iYear_start_in = None,\
@@ -28,32 +29,27 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
                                     iYear_subset_start_in = None, \
                                 iYear_subset_end_in = None,\
                                    iFlag_same_grid_in = None,\
-                                   sDate_in = None):
+                                        dMax_y_in = None,\
+                                                       dMin_y_in =None,\
+                                   sDate_in = None,\
+                                   sVariable_in= None):
 
     #extract information
-    aParameter = pye3sm_read_configuration_file(sFilename_configuration_in,\
+    aParameter = pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                  iCase_index_in = iCase_index, \
                                  iYear_start_in = iYear_start_in,\
                                  iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)    
-    oE3SM = pye3sm(aParameter)
+                                 sDate_in= sDate_in, \
+                                     sVariable_in= sVariable_in)    
+    oCase = pycase(aParameter)
 
 
-    sModel = oE3SM.sModel
-    sRegion = oE3SM.sRegion
-    if iYear_start_in is not None:
-        iYear_start = iYear_start_in
-    else:
-        iYear_start = oE3SM.iYear_start
-    if iYear_end_in is not None:
-        iYear_end = iYear_end_in
-    else:
-        iYear_end = oE3SM.iYear_end
+    sModel = oCase.sModel
+    sRegion = oCase.sRegion
+    iFlag_same_grid = oCase.iFlag_same_grid
 
-    if iFlag_same_grid_in is not None:
-        iFlag_same_grid = iFlag_same_grid_in
-    else:
-        iFlag_same_grid = 0
+    iYear_start = oCase.iYear_start
+    iYear_end = oCase.iYear_end
 
     if iYear_subset_start_in is not None:
         iYear_subset_start = iYear_subset_start_in
@@ -72,11 +68,11 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
             aDimension = [96, 144]
         else:
             pass
-    dConversion = oE3SM.dConversion
-    sVariable = oE3SM.sVariable.lower()
-    sCase = oE3SM.sCase
-    sWorkspace_simulation_case_run =oE3SM.sWorkspace_simulation_case_run
-    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+    dConversion = oCase.dConversion
+    sVariable = oCase.sVariable
+    sCase = oCase.sCase
+    sWorkspace_simulation_case_run =oCase.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = oCase.sWorkspace_analysis_case
 
     nrow = 360
     ncolumn = 720
@@ -107,12 +103,12 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
     
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +  slash + 'dat'
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
 
    
     #read the stack data
 
-    sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
+    sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
 
     aData_all = gdal_read_envi_file_multiple_band(sFilename)
     aVariable_total = aData_all[0]
@@ -165,20 +161,22 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
             aVariable4[iStress] = np.nanmax(dummy)
 
 
-        aVariable = np.array(  [[aVariable4], [aVariable2], [aVariable3] ] )
+        aVariable = np.array(  [aVariable2] )
         if np.isnan(aVariable).all():
             pass
         else:
         
-            plot_time_series_data(dates_subset, aVariable,\
+            plot_time_series_data([dates_subset], aVariable,\
                                       sFilename_out,\
-                                      iReverse_Y_in = 1, \
+                                      iReverse_y_in = 0, \
+                                           dMax_y_in = dMax_y_in,\
+                                                       dMin_y_in =dMin_y_in,\
                                       sTitle_in = '', \
-                                      sLabel_Y_in= sLabel_Y,\
-                                      sLabel_legend_in = sLabel_legend, \
-                                      sMarker_in='+',\
-                                      iSize_X_in = 12,\
-                                      iSize_Y_in = 5)
+                                      sLabel_y_in= sLabel_Y,\
+                                      aLabel_legend_in = [sLabel_legend], \
+                                      aMarker_in=['+'],\
+                                      iSize_x_in = 12,\
+                                      iSize_y_in = 5)
 
     print("finished")
 

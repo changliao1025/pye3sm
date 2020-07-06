@@ -13,9 +13,9 @@ sys.path.extend(sSystem_paths)
 from pyes.system.define_global_variables import *
 
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_configuration_file
+
 from pye3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain import elm_tsplot_variable_halfdegree_domain
 
 def h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
@@ -24,7 +24,10 @@ def h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
                                            iYear_end_in =None,\
                                            iYear_subset_start_in = None, \
                                            iYear_subset_end_in = None,\
-                                           sDate_in = None):
+                                             dMax_y_in = None,\
+                                                       dMin_y_in =None,\
+                                           sDate_in = None,\
+                                               sVariable_in = None):
 
     elm_tsplot_variable_halfdegree_domain(sFilename_configuration,\
                                           iCase_index, \
@@ -33,7 +36,10 @@ def h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
                                           iYear_end_in = iYear_end_in,\
                                           iYear_subset_start_in = iYear_subset_start_in, \
                                           iYear_subset_end_in =iYear_subset_end_in,\
-                                          sDate_in = sDate_in)
+                                               dMax_y_in = dMax_y_in,\
+                                                       dMin_y_in =dMin_y_in,\
+                                          sDate_in = sDate_in, \
+                                              sVariable_in = sVariable_in )
 
 if __name__ == '__main__':
     iFlag_debug = 1
@@ -66,6 +72,8 @@ if __name__ == '__main__':
     #sVariable = 'QVEGE'
     sVariable = 'QVEGT'
 
+
+    sVariable = sVariable.lower()
     sFilename_configuration = sWorkspace_configuration + slash \
         + sModel + slash \
         + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
@@ -74,19 +82,22 @@ if __name__ == '__main__':
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
     #iCase_index = 240
-    sFilename_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
-
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
 
     #aParameter  = pye3sm_read_configuration_file(sFilename_configuration)
     #print(aParameter)
     #oE3SM = pye3sm(aParameter)
     for iCase_index in (aCase_index):
-        h2sc_tsplot_variable_halfdegree_domain(sFilename_configuration, \
+        h2sc_tsplot_variable_halfdegree_domain(sFilename_case_configuration, \
                                                iCase_index,\
                                                iYear_start_in = iYear_start, \
                                                iYear_end_in =iYear_end,\
-                                               iYear_subset_start_in = 1990, \
+                                               iYear_subset_start_in = 2000, \
                                                iYear_subset_end_in =2008,\
-                                               sDate_in= sDate)
+                                                   dMax_y_in = 0.0001,\
+                                                       dMin_y_in =0,\
+                                               sDate_in= sDate,\
+                                              sVariable_in = sVariable)
 
     print('finished')
