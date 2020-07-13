@@ -41,6 +41,7 @@ if __name__ == '__main__':
     iYear_start = 1980
     iYear_end = 2008
     #from now, to maintain consistancy, we will the same variable name for all processes.
+    #use the new naming method
     sVariable = 'ZWT'
     #sVariable = 'wt_slp'
     #sVariable = 'sur_slp'
