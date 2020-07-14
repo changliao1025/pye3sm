@@ -95,6 +95,12 @@
         The workspace of pest calibration
       </desc>
     </entry>
+     <entry id="sLabel_y" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
      <entry id="sWorkspace_cases" value="">
       <type>char</type>
       <desc>

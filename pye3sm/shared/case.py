@@ -27,6 +27,7 @@ class pycase(object):
     sVariable=''
     sWorkspace_analysis=''
     sWorkspace_cases=''
+    sLabel_y='' #the y label for plotting purpose
 
     
     sWorkspace_case=''
@@ -78,7 +79,9 @@ class pycase(object):
             self.sDate                = aParameter[ 'sDate']
         if 'sVariable' in aParameter:
             self.sVariable               = aParameter[ 'sVariable']
-        
+        if 'sLabel_y' in aParameter:
+            self.sLabel_y               = aParameter[ 'sLabel_y']
+
         if 'sWorkspace_analysis' in aParameter:
             self.sWorkspace_analysis       = aParameter[ 'sWorkspace_analysis']
         if 'sWorkspace_cases' in aParameter:

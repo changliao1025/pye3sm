@@ -22,7 +22,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                    iFlag_branch_in = None, \
                                    iFlag_continue_in = None, \
                                    iFlag_debug_in = None, \
-                                       iFlag_same_grid_in= None,\
+                             
                                    iFlag_short_in =None,\
                                    iFlag_resubmit_in = None):
 
@@ -46,10 +46,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_resubmit = iFlag_resubmit_in
     else:
         iFlag_resubmit = 0
-    if iFlag_same_grid_in is not None:        
-        iFlag_same_grid = iFlag_same_grid_in
-    else:       
-        iFlag_same_grid = 0
+   
     if iFlag_short_in is not None:
         iFlag_short = iFlag_short_in
     else:
@@ -61,7 +58,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
-    config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
+    
 
     sCIME_directory = sWorkspace_code + slash \
         + 'fortran/e3sm/TRIGRID/cime/scripts'
@@ -70,6 +67,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
 
     return config
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
+                                    iFlag_same_grid_in= None,\
                                    iCase_index_in = None, \
                                    iYear_start_in = None,\
                                    iYear_end_in = None, \
@@ -101,7 +99,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sCase = sModel + sDate + sCase_index
     config['sDate'] = sDate
     config['sCase'] = sCase
-
+    if iFlag_same_grid_in is not None:        
+        iFlag_same_grid = iFlag_same_grid_in
+    else:       
+        iFlag_same_grid = 0
     if iYear_start_in is not None:
         iYear_start = iYear_start_in
     else:
@@ -129,6 +130,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['iYear_end'] =  "{:04d}".format(iYear_end)
     config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
     config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
+    config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
     nYear =  iYear_end-iYear_start+1
     config['nYear'] =  "{:03d}".format(nYear)
     nMonth = nYear  * 12

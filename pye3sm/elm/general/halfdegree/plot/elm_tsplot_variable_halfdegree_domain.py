@@ -20,36 +20,26 @@ sys.path.append(sPath_pye3sm)
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import  pycase
+
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
-                                   iCase_index, \
-                                   iYear_start_in = None,\
-                                   iYear_end_in = None,\
+def elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in, \
                                     iYear_subset_start_in = None, \
                                 iYear_subset_end_in = None,\
                                    iFlag_same_grid_in = None,\
                                         dMax_y_in = None,\
-                                                       dMin_y_in =None,\
-                                   sDate_in = None,\
-                                   sVariable_in= None):
+                                                       dMin_y_in =None):
 
-    #extract information
-    aParameter = pye3sm_read_case_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in, \
-                                     sVariable_in= sVariable_in)    
-    oCase = pycase(aParameter)
+   
+    
 
 
-    sModel = oCase.sModel
-    sRegion = oCase.sRegion
-    iFlag_same_grid = oCase.iFlag_same_grid
+    sModel = oCase_in.sModel
+    sRegion = oCase_in.sRegion
+    iFlag_same_grid = oCase_in.iFlag_same_grid
 
-    iYear_start = oCase.iYear_start
-    iYear_end = oCase.iYear_end
+    iYear_start = oCase_in.iYear_start
+    iYear_end = oCase_in.iYear_end
 
     if iYear_subset_start_in is not None:
         iYear_subset_start = iYear_subset_start_in
@@ -68,17 +58,18 @@ def elm_tsplot_variable_halfdegree_domain(sFilename_configuration_in,\
             aDimension = [96, 144]
         else:
             pass
-    dConversion = oCase.dConversion
-    sVariable = oCase.sVariable
-    sCase = oCase.sCase
-    sWorkspace_simulation_case_run =oCase.sWorkspace_simulation_case_run
-    sWorkspace_analysis_case = oCase.sWorkspace_analysis_case
+    dConversion = oCase_in.dConversion
+    sVariable = oCase_in.sVariable
+    sCase = oCase_in.sCase
+    sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
     nrow = 360
     ncolumn = 720
 
     #read basin mask
-    sWorkspace_data_auxiliary_basin = sWorkspace_data + slash + sModel + slash + sRegion + slash \
+    sWorkspace_data_auxiliary_basin = sWorkspace_data + slash  \
+        + sModel + slash + sRegion + slash \
         + 'auxiliary' + slash + 'basins' 
     aBasin = ['amazon','congo','mississippi','yangtze']
 
