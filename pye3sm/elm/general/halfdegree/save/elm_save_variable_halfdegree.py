@@ -15,38 +15,39 @@ from pyes.gis.gdal.write.gdal_write_envi_file_multiple_band import gdal_write_en
 
 from pyes.gis.gdal.write.gdal_write_geotiff_multiple_band import gdal_write_geotiff_multiple_band
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
-def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
-    iFlag_same_grid_in = None, \
-    iYear_start_in = None, \
-    iYear_end_in = None, \
-    sDate_in = None ):
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
+
+#(sFilename_configuration_in, iCase_index, \
+#    iFlag_same_grid_in = None, \
+#    iYear_start_in = None, \
+#    iYear_end_in = None, \
+#    sDate_in = None ):
     
     #extract information
-    e3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index,\
-         iYear_start_in = iYear_start_in, \
-    iYear_end_in = iYear_end_in, \
-         sDate_in= sDate_in)       
-    sModel  = oE3SM.sModel
-    sRegion = oE3SM.sRegion      
-    if iYear_start_in is not None:        
-        iYear_start = iYear_start_in
-    else:       
-        iYear_start = oE3SM.iYear_start
-    if iYear_end_in is not None:        
-        iYear_end = iYear_end_in
-    else:       
-        iYear_end = oE3SM.iYear_end
+    #pye3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index,\
+    #     iYear_start_in = iYear_start_in, \
+    #iYear_end_in = iYear_end_in, \
+    #     sDate_in= sDate_in)       
+
+
+    sModel  = oCase_in.sModel
+    sRegion = oCase_in.sRegion      
+         
+    iYear_start = oCase_in.iYear_start
+        
+    iYear_end = oCase_in.iYear_end
     
-    if iFlag_same_grid_in is not None:        
-        iFlag_same_grid = iFlag_same_grid_in
-    else:       
-        iFlag_same_grid = 0
+          
+    iFlag_same_grid = oCase_in.iFlag_same_grid
+   
  
     print('The following model is processed: ', sModel)
     if( sModel == 'h2sc'):
@@ -56,22 +57,22 @@ def elm_save_variable_halfdegree(sFilename_configuration_in, iCase_index, \
             aDimension = [ 96, 144]
         else:
             pass    
-    dConversion = oE3SM.dConversion   
-    sVariable  = oE3SM.sVariable
+    dConversion = oCase_in.dConversion   
+    sVariable  = oCase_in.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster
    
-    sCase = oE3SM.sCase
+    sCase = oCase_in.sCase
     #we only need to change the case number, all variables will be processed one by one
     
     
-    sWorkspace_simulation_case_run = oE3SM.sWorkspace_simulation_case_run
-    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+    sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
     
     if not os.path.exists(sWorkspace_analysis_case):
         os.makedirs(sWorkspace_analysis_case)
     
     #read in global 0.5 * 0.5 mask
-    sFilename_mask = oE3SM.sFilename_mask
+    sFilename_mask = oCase_in.sFilename_mask
 
     aDatasets = Dataset(sFilename_mask)
     netcdf_format = aDatasets.file_format

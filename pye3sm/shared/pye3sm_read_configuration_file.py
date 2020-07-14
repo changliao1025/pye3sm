@@ -22,13 +22,12 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                    iFlag_branch_in = None, \
                                    iFlag_continue_in = None, \
                                    iFlag_debug_in = None, \
+                                       iFlag_same_grid_in= None,\
                                    iFlag_short_in =None,\
                                    iFlag_resubmit_in = None):
 
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
-
-
 
     if iFlag_branch_in is not None:
         iFlag_branch = iFlag_branch_in
@@ -47,6 +46,10 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_resubmit = iFlag_resubmit_in
     else:
         iFlag_resubmit = 0
+    if iFlag_same_grid_in is not None:        
+        iFlag_same_grid = iFlag_same_grid_in
+    else:       
+        iFlag_same_grid = 0
     if iFlag_short_in is not None:
         iFlag_short = iFlag_short_in
     else:
@@ -58,11 +61,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
-
-
-
-    
-
+    config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
 
     sCIME_directory = sWorkspace_code + slash \
         + 'fortran/e3sm/TRIGRID/cime/scripts'
@@ -77,7 +76,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                    iYear_data_start_in = None,\
                                    iYear_data_end_in = None, \
                                    sDate_in = None,\
-                                sVariable_in = None, \
+                                   sVariable_in = None, \
                                    sFilename_clm_namelist_in = None,\
                                    sFilename_datm_namelist_in = None):
     #read the default configuration
@@ -135,8 +134,6 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     nMonth = nYear  * 12
     config['nMonth']=  "{:04d}".format(nMonth)
 
-
-
     sRegion = config['sRegion']
     config['sVariable'] = sVariable
 
@@ -182,7 +179,7 @@ if __name__ == '__main__':
 
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
-    aParameter  = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
+    aParameter = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
     print(aParameter)
     oE3SM = pye3sm(aParameter)
     aParameter  = pye3sm_read_case_configuration_file(sFilename_case_configuration)
