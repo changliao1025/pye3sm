@@ -3,7 +3,7 @@
 PyE3SM is a Python library to assist E3SM model simulation.
 Currently, iy only supports the land component.
 
-# Abstarct
+# Abstract
 
 
 
