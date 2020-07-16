@@ -23,7 +23,7 @@ from pye3sm.shared.case import  pycase
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-def elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in, \
+def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
                                     iYear_subset_start_in = None, \
                                 iYear_subset_end_in = None,\
                                    iFlag_same_grid_in = None,\

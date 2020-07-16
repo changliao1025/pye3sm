@@ -74,6 +74,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                    iYear_data_start_in = None,\
                                    iYear_data_end_in = None, \
                                    sDate_in = None,\
+                                       sLabel_y_in = None, \
                                    sVariable_in = None, \
                                    sFilename_clm_namelist_in = None,\
                                    sFilename_datm_namelist_in = None):
@@ -125,6 +126,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sVariable = sVariable_in
     else:
         sVariable = config['iYear_start']
+    if sLabel_y_in is not None:
+        sLabel_y = sLabel_y_in
+    else:
+        sLabel_y = ''
 
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
@@ -138,6 +143,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     sRegion = config['sRegion']
     config['sVariable'] = sVariable
+    config['sLabel_y'] = sLabel_y
+    
 
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in

@@ -19,23 +19,23 @@ sys.path.append(sPath_pye3sm)
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
-from pye3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain import elm_tsplot_variable_halfdegree_domain
+from pye3sm.elm.general.halfdegree.plot.elm_tsplot_total_water_storage_halfdegree_domain import elm_tsplot_total_water_storage_halfdegree_domain
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def h2sc_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in, \
+def h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
                                            iYear_subset_start_in = None, \
                                            iYear_subset_end_in = None,\
                                              dMax_y_in = None,\
                                             dMin_y_in= None  ):
 
-    elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in, \
+    elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
                                          
                                           iYear_subset_start_in = iYear_subset_start_in, \
                                           iYear_subset_end_in =iYear_subset_end_in,\
                                                dMax_y_in = dMax_y_in,\
-                                                       dMin_y_in =dMin_y_in )
+                                                dMin_y_in =dMin_y_in )
 
 if __name__ == '__main__':
     iFlag_debug = 1
@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
         oCase = pycase(aParameter_case)
 
-        h2sc_tsplot_variable_halfdegree_domain(oE3SM, oCase, 
+        h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM, oCase, 
                                                iYear_subset_start_in = 2000, \
                                                iYear_subset_end_in =2008)
 
