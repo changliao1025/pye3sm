@@ -44,7 +44,7 @@ if __name__ == '__main__':
     sDate = '20200421'
     #sVariable='ZWT'
     #sVariable = 'wt_slp'    
-    aVariable = ['rain','snow','qsoil', 'qvege','qvegt', 'qover','qdrai']
+    aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI']
     #sVariable = 'drainage'
     #sVariable = 'sur_slp'
     sFilename_configuration = sWorkspace_configuration + slash + \
