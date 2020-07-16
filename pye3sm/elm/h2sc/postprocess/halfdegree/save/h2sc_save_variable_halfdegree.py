@@ -30,6 +30,7 @@ if __name__ == '__main__':
     sRegion = 'global'
     
     sDate = '20200421'
+    sDate = '202000602'
     iCase_index = 1
     
     iYear_start = 1980
@@ -39,8 +40,10 @@ if __name__ == '__main__':
     #sVariable = 'ZWT'
     #sVariable = 'wt_slp'
     #sVariable = 'sur_slp'
+
+    
     #P
-    #sVariable = 'RAIN'
+    sVariable = 'RAIN'
     #sVariable = 'SNOW'
     #ET
     #sVariable = 'QSOIL'
@@ -49,7 +52,7 @@ if __name__ == '__main__':
     #runoff
     #sVariable = 'QDRAI'
     #sVariable = 'DRARI_h2sc'
-    sVariable = 'QOVER'
+    #sVariable = 'QOVER'
    
 
 

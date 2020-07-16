@@ -44,7 +44,8 @@ if __name__ == '__main__':
     sDate = '20200421'
     #sVariable='ZWT'
     #sVariable = 'wt_slp'    
-    sVariable = 'drainage'
+    aVariable = ['rain','snow','qsoil', 'qvege','qvegt', 'qover','qdrai']
+    #sVariable = 'drainage'
     #sVariable = 'sur_slp'
     sFilename_configuration = sWorkspace_configuration + slash + \
         sModel + slash \
@@ -60,8 +61,10 @@ if __name__ == '__main__':
 
         #iCase_index = 240       
     for iCase_index in (aCase_index):
+        for iVariable in aVariable:
+
         
-        h2sc_save_variable_wrap(iCase_index)
+            h2sc_save_variable_wrap(iCase_index)
     
     
     print('finished')

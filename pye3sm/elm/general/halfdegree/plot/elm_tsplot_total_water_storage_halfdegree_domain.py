@@ -45,6 +45,7 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
         iYear_subset_end = iYear_end
 
     print('The following model is processed: ', sModel)
+    sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
     if (sModel == 'h2sc'):
         pass
     else:
@@ -91,15 +92,16 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
     aDate_subset = aDate[subset_index]
     nstress_subset= len(aDate_subset)
 
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
+    
 
 
     #read the stack data for each variable
     aVariable = ['rain','snow','qsoil', 'qvege','qvegt', 'qover','qdrai']
     nvariable = len(aVariable)
-    aVariable_tws = np.full( nvariable, nstress_subset, nrow, ncolumn )
+    aVariable_tws = np.full(( nvariable, nstress_subset, nrow, ncolumn ),-9999, dtype=float)
     for i in np.arange(nvariable):
         sVariable = aVariable[i]
+        sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
 
         sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
 
@@ -107,7 +109,7 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
         aVariable_total = aData_all[0]
         aVariable_tws[i, :, :, :] = aVariable_total[subset_index,:,:]
 
-    sLabel_Y = r'Total water storage variations'
+    sLabel_Y = r'Total water storage variations (mm/s)'
     #r'Water table depth (m)'
     #sLabel_Y =r'Drainge (mm/day)'
     #sLabel_Y =r'Water table slope (radian)'
@@ -152,22 +154,24 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
         #S = Rain + Snow - (qsoil + qvege + qvegt) - (Runoff)
         tws = aTWS_ts[0,:]+ aTWS_ts[1,:] \
             - (aTWS_ts[2,:]+ aTWS_ts[3,:] + aTWS_ts[4,:])\
-            - (aTWS_ts[5,:]+ aTWS_ts[6,:])
+            - (aTWS_ts[5,:]+ aTWS_ts[6,:]*0)
 
-        aVariable = np.array(  [tws] )
-        if np.isnan(aVariable).all():
+        aVariable_ts = np.array(  [tws] )
+        if np.isnan(aVariable_ts).all():
             pass
         else:
-
-            plot_time_series_data([aDate_subset], aVariable,\
+            aDate_ts = np.tile(aDate_subset,(nvariable,1))
+            aDate_ts = [aDate_subset]
+            
+            plot_time_series_data(aDate_ts, aVariable_ts,\
                                   sFilename_out,\
                                   iReverse_y_in = 0, \
                                   dMax_y_in = dMax_y_in,\
                                   dMin_y_in =dMin_y_in,\
                                   sTitle_in = '', \
                                   sLabel_y_in= sLabel_Y,\
-                                  aLabel_legend_in = [sLabel_legend], \
-                                  aMarker_in=['+'],\
+                                  #aLabel_legend_in = aVariable, \
+                                  #aMarker_in=['+'],\
                                   iSize_x_in = 12,\
                                   iSize_y_in = 5)
 
