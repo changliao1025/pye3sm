@@ -4,7 +4,7 @@ class pycase(object):
     __metaclass__ = ABCMeta
     #aParameter={}
 
-    
+    iFlag_spinup=0
     iCase_index=0
     iYear_start=0
     iYear_end=0
@@ -12,6 +12,7 @@ class pycase(object):
     iYear_data_end=0
 
     iFlag_same_grid=1
+    nyear=0
     nmonth=0
     dConversion=1.0
 
@@ -37,6 +38,7 @@ class pycase(object):
     sWorkspace_simulation_case_run=''
     sFilename_mask=''
     sFilename_clm_namelist=''
+    sFilename_datm_namelist=''
 
     def __init__(self, aParameter):
         print('PEST model is being initialized')
@@ -45,7 +47,8 @@ class pycase(object):
         #required with default variables
 
         #optional
-        
+        if 'iFlag_spinup' in aParameter:
+            self.iFlag_spinup             = int(aParameter[ 'iFlag_spinup'])
         if 'iCase_index' in aParameter:
             self.iCase_index             = int(aParameter[ 'iCase_index'])
         if 'iYear_start' in aParameter:
@@ -102,9 +105,12 @@ class pycase(object):
             self.sFilename_mask               = aParameter[ 'sFilename_mask']
         if 'sFilename_clm_namelist' in aParameter:
             self.sFilename_clm_namelist      = aParameter[ 'sFilename_clm_namelist']
+        if 'sFilename_datm_namelist' in aParameter:
+            self.sFilename_datm_namelist      = aParameter[ 'sFilename_datm_namelist']
      
 
         sCase_index = "{:03d}".format( self.iCase_index )
         sCase = self.sModel + self.sDate + sCase_index
         self.sCase = sCase
+        self.nyear = self.iYear_end - self.iYear_start + 1
         pass

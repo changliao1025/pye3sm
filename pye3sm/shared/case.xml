@@ -1,9 +1,15 @@
 <file id="e3sm.xml" version="2.0">
   <header>
     This file is used to control the e3sm case.
-  </header>  
+  </header>
 
-  <group id="pycase">    
+  <group id="pycase">
+   <entry id="iFlag_spinup" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
     <entry id="iCase_index" value="0">
       <type>int</type>
       <desc>
@@ -34,13 +40,13 @@
         The scratch workspace
       </desc>
     </entry>
-<entry id="iFlag_same_grid" value="1">
+    <entry id="iFlag_same_grid" value="1">
       <type>int</type>
       <desc>
         The scratch workspace
       </desc>
     </entry>
-    
+
     <entry id="nMonth" value="0">
       <type>int</type>
       <desc>
@@ -95,19 +101,19 @@
         The workspace of pest calibration
       </desc>
     </entry>
-     <entry id="sLabel_y" value="">
+    <entry id="sLabel_y" value="">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-     <entry id="sWorkspace_cases" value="">
+    <entry id="sWorkspace_cases" value="">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-  
+
     <entry id="sWorkspace_case" value="">
       <type>char</type>
       <desc>
@@ -138,13 +144,18 @@
         The workspace of pest calibration
       </desc>
     </entry>
-      <entry id="sFilename_clm_namelist" value="">
+    <entry id="sFilename_clm_namelist" value="">
       <type>char</type>
       <desc>
         The workspace of pest calibration
       </desc>
     </entry>
-    
+  <entry id="sFilename_datm_namelist" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
   </group>
 
 </file>

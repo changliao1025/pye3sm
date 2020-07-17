@@ -67,6 +67,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
 
     return config
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
+    iFlag_spinup_in = None, \
                                     iFlag_same_grid_in= None,\
                                    iCase_index_in = None, \
                                    iYear_start_in = None,\
@@ -83,7 +84,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
 
     sModel = config['sModel']
-
+    if iFlag_spinup_in is not None:
+        iFlag_spinup = iFlag_spinup_in
+    else:
+        iFlag_spinup = 0
 
     if sDate_in is not None:
         sDate = sDate_in
@@ -103,7 +107,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     if iFlag_same_grid_in is not None:        
         iFlag_same_grid = iFlag_same_grid_in
     else:       
-        iFlag_same_grid = 0
+        iFlag_same_grid = 1
     if iYear_start_in is not None:
         iYear_start = iYear_start_in
     else:
@@ -152,6 +156,12 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
             + sModel + slash \
             + 'cases' + slash + 'user_nl_clm'
+    if sFilename_datm_namelist_in is not None:
+        sFilename_datm_namelist = sFilename_datm_namelist_in
+    else:
+        sFilename_datm_namelist = sWorkspace_scratch + slash + '04model' + slash \
+            + sModel + slash \
+            + 'cases' + slash + 'user_nl_datm'
 
     #update mask if region changes
     sFilename_mask = sWorkspace_data + slash \
@@ -182,7 +192,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sWorkspace_simulation_case_build'] = sDirectory_run + slash + sCase + slash +'build'
     config['sWorkspace_analysis_case'] = sWorkspace_analysis + slash + sCase
 
-
+    config['sFilename_clm_namelist'] = sFilename_clm_namelist
+    config['sFilename_datm_namelist'] = sFilename_datm_namelist
     return config
 if __name__ == '__main__':
 

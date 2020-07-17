@@ -44,7 +44,6 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
     iYear_start = oCase_in.iYear_start
         
     iYear_end = oCase_in.iYear_end
-    
           
     iFlag_same_grid = oCase_in.iFlag_same_grid
    

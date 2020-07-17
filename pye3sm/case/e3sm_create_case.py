@@ -5,66 +5,46 @@ import subprocess
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
-
 from pyes.system.define_global_variables import *
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
-from e3sm.shared import oE3SM
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def e3sm_create_case(sFilename_configuration_in,\
-    iFlag_branch_in = None, \
-    iFlag_continue_in = None, \
-    iFlag_debug_in = None,\
-    iFlag_resubmit_in=None,\
-    iFlag_short_in=None, \
-    iCase_index_in = None,\
-    iYear_end_in = None, \
-    iYear_start_in = None, \
-    iYear_data_end_in = None, \
-    iYear_data_start_in = None, \
-    sDate_in =None     ,\
-    sFilename_clm_namelist_in = None, \
-    sFilename_datm_namelist_in = None):
+def e3sm_create_case(oE3SM_in, oCase_in,\
+                     iYear_data_end_in = None, \
+                     iYear_data_start_in = None):
+    #e3sm attributes
+    iFlag_branch = oE3SM_in.iFlag_branch
+    iFlag_debug = oE3SM_in.iFlag_debug
+    iFlag_continue = oE3SM_in.iFlag_continue
+    iFlag_resubmit = oE3SM_in.iFlag_resubmit
+    iFlag_short = oE3SM_in.iFlag_short
+    RES = oE3SM_in.RES
+    COMPSET = oE3SM_in.COMPSET
+    PROJECT = oE3SM_in.PROJECT
+    MACH = oE3SM_in.MACH
+    sCIME_directory = oE3SM_in.sCIME_directory
 
-    #get configuration
-    e3sm_read_configuration_file(sFilename_configuration_in,\
-        iFlag_branch_in = iFlag_branch_in, \
-        iFlag_continue_in = iFlag_continue_in ,\
-        iFlag_debug_in = iFlag_debug_in, \
-        iFlag_resubmit_in = iFlag_resubmit_in, \
-        iFlag_short_in= iFlag_short_in, \
-        iCase_index_in = iCase_index_in,\
-        iYear_end_in = iYear_end_in,\
-        iYear_start_in =iYear_start_in, \
-            iYear_data_end_in = iYear_data_end_in,\
-        iYear_data_start_in =iYear_data_start_in, \
-        sDate_in= sDate_in,\
-        sFilename_clm_namelist_in = sFilename_clm_namelist_in, \
-        sFilename_datm_namelist_in = sFilename_datm_namelist_in)
-
-    sDirectory_case = oE3SM.sDirectory_case
-    sDirectory_run = oE3SM.sDirectory_run
+    #case attributes
+    sDirectory_case = oCase_in.sDirectory_case
+    sDirectory_run = oCase_in.sDirectory_run
     #start
     #currently we only need to calibrate H2SC so I will not use advanced I/O
     #we will the same variables used by corresponding CIME python script
 
     sPython=''
-    sModel = oE3SM.sModel #'h2sc'
-    sCase = oE3SM.sCase
-    RES = oE3SM.RES
-    COMPSET = oE3SM.COMPSET
-    PROJECT = oE3SM.PROJECT
-    MACH = oE3SM.MACH
-    sCIME_directory = oE3SM.sCIME_directory
+    sModel = oCase_in.sModel #'h2sc'
+    sCase = oCase_in.sCase
+    sFilename_clm_namelist = oCase_in.sFilename_clm_namelist
+    sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
+
     #GIT_HASH=`git log -n 1 --format=%h`
-    iFlag_branch = oE3SM.iFlag_branch
-    iFlag_debug = oE3SM.iFlag_debug
-    iFlag_continue = oE3SM.iFlag_continue
-    iFlag_resubmit = oE3SM.iFlag_resubmit
-    iFlag_short = oE3SM.iFlag_short
 
     sCasename = sDirectory_case  + sCase
     sJobname = sModel + sCase
@@ -73,20 +53,21 @@ def e3sm_create_case(sFilename_configuration_in,\
     sBldname = sSimname + slash + 'bld'
     sRunname = sSimname + slash + 'run'
 
-    nYear = oE3SM.nYear
+    nYear = oCase_in.nyear
     sYear =  "{:04d}".format(nYear)
-    sYear_start = "{:04d}".format(oE3SM.iYear_start)
-    sYear_data_start = "{:04d}".format(oE3SM.iYear_data_start)
-    sYear_data_end = "{:04d}".format(oE3SM.iYear_data_end)
+    sYear_start = "{:04d}".format(oCase_in.iYear_start)
+    sYear_end = "{:04d}".format(oCase_in.iYear_end)
+    sYear_data_start = "{:04d}".format(oCase_in.iYear_data_start)
+    sYear_data_end = "{:04d}".format(oCase_in.iYear_data_end)
 
     if (iFlag_short ==1 ):
         sQueue = 'short'
-        sWalltime = '2:00:00'        
+        sWalltime = '2:00:00'
         sNode = '-20'
         sYear = '2'
     else:
         sQueue = 'slurm'
-        sWalltime = '10:00:00'        
+        sWalltime = '10:00:00'
         sNode = '-40'
         sYear = '30'
 
@@ -152,7 +133,7 @@ def e3sm_create_case(sFilename_configuration_in,\
         sCommand = sPython + ' ./xmlchange NTASKS=' + sNode + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
-        p.wait()                                         
+        p.wait()
 
         if(iFlag_branch != 1):
             sCommand = sPython + ' ./xmlchange RUN_TYPE=startup' + '\n'
@@ -180,7 +161,7 @@ def e3sm_create_case(sFilename_configuration_in,\
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
-        else: ##branch run 
+        else: ##branch run
             sCommand = sPython + ' ./xmlchange RUN_TYPE=branch' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
@@ -232,12 +213,12 @@ def e3sm_create_case(sFilename_configuration_in,\
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
         #we will generate clm name list in real time
-        sCommand = 'cp ' + sFilename_clm_namelist_in + ' ./user_nl_clm' + '\n'
+        sCommand = 'cp ' + sFilename_clm_namelist + ' ./user_nl_clm' + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
 
-        if(sFilename_datm_namelist_in is not None):
+        if(iFlag_spinup==1):
             sCommand = 'cp ' + sFilename_datm_namelist_in + ' ./user_nl_datm' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
@@ -261,7 +242,7 @@ def e3sm_create_case(sFilename_configuration_in,\
 
     else: #special condition, this is a continue run, may debug, also with resubmit
 
-    
+
         if (iFlag_debug !=1):
             #not debugging
             #sCommand = sPython + ' ./xmlchange RESUBMIT=5' + '\n'
@@ -270,7 +251,7 @@ def e3sm_create_case(sFilename_configuration_in,\
             #p.wait()
             pass
 
-            
+
 
         else:
             #debug,
@@ -303,12 +284,12 @@ if __name__ == '__main__':
 
     sModel = 'h2sc'
     sRegion ='global'
-    sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
-        + sRegion + slash + 'h2sc_configuration.txt'
+    #sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
+        #    + sRegion + slash + 'h2sc_configuration.txt'
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 1
+    iCase = 3
 
     iFlag_default = 1
     iFlag_debug = 0
@@ -325,7 +306,7 @@ if __name__ == '__main__':
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
         + 'cases' + slash + 'user_nl_clm_' + sCase
     if (iFlag_initial !=1):
-        #normal case,      
+        #normal case,
         ofs = open(sFilename_clm_namelist, 'w')
         sCommand_out = "fsurdat = " + "'" \
             + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
@@ -335,7 +316,7 @@ if __name__ == '__main__':
         else:
             sLine = "use_h2sc = .true." + '\n'
             ofs.write(sLine)
-            
+
         sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
         ofs.write(sLine)
         ofs.close()
@@ -349,12 +330,12 @@ if __name__ == '__main__':
         else:
             sLine = "use_h2sc = .true." + '\n'
             ofs.write(sLine)
-        sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
-        ofs.write(sLine)
-        #this is a case that use existing restart file
-        #be careful with the filename!!!
-        
-        sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+            sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
+            ofs.write(sLine)
+            #this is a case that use existing restart file
+            #be careful with the filename!!!
+
+        sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(1)
         #sCase_spinup = sModel + '20200409001'
 
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
@@ -362,18 +343,18 @@ if __name__ == '__main__':
             + sCase_spinup +  ".clm2.rh0.1979-01-01-00000.nc'"  + '\n'
         ofs.write(sLine)
         ofs.close()
-    #mosart
-    #sFilename_rtm_namelist = sWorkspace_scratch + slash \
-    #    + '04model' + slash + sModel + slash \
-    #    + sRegion + slash \
-    #    + 'cases' + slash + 'user_nl_rtm_' + sCase
-    #ofs = open(sFilename_rtm_namelist, 'w')
-    #sLine = 'rtmhist_nhtfrq=0' + '\n'
-    #ofs.write(sLine)
-    #sLine = 'rtmhist_fincl1= "area"' + '\n'
-    #ofs.write(sLine)
-    #ofs.close()
-           
+        #mosart
+        #sFilename_rtm_namelist = sWorkspace_scratch + slash \
+            #    + '04model' + slash + sModel + slash \
+            #    + sRegion + slash \
+            #    + 'cases' + slash + 'user_nl_rtm_' + sCase
+        #ofs = open(sFilename_rtm_namelist, 'w')
+        #sLine = 'rtmhist_nhtfrq=0' + '\n'
+        #ofs.write(sLine)
+        #sLine = 'rtmhist_fincl1= "area"' + '\n'
+        #ofs.write(sLine)
+        #ofs.close()
+
 
 
 
@@ -391,33 +372,41 @@ if __name__ == '__main__':
     else:
         #no spin up needed
         pass
-        
+
     #write the clm namelist file
-    if (iFlag_spinup ==1):   
-        e3sm_create_case(sFilename_configuration, \
-                    iFlag_branch_in= iFlag_branch, \
-                    iFlag_continue_in = iFlag_continue, \
-                    iFlag_debug_in = iFlag_debug, \
-                    iFlag_resubmit_in = iFlag_resubmit, \
-                    iFlag_short_in = iFlag_short, \
-                    iCase_index_in = iCase, \
-                    iYear_end_in = 1978, \
-                    iYear_start_in = 1949, \
-                    iYear_data_end_in = 1988, \
-                    iYear_data_start_in = 1979, \
-                    sDate_in = sDate, \
-                    sFilename_clm_namelist_in = sFilename_clm_namelist, \
-                    sFilename_datm_namelist_in = sFilename_datm_namelist )
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
+                                                          iFlag_debug_in = iFlag_debug, \
+                                                          iFlag_branch_in = iFlag_branch,\
+                                                          iFlag_continue_in = iFlag_continue,\
+                                                          iFlag_resubmit_in = iFlag_resubmit,\
+                                                          iFlag_short_in = iFlag_short  )
+
+    oE3SM = pye3sm(aParameter_e3sm)
+
+    if (iFlag_spinup ==1):
+        aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+            iFlag_spinup_in = iFlag_spinup,\
+                                                              iYear_start_in = 1949, \
+                                                              iYear_end_in = 1978,\
+                                                              iYear_data_end_in = 1988, \
+                                                              iYear_data_start_in = 1979   ,\
+                                                              iCase_index_in = iCase, \
+                                                              sDate_in = sDate, \
+                                                              sFilename_clm_namelist_in = sFilename_clm_namelist, \
+                                                              sFilename_datm_namelist_in = sFilename_datm_namelist )
+        
     else:
-        e3sm_create_case(sFilename_configuration,\
-                    iFlag_continue_in = iFlag_continue, \
-                    iFlag_debug_in = iFlag_debug, \
-                    iFlag_resubmit_in = iFlag_resubmit, \
-                    iFlag_short_in = iFlag_short, \
-                    iCase_index_in = iCase, \
-                    iYear_end_in = 2008, \
-                    iYear_start_in = 1979, \
-                    iYear_data_end_in = 2008, \
-                    iYear_data_start_in = 1979, \
-                    sDate_in = sDate, \
-                    sFilename_clm_namelist_in = sFilename_clm_namelist )
+        aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+            iFlag_spinup_in = iFlag_spinup,\
+                                                              iYear_start_in = 1979, \
+                                                              iYear_end_in = 2008,\
+                                                              iYear_data_end_in = 2008, \
+                                                              iYear_data_start_in = 1979   , \
+                                                              iCase_index_in = iCase, \
+                                                              sDate_in = sDate, \
+                                                              sFilename_clm_namelist_in = sFilename_clm_namelist )
+        #print(aParameter_case)
+    oCase = pycase(aParameter_case)
+    e3sm_create_case(oE3SM, oCase )
