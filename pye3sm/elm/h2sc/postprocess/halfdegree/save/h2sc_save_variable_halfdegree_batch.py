@@ -34,12 +34,13 @@ if __name__ == '__main__':
         iIndex_start = pArgs.iIndex_start
         iIndex_end = pArgs.iIndex_end
     else:
-        iIndex_start = 2
-        iIndex_end = 7
+        iIndex_start = 3
+        iIndex_end = 3
         sModel = 'h2sc'
         sRegion = 'global'
 
     sDate = '20200421'
+    sDate = '20200602'
     #sVariable='ZWT'
     #sVariable = 'wt_slp'
     aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI']

@@ -291,7 +291,7 @@ if __name__ == '__main__':
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
     iCase = 3
 
-    iFlag_default = 1
+    iFlag_default = 0
     iFlag_debug = 0
     iFlag_branch = 0
     iFlag_initial = 1
@@ -299,7 +299,7 @@ if __name__ == '__main__':
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200602'
+    sDate = '20200722'
     sDate_spinup = '20200412'
     sCase =  sModel + sDate + "{:03d}".format(iCase)
 

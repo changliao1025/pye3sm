@@ -28,19 +28,19 @@ def h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
                                                       iYear_subset_start_in = None, \
                                                       iYear_subset_end_in = None,\
                                                       dMax_y_in = None,\
-                                                      dMin_y_in= None  ):
+                                                      dMin_y_in= None ):
 
     elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
                                           iYear_subset_start_in = iYear_subset_start_in, \
                                                      iYear_subset_end_in =iYear_subset_end_in,\
                                                      dMax_y_in = dMax_y_in,\
-                                                     dMin_y_in =dMin_y_in )
+                                                     dMin_y_in = dMin_y_in )
 
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 1
-        iIndex_end = 1
+        iIndex_start = 3
+        iIndex_end = 3
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -53,29 +53,12 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     sDate = '20200421'
+    sDate = '20200602'
 
     iYear_start = 1980
     iYear_end = 2008
 
 
-    #sVariable = 'wt_slp'
-    #sVariable='zwt'
-    #sVariable = 'RAIN'
-    #sVariable = 'SNOW'
-    #sVariable = 'QSOIL'
-    #sVariable = 'QVEGE'
-    #sVariable = 'QVEGT'
-    sVariable = 'QDRAI'
-    sVariable = 'QOVER'
-    sVariable = sVariable.lower()
-    #sLabel_y = r'Soil evaporation (mm/s)'
-    sLabel_y = r'Vegetation evaporation (mm/s)'
-    sLabel_y = r'Vegetation transpiration (mm/s)'
-    sLabel_y = r'Groundwater drainage (mm/s)'
-    sLabel_y = r'Overland runoff (mm/s)'
-    #sFilename_configuration = sWorkspace_configuration + slash \
-        #    + sModel + slash \
-        #    + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
@@ -94,14 +77,12 @@ if __name__ == '__main__':
                                                                iFlag_same_grid_in = iFlag_same_grid, \
                                                                iYear_start_in = iYear_start, \
                                                                iYear_end_in =iYear_end,\
-                                                               sDate_in= sDate,\
-                                                               sLabel_y_in =  sLabel_y, \
-                                                               sVariable_in = sVariable )
+                                                               sDate_in= sDate)
 
         oCase = pycase(aParameter_case)
 
         h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM, oCase,
-                                                          iYear_subset_start_in = 2000, \
+                                                          iYear_subset_start_in = 2004, \
                                                           iYear_subset_end_in =2008)
 
     print('finished')

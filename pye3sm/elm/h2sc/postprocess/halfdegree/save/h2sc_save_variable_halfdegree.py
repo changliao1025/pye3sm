@@ -30,20 +30,20 @@ if __name__ == '__main__':
     sRegion = 'global'
 
     sDate = '20200421'
-    sDate = '202000602'
-    iCase_index = 1
+    sDate = '20200602'
+    iCase_index = 3
 
     iYear_start = 1980
     iYear_end = 2008
     #from now, to maintain consistancy, we will the same variable name for all processes.
     #use the new naming method
-    #sVariable = 'ZWT'
+    sVariable = 'ZWT'
     #sVariable = 'wt_slp'
     #sVariable = 'sur_slp'
 
 
     #P
-    sVariable = 'RAIN'
+    #sVariable = 'RAIN'
     #sVariable = 'SNOW'
     #ET
     #sVariable = 'QSOIL'

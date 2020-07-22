@@ -40,8 +40,8 @@ def h2sc_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in, \
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 1
-        iIndex_end = 1
+        iIndex_start = 3
+        iIndex_end = 3
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -54,26 +54,28 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     sDate = '20200421'
+    sDate = '20200602'
 
     iYear_start = 1980
     iYear_end = 2008
 
     
     #sVariable = 'wt_slp'
-    #sVariable='zwt'
+    sVariable='zwt'
     #sVariable = 'RAIN'
     #sVariable = 'SNOW'
     #sVariable = 'QSOIL'
     #sVariable = 'QVEGE'
     #sVariable = 'QVEGT'
-    sVariable = 'QDRAI'
-    sVariable = 'QOVER'
-    sVariable = sVariable.lower()
+    #sVariable = 'QDRAI'
+    #sVariable = 'QOVER'
+    #sVariable = sVariable.lower()
+    sLabel_y = r'Water table depth (m)'
     #sLabel_y = r'Soil evaporation (mm/s)'
-    sLabel_y = r'Vegetation evaporation (mm/s)'
-    sLabel_y = r'Vegetation transpiration (mm/s)'
-    sLabel_y = r'Groundwater drainage (mm/s)'
-    sLabel_y = r'Overland runoff (mm/s)'
+    #sLabel_y = r'Vegetation evaporation (mm/s)'
+    #sLabel_y = r'Vegetation transpiration (mm/s)'
+    #sLabel_y = r'Groundwater drainage (mm/s)'
+    #sLabel_y = r'Overland runoff (mm/s)'
     #sFilename_configuration = sWorkspace_configuration + slash \
     #    + sModel + slash \
     #    + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt

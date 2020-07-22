@@ -257,7 +257,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     iCase = args.iCase
 
-    sFilename_configuration = sWorkspace_scratch + slash + '03model' + slash \
-              + 'elm_configuration' + sFilename_config
-   
-    eco3d_evaluate_soil_doc_concentration_scatterplot(sFilename_configuration, iCase)
+    

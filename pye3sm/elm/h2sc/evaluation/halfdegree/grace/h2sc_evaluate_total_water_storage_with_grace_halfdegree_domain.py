@@ -187,18 +187,14 @@ def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(sFilename_con
             #resample the data because resolution is different
             aData_dummy1 = np.flip(aData_dummy0, 0)
             aData_dummy1 = np.roll(aData_dummy1, 180, axis=1) # right
-            
             #because the dimensions, we use simple way to resample
-            
             aData_dummy2 = ndimage.zoom(aData_dummy1, 2, order=0)
-            
             
             aData_dummy2[np.where(aData_dummy2==-99999)] = -9999
             aData_dummy2[np.where(aData_dummy2==-9999)] = np.nan
             #plt.imshow(aData_dummy2)
             #plt.show()
             aData_grace[iStress - 1,:,:]=aData_dummy2
-            
             iStress=iStress+1
             
     aTime = dates_subset
@@ -230,26 +226,18 @@ def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(sFilename_con
         #apply mask
         aVariable4 = ma.masked_array(aData_grace, mask= dummy_mask)
         #aVariable4 = aData_grace
-
         aVariable5 = aVariable4.reshape(nstress_subset, nrow, ncolumn)        
-        
-
         aVariable6 = np.full(nstress_subset, -9999, dtype=float)
-       
         for iStress in range(1,nstress_subset+1):
             dummy = aVariable5[iStress-1, :,:]
             #plt.imshow(dummy)
             #plt.show()
             #print(dummy)
             dummy1 = dummy[dummy.mask == False]
-            dummy1[np.where(dummy1==-9999)] = np.nan
-            
+            dummy1[np.where(dummy1==-9999)] = np.nan 
             #aVariable6[iStress-1] = np.nanmean(dummy[aX,aY])
             aVariable6[iStress-1] = np.nanmean(dummy1)
-            #use regional mean instead of grid
-
-
-            
+            #use regional mean instead of grid            
             print(np.nanmax(dummy1))
 
         #now we can comparre

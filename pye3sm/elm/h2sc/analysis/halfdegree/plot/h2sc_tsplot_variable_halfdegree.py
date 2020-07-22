@@ -46,6 +46,7 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     sDate = '20200212'
+    sDate = '20200602'
 
     
 
