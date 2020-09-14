@@ -39,8 +39,8 @@ def h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 3
-        iIndex_end = 3
+        iIndex_start = 1
+        iIndex_end = 1
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     sModel = 'h2sc'
     sRegion = 'global'
     sDate = '20200421'
-    sDate = '20200602'
+    sDate = '20200722'
 
     iYear_start = 1980
     iYear_end = 2008

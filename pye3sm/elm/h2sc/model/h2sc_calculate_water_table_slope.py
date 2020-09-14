@@ -24,13 +24,14 @@ aHeight1 =   np.arange(ndrop) * 10 + 10
 aHeight1 =   (np.arange(ndrop) + 1)*  dThickness_critical_zone_in / (ndrop+1)
 #aHeight2 =   np.arange(ndrop) * 10 + 10
 
+dSlope_mosart = 0.01
+
 dRatio0 = 0.5  #for bedrock slope
 dRatio1 = 0.25  #for transition slope
 dRatio2 = 1.1 #above seepage
 dRatio3 =1.0 #below transition
 
-X, Y = np.meshgrid(aElevation1, aElevation2)
-aLength = np.full( (ninterval,ninterval), 0.0, dtype=float)
+X, Y = np.meshgrid(aElevation1, aElevation2
 
 #for i in range(1,20):
     #print(math.atan(i /ninterval))
@@ -45,18 +46,20 @@ for i in range(ninterval):
     #slope
     dDummy1 =  dElevation_difference  / dDistance_in
     A1 = dDummy1
-    dSlope_surface = math.atan(A1)
+    dSlope_surface = A1
+    dSlope_surface_radian = math.atan(A1)
+
     #print(dSlope_surface / math.pi * 180)
-    aLength[i,i] = dSlope_surface
+    
     #dDummy2 = dElevation_difference / dDistance_in
     #dDummy2 = dThickness_critical_zone_in * (1 - pow(dDummy2, 0.25 ))
     #dDummy2 =  (aElevation2[i] - dDummy2) - (aElevation1[i] - dThickness_critical_zone_in) 
     #dDummy3 =  dDummy2 / dDistance_in
     dDummy2 = (aElevation2[i] - dThickness_critical_zone_in * dRatio0) - ( (aElevation1[i] ) - dThickness_critical_zone_in  ) 
     dDummy3 =  dDummy2 / dDistance_in
-    A4= dDummy3
-
-    dSlope_bedrock = math.atan(A4)
+    A4 = dDummy3
+    dSlope_bedrock = A4
+    dSlope_bedrock_radian = math.atan(A4)
     #print(dSlope_bedrock / math.pi * 180)
 
     # start from here , we have another loop for WT dynamics
@@ -86,7 +89,7 @@ for i in range(ninterval):
     dummy0 = np.array((a1_degree,)) 
     dummy1 = np.array( [ 0, aElevation1[i] ] ) 
     dummy2 = dummy1.reshape((1, 2))
-    trans_angle = ax.transData.transform_angles(dummy0, dummy2,False )[0]
+    trans_angle = ax.transData.transform_angles(dummy0, dummy2, False )[0]
     #plt.show()
 
     ax.text(-0.03 * dDistance_in , aElevation1[i] - dThickness_critical_zone_in, "Downslope end", color ='blue', rotation = 90)
@@ -94,9 +97,7 @@ for i in range(ninterval):
     ax.text(0.06* dDistance_in, aElevation1[i], "Seepage face", color ='green', rotation = trans_angle)
     iFlag_once = 1 
 
-    
-
-    A3 = ( dRatio1 ) * (aElevation2[i]  -aElevation1[i] ) / dDistance_in
+    A3 = ( dRatio1 ) * (aElevation2[i]  - aElevation1[i] ) / dDistance_in
 
     B3 = aElevation1[i]
     C3 = dDistance_in

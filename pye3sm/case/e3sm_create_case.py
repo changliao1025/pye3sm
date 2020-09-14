@@ -25,6 +25,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
     iFlag_continue = oE3SM_in.iFlag_continue
     iFlag_resubmit = oE3SM_in.iFlag_resubmit
     iFlag_short = oE3SM_in.iFlag_short
+    
     RES = oE3SM_in.RES
     COMPSET = oE3SM_in.COMPSET
     PROJECT = oE3SM_in.PROJECT
@@ -34,6 +35,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
     #case attributes
     sDirectory_case = oCase_in.sDirectory_case
     sDirectory_run = oCase_in.sDirectory_run
+    iFlag_spinup=oCase_in.iFlag_spinup
     #start
     #currently we only need to calibrate H2SC so I will not use advanced I/O
     #we will the same variables used by corresponding CIME python script
@@ -62,9 +64,10 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
 
     if (iFlag_short ==1 ):
         sQueue = 'short'
-        sWalltime = '2:00:00'
+        sWalltime = '1:00:00'
         sNode = '-20'
         sYear = '2'
+
     else:
         sQueue = 'slurm'
         sWalltime = '10:00:00'
@@ -87,11 +90,11 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             p.wait()
 
         #remove run directory
-        #if (os.path.exists(sRunname)):
-        #    sCommand = 'rm -rf '  + sRunname
-        #    print(sCommand)
-        #    p = subprocess.Popen(sCommand, shell= True)
-        #    p.wait()
+        if (os.path.exists(sRunname)):
+            sCommand = 'rm -rf '  + sRunname
+            print(sCommand)
+            p = subprocess.Popen(sCommand, shell= True)
+            p.wait()
 
         #create case
         print(sCIME_directory)
@@ -206,6 +209,8 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
 
+
+
         #copy namelist
         #the mosart will be constant
         sCommand = 'cp ../user_nl_mosart ./user_nl_mosart' + '\n'
@@ -219,13 +224,20 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
         p.wait()
 
         if(iFlag_spinup==1):
-            sCommand = 'cp ' + sFilename_datm_namelist_in + ' ./user_nl_datm' + '\n'
+            sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
 
-
         #Build and submit
+        if (iFlag_debug == 1):
+            
+            sCommand = sPython + ' ./xmlchange -file env_build.xml DEBUG=TRUE' + '\n'
+            sCommand = sCommand.lstrip()
+            p = subprocess.Popen(sCommand, shell= True)
+            p.wait()
+            pass
+        
         sCommand = sPython + ' ./case.build' + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
@@ -235,6 +247,8 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             pass
         else:
             #create the timing.checkpoints folder for debug
+            
+
             os.chdir(sRunname)
             os.mkdir('timing')
             os.chdir('timing')
@@ -289,7 +303,7 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 3
+    iCase = 2
 
     iFlag_default = 0
     iFlag_debug = 0
@@ -299,9 +313,10 @@ if __name__ == '__main__':
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200722'
-    sDate_spinup = '20200412'
-    sCase =  sModel + sDate + "{:03d}".format(iCase)
+    sDate = '20200904'
+    #sDate_spinup = '20200412'
+    sDate_spinup = '20200904'
+    sCase = sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
         + 'cases' + slash + 'user_nl_clm_' + sCase
@@ -373,7 +388,6 @@ if __name__ == '__main__':
         #no spin up needed
         pass
 
-    #write the clm namelist file
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\

@@ -10,17 +10,20 @@ sys.path.extend(sSystem_paths)
 from pyes.system import define_global_variables
 from pyes.system.define_global_variables import *
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
-from e3sm.case.e3sm_create_case import e3sm_create_case
+
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.case.e3sm_create_case import e3sm_create_case
 
 sModel = 'h2sc'
 sRegion ='global'
       
-sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
-               + sRegion + slash + 'h2sc_configuration.txt' 
 
-aHydraulic_anisotropy_exp = np.arange(-3,1.1,0.5)
+aHydraulic_anisotropy_exp = np.arange(-3,1.1,0.25)
 aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
 print(aHydraulic_anisotropy)
 
@@ -29,13 +32,14 @@ print(aHydraulic_anisotropy)
 ncase = len(aHydraulic_anisotropy)
 iFlag_debug = 0
 iFlag_branch = 0
-iFlag_initial = 1
-iFlag_spinup = 0
+iFlag_initial = 0
+iFlag_spinup = 1
 iFlag_continue = 0
 iFlag_resubmit = 0
 iFlag_short = 0
 sDate_spinup = '20200504'
-sDate = '20200525'
+sDate_spinup = '20200904'
+sDate = '20200905'
 for iCase in range(1,ncase + 1):
     #call the create case function
     dHydraulic_anisotropy = aHydraulic_anisotropy[iCase-1]
@@ -73,7 +77,7 @@ for iCase in range(1,ncase + 1):
         #this is a case that use existing restart file
         #be careful with the filename!!!
         
-        sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+        #sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
         #sCase_spinup = 'h2sc20200409001'
 
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
@@ -95,37 +99,44 @@ for iCase in range(1,ncase + 1):
         pass
 
 
-    
-    #write the clm namelist file
-    #e3sm_create_case(sFilename_configuration, iCase, sFilename_clm_namelist)
-    
-    if (iFlag_spinup ==1):   
-        e3sm_create_case(sFilename_configuration,\
-                     iFlag_continue_in = iFlag_continue,\
-                     iFlag_debug_in = iFlag_debug,\
-                     iFlag_resubmit_in = iFlag_resubmit ,\
-                     iFlag_short_in = iFlag_short, \
-                     iCase_index_in = iCase,  \
-                     iYear_end_in=1978,\
-                     iYear_start_in=1949,\
-                         iYear_data_end_in=1988,\
-                     iYear_data_start_in=1979,\
-                     sDate_in= sDate,\
-                     sFilename_clm_namelist_in = sFilename_clm_namelist,\
-                     sFilename_datm_namelist_in= sFilename_datm_namelist )
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
+                                                          iFlag_debug_in = iFlag_debug, \
+                                                          iFlag_branch_in = iFlag_branch,\
+                                                          iFlag_continue_in = iFlag_continue,\
+                                                          iFlag_resubmit_in = iFlag_resubmit,\
+                                                          iFlag_short_in = iFlag_short  )
+
+    oE3SM = pye3sm(aParameter_e3sm)
+
+
+    if (iFlag_spinup ==1):
+        aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+            iFlag_spinup_in = iFlag_spinup,\
+                                                              iYear_start_in = 1949, \
+                                                              iYear_end_in = 1978,\
+                                                              iYear_data_end_in = 1988, \
+                                                              iYear_data_start_in = 1979   ,\
+                                                              iCase_index_in = iCase, \
+                                                              sDate_in = sDate, \
+                                                              sFilename_clm_namelist_in = sFilename_clm_namelist, \
+                                                              sFilename_datm_namelist_in = sFilename_datm_namelist )
+        
     else:
-        e3sm_create_case(sFilename_configuration,\
-                     iFlag_continue_in = iFlag_continue,\
-                     iFlag_debug_in = iFlag_debug,\
-                     iFlag_resubmit_in = iFlag_resubmit ,\
-                     iFlag_short_in = iFlag_short, \
-                     iCase_index_in = iCase,  \
-                    iYear_end_in=2008,\
-                     iYear_start_in=1979,\
-                    iYear_data_end_in=2008,\
-                     iYear_data_start_in=1979,\
-                     sDate_in= sDate,\
-                     sFilename_clm_namelist_in = sFilename_clm_namelist)
+        aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+            iFlag_spinup_in = iFlag_spinup,\
+                                                              iYear_start_in = 1979, \
+                                                              iYear_end_in = 2008,\
+                                                              iYear_data_end_in = 2008, \
+                                                              iYear_data_start_in = 1979   , \
+                                                              iCase_index_in = iCase, \
+                                                              sDate_in = sDate, \
+                                                              sFilename_clm_namelist_in = sFilename_clm_namelist )
+    
+    oCase = pycase(aParameter_case)
+    e3sm_create_case(oE3SM, oCase )
+        
 
     
 

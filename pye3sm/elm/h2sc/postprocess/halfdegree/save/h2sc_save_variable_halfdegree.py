@@ -20,6 +20,7 @@ from pye3sm.elm.general.halfdegree.save.elm_save_variable_halfdegree import elm_
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
+
 def h2sc_save_variable_halfdegree(oE3SM_in, oCase_in):
 
     elm_save_variable_halfdegree(oE3SM_in, oCase_in)
@@ -30,8 +31,8 @@ if __name__ == '__main__':
     sRegion = 'global'
 
     sDate = '20200421'
-    sDate = '20200602'
-    iCase_index = 3
+    sDate = '20200722'
+    iCase_index = 1
 
     iYear_start = 1980
     iYear_end = 2008

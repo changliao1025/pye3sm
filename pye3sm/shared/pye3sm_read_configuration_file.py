@@ -140,6 +140,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
     config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
+    config['iFlag_spinup'] = "{:01d}".format(iFlag_spinup)
+
     nYear =  iYear_end-iYear_start+1
     config['nYear'] =  "{:03d}".format(nYear)
     nMonth = nYear  * 12

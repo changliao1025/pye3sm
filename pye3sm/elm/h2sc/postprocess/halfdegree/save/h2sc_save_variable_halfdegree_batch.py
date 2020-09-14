@@ -26,21 +26,22 @@ def h2sc_save_variable_halfdegree_batch(oE3SM_in, oCase_in):
 
 if __name__ == '__main__':
     iFlag_debug = 1
-    if iFlag_debug == 0:
+    if iFlag_debug == 1:
+        iIndex_start = 1
+        iIndex_end = 1
+        sModel = 'h2sc'
+        sRegion = 'global'
+
+    else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
         parser.add_argument("--iIndex_end", help = "the path",   type = int)
         pArgs = parser.parse_args()
         iIndex_start = pArgs.iIndex_start
         iIndex_end = pArgs.iIndex_end
-    else:
-        iIndex_start = 3
-        iIndex_end = 3
-        sModel = 'h2sc'
-        sRegion = 'global'
 
     sDate = '20200421'
-    sDate = '20200602'
+    sDate = '20200722'
     #sVariable='ZWT'
     #sVariable = 'wt_slp'
     aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI']
