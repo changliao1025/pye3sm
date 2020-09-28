@@ -19,22 +19,36 @@ from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff
 from pyes.gis.gdal.write.gdal_write_geotiff import gdal_write_geotiff
 from pyes.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
+def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
     iRow_start_in=None, iRow_end_in =None):
 
-    e3sm_read_configuration_file(sFilename_configuration_in)
-    sModel  = oE3SM.sModel   
-    
     nrow = 360
     ncolumn  = 720 
+    dConversion = oCase_in.dConversion
+    sVariable  = oCase_in.sVariable
+    sModel  = oCase_in.sModel   
+    sRegion = oCase_in.sRegion
+    sDate = oCase_in.sDate
+    iYear_start = oCase_in.iYear_start
+    iYear_end = oCase_in.iYear_end
+    iYear_subset_start = oCase_in.iYear_subset_start
+    iYear_subset_end = oCase_in.iYear_subset_end
+  
+    sWorkspace_analysis = oCase_in.sWorkspace_analysis
 
-    print('The following model is processed: ', sModel)
+    iMonth = 1
+    subset_index_start = (iYear_subset_start-iYear_start) * 12 + iMonth-1 
+    subset_index_end = (iYear_subset_end+1-iYear_start) * 12 + iMonth-1
+    subset_index = np.arange( subset_index_start,subset_index_end, 1 )
+
     if( sModel == 'h2sc'):
         pass
     else:
@@ -51,12 +65,6 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     else:
         iRow_end= nrow
 
-    dConversion = 1.0
-    sVariable  = oE3SM.sVariable
-    print(sVariable)
-    #for the sake of simplicity, all directory will be the same, no matter on mac or cluster        
-    sWorkspace_analysis =oE3SM.sWorkspace_analysis
-
     sWorkspace_analysis_wtd  = sWorkspace_analysis + slash + 'wtd'
     if not os.path.exists(sWorkspace_analysis_wtd):
         os.makedirs(sWorkspace_analysis_wtd)   
@@ -64,32 +72,33 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     #we only need to change the case number, all variables will be processed one by one   
     #read the observed WTD data
     sFilename_in = sWorkspace_data + slash + sModel + slash + sRegion+ slash + 'raster' + slash \
-    + 'wtd' + slash  + 'wtd_halfdegree'  + sExtension_tif
+    + 'wtd' + slash  + 'wtd_halfdegree'  + sExtension_tiff
     pWTD = gdal_read_geotiff(sFilename_in)
     aWTD_obs = pWTD[0]
-    dX_origin = pWTD[3]
-    dY_origin = pWTD[4]
-    dPixelWidth = pWTD[5]
+    dX_origin = pWTD[2]
+    dY_origin = pWTD[3]
+    dPixelWidth = pWTD[1]
     dMissing_value = missing_value
-    pSpatialRef = pWTD[8]        
+    pSpatialRef = pWTD[7]        
    
     #we need to match the case id with actual parameter space
     #aHydraulic_anisotropy_exp = np.arange(-3,3.1,0.25)
     #aHydraulic_anisotropy_exp = np.arange(-3,0.1,0.25)
     aHydraulic_anisotropy_exp = np.arange(-2,0.3,0.25)
+    aHydraulic_anisotropy_exp = np.arange(-3,1.1,0.25)
+
     aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
     print(aHydraulic_anisotropy)
 
     ncase = len(aHydraulic_anisotropy)
     aCase = np.arange(ncase) + 1
-    sDate = '20200420'
-    iYear_start = 1989
-    iYear_end = 2008
+    
+   
     sRecord = sDate
 
-    nTS = 20 * 12 #20 year
-    dMin = -2.5
-    dMax = 0.5
+    nTS = 9 * 12 #20 year
+    dMin = -3.0
+    dMax = 1.0
     #dMax = 0
     x2 = np.arange(int(dMax-dMin+1))  + int(dMin)
     
@@ -104,24 +113,27 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
     for iCase in range(1,  ncase+1):
     #for iCase in range(1,  4+1):
         print('reading case', iCase)
+
+        oCase_in.iCase_index = iCase
         sCase = sModel + sDate + "{:03d}".format(iCase)
-        sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
-        sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tif'
-        sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() \
-             +  sExtension_tif
+        sWorkspace_analysis_case = oCase_in.sWorkspace_analysis + slash + sCase
+        
+        sWorkspace_variable_tiff = sWorkspace_analysis_case  + slash + sVariable + slash + 'tiff'
+        sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable \
+             +  sExtension_tiff
         if os.path.isfile(sFilename_tiff):
             pWTD = gdal_read_geotiff_multiple_band(sFilename_tiff)
-            aData_all[iCase -1, : :,: ] = (pWTD[0])[9*12:,:,:]
+            aData_all[iCase -1, : :,: ] = (pWTD[0])[subset_index,:,:]
         else:
             print('file does not exist: ' + sFilename_tiff)
             exit
     print('finished reading data')
-    aQC = np.full((nrow, ncolumn),missing_value, dtype= int )
+    aQC = np.full((nrow, ncolumn), missing_value, dtype= int )
     aAnisotropy_optimal = np.full((nrow, ncolumn), missing_value, dtype= float )
     iFlag_debug = 0
-    xlabel = 'Anisotropy' + ' (' +r'$ \frac{ K_{v}}{k_{h}} $' + ')'
+    xlabel = 'Anisotropy ' + ' (' +r'$ \frac{ K_{v}}{k_{h}} $' + ')'
     x3 = [dMin,  dMax]
-    iFlag_plot = 0
+    iFlag_plot = 1
     iFlag_optimal = 1
     print(iRow_start, iRow_end)
     for iRow in range(iRow_start, iRow_end+1, 1):
@@ -205,14 +217,14 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration_in, \
 
         pSpatialRef =osr.SpatialReference()
         pSpatialRef.ImportFromEPSG(4326)
-        sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tif
+        sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tiff
         print(sFilename_tiff)
         gdal_write_geotiff(sFilename_tiff, aQC, dPixelWidth,\
             dX_origin, dY_origin,  dMissing_value,\
           pSpatialRef)
 
         sFilename_tiff = sWorkspace_analysis_wtd + slash + 'optimal' \
-            + sRecord + sExtension_tif
+            + sRecord + sExtension_tiff
         print(sFilename_tiff)    
         gdal_write_geotiff(sFilename_tiff, aAnisotropy_optimal, dPixelWidth,\
              dX_origin, dY_origin,  dMissing_value, \
@@ -232,17 +244,25 @@ if __name__ == '__main__':
     else:
         iIndex_start = 1
         iIndex_end = 360
-    sModel = 'h2sc'
-    sRegion = 'global'
-    
-    sDate = '20200420'
+   
+    sDate = '20200906'
     sVariable = 'ZWT'
-    sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
-            + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
+    
     
     #start loop
-   
-    h2sc_curve_fit_anisotropy_with_wtd_halfdegree(sFilename_configuration, \
-        iRow_start_in=iIndex_start, iRow_end_in=iIndex_end)
-       
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration    )
+
+    oE3SM = pye3sm(aParameter_e3sm)
+    aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+                                                     iYear_start_in = 1979, \
+                                                              iYear_end_in = 2008,\
+                                                              sDate_in = sDate,\
+                                                                  sVariable_in= sVariable  )
+    oCase = pycase(aParameter_case)   
+    oCase.iYear_subset_start = 2000
+    oCase.iYear_subset_end = 2008
+    h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM , oCase, \
+        iRow_start_in=iIndex_start, iRow_end_in=iIndex_end)       
                 

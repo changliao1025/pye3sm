@@ -19,7 +19,7 @@ missing_value = -9999.0 #used to save binary
 sExtension_nc = '.nc'
 sExtension_envi ='.dat'
 sExtension_header ='.hdr'
-sExtension_tif = '.tif'
+sExtension_tiff = '.tif'
 
 sModel = 'h2sc'
 #vsdm dimension

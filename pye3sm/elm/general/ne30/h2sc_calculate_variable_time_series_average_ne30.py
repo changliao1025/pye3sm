@@ -93,7 +93,7 @@ def h2sc_calculate_variable_time_series_average_ne30(sFilename_configuration_in,
             sFilename = sWorkspace_simulation_case + slash + sCase + sDummy
     
             #read raster data
-            #sFilename_netcdf = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMonth + sExtension_tif
+            #sFilename_netcdf = sWorkspace_variable_tiff + slash + sVariable.lower() + sYear + sMonth + sExtension_tiff
             if os.path.isfile(sFilename):
                 pass
             else:

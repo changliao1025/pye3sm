@@ -2,11 +2,12 @@ import os
 import numpy
 import numpy as np
 from netCDF4 import Dataset
-import shapefile
+#import shapefile
 from osgeo import ogr
-workspace_data = "/Volumes/mac/01data/h2sc/raster/dem/"
+workspace_data = "/people/liao313/data/hexwatershed/columbia_river_basin/vector/mosart/"
 
 filename_netcdf = "MOSART_Global_half_20180606c.chang_9999.nc"
+filename_netcdf = 'MOSART_columbia_half_c200917.nc'
 
 
 
@@ -54,6 +55,8 @@ for sKey, aValue in aDatasets.variables.items():
         longi = (aValue[:]).data
 
 out_shp = 'mosart_shape.shp'
+
+out_shp = os.path.join(workspace_data, out_shp)
 driver = ogr.GetDriverByName('Esri Shapefile')
 ds = driver.CreateDataSource(out_shp)
 layer = ds.CreateLayer('', None, ogr.wkbLineString)

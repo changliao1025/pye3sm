@@ -21,7 +21,7 @@ from gis.gdal.reader.gdal_read_tiff import gdal_read_tiff
 missing_value = -9999.0
 sExtension_envi ='.dat'
 sExtension_header ='.hdr'
-sExtension_tif = '.tif'
+sExtension_tiff = '.tif'
 sExtension_jpg ='.jpg'
 dConversion = 1.0
 sVariable = 'zwt'
@@ -74,7 +74,7 @@ aMask = np.where(aEle0 == missing_value)
 
 #read wtd 
 sFilename_tiff = sWorkspace_data + slash + sModel + slash + 'raster' + slash \
-    + 'wtd' + slash  + 'wtd'  + sExtension_tif
+    + 'wtd' + slash  + 'wtd'  + sExtension_tiff
 
 pWTD = gdal_read_tiff(sFilename_tiff)
 aWTD = pWTD[0]

@@ -70,7 +70,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
 
     else:
         sQueue = 'slurm'
-        sWalltime = '10:00:00'
+        sWalltime = '3:00:00'
         sNode = '-40'
         sYear = '30'
 
@@ -303,7 +303,7 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 2
+    iCase = 1
 
     iFlag_default = 0
     iFlag_debug = 0
@@ -313,9 +313,9 @@ if __name__ == '__main__':
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20200904'
+    sDate = '20200924'
     #sDate_spinup = '20200412'
-    sDate_spinup = '20200904'
+    sDate_spinup = '20200923'
     sCase = sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
@@ -370,9 +370,6 @@ if __name__ == '__main__':
         #ofs.write(sLine)
         #ofs.close()
 
-
-
-
     sFilename_datm_namelist = sWorkspace_scratch + slash \
         + '04model' + slash + sModel + slash \
         + sRegion + slash \
@@ -401,7 +398,7 @@ if __name__ == '__main__':
 
     if (iFlag_spinup ==1):
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-            iFlag_spinup_in = iFlag_spinup,\
+                                                              iFlag_spinup_in = iFlag_spinup,\
                                                               iYear_start_in = 1949, \
                                                               iYear_end_in = 1978,\
                                                               iYear_data_end_in = 1988, \
@@ -413,7 +410,7 @@ if __name__ == '__main__':
         
     else:
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-            iFlag_spinup_in = iFlag_spinup,\
+                                                            iFlag_spinup_in = iFlag_spinup,\
                                                               iYear_start_in = 1979, \
                                                               iYear_end_in = 2008,\
                                                               iYear_data_end_in = 2008, \

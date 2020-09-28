@@ -129,7 +129,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     if sVariable_in is not None:
         sVariable = sVariable_in
     else:
-        sVariable = config['iYear_start']
+        sVariable = config['sVariable']
     if sLabel_y_in is not None:
         sLabel_y = sLabel_y_in
     else:
@@ -142,13 +142,13 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
     config['iFlag_spinup'] = "{:01d}".format(iFlag_spinup)
 
-    nYear =  iYear_end-iYear_start+1
+    nYear = iYear_end - iYear_start + 1
     config['nYear'] =  "{:03d}".format(nYear)
     nMonth = nYear  * 12
     config['nMonth']=  "{:04d}".format(nMonth)
 
     sRegion = config['sRegion']
-    config['sVariable'] = sVariable
+    config['sVariable'] = sVariable.lower()
     config['sLabel_y'] = sLabel_y
     
 

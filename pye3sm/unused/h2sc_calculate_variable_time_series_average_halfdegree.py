@@ -2,38 +2,31 @@ import os #operate folder
 import sys
 import numpy as np
 
-#maybe not needed
 from osgeo import gdal #the default operator
-import argparse
-from joblib import Parallel, delayed
-import multiprocessing
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 from pyes.system.define_global_variables import *
-from pyes.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
+from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 
-def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configuration_in, iCase_index_in = None):
+def h2sc_calculate_variable_time_series_average_halfdegree(oE3SM_in, oCase_in):
 
-    if iCase_index_in is not None:
-        
-        iCase_index = iCase_index_in
-    else:
-        iCase_index = 0
-    e3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index)       
-    sModel  = oE3SM.sModel
-    sRegion = oE3SM.sRegion     
-    
-    iYear_start = 2000
-    iYear_end = 2008
-    
-    
+    iCase_index = oCase_in.iCase_index
+    sModel  = oCase_in.sModel
+    sRegion = oCase_in.sRegion     
+    dConversion = oCase_in.dConversion
+    sVariable  = oCase_in.sVariable
+
+    iYear_start = oCase_in.iYear_start
+    iYear_end = oCase_in.iYear_end
+    sCase = oCase_in.sCase
 
     print('The following model is processed: ', sModel)
     if( sModel == 'h2sc'):
@@ -44,10 +37,6 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
         else:
             pass
     
-    dConversion = 1.0
-   
-    sVariable  = oE3SM.sVariable
-
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster    
     
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
@@ -57,7 +46,7 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
     
     #we only need to change the case number, all variables will be processed one by one
     
-    sCase = oE3SM.sCase
+    
     
     sWorkspace_analysis_case = sWorkspace_analysis + slash + sCase
     
@@ -71,8 +60,8 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
     nrow = 360
     aData_all = np.full( (nts, nrow, ncolumn), missing_value, dtype = float)
     iIndex = 0 
-    sWorkspace_variable_tif = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tiff'
-    sFilename_out = sWorkspace_variable_tif + slash + sVariable.lower() +  sCase + '000' + sExtension_tif
+    sWorkspace_variable_tiff = sWorkspace_analysis_case  + slash + sVariable.lower() + slash + 'tiff'
+    sFilename_out = sWorkspace_variable_tiff + slash + sVariable.lower() +  sCase + '000' + sExtension_tiff
     iFlag_first_time = 1 
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
@@ -82,7 +71,7 @@ def h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configurati
             sMonth = str(iMonth).zfill(2)
     
             #read raster data
-            sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMonth + sExtension_tif
+            sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower() + sYear + sMonth + sExtension_tiff
             if os.path.isfile(sFilename_tiff):
                 pass
             else:
@@ -130,16 +119,7 @@ if __name__ == '__main__':
     
   
     mms2mmd = 24 * 3600.0
-    iMonth_start = 1
-    iMonth_end = 12
-    sModel = 'h2sc'
-    sRegion = 'global'
-    sFilename_configuration = sWorkspace_configuration  + slash + sModel + slash + sRegion + slash \
-        + slash + 'h2sc_configuration_zwt.txt' 
-
-
-    print(sFilename_configuration)
-    h2sc_calculate_variable_time_series_average_halfdegree(sFilename_configuration)
+    
     print('finished')
 
 

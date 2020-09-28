@@ -11,6 +11,9 @@ class pycase(object):
     iYear_data_start=0
     iYear_data_end=0
 
+    iYear_subset_start = 0
+    iYear_subset_end= 0
+
     iFlag_same_grid=1
     nyear=0
     nmonth=0
@@ -41,7 +44,7 @@ class pycase(object):
     sFilename_datm_namelist=''
 
     def __init__(self, aParameter):
-        print('PEST model is being initialized')
+        print('E3SM case model is being initialized')
         #self.aParameter = aParameter
 
         #required with default variables
@@ -59,6 +62,10 @@ class pycase(object):
             self.iYear_data_start             = int(aParameter[ 'iYear_data_start'])
         if 'iYear_data_end' in aParameter:
             self.iYear_data_end             = int(aParameter[ 'iYear_data_end'])
+        if 'iYear_subset_start' in aParameter:
+            self.iYear_subset_start             = int(aParameter[ 'iYear_subset_start'])
+        if 'iYear_subset_end' in aParameter:
+            self.iYear_subset_end             = int(aParameter[ 'iYear_subset_end'])
         if 'iFlag_same_grid' in aParameter:
             self.iFlag_same_grid             = int(aParameter[ 'iFlag_same_grid'])
             

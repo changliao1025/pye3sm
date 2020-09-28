@@ -27,19 +27,30 @@ aHydraulic_anisotropy_exp = np.arange(-3,1.1,0.25)
 aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
 print(aHydraulic_anisotropy)
 
-
 #start loop
 ncase = len(aHydraulic_anisotropy)
 iFlag_debug = 0
 iFlag_branch = 0
-iFlag_initial = 0
-iFlag_spinup = 1
+iFlag_initial = 1
+iFlag_spinup = 0
 iFlag_continue = 0
 iFlag_resubmit = 0
 iFlag_short = 0
-sDate_spinup = '20200504'
-sDate_spinup = '20200904'
-sDate = '20200905'
+#sDate_spinup = '20200504'
+sDate_spinup = '20200905'
+sDate = '20200906'
+
+sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
+                                                          iFlag_debug_in = iFlag_debug, \
+                                                          iFlag_branch_in = iFlag_branch,\
+                                                          iFlag_continue_in = iFlag_continue,\
+                                                          iFlag_resubmit_in = iFlag_resubmit,\
+                                                          iFlag_short_in = iFlag_short  )
+
+oE3SM = pye3sm(aParameter_e3sm)
+
 for iCase in range(1,ncase + 1):
     #call the create case function
     dHydraulic_anisotropy = aHydraulic_anisotropy[iCase-1]
@@ -77,7 +88,7 @@ for iCase in range(1,ncase + 1):
         #this is a case that use existing restart file
         #be careful with the filename!!!
         
-        #sCase_spinup =  sModel + sDate_spinup+ "{:03d}".format(iCase)
+        sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(iCase)
         #sCase_spinup = 'h2sc20200409001'
 
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
@@ -99,16 +110,7 @@ for iCase in range(1,ncase + 1):
         pass
 
 
-    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
-    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
-    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
-                                                          iFlag_debug_in = iFlag_debug, \
-                                                          iFlag_branch_in = iFlag_branch,\
-                                                          iFlag_continue_in = iFlag_continue,\
-                                                          iFlag_resubmit_in = iFlag_resubmit,\
-                                                          iFlag_short_in = iFlag_short  )
-
-    oE3SM = pye3sm(aParameter_e3sm)
+    
 
 
     if (iFlag_spinup ==1):

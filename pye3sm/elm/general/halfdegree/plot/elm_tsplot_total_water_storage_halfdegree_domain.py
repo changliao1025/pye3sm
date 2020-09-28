@@ -139,7 +139,6 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
             iStress=iStress+1
             
 
-
     #read the stack data for each variable
     aVariable = ['rain','snow','qsoil', 'qvege','qvegt', 'qover','qdrai']
     nvariable = len(aVariable)

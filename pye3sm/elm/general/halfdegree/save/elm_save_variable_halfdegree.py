@@ -122,10 +122,10 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
                             + sVariable.lower() + slash + 'dat'
     if not os.path.exists(sWorkspace_variable_dat):
         os.makedirs(sWorkspace_variable_dat)
-    sWorkspace_variable_tif = sWorkspace_analysis_case + slash \
-        + sVariable.lower() + slash + 'tif'
-    if not os.path.exists(sWorkspace_variable_tif):
-        os.makedirs(sWorkspace_variable_tif)
+    sWorkspace_variable_tiff = sWorkspace_analysis_case + slash \
+        + sVariable.lower() + slash + 'tiff'
+    if not os.path.exists(sWorkspace_variable_tiff):
+        os.makedirs(sWorkspace_variable_tiff)
         
     sFilename_output = sWorkspace_variable_netcdf + slash + sVariable.lower() +  sExtension_netcdf
     pFile = Dataset(sFilename_output, 'w', format='NETCDF4') 
@@ -237,9 +237,9 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
               float(pHeaderParameters['ULlat']),\
                   -9999.0, pSpatial)
 
-    sFilename_tif = sWorkspace_variable_tif + slash + sVariable.lower()  + sExtension_tif
+    sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower()  + sExtension_tiff
 
-    gdal_write_geotiff_multiple_band(sFilename_tif, aGrid_stack,\
+    gdal_write_geotiff_multiple_band(sFilename_tiff, aGrid_stack,\
         float(pHeaderParameters['pixelSize']),\
          float(pHeaderParameters['ULlon']),\
               float(pHeaderParameters['ULlat']),\

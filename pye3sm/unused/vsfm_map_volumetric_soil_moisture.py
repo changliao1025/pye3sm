@@ -32,7 +32,7 @@ missing_value = -9999.0
 sExtension_nc = '.nc'
 sExtension_envi ='.dat'
 sExtension_header ='.hdr'
-sExtension_tif = '.tif'
+sExtension_tiff = '.tif'
 sExtension_png = '.png'
 #local
 sModel = 'vsfm'

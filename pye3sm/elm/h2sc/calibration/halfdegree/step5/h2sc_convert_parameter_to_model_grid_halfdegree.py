@@ -9,24 +9,25 @@ sys.path.extend(sSystem_paths)
 from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
-def h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration_in):
+def h2sc_convert_parameter_to_model_grid_halfdegree(oE3SM_in, oCase_in):
     
     #get configuration
-    e3sm_read_configuration_file(sFilename_configuration_in)
     
-    sDate='20200212'
+    
+    sModel = oCase_in.sModel
 
-    
+    sDate = oCase_in.sDate
     sRecord = sDate
-    
-    
+    dConversion = 1.0
     
 
     print('The following model is processed: ', sModel)
@@ -37,27 +38,24 @@ def h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration_in):
             aDimension = [ 96, 144]
         else:
             pass
-    sWorkspace_analysis = oE3SM.sWorkspace_analysis
+    sWorkspace_analysis = oCase_in.sWorkspace_analysis
    
 
     sWorkspace_analysis_wtd  = sWorkspace_analysis + slash + 'wtd'
     if not os.path.exists(sWorkspace_analysis_wtd):
         os.makedirs(sWorkspace_analysis_wtd)   
     
-    dConversion = 1.0
+    
     
     
 
-    sFilename_parameter = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tif
+    sFilename_parameter = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
     dummy = gdal_read_geotiff(sFilename_parameter)
     aAnisotropy_optimal = dummy[0]
     #extract the effective data from the matrix
     dummy_index = np.where(aAnisotropy_optimal != missing_value)
     aData_subset = aAnisotropy_optimal[dummy_index] 
     
-    aLongitude_subset = grid_x[dummy_index]
-    aLatitude_subset = grid_y[dummy_index]
-
 
     #read model grid from existing dataset
     #here we will use the surface data as example
@@ -127,16 +125,22 @@ def h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration_in):
     ds = layer = feat  = None  
     print('finished')                 
 if __name__ == '__main__':
-    sModel = 'h2sc'
-    sRegion = 'global'
-    sFilename_configuration = sWorkspace_configuration  + slash + sModel + slash + sRegion + slash   + slash + 'h2sc_configuration_zwt.txt' 
-    print(sFilename_configuration)
 
-    iFlag_debug = 1
-    if iFlag_debug == 1:
+    sDate='20200906'
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration    )
+
+    oE3SM = pye3sm(aParameter_e3sm)
+    aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+                                                     iYear_start_in = 1979, \
+                                                              iYear_end_in = 2008,\
+                                                              sDate_in = sDate )
+    oCase = pycase(aParameter_case)   
+    oCase.iYear_subset_start = 2000
+    oCase.iYear_subset_end = 2008
          
    
-        h2sc_convert_parameter_to_model_grid_halfdegree(sFilename_configuration)
-    else:
-        pass
+    h2sc_convert_parameter_to_model_grid_halfdegree(oE3SM, oCase)
+    
                                            

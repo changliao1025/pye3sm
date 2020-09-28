@@ -10,7 +10,7 @@
     sFormat = "GTiff"
     driver = gdal.GetDriverByName( sFormat )
     #Output to new format
-    sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower() + sYear + sMo+sExtension_tif
+    sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower() + sYear + sMo+sExtension_tiff
     dst_ds = driver.CreateCopy( sFilename_tiff, src_ds, 0 )
     #Properly close the datasets to flush to disk
     dst_ds = None

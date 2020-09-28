@@ -121,9 +121,9 @@ def h2sc_map_soil_clay_content(sFilename_configuration_in, iCase_index):
                 + sVariable.lower() + slash + 'dat'
             if not os.path.exists(sWorkspace_variable_dat):
                 os.makedirs(sWorkspace_variable_dat)
-            sWorkspace_variable_tif = sWorkspace_analysis_case + slash + sVariable.lower() + slash + 'tiff'
-            if not os.path.exists(sWorkspace_variable_tif):
-                os.makedirs(sWorkspace_variable_tif)
+            sWorkspace_variable_tiff = sWorkspace_analysis_case + slash + sVariable.lower() + slash + 'tiff'
+            if not os.path.exists(sWorkspace_variable_tiff):
+                os.makedirs(sWorkspace_variable_tiff)
             sFilename_envi = sWorkspace_variable_dat + slash + sVariable.lower() +sExtension_envi
             aGrid_data.astype('float32').tofile(sFilename_envi)
             #write header
@@ -135,7 +135,7 @@ def h2sc_map_soil_clay_content(sFilename_configuration_in, iCase_index):
             sFormat = "GTiff"
             driver = gdal.GetDriverByName( sFormat )
             #Output to new format
-            sFilename_tiff = sWorkspace_variable_tif + slash + sVariable.lower()  + sExtension_tif
+            sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower()  + sExtension_tiff
             dst_ds = driver.CreateCopy( sFilename_tiff, src_ds, 0 )
             #Properly close the datasets to flush to disk
             dst_ds = None
