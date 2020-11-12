@@ -13,20 +13,20 @@ from pyes.toolbox.date.day_in_month import day_in_month
 from pyes.toolbox.data.remove_outliers import remove_outliers
 from pyes.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
 
-from pyes.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_bound import plot_time_series_data_multiple_temporal_resolution_bound
+from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration_in, \
-                                                         iCase_index,\
-                                                         iYear_start_in = None, \
-                                                         iYear_end_in =None,\
+def h2sc_evaluate_water_table_depth_with_situ_halfdegree(oE3SM_in, \
+                                                         oCase_in,\
                                                          dMin_in = None, \
                                                          dMax_in = None, \
                                                          dMin_x_in = None, \
@@ -37,13 +37,11 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
                                                          sLabel_y_in = None, \
                                                          aLabel_legend_in = None, \
                                                          sTitle_in=None):
-    e3sm_read_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
-    sModel = oE3SM.sModel
-    sRegion = oE3SM.sRegion
+
+    sModel = oCase_in.sModel
+    sRegion = oCase_in.sRegion
+    iYear_start = oCase_in.iYear_start
+    iYear_end = oCase_in.iYear_end
     sWorkspace_auxiliary = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'auxiliary'
     #read obs
     #the obs time period is limited, so we will use only 2001 -2008 here
@@ -52,17 +50,7 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     sFilename = sWorkspace_auxiliary + slash + 'situ' + slash + 'INPA-LBA_WellData_2001_2016.xlsx'
     xl = pd.ExcelFile(sFilename)
     aSheet = xl.sheet_names  # see all sheet names
-    #ss=openpyxl.load_workbook(sFilename)
-    #for sSheet in aSheet:
-    #    sSheet_new = sSheet.replace('\xad', '')
-    #    ss_sheet = ss[sSheet]
-    #    ss_sheet.title = sSheet_new
-    #ss.save(sFilename)
-    #sSheet = 'PZ_PR-10'
-
-    #now make a list of all the sheet
-    #xl = pd.ExcelFile(sFilename)
-    #aSheet = xl.sheet_names  # see all sheet names
+    aElevation = np.array([59, 59, 60, 61, 60, 87,87, 81, 101, 96, 101,101, 101, ])
     aDate_host=list()
     nyear = iYear_end - iYear_start + 1
     for iYear in range(iYear_start, iYear_end + 1):
@@ -71,14 +59,17 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
             for iDay in range(1, dom+1):
                 dSimulation = datetime.datetime(iYear, iMonth, iDay)
                 aDate_host.append( dSimulation )
+                pass
+
     aDate_host=np.array(aDate_host)
     nobs_host = len(aDate_host)
     aData_host = np.full( (12,nobs_host), np.nan, dtype=float)
+    # we skip some data because language is not in english
     for iSheet in np.arange(1,13):
         sSheet = aSheet[iSheet]
         print(sSheet)
         if sSheet == 'PZ_PT-07':
-            continue
+            continue            
         if sSheet == 'PP03':
             continue
         if sSheet == 'PP2':
@@ -93,17 +84,21 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
         df.columns = ['Date','WTD']
         dummy1 = df['Date']
         dummy2 = np.array(dummy1)
-
         dummy3 = dt2cal(dummy2)
         #aDate_obs = pd.to_datetime(np.array(dummy1))
         nobs =len(dummy3)
-        aDate_obs=list()
+        aDate_obs = list()
         for iObs in range(nobs):
-            dummy4= datetime.datetime(dummy3[iObs,0], dummy3[iObs,1],  dummy3[iObs,2])
+            d1=dummy3[iObs,0]
+            d2=dummy3[iObs,1]
+            d3= dummy3[iObs,2]
+            dummy4= datetime.datetime(d1,d2 , d3 )
             aDate_obs.append( dummy4 )
-            aDate_obs= np.array(aDate_obs)
-            dummy5 = df['WTD']
-            aWTD_obs_dummy = np.array(dummy5)  # mg/l
+            pass
+
+        aDate_obs= np.array(aDate_obs)
+        dummy5 = df['WTD']
+        aWTD_obs_dummy = np.array(dummy5)  # mg/l
 
         #now fit the data inside the host
 
@@ -133,32 +128,32 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
         for iMonth in range(1,13):
             dSimulation = datetime.datetime(iYear, iMonth, 15)
             aDate_sim.append( dSimulation )
+            pass
             #do the subset
             #convert date to juliday
 
     lJulian_start = gcal2jd(iYear_start, 1, 1)
-    iYear_subset_start = 2000
+    iYear_subset_start = 2002
     iYear_subset_end = 2008
     iMonth = 1
     #select subset by date range
 
 
     #read sim
-    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
-    sVariable = oE3SM.sVariable.lower()
+    sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
+    sVariable = oCase_in.sVariable
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +    slash + 'tiff'
     #read the stack data
 
-    sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
-    subset_index_start = (iYear_subset_start-iYear_start) * 12 + iMonth-1
-    subset_index_end = (iYear_subset_end+1-iYear_start) * 12 + iMonth-1
-    subset_index = np.arange( subset_index_start,subset_index_end, 1 )
+    sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_tiff
+    subset_index_start = (iYear_subset_start-iYear_start) * 12 + 1-1
+    subset_index_end = (iYear_subset_end-iYear_start) * 12 + 12-1
+    subset_index = np.arange( subset_index_start,subset_index_end+1, 1 )
     aDate_sim = np.array(aDate_sim)
     aDate_sim_subset = aDate_sim[subset_index]
 
-    sFilename
-    aData_all = gdal_read_envi_file_multiple_band(sFilename)
+    aData_all = gdal_read_geotiff_multiple_band(sFilename)
     aVariable_all = aData_all[0]
 
     aVariable_total_subset = aVariable_all[ subset_index,:,:]
@@ -166,36 +161,38 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration
     #pick the pixel by lat/lon
     dLongitude = -60.2
     dLatitude = -2.6
-    lColumn = int((dLongitude - (-180)) / 0.5 )
-    lRow = int( (90 - (dLatitude)) / 0.5 )
+    lColumn = int((dLongitude - (-180)) / 0.5 ) -1
+    lRow = int( (90 - (dLatitude)) / 0.5 ) -1
     aWTD_sim = aVariable_total_subset[:, lRow, lColumn]
 
     #plot time series
-    aWTD_obs = [aWTD_obs_low, aWTD_obs_mean,  aWTD_obs_high]
-    aTime_all = [aDate_host, aDate_sim_subset]
-    aData_all = [aWTD_obs, aWTD_sim]
+    #aWTD_obs = [aWTD_obs_low, aWTD_obs_mean,  aWTD_obs_high]
+    aTime_all = [aDate_host, aDate_host,aDate_host, aDate_sim_subset]
+    aData_all = [aWTD_obs_low, aWTD_obs_mean,  aWTD_obs_high, aWTD_sim]
     sFilename_out = sWorkspace_analysis_case + slash \
-        + sVariable +'_'+ 'amzone' + '_wtd_situ_tsplot' + '.png'
+        + sVariable + slash + 'amazon' + '_wtd_situ_tsplot' + '.png'
     aColor = create_diverge_rgb_color_hex(4, iFlag_reverse_in=1)
-    plot_time_series_data_multiple_temporal_resolution_bound(aTime_all, aData_all, \
-                                                             sFilename_out,\
-                                                             iReverse_Y_in=1,\
-                                                             iSize_X_in = 12, \
-                                                             iSize_Y_in = 5, \
-                                                             dMax_Y_in =5, \
-                                                             dMin_Y_in = 0, \
-                                                             dSpace_y_in=1.0,\
-                                                             sLabel_Y_in = 'Water table depth (m)', \
-                                                             aColor_in = [aColor[0:3], aColor[3]],\
-                                                             aMarker_in = [['o','.','*'],'+'],\
-                                                             aLinestyle_in = [['-','--','-.' ],'solid'],\
-                                                             aLabel_legend_in = [['In situ low','In situ mean','In situ high'],'ELM simulated'])
+    plot_time_series_data(aTime_all, aData_all, \
+                          sFilename_out,\
+                          iReverse_y_in=1,\
+                          iSize_x_in = 12, \
+                          iSize_y_in = 5, \
+                          dMax_x_in = max(aDate_sim_subset), \
+                          dMin_x_in = aDate_sim_subset[0], \
+                          dMax_y_in = 7, \
+                          dMin_y_in = 0, \
+                          dSpace_y_in=1.0,\
+                          sLabel_y_in = 'Water table depth (m)', \
+                          aColor_in = aColor,\
+                          aMarker_in = ['o','.','*','+'],\
+                          aLinestyle_in = ['-','--','-.' ,'solid'],\
+                          aLabel_legend_in = ['In situ min','In situ mean','In situ max','ELM simulated'])
     return
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 1
-        iIndex_end = 7
+        iIndex_start = 9
+        iIndex_end = 9
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -206,32 +203,42 @@ if __name__ == '__main__':
 
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200421'
+    sDate = '20200924'
 
-    iYear_start = 1980
+    iYear_start = 1979
     iYear_end = 2008
 
     sVariable = 'zwt'
-    sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
-        + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+
+    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
+    print(aParameter_e3sm)
+    oE3SM = pye3sm(aParameter_e3sm)
 
 
     sLabel = 'Water table depth (m)'
 
 
-    aLabel_legend = [  'Observed WTD','Simulated WTD' ]
+    aLabel_legend = ['Observed WTD','Simulated WTD' ]
 
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
     #iCase_index = 1
     for iCase_index in (aCase_index):
-        h2sc_evaluate_water_table_depth_with_situ_halfdegree(sFilename_configuration,\
-                                                             iCase_index,\
-                                                             iYear_start_in = iYear_start, \
-                                                             iYear_end_in =iYear_end,\
+        aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+                                                               iCase_index_in =  iCase_index ,\
+                                                               iYear_start_in = iYear_start, \
+                                                               iYear_end_in = iYear_end,\
+                                                               sDate_in= sDate,\
+                                                               sVariable_in = sVariable )
+        #print(aParameter_case)
+        oCase = pycase(aParameter_case)
+        h2sc_evaluate_water_table_depth_with_situ_halfdegree(oE3SM,\
+                                                             oCase,\
                                                              dMin_in = 0, \
-                                                             dMax_in = 80, \
+                                                             dMax_in = 60, \
                                                              sDate_in= sDate, \
                                                              sLabel_x_in=sLabel,\
                                                              #sLabel_y_in='Distribution [%]',\

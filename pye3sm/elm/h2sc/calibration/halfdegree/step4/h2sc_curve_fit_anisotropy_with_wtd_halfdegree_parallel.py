@@ -82,6 +82,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
     pSpatialRef = pWTD[7]        
    
     #we need to match the case id with actual parameter space
+    #dSaturate_hydraulic_conductivity =  dDummy / hydraulic_anisotropy
     #aHydraulic_anisotropy_exp = np.arange(-3,3.1,0.25)
     #aHydraulic_anisotropy_exp = np.arange(-3,0.1,0.25)
     aHydraulic_anisotropy_exp = np.arange(-2,0.3,0.25)
@@ -204,11 +205,20 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
                         dummy = calculate_line_intersect_point(A,B, C, D)
                         aAnisotropy_optimal[iRow-1, iColumn-1] = np.power(10.0, dummy[0]   )
                     else:
-                        if( np.min(aWtd) > dWtd ):
+                        if( np.min(aWtd2) > dWtd ):
+                            #the obs is very shallow
+                            #we need to have low hk = hkv / aniso
+                            #so we need to have high aniso
+                            #check the line profile
                             aAnisotropy_optimal[iRow-1, iColumn-1] =np.power(10.0,\
                                     aHydraulic_anisotropy_exp[ncase -1]   )
                             aQC[iRow-1, iColumn-1] = 2
                         else:
+                            #the opposite
+                            #the obs is too deep
+                            #we need large hk
+                            #so we need low aniso
+                        
                             aAnisotropy_optimal[iRow-1, iColumn-1] = np.power(10.0,\
                                 aHydraulic_anisotropy_exp[0] )
                             aQC[iRow-1, iColumn-1] = 3

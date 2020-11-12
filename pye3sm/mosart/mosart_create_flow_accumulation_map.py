@@ -14,12 +14,7 @@ sWorkspace_data = '/people/liao313/data/hexwatershed/columbia_river_basin/vector
 sWorkspace_out = '/people/liao313/data/hexwatershed/columbia_river_basin/vector/mosart/shapefile/'
 for i in np.arange(len(aResolution)):
     sResolution = aResolution[i]
-
-
     sFilename= 'MOSART_columbia_river_basin_' + sResolution + '.nc'
-
-
-
     sFilename_netcdf = os.path.join(sWorkspace_data, sFilename)
     if os.path.exists(sFilename_netcdf):
         print("Yep, I can read that file!")
@@ -27,9 +22,6 @@ for i in np.arange(len(aResolution)):
         print("Nope, the path doesn't reach your file. Go research filepath in python")
         print(sFilename_netcdf)
         continue
-
-
-
 
     print(sFilename_netcdf)
     aDatasets = Dataset(sFilename_netcdf)
@@ -63,9 +55,9 @@ for i in np.arange(len(aResolution)):
         if sKey == 'longxy':
             aLongitude = (aValue[:]).data
         if sKey == 'areaTotal2':
-            aAccu = (aValue[:]).data
+            aAccu = (aValue[:]).data / 1.0e+6
 
-    sFilename_shapefile_output = 'MOSART_columbia_river_basin_flow_direction_' + sResolution +'.shp'
+    sFilename_shapefile_output = 'MOSART_columbia_river_basin_flow_accumulation_' + sResolution +'.shp'
     
 
     sFilename_shapefile_output = os.path.join(sWorkspace_out, sFilename_shapefile_output)
@@ -73,10 +65,10 @@ for i in np.arange(len(aResolution)):
     pDataset = pDriver.CreateDataSource(sFilename_shapefile_output)
     pSrs = osr.SpatialReference()  
     pSrs.ImportFromEPSG(4326)    # WGS84 lat/long
-    pLayer = pDataset.CreateLayer('flowdir', pSrs, ogr.wkbLineString)
+    pLayer = pDataset.CreateLayer('flowacu', pSrs, ogr.wkbPoint)
     # Add one attribute
-    pLayer.CreateField(ogr.FieldDefn('id', ogr.OFTInteger))
-    #pLayer.CreateField(ogr.FieldDefn('dAccu', ogr.OFTReal))
+
+    pLayer.CreateField(ogr.FieldDefn('dAccu', ogr.OFTReal))
 
     pLayerDefn = pLayer.GetLayerDefn()
     pFeature = ogr.Feature(pLayerDefn)
@@ -91,17 +83,17 @@ for i in np.arange(len(aResolution)):
         y_start = aLatitude[i]
         if(lID_down != -9999):
             aDn_index = np.where(aID == lID_down)
-            if len(aDn_index) ==1:
+            if len(aDn_index) == 1:
                 aDn_index = np.reshape(aDn_index, (1))
                 dummy_index = aDn_index[0]
                 x_end = aLongitude[dummy_index]
                 y_end = aLatitude[dummy_index]
-                pLine = ogr.Geometry(ogr.wkbLineString)
-                pLine.AddPoint(x_start, y_start)
-                pLine.AddPoint(x_end, y_end)
-                print(x_start, y_start, x_end, y_end)
-                pFeature.SetGeometry(pLine)
-                pFeature.SetField("id", lID)
+                pPoint = ogr.Geometry(ogr.wkbPoint)
+                pPoint.AddPoint(x_start, y_start)
+                
+                print(x_start, y_start)
+                pFeature.SetGeometry(pPoint)
+                pFeature.SetField("dAccu", dAccu)
                 pLayer.CreateFeature(pFeature)
             else:
                 print(aDn_index)

@@ -44,7 +44,7 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(oE3SM_in, oCase_in):
         
     sFilename_old = '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025.nc'
     
-    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025_log10_new.nc'
+    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025_log10.nc'
     aData_in=aAnisotropy_optimal
     sVariable_in= 'anisotropy'
     sUnit_in= 'none'

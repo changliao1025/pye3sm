@@ -1,7 +1,6 @@
-import matplotlib.pyplot as plt
+import sys
 import numpy as np
-a = np.arange(5)
-b = a + 1
-plt.plot(a,b)
-plt.show()
+x = np.arange(10)
+y =np.roll(x, 1)
 
+print(y)

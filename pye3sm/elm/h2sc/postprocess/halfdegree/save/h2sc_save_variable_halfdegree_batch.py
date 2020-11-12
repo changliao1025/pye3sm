@@ -27,11 +27,8 @@ def h2sc_save_variable_halfdegree_batch(oE3SM_in, oCase_in):
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 1
-        iIndex_end = 1
-        sModel = 'h2sc'
-        sRegion = 'global'
-
+        iIndex_start = 9
+        iIndex_end = 9
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -40,23 +37,22 @@ if __name__ == '__main__':
         iIndex_start = pArgs.iIndex_start
         iIndex_end = pArgs.iIndex_end
 
-    sDate = '20200421'
-    sDate = '20200722'
-    #sVariable='ZWT'
-    #sVariable = 'wt_slp'
-    aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI']
+    sDate = '20200924'
+    
+    
+    aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI', \
+        'wt_slp','sur_slp','ZWT','TWS_MONTH_BEGIN','TWS_MONTH_END']
+    #aVariable = ['wt_slp','sur_slp','ZWT']
+    #aVariable = ['TWS_MONTH_BEGIN','TWS_MONTH_END']
     nvariable = len(aVariable)
-    #sVariable = 'drainage'
-    #sVariable = 'sur_slp'
-    #sFilename_configuration = sWorkspace_configuration + slash + \
-    #    sModel + slash \
-    #    + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
+    
+  
 
     #start loop
 
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
-    iYear_start = 1980
+    iYear_start = 1979
     iYear_end = 2008
 
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)

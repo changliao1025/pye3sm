@@ -27,19 +27,19 @@ def h2sc_save_variable_halfdegree(oE3SM_in, oCase_in):
 
 if __name__ == '__main__':
 
-    sModel = 'h2sc'
-    sRegion = 'global'
 
-    sDate = '20200421'
-    sDate = '20200722'
-    iCase_index = 1
+    sDate = '20200924'
+    
+    iCase_index = 9
 
-    iYear_start = 1980
+    iYear_start = 1979
     iYear_end = 2008
     #from now, to maintain consistancy, we will the same variable name for all processes.
     #use the new naming method
-    sVariable = 'ZWT'
-    #sVariable = 'wt_slp'
+    #sVariable = 'ZWT'
+    sVariable = 'wt_slp'
+    #aVariable = ['TWS_MONTH_END','TWS_MONTH_BEGIN']
+    sVariable = 'TWS_MONTH_END'
     #sVariable = 'sur_slp'
 
 
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                            iCase_index_in =  iCase_index ,\
                                                            iYear_start_in = iYear_start, \
-                                                           iYear_end_in =iYear_end,\
+                                                           iYear_end_in = iYear_end,\
                                                            sDate_in= sDate,\
                                                            sVariable_in = sVariable )
     #print(aParameter_case)

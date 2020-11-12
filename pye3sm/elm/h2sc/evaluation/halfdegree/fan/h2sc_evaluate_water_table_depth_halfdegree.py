@@ -9,20 +9,25 @@ sys.path.extend(sSystem_paths)
 from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
 
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
+
 from pyes.visual.histogram.histogram_plot import histogram_plot
 from pyes.visual.histogram.histogram_plot_multiple import histogram_plot_multiple
 
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration_in, \
-                                               iCase_index,\
+sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
+sys.path.append(sPath_pye3sm)
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.elm.general.halfdegree.save.elm_save_variable_halfdegree import elm_save_variable_halfdegree
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+
+def h2sc_evaluate_water_table_depth_halfdegree(oE3SM_in, \
+                                               oCase_in,\
                                                iYear_start_in = None, \
-                                               iYear_end_in =None,\
+                                               iYear_end_in = None,\
                                                dMin_in = None, \
                                                dMax_in = None, \
                                                dMin_x_in = None, \
@@ -34,20 +39,13 @@ def h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration_in, \
                                                aLabel_legend_in = None, \
                                                sTitle_in=None):
 
+   
 
-    e3sm_read_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
-
-    sModel = oE3SM.sModel
-    sRegion = oE3SM.sRegion
-    sCase = oE3SM.sCase
+    sModel = oCase_in.sModel
+    sRegion = oCase_in.sRegion
+    sCase = oCase_in.sCase
     #read obs 
-    sFilename_mask = sWorkspace_data + slash \
-        + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
-        + 'MOSART_Global_half_20180606c.chang_9999.nc'
+    sFilename_mask = oCase_in.sFilename_mask
     #read in mask
     aDatasets = Dataset(sFilename_mask)
     netcdf_format = aDatasets.file_format
@@ -72,23 +70,25 @@ def h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration_in, \
 
 
     #read simulated 
-    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
-    sVariable = oE3SM.sVariable.lower()
+    sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
+    sVariable = oCase_in.sVariable
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'tiff'
     #read the stack data
 
-    sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
+    sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_tiff
 
-    aData_all = gdal_read_envi_file_multiple_band(sFilename)
+    aData_all = gdal_read_geotiff_multiple_band(sFilename)
+
     aVariable_all = aData_all[0]
-
-    iYear_base = 1990
-    iYear_level = 2008
+    
+    iYear_origin = 1979
+    iYear_start = 1990
+    iYear_end = 2008
     iMonth = 6
 
-    i = (iYear_base-iYear_start) * 12 + iMonth-1 
-    j = (iYear_level-iYear_start) * 12 + iMonth-1
+    i = (iYear_start - iYear_origin) * 12 + iMonth-1 
+    j = (iYear_end - iYear_origin ) * 12 + iMonth-1
 
     #take average
     aVariable_all1 = aVariable_all[ i:j,:,:]
@@ -97,15 +97,15 @@ def h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration_in, \
     #plot kde distribution 
 
     #now we will remove the high latitudes due to the frozen soil issue.
-    nCutoff = 15
+    nCutoff = 45
     iStart= int(nCutoff/0.5)
     iEnd = 360 - iStart
-    #aWTD_obs = aWTD_obs[iStart:iEnd,:]
+    aWTD_obs = aWTD_obs[iStart:iEnd,:]
 
     aMask1 = np.where(aWTD_obs != missing_value)
     aData_a = aWTD_obs[aMask1]
     #sim
-    #aVariable_all2 = aVariable_all2[iStart:iEnd,:]
+    aVariable_all2 = aVariable_all2[iStart:iEnd,:]
     aMask1 = np.where(aVariable_all2 != missing_value )
 
 
@@ -155,8 +155,8 @@ def h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration_in, \
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 1
-        iIndex_end = 7
+        iIndex_start = 9
+        iIndex_end = 9
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -167,35 +167,46 @@ if __name__ == '__main__':
 
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200421'
+    sDate = '20200924'
 
-    iYear_start = 1980
+    iYear_start = 1979
     iYear_end = 2008
 
-
-
-    sVariable = 'zwt'
-    sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
-        + sRegion + slash + 'h2sc_configuration_' + sVariable.lower() + sExtension_txt
+    sVariable = 'zwt'  
 
 
     sLabel = 'Water table depth (m)'
 
 
-    aLabel_legend = [  'Observed WTD','Simulated WTD' ]
+    aLabel_legend = ['Observed WTD','Simulated WTD' ]
 
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 
-        #iCase_index = 240
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+
+    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
+    print(aParameter_e3sm)
+    oE3SM = pye3sm(aParameter_e3sm)
+
+    
+
     for iCase_index in (aCase_index):
-        h2sc_evaluate_water_table_depth_halfdegree(sFilename_configuration,\
-                                                   iCase_index,\
-                                                   iYear_start_in = iYear_start, \
-                                                   iYear_end_in =iYear_end,\
+        aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+                                                           iCase_index_in =  iCase_index ,\
+                                                           iYear_start_in = iYear_start, \
+                                                           iYear_end_in = iYear_end,\
+                                                           sDate_in= sDate,\
+                                                           sVariable_in = sVariable )
+    #print(aParameter_case)
+        oCase = pycase(aParameter_case)
+        h2sc_evaluate_water_table_depth_halfdegree(oE3SM,\
+                                                   oCase,\
+                                                  
                                                    dMin_in = 0, \
-                                                   dMax_in = 80, \
+                                                   dMax_in = 60, \
                                                    dMin_x_in = 0, \
                                                    dMax_x_in = 60, \
                                                    dSpace_x_in = 0.5, \

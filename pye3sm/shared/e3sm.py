@@ -22,7 +22,7 @@ class pye3sm(object):
     
 
     def __init__(self, aParameter):
-        print('PEST model is being initialized')
+        print('pye3sm model is being initialized')
         #self.aParameter = aParameter
 
         #required with default variables

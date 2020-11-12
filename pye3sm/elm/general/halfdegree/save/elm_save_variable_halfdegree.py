@@ -6,6 +6,8 @@ from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
 
 
+os.environ['PROJ_LIB'] = '/qfs/people/liao313/.conda/envs/gdalenv/share/proj'
+
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
@@ -24,19 +26,6 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
-
-#(sFilename_configuration_in, iCase_index, \
-#    iFlag_same_grid_in = None, \
-#    iYear_start_in = None, \
-#    iYear_end_in = None, \
-#    sDate_in = None ):
-    
-    #extract information
-    #pye3sm_read_configuration_file(sFilename_configuration_in, iCase_index_in = iCase_index,\
-    #     iYear_start_in = iYear_start_in, \
-    #iYear_end_in = iYear_end_in, \
-    #     sDate_in= sDate_in)       
-
 
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion      
@@ -115,19 +104,19 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
 
     #save netcdf
     sWorkspace_variable_netcdf = sWorkspace_analysis_case + slash \
-        + sVariable.lower() + slash + 'netcdf'
+        + sVariable + slash + 'netcdf'
     if not os.path.exists(sWorkspace_variable_netcdf):
         os.makedirs(sWorkspace_variable_netcdf)
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash \
-                            + sVariable.lower() + slash + 'dat'
+                            + sVariable + slash + 'dat'
     if not os.path.exists(sWorkspace_variable_dat):
         os.makedirs(sWorkspace_variable_dat)
     sWorkspace_variable_tiff = sWorkspace_analysis_case + slash \
-        + sVariable.lower() + slash + 'tiff'
+        + sVariable + slash + 'tiff'
     if not os.path.exists(sWorkspace_variable_tiff):
         os.makedirs(sWorkspace_variable_tiff)
         
-    sFilename_output = sWorkspace_variable_netcdf + slash + sVariable.lower() +  sExtension_netcdf
+    sFilename_output = sWorkspace_variable_netcdf + slash + sVariable +  sExtension_netcdf
     pFile = Dataset(sFilename_output, 'w', format='NETCDF4') 
     pDimension_longitude = pFile.createDimension('lon', ncolumn_new) 
     pDimension_latitude = pFile.createDimension('lat', nrow_new) 
@@ -174,7 +163,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
     
             #read the actual data
             for sKey, aValue in aDatasets.variables.items():
-                if sVariable == sKey:
+                if sVariable == sKey.lower():
                     #for attrname in aValue.ncattrs():
                     #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
                     aData = (aValue[:]).data                     
@@ -207,7 +196,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
                     #save output
                     aGrid_data[aMask] = missing_value
 
-                    sDummy = sVariable.lower() + sYear + sMonth
+                    sDummy = sVariable + sYear + sMonth
                     pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
                     pVar[:] = aGrid_data
                     pVar.description = sDummy
@@ -227,9 +216,9 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
     pFile.close()
     #write envi and geotiff file
     
-    pSpatial =osr.SpatialReference()
+    pSpatial = osr.SpatialReference()
     pSpatial.ImportFromEPSG(4326)
-    sFilename_envi = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
+    sFilename_envi = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
 
     gdal_write_envi_file_multiple_band(sFilename_envi, aGrid_stack,\
         float(pHeaderParameters['pixelSize']),\
@@ -237,7 +226,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
               float(pHeaderParameters['ULlat']),\
                   -9999.0, pSpatial)
 
-    sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable.lower()  + sExtension_tiff
+    sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable + sExtension_tiff
 
     gdal_write_geotiff_multiple_band(sFilename_tiff, aGrid_stack,\
         float(pHeaderParameters['pixelSize']),\

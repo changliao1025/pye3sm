@@ -70,7 +70,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
 
     else:
         sQueue = 'slurm'
-        sWalltime = '3:00:00'
+        sWalltime = '4:00:00'
         sNode = '-40'
         sYear = '30'
 
@@ -303,7 +303,7 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 1
+    iCase = 9
 
     iFlag_default = 0
     iFlag_debug = 0

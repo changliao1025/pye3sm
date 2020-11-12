@@ -140,79 +140,63 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
             
 
     #read the stack data for each variable
-    aVariable = ['rain','snow','qsoil', 'qvege','qvegt', 'qover','qdrai']
+    aVariable = ['rain','snow', 'qdrai','qvegt',  'qvege','qsoil', 'qover']
     nvariable = len(aVariable)
     aVariable_tws = np.full(( nvariable, nstress_subset, nrow, ncolumn ),-9999, dtype=float)
-    for i in np.arange(nvariable):
-        sVariable = aVariable[i]
+
+    #aVariable_begin_end =['tws_month_begin','tws_month_end']
+
+    for i in np.arange(1, nvariable+1):
+        sVariable = aVariable[i-1]
         sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
-
         sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
-
         aData_all = gdal_read_envi_file_multiple_band(sFilename)
         aVariable_total = aData_all[0]
-        aVariable_tws[i, :, :, :] = aVariable_total[subset_index,:,:]
-
+        aVariable_tws[i-1, :, :, :] = aVariable_total[subset_index,:,:]    
     
-    
-    for iDomain in np.arange(nDomain):
-
-
-        sDomain = aBasin[iDomain]
-        
-
-        dummy_mask0 = aMask[iDomain, :, :]
+    for iDomain in np.arange(1, nDomain+1):
+        sDomain = aBasin[iDomain-1]      
+        dummy_mask0 = aMask[iDomain-1, :, :]
         dummy_mask1 = np.reshape(dummy_mask0, (nrow, ncolumn))
-        dummy_mask1 = 1 - dummy_mask1
-
-        dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress_subset, axis=0)
+        
+        #dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress_subset, axis=0)
         aVariable_all = np.full((nvariable, nstress_subset), -9999, dtype=float)
-        for i in np.arange(nvariable):
-            sVariable = aVariable[i]
-            aVariable_total_subset = aVariable_tws[i, :, : , :]
-            aVariable0 = ma.masked_array(aVariable_total_subset, mask= dummy_mask)
-            aVariable1 = aVariable0.reshape(nstress_subset,nrow * ncolumn)
-            #aVariable1[aVariable1 == -9999] = np.nan
-            #aVariable2 = np.nanmean( aVariable1, axis=1)
-            #aVariable3 = np.nanmin( aVariable1, axis=1)
-            #aVariable4 = np.nanmax( aVariable1, axis=1)
+        for i in np.arange(1, nvariable+1):
+            sVariable = aVariable[i-1]
+            aVariable_total_subset = aVariable_tws[i-1, :, : , :]
+            aVariable0 = aVariable_total_subset.reshape(nstress_subset,nrow , ncolumn)    
             aVariable2 = np.full(nstress_subset, -9999, dtype=float)
-            #aVariable3 = np.full(nstress_subset, -9999, dtype=float)
-            #aVariable4 = np.full(nstress_subset, -9999, dtype=float)
-            for iStress in range(nstress_subset):
-                dummy = aVariable1[iStress, :]
-                dummy = dummy[dummy.mask == False]
+            
+            for iStress in  np.arange(1,nstress_subset+1):
+                dummy = aVariable0[iStress-1, :,:]
+                dummy1 = dummy[dummy_mask1 == 1]
                 #remove outlier
-                #dummy = remove_outliers(dummy[np.where(dummy != -9999)], 0.1)
-                aVariable2[iStress] = np.nanmean(dummy)
-                #aVariable3[iStress] = np.nanmin(dummy)
-                #aVariable4[iStress] = np.nanmax(dummy)
-            aVariable_all[i, :] = aVariable2
+                if(i==3):
+                    dummy1 = remove_outliers(dummy1, 0.1)
+                aVariable2[iStress-1] = np.nanmean(dummy1)
+            #shoule we shift one time step
+            aVariable2 = np.roll(aVariable2, 1)
+            aVariable_all[i-1, :] = aVariable2
         #use the equation here
         #S = Rain + Snow - (qsoil + qvege + qvegt) - (Runoff)
         #grace
         iStress = 1
-        #apply mask
-        aVariable4 = ma.masked_array(aData_grace, mask= dummy_mask)
-        #aVariable4 = aData_grace
-        aVariable5 = aVariable4.reshape(nstress_subset, nrow, ncolumn)        
+        
         aVariable6 = np.full(nstress_subset, -9999, dtype=float)
-        for iStress in range(1,nstress_subset+1):
-            dummy = aVariable5[iStress-1, :,:]
+        for iStress in np.arange(1,nstress_subset+1):
+            dummy = aData_grace[iStress-1, :,:]
+
             #plt.imshow(dummy)
             #plt.show()
             #print(dummy)
-            dummy1 = dummy[dummy.mask == False]
-            dummy1[np.where(dummy1==-9999)] = np.nan
-            
-            #aVariable6[iStress-1] = np.nanmean(dummy[aX,aY])
+            dummy1 = dummy[dummy_mask1 == 1]
+            dummy1[dummy1==-9999] = np.nan                      
             aVariable6[iStress-1] = np.nanmean(dummy1)
             #use regional mean instead of grid
         if np.isnan(aVariable_all).all():
             pass
         else:           
-            #separated 
-            
+            #separated             
             sFilename_out = sWorkspace_analysis_case_domain + slash \
             + 'flux_tsplot_' + sDomain +'.png'
 
@@ -232,11 +216,18 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
                                   iSize_y_in = 5)
             #combined
             aDate_ts = [aDate_subset, aDate_subset ]
+            #be careful
+
             aTWS_ts = aVariable_all[0,:]+ aVariable_all[1,:] \
             - (aVariable_all[2,:]+ aVariable_all[3,:] + aVariable_all[4,:])\
             - (aVariable_all[5,:]+ aVariable_all[6,:])
+            
 
-            aData_ts = [aTWS_ts *30* 24*3600/1000, aVariable6] 
+            #aTWs_ts_end = aVariable_all[8,:]
+            #aTWs_ts_begin = np.roll(aTWs_ts_end, -1)
+            #aTWS_ts = aTWs_ts_end - aTWs_ts_begin            
+
+            aData_ts = [aTWS_ts *31* 24*3600/1000, aVariable6] 
             sLabel_legend = sDomain.title()
             sFilename_out = sWorkspace_analysis_case_domain + slash \
             + 'tws_tsplot_' + sDomain +'.png'

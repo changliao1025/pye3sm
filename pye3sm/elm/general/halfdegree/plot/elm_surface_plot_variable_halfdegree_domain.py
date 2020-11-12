@@ -24,13 +24,7 @@ sys.path.append(sPath_pye3sm)
 from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def elm_surface_plot_variable_halfdegree_domain(sFilename_configuration_in,\
-                                                iCase_index, \
-                                                iYear_start_in = None,\
-                                                iYear_end_in = None,\
-                                                iYear_subset_start_in = None, \
-                                                iYear_subset_end_in = None,\
-                                                iFlag_same_grid_in = None,\
+def elm_surface_plot_variable_halfdegree_domain(
                                                 dMin_x_in = None, \
                                                 dMax_x_in = None, \
                                                 dMin_z_in = None, \
@@ -43,37 +37,11 @@ def elm_surface_plot_variable_halfdegree_domain(sFilename_configuration_in,\
                                                 sLabel_z_in = None,\
                                                 sTitle_in =None):
 
-    #extract information
-    e3sm_read_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
+   
 
     sModel = oE3SM.sModel
     sRegion = oE3SM.sRegion
-    if iYear_start_in is not None:
-        iYear_start = iYear_start_in
-    else:
-        iYear_start = oE3SM.iYear_start
-    if iYear_end_in is not None:
-        iYear_end = iYear_end_in
-    else:
-        iYear_end = oE3SM.iYear_end
-
-    if iFlag_same_grid_in is not None:
-        iFlag_same_grid = iFlag_same_grid_in
-    else:
-        iFlag_same_grid = 0
-
-    if iYear_subset_start_in is not None:
-        iYear_subset_start = iYear_subset_start_in
-    else:
-        iYear_subset_start = iYear_start
-    if iYear_subset_end_in is not None:
-        iYear_subset_end = iYear_subset_end_in
-    else:
-        iYear_subset_end = iYear_end
+    
 
     print('The following model is processed: ', sModel)
     if (sModel == 'h2sc'):

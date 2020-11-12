@@ -19,12 +19,12 @@ pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
 def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
-                                   iFlag_branch_in = None, \
-                                   iFlag_continue_in = None, \
-                                   iFlag_debug_in = None, \
-                             
+                                        iFlag_branch_in = None, \
+                                        iFlag_continue_in = None, \
+                                        iFlag_debug_in = None, \
+
                                    iFlag_short_in =None,\
-                                   iFlag_resubmit_in = None):
+                                        iFlag_resubmit_in = None):
 
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
@@ -33,10 +33,12 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_branch = iFlag_branch_in
     else:
         iFlag_branch = 0
+
     if iFlag_continue_in is not None:
         iFlag_continue = iFlag_continue_in
     else:
         iFlag_continue = 0
+
     if iFlag_debug_in is not None:
         iFlag_debug = iFlag_debug_in
     else:
@@ -46,11 +48,14 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_resubmit = iFlag_resubmit_in
     else:
         iFlag_resubmit = 0
-   
+
     if iFlag_short_in is not None:
         iFlag_short = iFlag_short_in
     else:
         iFlag_short = 0
+
+
+        
 
     #update these controls
     config['iFlag_branch'] = "{:01d}".format(iFlag_branch)
@@ -58,30 +63,30 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
-    
 
     sCIME_directory = sWorkspace_code + slash \
         + 'fortran/e3sm/TRIGRID/cime/scripts'
     config['sCIME_directory'] = sCIME_directory
 
-
     return config
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
-    iFlag_spinup_in = None, \
-                                    iFlag_same_grid_in= None,\
-                                   iCase_index_in = None, \
-                                   iYear_start_in = None,\
-                                   iYear_end_in = None, \
-                                   iYear_data_start_in = None,\
-                                   iYear_data_end_in = None, \
-                                   sDate_in = None,\
-                                       sLabel_y_in = None, \
-                                   sVariable_in = None, \
-                                   sFilename_clm_namelist_in = None,\
-                                   sFilename_datm_namelist_in = None):
+                                        iFlag_spinup_in = None, \
+                                        iFlag_same_grid_in= None,\
+                                        iCase_index_in = None, \
+                                        iYear_start_in = None,\
+                                        iYear_end_in = None, \
+                                        iYear_data_start_in = None,\
+                                        iYear_data_end_in = None, \
+                                        iYear_subset_start_in = None, \
+                                        iYear_subset_end_in = None, \
+                                        dConversion_in = None, \
+                                        sDate_in = None,\
+                                        sLabel_y_in = None, \
+                                        sVariable_in = None, \
+                                        sFilename_clm_namelist_in = None,\
+                                        sFilename_datm_namelist_in = None):
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
-
 
     sModel = config['sModel']
     if iFlag_spinup_in is not None:
@@ -93,43 +98,65 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sDate = sDate_in
     else:
         sDate = sDate_default
-        
+
     if iCase_index_in is not None:
         iCase_index = iCase_index_in
     else:
         iCase_index = 0
+
     sCase_index = "{:03d}".format(iCase_index)
-        #important change here
+    #important change here
     config['iCase_index'] = "{:04d}".format(iCase_index)
     sCase = sModel + sDate + sCase_index
     config['sDate'] = sDate
     config['sCase'] = sCase
-    if iFlag_same_grid_in is not None:        
+
+    if iFlag_same_grid_in is not None:
         iFlag_same_grid = iFlag_same_grid_in
-    else:       
+    else:
         iFlag_same_grid = 1
+
     if iYear_start_in is not None:
         iYear_start = iYear_start_in
     else:
         iYear_start = int(config['iYear_start'])
+
     if iYear_end_in is not None:
         iYear_end = iYear_end_in
     else:
         iYear_end = int(config['iYear_end'])
+
+    if iYear_subset_start_in is not None:
+        iYear_subset_start = iYear_subset_start_in
+    else:
+        iYear_subset_start = int(config['iYear_start'])
+
+    if iYear_subset_end_in is not None:
+        iYear_subset_end = iYear_subset_end_in
+    else:
+        iYear_subset_end = int(config['iYear_end'])
+
     if iYear_data_start_in is not None:
         iYear_data_start = iYear_data_start_in
     else:
         iYear_data_start = int(config['iYear_data_start'])
+
     if iYear_data_end_in is not None:
         iYear_data_end = iYear_data_end_in
     else:
         iYear_data_end = int(config['iYear_data_end'])
 
+    
+    if dConversion_in is not None:
+        dConversion = dConversion_in
+    else:
+        dConversion = 1.0
 
     if sVariable_in is not None:
         sVariable = sVariable_in
     else:
         sVariable = config['sVariable']
+
     if sLabel_y_in is not None:
         sLabel_y = sLabel_y_in
     else:
@@ -137,8 +164,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
+    config['iYear_subset_start'] =  "{:04d}".format(iYear_subset_start)
+    config['iYear_subset_end'] =  "{:04d}".format(iYear_subset_end)
     config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
     config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
+    
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
     config['iFlag_spinup'] = "{:01d}".format(iFlag_spinup)
 
@@ -146,11 +176,12 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['nYear'] =  "{:03d}".format(nYear)
     nMonth = nYear  * 12
     config['nMonth']=  "{:04d}".format(nMonth)
+    config['dConversion']=  "{:0f}".format(dConversion)
 
     sRegion = config['sRegion']
     config['sVariable'] = sVariable.lower()
     config['sLabel_y'] = sLabel_y
-    
+
 
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in
@@ -158,6 +189,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
             + sModel + slash \
             + 'cases' + slash + 'user_nl_clm'
+
     if sFilename_datm_namelist_in is not None:
         sFilename_datm_namelist = sFilename_datm_namelist_in
     else:
@@ -197,6 +229,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sFilename_clm_namelist'] = sFilename_clm_namelist
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
     return config
+
 if __name__ == '__main__':
 
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
