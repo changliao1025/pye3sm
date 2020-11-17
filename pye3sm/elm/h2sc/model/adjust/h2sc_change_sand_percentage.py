@@ -2,7 +2,7 @@ import os #operate folder
 import sys
 
 import numpy as np
-import numpy.ma as ma
+
 from netCDF4 import Dataset #it maybe be replaced by gdal 
 #maybe not needed
 
@@ -61,6 +61,7 @@ def h2sc_change_sand_percentage(oE3SM_in, oCase_in):
         #d = np.flip(c, 0) 
         #aData_out[i, :,:] = d
         aData_out[i][aMask==1] += 10
+        pass
     aData_out[aData_out>100] = 100
     pDatasets_in.close()
 

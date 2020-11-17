@@ -138,16 +138,13 @@ def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(sFilename_con
         aData_all = gdal_read_envi_file_multiple_band(sFilename)
         aVariable_all = aData_all[0]
 
-
-    
-
-
         aVariable_total_subset = aVariable_all[ subset_index,:,:]
  
     
     sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + 'tsplot'
     if not os.path.exists(sWorkspace_analysis_case_domain):
         os.makedirs(sWorkspace_analysis_case_domain)
+        pass
 
 
     #read greace date list

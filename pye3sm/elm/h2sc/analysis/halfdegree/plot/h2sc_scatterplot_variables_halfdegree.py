@@ -27,7 +27,8 @@ def h2sc_scatterplot_variables_halfdegree(oE3SM_in, \
                                           dSpace_x_in = None, \
                                           dSpace_y_in = None, \
                                           sLabel_x_in=None,\
-                                          sLabel_y_in=None):
+                                          sLabel_y_in=None,\
+                                          sLabel_legend_in=None):
 
     elm_scatterplot_variables_halfdegree(oE3SM_in,\
                                          oCase_x_in,\
@@ -39,7 +40,8 @@ def h2sc_scatterplot_variables_halfdegree(oE3SM_in, \
                                          dSpace_x_in = dSpace_x_in, \
                                          dSpace_y_in = dSpace_y_in, \
                                          sLabel_x_in = sLabel_x_in, \
-                                         sLabel_y_in= sLabel_y_in)
+                                         sLabel_y_in= sLabel_y_in,\
+                                        sLabel_legend_in = sLabel_legend_in)
 
 if __name__ == '__main__':
     iFlag_debug = 1
@@ -78,7 +80,7 @@ if __name__ == '__main__':
         #iCase_index = 240
     for iCase_index in (aCase_index):
         sVariable = 'sur_slp'
-        dConversion = 1.0
+        dConversion = 100
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
                                                                iYear_start_in = iYear_start, \
@@ -102,13 +104,14 @@ if __name__ == '__main__':
                                               oCase_x,\
                                               oCase_y,\
                                               dMin_x_in = 0,\
-                                              dMax_x_in = 0.1, \
+                                              dMax_x_in = 10, \
                                               dMin_y_in = 0, \
                                               dMax_y_in = 40, \
-                                              dSpace_x_in = 0.02, \
+                                              dSpace_x_in = 1, \
                                               dSpace_y_in = 10, \
                                               sLabel_x_in = sLabel_x, \
-                                              sLabel_y_in = sLabel_y)
+                                              sLabel_y_in = sLabel_y,\
+                                              sLabel_legend_in = 'Global')
         pass
 
     print('finished')

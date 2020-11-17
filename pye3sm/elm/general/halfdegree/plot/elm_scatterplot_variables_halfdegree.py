@@ -40,7 +40,7 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
     sVariable_x = oCase_x_in.sVariable
     sVariable_y = oCase_y_in.sVariable
     sCase = oCase_x_in.sCase
-    sWorkspace_simulation_case_run =oCase_x_in.sWorkspace_simulation_case_run
+    
     sWorkspace_analysis_case = oCase_x_in.sWorkspace_analysis_case
 
     iFlag_optional = 1
@@ -82,6 +82,7 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
     good_index = np.where(  (x > 0.001)&(y < 40)  )
     x= x[good_index]
     y= y[good_index]
+    x = x * oCase_x_in.dConversion
 
     sFilename_out = sWorkspace_analysis_case_grid + slash + sVariable_x + '-' + sVariable_y + '_scatterplot.png'
 
