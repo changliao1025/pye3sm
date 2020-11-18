@@ -158,31 +158,28 @@ def elm_surface_plot_variable_halfdegree_domain(oE3SM_in,\
 
         #right edge z coordinates for top layer
         for iRow in range(nrow1 ):
-            #z[0,iRow,ncolumn1] = aDem_domain[iRow, ncolumn1-1]
-            z[2,iRow+1,ncolumn1] = aDem_domain[iRow, ncolumn1-1]
+            z[0,iRow,ncolumn1] = aDem_domain[iRow, ncolumn1-1]
+            #z[2,iRow,ncolumn1] = aDem_domain[iRow, ncolumn1-1]
             pass
 
         #bottom line
         for iColumn in range(ncolumn1 ):
-            #z[0,nrow1,iColumn] = aDem_domain[nrow1-1, iColumn]
-            z[2,nrow1,iColumn] = aDem_domain[nrow1-1, iColumn]
+            z[0,nrow1,iColumn] = aDem_domain[nrow1-1, iColumn]
+            #z[2,nrow1,iColumn] = aDem_domain[nrow1-1, iColumn]
             pass
 
         z[0,nrow1,ncolumn1] = aDem_domain[nrow1-1, ncolumn1-1]
 
         #right edge
         for iRow in range(nrow1 ):
-            z[1,iRow,ncolumn1] = aDem_domain[iRow, ncolumn1-1] - aData[iRow, ncolumn1-1]-3 
-            #additional space added
+            z[1,iRow,ncolumn1] = aDem_domain[iRow, ncolumn1-1] - aData[iRow, ncolumn1-1]-3 #additional space added
             pass
 
         #bottom line
         for iColumn in range(ncolumn1 ):
             z[1,nrow1,iColumn] = aDem_domain[nrow1-1, iColumn]- aData[iRow, ncolumn1-1] -3
-            pass
 
         z[1,nrow1,ncolumn1] = aDem_domain[nrow1-1, ncolumn1-1]  - aData[iRow, ncolumn1-1]-3
-
 
         for iRow in range(nrow1 + 1):
             for iColumn in range(ncolumn1 + 1):
@@ -191,8 +188,6 @@ def elm_surface_plot_variable_halfdegree_domain(oE3SM_in,\
                 y[0,iRow,iColumn] = Y[iRow]
                 if (iColumn < ncolumn1 and iRow < nrow1):
                     z[0,iRow,iColumn] = aDem_domain[iRow, iColumn]
-                    pass
-
         for iRow in range(nrow1 + 1):
             for iColumn in range(ncolumn1 + 1):
 
@@ -200,8 +195,6 @@ def elm_surface_plot_variable_halfdegree_domain(oE3SM_in,\
                 y[1,iRow,iColumn] = Y[iRow]
                 if (iColumn < ncolumn1 and iRow < nrow1):
                     z[1,iRow,iColumn] = aDem_domain[iRow, iColumn]- aData[iRow, iColumn]-3
-
-                    pass
         
 
         #bottom
