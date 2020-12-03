@@ -9,11 +9,7 @@ sys.path.extend(sSystem_paths)
 from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
-
-
-from pyes.visual.timeseries.fill.plot3d_time_series_data_fill import plot3d_time_series_data_fill
-
-
+from pyes.visual.timeseries.analysis.plot_time_series_analysis import plot_time_series_analysis
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
 
@@ -26,17 +22,17 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 
 
-def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
-                                            oCase_in, \
-                                            dMin_x_in = None, \
-                                            dMax_x_in = None, \
-                                            dMin_z_in = None, \
-                                            dMax_z_in = None, \
-                                            dSpace_x_in = None, \
-                                            dSpace_z_in = None, \
-                                            sLabel_x_in=None,
-                                            sLabel_z_in = None,\
-                                            sTitle_in =None):
+def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
+                                                    oCase_in, \
+                                                    dMin_x_in = None, \
+                                                    dMax_x_in = None, \
+                                                    dMin_y_in = None, \
+                                                    dMax_y_in = None, \
+                                                    dSpace_x_in = None, \
+                                                    dSpace_y_in = None, \
+                                                    sLabel_x_in=None,
+                                                    sLabel_y_in = None,\
+                                                    sTitle_in =None):
 
 
 
@@ -77,7 +73,7 @@ def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
     nyear = iYear_end - iYear_start + 1
     for iYear in range(iYear_start, iYear_end + 1):
         for iMonth in range(1,13):
-            dSimulation = datetime.datetime(iYear, iMonth, 15)
+            dSimulation = datetime.datetime(iYear, iMonth, 1)
             dates.append( dSimulation )
             pass
 
@@ -87,6 +83,8 @@ def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
     index_start = (iYear_subset_start - iYear_start)* 12 + iMonth - 1
     index_end = (iYear_subset_end + 1 - iYear_start)* 12 + iMonth - 1
     subset_index = np.arange(index_start , index_end , 1 )
+
+
     dates=np.array(dates)
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
@@ -108,12 +106,12 @@ def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
         os.makedirs(sWorkspace_analysis_case_variable)
         pass
 
-    sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + '3dtsplot'
+    sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + 'tsaplot'
     if not os.path.exists(sWorkspace_analysis_case_domain):
         os.makedirs(sWorkspace_analysis_case_domain)
         pass
 
-    aData_all=[]
+    #aData_all=[]
 
     for iDomain in np.arange(1, nDomain+1, 1):
 
@@ -130,35 +128,30 @@ def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
             aVariable0[i, :,:] = aVariable_total_subset[i, :,:]
             aVariable0[i][dummy_mask1!=1] = np.nan
             aVariable2[i] = np.nanmean(aVariable0[i, :,:])
-            pass    
+            pass
 
 
-        aData_all.append(aVariable2)
-        pass
+        #aData_all.append(aVariable2)
+        #pass
 
-    sFilename_out = sWorkspace_analysis_case_domain + slash \
-        + sVariable + '_3dtsplot_' +'.png'
+        sFilename_out = sWorkspace_analysis_case_domain + slash \
+            + sVariable + '_tsaplot_' + sDomain +'.png'
 
-    aDate_all = [dates_subset, dates_subset, dates_subset,dates_subset]
-
-    plot3d_time_series_data_fill(aDate_all, \
-        aData_all,\
-                                 sFilename_out,\
-                                 iReverse_z_in = 1, \
-                                 dMin_x_in = dMin_x_in, \
-                                 dMax_x_in = dMax_x_in, \
-                                 dMin_z_in = dMin_z_in, \
-                                 dMax_z_in = dMax_z_in, \
-                                 dSpace_x_in = 1, \
-                                 dSpace_z_in = dSpace_z_in, \
-                                 sTitle_in = sTitle_in, \
-                                 sLabel_x_in=sLabel_x_in,\
-                                 aLabel_y_in= np.array(aBasin),\
-                                 sLabel_z_in= sLabel_z_in,\
-                                 sLabel_legend_in = sLabel_legend, \
-                                 sMarker_in='+',\
-                                 iSize_x_in = 10,\
-                                 iSize_y_in = 5)
+        plot_time_series_analysis(dates_subset, \
+                                  aVariable2,\
+                                  sFilename_out,\
+                                    sLabel_y_in,\
+                                  iReverse_y_in = 0, \
+                                  dMin_x_in = dMin_x_in, \
+                                  dMax_x_in = dMax_x_in, \
+                                  #dMin_y_in = 5, \
+                                  #dMax_y_in = 20, \
+                                  dSpace_x_in = 1, \
+                                  dSpace_y_in = 5, \
+                                  sTitle_in = sDomain, \
+                                  sLabel_x_in = sLabel_x_in,\
+                                  iSize_x_in = 10,\
+                                  iSize_y_in = 9)
 
     print("finished")
 

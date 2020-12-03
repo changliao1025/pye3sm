@@ -57,6 +57,7 @@ def elm_map_variable_halfdegree(sFilename_configuration_in, iCase_index, \
     sWorkspace_simulation = sWorkspace_scratch + slash + 'csmruns'
     sWorkspace_analysis = sWorkspace_scratch + slash + '03model' + slash \
         + sModel + slash + 'analysis'
+        
     if not os.path.isdir(sWorkspace_analysis):
         os.makedirs(sWorkspace_analysis)
 

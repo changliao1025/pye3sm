@@ -18,28 +18,27 @@ from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-from pye3sm.elm.general.halfdegree.plot.elm_3dtsplot_variable_halfdegree_domain import elm_3dtsplot_variable_halfdegree_domain
+from pye3sm.elm.general.halfdegree.plot.elm_ts_analysis_plot_variable_halfdegree_domain import elm_ts_analysis_plot_variable_halfdegree_domain
 
-def h2sc_3dtsplot_variable_halfdegree_domain(oE3SM_in, \
+def h2sc_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in, \
                                              oCase_in,\
-                                           
                                              dMin_x_in = None, \
                                              dMax_x_in = None, \
-                                             dMin_z_in = None, \
-                                             dMax_z_in = None, \
+                                             dMin_y_in = None, \
+                                             dMax_y_in = None, \
                                              dSpace_x_in = None, \
-                                             dSpace_z_in = None, \
+                                             dSpace_y_in = None, \
                                              sLabel_x_in =None, \
-                                             sLabel_z_in=None):
+                                             sLabel_y_in=None):
 
-    elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
+    elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
                                             oCase_in, \
-                                            dMin_z_in = dMin_z_in, \
-                                            dMax_z_in = dMax_z_in, \
+                                            dMin_y_in = dMin_y_in, \
+                                            dMax_y_in = dMax_y_in, \
                                             dSpace_x_in = dSpace_x_in, \
-                                            dSpace_z_in = dSpace_z_in, \
+                                            dSpace_y_in = dSpace_y_in, \
                                             sLabel_x_in =sLabel_x_in, \
-                                            sLabel_z_in=sLabel_z_in)
+                                            sLabel_y_in=sLabel_y_in)
 
 if __name__ == '__main__':
     iFlag_debug = 1
@@ -91,13 +90,13 @@ if __name__ == '__main__':
                                                                sVariable_in = sVariable )
         #print(aParameter_case)
         oCase  = pycase(aParameter_case)
-        h2sc_3dtsplot_variable_halfdegree_domain(oE3SM, \
+        h2sc_ts_analysis_plot_variable_halfdegree_domain(oE3SM, \
                                                  oCase,\
-                                                 dMin_z_in = 0, \
-                                                 dMax_z_in = 80, \
-                                                 dSpace_z_in = 10, \
+                                                 dMin_y_in = 0, \
+                                                 dMax_y_in = 40, \
+                                                 dSpace_y_in = 10, \
                                                
                                                  sLabel_x_in = 'Year',\
-                                                 sLabel_z_in = 'Water table depth (m)')
+                                                 sLabel_y_in = 'Water table depth (m)')
 
     print('finished')

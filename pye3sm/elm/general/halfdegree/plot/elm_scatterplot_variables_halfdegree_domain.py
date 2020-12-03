@@ -56,12 +56,7 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
     aBasin = ['amazon','congo','mississippi','yangtze']
 
     nDomain = len(aBasin)
-    aMask = np.full( (nDomain, nrow, ncolumn), 0, dtype=int)
-    for i in range(nDomain):
-        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + aBasin[i] + slash + aBasin[i] + '.tif'
-        dummy = gdal_read_geotiff(sFilename_basin)
-        aMask[i, :,:] = dummy[0]
-        pass
+
 
 
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable_x +    slash + 'tiff'
