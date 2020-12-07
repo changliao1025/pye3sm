@@ -13,7 +13,7 @@ from pyes.toolbox.date.day_in_month import day_in_month
 from pyes.toolbox.data.remove_outliers import remove_outliers
 from pyes.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
-from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
 
 from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
@@ -153,7 +153,7 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(oE3SM_in, \
     aDate_sim = np.array(aDate_sim)
     aDate_sim_subset = aDate_sim[subset_index]
 
-    aData_all = gdal_read_geotiff_multiple_band(sFilename)
+    aData_all = gdal_read_geotiff_file_multiple_band(sFilename)
     aVariable_all = aData_all[0]
 
     aVariable_total_subset = aVariable_all[ subset_index,:,:]

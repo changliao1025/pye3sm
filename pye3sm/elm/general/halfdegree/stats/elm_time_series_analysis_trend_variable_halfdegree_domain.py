@@ -1,6 +1,6 @@
 import os, sys
 import numpy as np
-import numpy.ma as ma
+import pymannkendall as mk
 import datetime
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
@@ -9,7 +9,7 @@ sys.path.extend(sSystem_paths)
 from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
-from pyes.visual.timeseries.analysis.plot_time_series_analysis import plot_time_series_analysis
+
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
 
@@ -17,22 +17,9 @@ sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'p
 sys.path.append(sPath_pye3sm)
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-
-
-def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
-                                                    oCase_in, \
-                                                    dMin_x_in = None, \
-                                                    dMax_x_in = None, \
-                                                    dMin_y_in = None, \
-                                                    dMax_y_in = None, \
-                                                    dSpace_x_in = None, \
-                                                    dSpace_y_in = None, \
-                                                    sLabel_x_in=None,
-                                                    sLabel_y_in = None,\
-                                                    sTitle_in =None):
+def elm_time_series_analysis_trend_variable_halfdegree_domain(oE3SM_in,\
+                                                    oCase_in):
 
 
 
@@ -139,22 +126,11 @@ def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
 
 
 
+        #trend analyis
 
-        plot_time_series_analysis(dates_subset, \
-                                  aVariable2,\
-                                  sFilename_out,\
-                                    sLabel_y_in,\
-                                  iReverse_y_in = 0, \
-                                  dMin_x_in = dMin_x_in, \
-                                  dMax_x_in = dMax_x_in, \
-                                  #dMin_y_in = 5, \
-                                  #dMax_y_in = 20, \
-                                  dSpace_x_in = 1, \
-                                  dSpace_y_in = 5, \
-                                  sTitle_in = sDomain, \
-                                  sLabel_x_in = sLabel_x_in,\
-                                  iSize_x_in = 10,\
-                                  iSize_y_in = 9)
+        trend = mk.seasonal_test(aVariable2, alpha=0.01, period =12)
+        print(trend)
+        
 
     print("finished")
 

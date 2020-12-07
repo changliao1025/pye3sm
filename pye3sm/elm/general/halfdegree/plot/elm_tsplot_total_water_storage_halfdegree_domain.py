@@ -9,8 +9,8 @@ sys.path.extend(sSystem_paths)
 
 from pyes.system.define_global_variables import *
 from pyes.toolbox.reader.text_reader_string import text_reader_string
-from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
+from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
@@ -23,10 +23,9 @@ from pye3sm.shared.case import  pycase
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
-                                                     iYear_subset_start_in = None, \
-                                                     iYear_subset_end_in = None,\
-                                                     iFlag_same_grid_in = None,\
+def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
+    oCase_in, \
+                                                   
                                                      dMax_y_in = None,\
                                                      dMin_y_in =None):
 
@@ -37,32 +36,24 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
     iYear_start = oCase_in.iYear_start
     iYear_end = oCase_in.iYear_end
 
-    if iYear_subset_start_in is not None:
-        iYear_subset_start = iYear_subset_start_in
-    else:
-        iYear_subset_start = iYear_start
-    if iYear_subset_end_in is not None:
-        iYear_subset_end = iYear_subset_end_in
-    else:
-        iYear_subset_end = iYear_end
+   
+    iYear_subset_start = oCase_in.iYear_subset_start
+   
+    iYear_subset_end = oCase_in.iYear_subset_end
+   
 
-    print('The following model is processed: ', sModel)
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
-    if (sModel == 'h2sc'):
-        pass
-    else:
-        if (sModel == 'vsfm'):
-            aDimension = [96, 144]
-        else:
-            pass
-        dConversion = oCase_in.dConversion
-        sVariable = oCase_in.sVariable
-        sCase = oCase_in.sCase
-        sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
-        sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
+   
+
+    dConversion = oCase_in.dConversion
+    sVariable = oCase_in.sVariable
+    sCase = oCase_in.sCase
+    sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
     sWorkspace_analysis_case_domain = sWorkspace_analysis_case + slash + 'tsplot_tws_domain'
     if not os.path.exists(sWorkspace_analysis_case_domain):
         os.makedirs(sWorkspace_analysis_case_domain)
+        pass
 
     nrow = 360
     ncolumn = 720
@@ -74,11 +65,7 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
     aBasin = ['amazon','congo','mississippi','yangtze']
 
     nDomain = len(aBasin)
-    aMask = np.full( (nDomain, nrow, ncolumn), 0, dtype=int)
-    for i in range(nDomain):
-        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + aBasin[i] + slash + aBasin[i] + '.tif'
-        dummy = gdal_read_geotiff(sFilename_basin)
-        aMask[i, :,:] = dummy[0]
+    
 
     aDate = list()
     nyear = iYear_end - iYear_start + 1
@@ -89,7 +76,10 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
 
     nstress = nyear * nmonth
 
-    subset_index = np.arange( (iYear_subset_start-iYear_start)* 12,(iYear_subset_end + 1 - iYear_start)* 12, 1 )
+    iMonth = 1
+    index_start = (iYear_subset_start - iYear_start)* 12 + iMonth - 1
+    index_end = (iYear_subset_end + 1 - iYear_start)* 12 + iMonth - 1
+    subset_index = np.arange(index_start , index_end , 1 )
     aDate=np.array(aDate)
     aDate_subset = aDate[subset_index]
     nstress_subset= len(aDate_subset)
@@ -122,7 +112,7 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
                 + sFilename_pre + sDummy2 + sFilename_suf 
             print(sFilename_grace)
             #read the file
-            aData_dummy0  = gdal_read_geotiff(sFilename_grace)
+            aData_dummy0  = gdal_read_geotiff_file(sFilename_grace)
             aData_dummy0 = aData_dummy0[0]
             
             #resample the data because resolution is different
@@ -155,11 +145,14 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
         aVariable_tws[i-1, :, :, :] = aVariable_total[subset_index,:,:]    
     
     for iDomain in np.arange(1, nDomain+1):
+
         sDomain = aBasin[iDomain-1]      
-        dummy_mask0 = aMask[iDomain-1, :, :]
-        dummy_mask1 = np.reshape(dummy_mask0, (nrow, ncolumn))
+        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + sDomain + slash + sDomain + '.tif'
+        dummy = gdal_read_geotiff_file(sFilename_basin)
+        dummy_mask1 = dummy[0]
         
-        #dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress_subset, axis=0)
+        
+
         aVariable_all = np.full((nvariable, nstress_subset), -9999, dtype=float)
         for i in np.arange(1, nvariable+1):
             sVariable = aVariable[i-1]
@@ -204,13 +197,15 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
             aData_ts = aVariable_all
             sLabel_Y = r'Water flux (mm/s)'
             
-            plot_time_series_data(aDate_ts, aData_ts,\
+            plot_time_series_data(aDate_ts, \
+                aData_ts,\
                                   sFilename_out,\
                                   iReverse_y_in = 0, \
                                   dMax_y_in = dMax_y_in,\
                                   dMin_y_in = dMin_y_in,\
                                   sTitle_in = '', \
                                   sLabel_y_in= sLabel_Y,\
+                                      sFormat_y_in = '%.1e',\
                                   aLabel_legend_in = aVariable, \
                                   iSize_x_in = 12,\
                                   iSize_y_in = 5)
