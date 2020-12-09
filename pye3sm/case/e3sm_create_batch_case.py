@@ -58,10 +58,12 @@ for iCase in range(1,ncase + 1):
     
     
     sCase =  sModel + sDate+ "{:03d}".format(iCase)
-    sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
+    sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
+        + sModel + slash + sRegion + slash \
         + 'cases' + slash + 'user_nl_clm_' + sCase
 
-    sFilename_datm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
+    sFilename_datm_namelist = sWorkspace_scratch + slash + '04model' + slash \
+        + sModel + slash + sRegion + slash \
         + 'cases' + slash + 'user_nl_datm_' + sCase
    
 
@@ -94,10 +96,7 @@ for iCase in range(1,ncase + 1):
         sLine = "finidat = '/compyfs/liao313/e3sm_scratch/" \
             + sCase_spinup + '/run/' + sCase_spinup +  ".clm2.rh0.1979-01-01-00000.nc'"  + '\n'
         ofs.write(sLine)
-        ofs.close()
-    
-
-    
+        ofs.close()    
 
     if (iFlag_spinup ==1):        
         #this is a case for spin up
@@ -107,10 +106,7 @@ for iCase in range(1,ncase + 1):
         ofs.close()
     else:
         #no spin up needed
-        pass
-
-
-    
+        pass 
 
 
     if (iFlag_spinup ==1):

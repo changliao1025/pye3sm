@@ -16,7 +16,8 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
-def e3sm_create_case(oE3SM_in, oCase_in,\
+def e3sm_create_case(oE3SM_in, \
+                     oCase_in,\
                      iYear_data_end_in = None, \
                      iYear_data_start_in = None):
     #e3sm attributes
@@ -25,7 +26,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
     iFlag_continue = oE3SM_in.iFlag_continue
     iFlag_resubmit = oE3SM_in.iFlag_resubmit
     iFlag_short = oE3SM_in.iFlag_short
-    
+
     RES = oE3SM_in.RES
     COMPSET = oE3SM_in.COMPSET
     PROJECT = oE3SM_in.PROJECT
@@ -67,12 +68,14 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
         sWalltime = '1:00:00'
         sNode = '-20'
         sYear = '2'
+        pass
 
     else:
         sQueue = 'slurm'
         sWalltime = '4:00:00'
         sNode = '-40'
         sYear = '30'
+        pass
 
     if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit
         #remove case directory
@@ -81,6 +84,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             print(sCommand)
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+            pass
 
         #remove bld directory
         if (os.path.exists(sBldname)):
@@ -88,6 +92,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             print(sCommand)
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+            pass
 
         #remove run directory
         if (os.path.exists(sRunname)):
@@ -95,6 +100,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             print(sCommand)
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+            pass
 
         #create case
         print(sCIME_directory)
@@ -164,6 +170,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+            pass
         else: ##branch run
             sCommand = sPython + ' ./xmlchange RUN_TYPE=branch' + '\n'
             sCommand = sCommand.lstrip()
@@ -203,6 +210,8 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+            pass
+
 
         sCommand = sPython + ' ./case.setup' + '\n'
         sCommand = sCommand.lstrip()
@@ -231,13 +240,13 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
 
         #Build and submit
         if (iFlag_debug == 1):
-            
+
             sCommand = sPython + ' ./xmlchange -file env_build.xml DEBUG=TRUE' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
             pass
-        
+
         sCommand = sPython + ' ./case.build' + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
@@ -247,7 +256,7 @@ def e3sm_create_case(oE3SM_in, oCase_in,\
             pass
         else:
             #create the timing.checkpoints folder for debug
-            
+
 
             os.chdir(sRunname)
             os.mkdir('timing')
@@ -407,10 +416,10 @@ if __name__ == '__main__':
                                                               sDate_in = sDate, \
                                                               sFilename_clm_namelist_in = sFilename_clm_namelist, \
                                                               sFilename_datm_namelist_in = sFilename_datm_namelist )
-        
+
     else:
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-                                                            iFlag_spinup_in = iFlag_spinup,\
+                                                              iFlag_spinup_in = iFlag_spinup,\
                                                               iYear_start_in = 1979, \
                                                               iYear_end_in = 2008,\
                                                               iYear_data_end_in = 2008, \
