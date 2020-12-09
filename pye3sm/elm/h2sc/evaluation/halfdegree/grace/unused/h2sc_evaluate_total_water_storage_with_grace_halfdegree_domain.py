@@ -27,41 +27,30 @@ sys.path.append(sPath_pye3sm)
 from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(sFilename_configuration_in, \
-                                               iCase_index,\
-                                               iYear_start_in = None, \
-                                               iYear_end_in =None,\
+def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(oE3SM_in, \
+                                              oCase_in, \
                                                dMin_in = None, \
                                                dMax_in = None, \
                                                dMin_x_in = None, \
                                                dMax_x_in = None, \
-                                               dSpace_x_in = None, \
-                                               sDate_in = None, \
+                                               dSpace_x_in = None, \                                             
                                                sLabel_x_in = None, \
                                                sLabel_y_in = None, \
                                                aLabel_legend_in = None, \
                                                sTitle_in=None):
 
 
-    e3sm_read_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
+
 
     sModel = oE3SM.sModel
     sRegion = oE3SM.sRegion
     sCase = oE3SM.sCase
     nrow = 360
     ncolumn = 720
-    if iYear_start_in is not None:
-        iYear_start = iYear_start_in
-    else:
-        iYear_start = oE3SM.iYear_start
-    if iYear_end_in is not None:
-        iYear_end = iYear_end_in
-    else:
-        iYear_end = oE3SM.iYear_end
+   
+    iYear_start = oCase_in.iYear_start    
+    iYear_end = oCase_in.iYear_end 
+
     #read obs 
     sFilename_mask = sWorkspace_data + slash \
         + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
@@ -78,6 +67,7 @@ def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(sFilename_con
         if "ele0" == sKey:
             aEle0 = (aValue[:]).data
             break
+
     aMask = np.where(aEle0 == missing_value)
     aMask1 = np.where(aEle0 != missing_value)
      #read basin mask
@@ -103,6 +93,7 @@ def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(sFilename_con
             dummy1.dtype)
         aMask_domain[i, :,:] = dummy2
         #test image process 
+        pass
 
 
     dates = list()
@@ -139,6 +130,7 @@ def h2sc_evaluate_total_water_storage_with_grace_halfdegree_domain(sFilename_con
         aVariable_all = aData_all[0]
 
         aVariable_total_subset = aVariable_all[ subset_index,:,:]
+        pass
  
     
     sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + 'tsplot'
@@ -302,8 +294,7 @@ if __name__ == '__main__':
     for iCase_index in (aCase_index):
         h2sc_evaluate_water_table_depth_with_grace_halfdegree_domain(sFilename_configuration,\
                                                    iCase_index,\
-                                                   iYear_start_in = iYear_start, \
-                                                   iYear_end_in =iYear_end,\
+                                                   
                                                    dMin_in = 0, \
                                                    dMax_in = 80, \
                                                    sDate_in= sDate, \

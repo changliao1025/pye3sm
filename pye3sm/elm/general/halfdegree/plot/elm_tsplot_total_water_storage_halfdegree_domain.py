@@ -236,7 +236,7 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
                                   dMin_y_in = dMin_y_in,\
                                   sTitle_in = '', \
                                   sLabel_y_in= sLabel_Y,\
-                                  aLabel_legend_in = ['H2SC', 'GRACE'], \
+                                  aLabel_legend_in = ['ELM-H2SC', 'GRACE'], \
                                   aMarker_in=['+','*'],\
                                   iSize_x_in = 12,\
                                   iSize_y_in = 5)

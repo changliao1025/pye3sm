@@ -177,16 +177,19 @@ def h2sc_evaluate_water_table_depth_with_situ_halfdegree(oE3SM_in, \
                           iReverse_y_in=1,\
                           iSize_x_in = 12, \
                           iSize_y_in = 5, \
+                              ncolumn_in = 4,\
                           dMax_x_in = max(aDate_sim_subset), \
                           dMin_x_in = aDate_sim_subset[0], \
-                          dMax_y_in = 7, \
+                          dMax_y_in = 8, \
                           dMin_y_in = 0, \
                           dSpace_y_in=1.0,\
                           sLabel_y_in = 'Water table depth (m)', \
                           aColor_in = aColor,\
                           aMarker_in = ['o','.','*','+'],\
+                          aLocation_legend_in = (1.0, 0.0),\
                           aLinestyle_in = ['-','--','-.' ,'solid'],\
-                          aLabel_legend_in = ['In situ min','In situ mean','In situ max','ELM simulated'])
+                          aLabel_legend_in = ['In situ min','In situ mean','In situ max','ELM-H2SC simulated'],\
+                            sLocation_legend_in='lower right')
     return
 if __name__ == '__main__':
     iFlag_debug = 1

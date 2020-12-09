@@ -8,8 +8,8 @@ sys.path.extend(sSystem_paths)
 
 from pyes.system.define_global_variables import *
 
-from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
-from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
+
 from pyes.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
@@ -64,7 +64,7 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
 
     sFilename_x = sWorkspace_variable_dat + slash + sVariable_x   + sExtension_tiff
 
-    aData_all_x = gdal_read_geotiff_multiple_band(sFilename_x)
+    aData_all_x = gdal_read_geotiff_file_multiple_band(sFilename_x)
     aVariable_x = aData_all_x[0]
 
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable_y  +    slash + 'tiff'
@@ -72,7 +72,7 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
 
     sFilename_y = sWorkspace_variable_dat + slash + sVariable_y   + sExtension_tiff
 
-    aData_all_y = gdal_read_geotiff_multiple_band(sFilename_y)
+    aData_all_y = gdal_read_geotiff_file_multiple_band(sFilename_y)
     aVariable_y = aData_all_y[0]
 
 
@@ -97,9 +97,10 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
     for iDomain in np.arange(nDomain):
         sDomain = aBasin[iDomain]
         sLabel_legend = sDomain.title()
-        #apply domain mask
-        dummy_mask0 = aMask[iDomain, :, :]
-        dummy_mask1 = np.reshape(dummy_mask0, (nrow, ncolumn))
+        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + sDomain + slash + sDomain + '.tif'
+        dummy = gdal_read_geotiff_file(sFilename_basin)
+        dummy_mask1 = dummy[0]
+        
 
         dummy_index = np.where(dummy_mask1 ==1)
         x1 = x0[dummy_index]

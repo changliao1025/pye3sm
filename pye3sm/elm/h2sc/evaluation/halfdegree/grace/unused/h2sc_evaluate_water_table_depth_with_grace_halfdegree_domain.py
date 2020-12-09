@@ -13,11 +13,9 @@ sys.path.extend(sSystem_paths)
 
 from pyes.toolbox.reader.text_reader_string import text_reader_string
 from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_envi_file_multiple_band
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
-
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
 from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 

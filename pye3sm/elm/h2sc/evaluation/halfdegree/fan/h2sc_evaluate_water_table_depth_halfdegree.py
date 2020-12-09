@@ -7,9 +7,8 @@ sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
 
-from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
 
 from pyes.visual.histogram.histogram_plot import histogram_plot
 from pyes.visual.histogram.histogram_plot_multiple import histogram_plot_multiple
@@ -44,6 +43,13 @@ def h2sc_evaluate_water_table_depth_halfdegree(oE3SM_in, \
     sModel = oCase_in.sModel
     sRegion = oCase_in.sRegion
     sCase = oCase_in.sCase
+    iYear_start = oCase_in.iYear_start
+
+    iYear_end = oCase_in.iYear_end
+
+    iYear_subset_start = oCase_in.iYear_subset_start
+
+    iYear_subset_end = oCase_in.iYear_subset_end
     #read obs 
     sFilename_mask = oCase_in.sFilename_mask
     #read in mask
@@ -65,7 +71,7 @@ def h2sc_evaluate_water_table_depth_halfdegree(oE3SM_in, \
     sFilename_wtd = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'raster' + slash \
     + 'wtd' + slash + 'wtd.tif'
 
-    pWTD = gdal_read_geotiff(sFilename_wtd)
+    pWTD = gdal_read_geotiff_file(sFilename_wtd)
     aWTD_obs = pWTD[0]
 
 
@@ -78,20 +84,21 @@ def h2sc_evaluate_water_table_depth_halfdegree(oE3SM_in, \
 
     sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_tiff
 
-    aData_all = gdal_read_geotiff_multiple_band(sFilename)
+    aData_all = gdal_read_geotiff_file_multiple_band(sFilename)
 
     aVariable_all = aData_all[0]
     
-    iYear_origin = 1979
-    iYear_start = 1990
-    iYear_end = 2008
-    iMonth = 6
+   
+    iMonth = 1
 
-    i = (iYear_start - iYear_origin) * 12 + iMonth-1 
-    j = (iYear_end - iYear_origin ) * 12 + iMonth-1
+
+    #iMonth = 1
+    index_start = (iYear_subset_start - iYear_start)* 12 + iMonth - 1
+    index_end = (iYear_subset_end + 1 - iYear_start)* 12 + iMonth - 1
+    subset_index = np.arange(index_start , index_end , 1 )
 
     #take average
-    aVariable_all1 = aVariable_all[ i:j,:,:]
+    aVariable_all1 = aVariable_all[ subset_index,:,:]
     aVariable_all2 = np.mean(  aVariable_all1, axis= 0 )
 
     #plot kde distribution 
@@ -118,6 +125,9 @@ def h2sc_evaluate_water_table_depth_halfdegree(oE3SM_in, \
     sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'histogram'
     if not os.path.exists(sWorkspace_analysis_case_grid):
         os.makedirs(sWorkspace_analysis_case_grid)
+        pass 
+
+
     sFilename_out = sWorkspace_analysis_case_grid + slash + sCase + '_wtd_histogram.png'
 
     #histogram_plot( aData_a,\
@@ -157,6 +167,7 @@ if __name__ == '__main__':
     if iFlag_debug == 1:
         iIndex_start = 9
         iIndex_end = 9
+        pass
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -164,6 +175,7 @@ if __name__ == '__main__':
         pArgs = parser.parse_args()
         iIndex_start = pArgs.iIndex_start
         iIndex_end = pArgs.iIndex_end
+        pass
 
     sModel = 'h2sc'
     sRegion = 'global'
@@ -191,13 +203,15 @@ if __name__ == '__main__':
     print(aParameter_e3sm)
     oE3SM = pye3sm(aParameter_e3sm)
 
-    
 
     for iCase_index in (aCase_index):
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                            iCase_index_in =  iCase_index ,\
                                                            iYear_start_in = iYear_start, \
                                                            iYear_end_in = iYear_end,\
+    iYear_subset_start_in = 1990, \
+                                                               iYear_subset_end_in =2008,\
+
                                                            sDate_in= sDate,\
                                                            sVariable_in = sVariable )
     #print(aParameter_case)

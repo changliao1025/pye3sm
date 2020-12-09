@@ -24,7 +24,8 @@ from pye3sm.elm.general.halfdegree.plot.elm_tsplot_total_water_storage_halfdegre
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, oCase_in, \
+def h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
+    oCase_in, \
                                                     
                                                       dMax_y_in = None,\
                                                       dMin_y_in= None ):
