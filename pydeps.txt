@@ -1,7 +1,7 @@
 [pydeps]
 max_bacon = 2
 no_show = True
-verbose = 0
+verbose = 1
 pylib = False
 exclude =
     os
@@ -9,3 +9,6 @@ exclude =
     sys
     collections
     __future__
+reverse = False
+show_cycles = False
+show_raw_deps = False
