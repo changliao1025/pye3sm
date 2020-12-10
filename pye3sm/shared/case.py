@@ -1,8 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 class pycase(object):
-    __metaclass__ = ABCMeta
-    #aParameter={}
+    __metaclass__ = ABCMeta   
 
     iFlag_spinup=0
     iCase_index=0
@@ -10,30 +9,22 @@ class pycase(object):
     iYear_end=0
     iYear_data_start=0
     iYear_data_end=0
-
     iYear_subset_start = 0
     iYear_subset_end= 0
-
     iFlag_same_grid=1
     nyear=0
     nmonth=0
-    dConversion=1.0
-
-  
+    dConversion=1.0  
     sDirectory_case=''
-    sDirectory_run=''
-   
+    sDirectory_run=''   
     sModel='h2sc'
     sRegion='global'
-
     sCase=''
     sDate =''
     sVariable=''
     sWorkspace_analysis=''
     sWorkspace_cases=''
-    sLabel_y='' #the y label for plotting purpose
-
-    
+    sLabel_y='' #the y label for plotting purpose    
     sWorkspace_case=''
     sWorkspace_analysis_case=''
     sWorkspace_simulation_case=''

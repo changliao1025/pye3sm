@@ -1,4 +1,4 @@
-<file id="e3sm.xml" version="2.0">
+<file id="case.xml" version="2.0">
   <header>
     This file is used to control the e3sm case.
   </header>
@@ -16,7 +16,7 @@
         The scratch workspace
       </desc>
     </entry>
-    <entry id="iYear_start" value="1980">
+    <entry id="iYear_start" value="1979">
       <type>int</type>
       <desc>
         The scratch workspace

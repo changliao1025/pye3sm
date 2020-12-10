@@ -13,7 +13,7 @@ sys.path.extend(sSystem_paths)
 
 from pyes.system.define_global_variables import *     
 #from pyes.gis.envi.envi_write_header import envi_write_header
-from pyes.gis.gdal.write.gdal_write_envi_file_multiple_band import gdal_write_envi_file_multiple_band
+from pyes.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
 
 from pyes.gis.gdal.write.gdal_write_geotiff_multiple_band import gdal_write_geotiff_multiple_band
 
@@ -23,20 +23,13 @@ sys.path.append(sPath_pye3sm)
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
 
     sModel  = oCase_in.sModel
-    sRegion = oCase_in.sRegion      
-         
-    iYear_start = oCase_in.iYear_start
-        
-    iYear_end = oCase_in.iYear_end
-          
-    iFlag_same_grid = oCase_in.iFlag_same_grid
-   
- 
+    sRegion = oCase_in.sRegion               
+    iYear_start = oCase_in.iYear_start        
+    iYear_end = oCase_in.iYear_end          
+    iFlag_same_grid = oCase_in.iFlag_same_grid 
     print('The following model is processed: ', sModel)
     if( sModel == 'h2sc'):
         pass

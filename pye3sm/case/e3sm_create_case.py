@@ -39,7 +39,7 @@ def e3sm_create_case(oE3SM_in, \
     iFlag_spinup=oCase_in.iFlag_spinup
     #start
     #currently we only need to calibrate H2SC so I will not use advanced I/O
-    #we will the same variables used by corresponding CIME python script
+    #we will use the same variables used by corresponding CIME python script
 
     sPython=''
     sModel = oCase_in.sModel #'h2sc'

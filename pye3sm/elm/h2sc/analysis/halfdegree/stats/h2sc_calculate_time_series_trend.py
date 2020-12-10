@@ -38,7 +38,7 @@ if __name__ == '__main__':
     sRegion = 'global'
     sDate = '20200924'
     sVariable = 'zwt'
-   
+
 
     iYear_start = 1979
     iYear_end = 2008
@@ -59,8 +59,8 @@ if __name__ == '__main__':
 
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
-                                                                    iYear_subset_start_in = 2000, \
-                                                          iYear_subset_end_in =2008,\
+                                                               iYear_subset_start_in = 2000, \
+                                                               iYear_subset_end_in =2008,\
                                                                iFlag_same_grid_in = iFlag_same_grid, \
                                                                iYear_start_in = iYear_start, \
                                                                iYear_end_in =iYear_end,\

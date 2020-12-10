@@ -152,9 +152,9 @@ def h2sc_analyze_hillslope_water_table_depth_with_situ_halfdegree(oE3SM_in, \
         #convert date to juliday
 
     lJulian_start = gcal2jd(iYear_start, 1, 1)
-    iYear_subset_start = 2008
-    iYear_subset_end = 2008
-    iMonth = 1
+    iYear_subset_start = 2007
+    iYear_subset_end = 2007
+    iMonth = 5
     #select subset by date range
 
 
@@ -171,8 +171,8 @@ def h2sc_analyze_hillslope_water_table_depth_with_situ_halfdegree(oE3SM_in, \
     sFilename1 = sWorkspace_variable_dat + slash + sVariable  + sExtension_tiff
     sFilename2 = sWorkspace_variable_dat2 + slash + sVariable2  + sExtension_tiff
 
-    subset_index_start = (iYear_subset_start-iYear_start) * 12 + 5-1
-    subset_index_end = (iYear_subset_end-iYear_start) * 12 + 5-1
+    subset_index_start = (iYear_subset_start-iYear_start) * 12 + iMonth - 1
+    subset_index_end = (iYear_subset_end-iYear_start) * 12 + iMonth -1
     subset_index = np.arange( subset_index_start,subset_index_end+1, 1 )
 
 

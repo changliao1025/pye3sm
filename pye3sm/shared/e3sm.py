@@ -1,25 +1,19 @@
 from abc import ABCMeta, abstractmethod
 
 class pye3sm(object):
-    __metaclass__ = ABCMeta
-    #aParameter={}
+    __metaclass__ = ABCMeta    
 
     iFlag_debug=0
     iFlag_branch =0
     iFlag_continue=0
     iFlag_resubmit=0
-    iFlag_short=0
-    
+    iFlag_short=0    
     RES=''
     COMPSET=''
     PROJECT=''
-    MACH=''
-   
-    sCIME_directory=''
-   
-    sWorkspace_forcing=''
-    
-    
+    MACH=''   
+    sCIME_directory=''   
+    sWorkspace_forcing=''    
 
     def __init__(self, aParameter):
         print('pye3sm model is being initialized')
