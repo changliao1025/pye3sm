@@ -2,11 +2,13 @@ import os, sys
 import numpy as np
 import datetime
 
+import scipy.stats
+
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
 from pyes.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
@@ -17,6 +19,7 @@ from pye3sm.shared.case import pycase
 def elm_scatterplot_variables_halfdegree(oE3SM_in,\
                                          oCase_x_in,\
                                          oCase_y_in, \
+                                             iFlag_log_y_in=None,\
                                          dMin_x_in = None, \
                                          dMax_x_in = None, \
                                          dMin_y_in = None, \
@@ -57,13 +60,13 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable_x + slash + 'tiff'
     #read the stack data
     sFilename_x = sWorkspace_variable_dat + slash + sVariable_x  + sExtension_tiff
-    aData_all_x = gdal_read_geotiff_multiple_band(sFilename_x)
+    aData_all_x = gdal_read_geotiff_file_multiple_band(sFilename_x)
     aVariable_x = aData_all_x[0]
 
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable_y +  slash + 'tiff'
     #read the stack data
     sFilename_y = sWorkspace_variable_dat + slash + sVariable_y  + sExtension_tiff
-    aData_all_y = gdal_read_geotiff_multiple_band(sFilename_y)
+    aData_all_y = gdal_read_geotiff_file_multiple_band(sFilename_y)
     aVariable_y = aData_all_y[0]
 
     #reshape the data
@@ -79,12 +82,26 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
     x= x[good_index]
     y= y[good_index]
 
-    good_index = np.where(  (x > 0.001)&(y < 40)  )
-    x= x[good_index]
-    y= y[good_index]
+    aCorrelation = scipy.stats.kendalltau(x, y)
+    print(aCorrelation)
+   
     x = x * oCase_x_in.dConversion
-
+    y = y * oCase_y_in.dConversion
+    
     sFilename_out = sWorkspace_analysis_case_grid + slash + sVariable_x + '-' + sVariable_y + '_scatterplot.png'
+
+    if iFlag_log_y_in == 1:
+        aData_y = np.log10(y)
+        #set inf to min
+        bad_index = np.where( np.isinf(  aData_y) == True  )
+        aData_y[bad_index] = dMin_y_in
+    
+        #we can also calculate correlation here
+    
+        y= aData_y
+
+    
+
 
     #we could have two options to produce simple scatter plot or density map
 
@@ -92,6 +109,7 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
                               sFilename_out,\
                               iSize_x_in = 8,\
                               iSize_y_in = 8, \
+                            iFlag_log_y_in =iFlag_log_y_in,\
                               dMin_x_in = dMin_x_in, \
                               dMax_x_in = dMax_x_in, \
                               dMin_y_in = dMin_y_in, \

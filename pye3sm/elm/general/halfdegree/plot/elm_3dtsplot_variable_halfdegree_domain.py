@@ -10,10 +10,7 @@ from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
-
 from pyes.visual.timeseries.fill.plot3d_time_series_data_fill import plot3d_time_series_data_fill
-
-
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
 
@@ -23,8 +20,6 @@ from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-
-
 
 def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
                                             oCase_in, \
@@ -129,12 +124,20 @@ def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
         for i in np.arange(0, pShape[0], 1):
             aVariable0[i, :,:] = aVariable_total_subset[i, :,:]
             aVariable0[i][dummy_mask1!=1] = np.nan
-            aVariable2[i] = np.nanmean(aVariable0[i, :,:])
+            dummy1 = aVariable0[i, :,:]
+            dummy2 = remove_outliers(dummy1, 0.05)
+            aVariable2[i] = np.nanmean(dummy2)
             pass    
 
 
         aData_all.append(aVariable2)
         pass
+
+    aData_all = np.log10(aData_all)
+    ##set inf to min
+    bad_index = np.where( np.isinf(  aData_all) == True  )
+    aData_all[bad_index] = dMin_z_in
+    
 
     sFilename_out = sWorkspace_analysis_case_domain + slash \
         + sVariable + '_3dtsplot_' +'.png'
@@ -144,7 +147,7 @@ def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
     plot3d_time_series_data_fill(aDate_all, \
         aData_all,\
                                  sFilename_out,\
-                                 iReverse_z_in = 1, \
+                                 #iReverse_z_in = 0, \
                                  dMin_x_in = dMin_x_in, \
                                  dMax_x_in = dMax_x_in, \
                                  dMin_z_in = dMin_z_in, \

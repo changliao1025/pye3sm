@@ -7,8 +7,10 @@ sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 
 from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
+from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
+from pyes.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
+
 from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
 from pyes.toolbox.data.remove_outliers import remove_outliers
@@ -19,12 +21,17 @@ sys.path.append(sPath_pye3sm)
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import  pycase
-
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-def elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in,\
+
+def elm_tsplot_variable_halfdegree_domain(oE3SM_in, \
+                                          oCase_in,\
                                           dMax_y_in = None,\
-                                          dMin_y_in = None):
+                                          dMin_y_in = None,
+                                          dSpace_y_in = None,\
+                                          sLabel_x_in=None,\
+                                          sLabel_z_in = None,\
+                                          sTitle_in =None):
 
     sModel = oCase_in.sModel
     sRegion = oCase_in.sRegion
@@ -43,14 +50,6 @@ def elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in,\
     sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
-    print('The following model is processed: ', sModel)
-    if (sModel == 'h2sc'):
-        pass
-    else:
-        if (sModel == 'vsfm'):
-            aDimension = [96, 144]
-        else:
-            pass
 
     nrow = 360
     ncolumn = 720
@@ -62,11 +61,6 @@ def elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in,\
     aBasin = ['amazon','congo','mississippi','yangtze']
 
     nDomain = len(aBasin)
-    aMask = np.full( (nDomain, nrow, ncolumn), 0, dtype=int)
-    for i in range(nDomain):
-        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + aBasin[i] + slash + aBasin[i] + '.tif'
-        dummy = gdal_read_geotiff(sFilename_basin)
-        aMask[i, :,:] = dummy[0]
 
     dates = list()
     nyear = iYear_end - iYear_start + 1
@@ -79,7 +73,7 @@ def elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in,\
 
     #take the subset
     iMonth = 1
-    subset_index_start = (iYear_subset_start - iYear_start) * 12 + iMonth-1 
+    subset_index_start = (iYear_subset_start - iYear_start) * 12 + iMonth-1
     subset_index_end = (iYear_subset_end + 1 - iYear_start) * 12 + iMonth-1
     subset_index = np.arange( subset_index_start,subset_index_end, 1 )
 
@@ -103,59 +97,70 @@ def elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in,\
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
-    
+
     sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + 'tsplot_domain'
     if not os.path.exists(sWorkspace_analysis_case_domain):
         os.makedirs(sWorkspace_analysis_case_domain)
+        pass
 
-    
-    for iDomain in np.arange(nDomain):
+    aData_all=[]
+    aLabel_legend=[]
+    for iDomain in np.arange(1, nDomain+1, 1):
 
-        sDomain = aBasin[iDomain]
+        sDomain = aBasin[iDomain-1]
         sLabel_legend = sDomain.title()
         sFilename_out = sWorkspace_analysis_case_domain + slash \
             + sVariable + '_tsplot_' + sDomain +'.png'
+        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + sDomain + slash + sDomain + '.tif'
+        dummy = gdal_read_geotiff_file(sFilename_basin)
+        dummy_mask1 = dummy[0]
 
-        dummy_mask0 = aMask[iDomain, :, :]
-        dummy_mask1 = np.reshape(dummy_mask0, (nrow, ncolumn))
-        dummy_mask1 = 1 - dummy_mask1
-
-        dummy_mask = np.repeat(dummy_mask1[np.newaxis,:,:], nstress_subset, axis=0)
-
-        aVariable0 = ma.masked_array(aVariable_total_subset, mask= dummy_mask)
-        aVariable1 = aVariable0.reshape(nstress_subset,nrow * ncolumn)
-       
+        pShape = aVariable_total_subset.shape
+        aVariable0= np.full(pShape, np.nan, dtype=float)
         aVariable2 = np.full(nstress_subset, -9999, dtype=float)
-        aVariable3 = np.full(nstress_subset, -9999, dtype=float)
-        aVariable4 = np.full(nstress_subset, -9999, dtype=float)
-        for iStress in range(nstress_subset):
-            dummy = aVariable1[iStress, :]
-            dummy = dummy[dummy.mask == False]
-
-            #remove outlier
-            #dummy = remove_outliers(dummy[np.where(dummy != -9999)], 0.1)
-            aVariable2[iStress] = np.nanmean(dummy)
-            aVariable3[iStress] = np.nanmin(dummy)
-            aVariable4[iStress] = np.nanmax(dummy)
-
-
-        aVariable = np.array(  [aVariable2] )
-        if np.isnan(aVariable).all():
+        for i in np.arange(0, pShape[0], 1):
+            aVariable0[i, :,:] = aVariable_total_subset[i, :,:]
+            aVariable0[i][dummy_mask1!=1] = np.nan
+            dummy1 = aVariable0[i, :,:]
+            dummy2 = remove_outliers(dummy1, 0.05)
+            aVariable2[i] = np.nanmean(dummy2)
             pass
-        else:
 
-            plot_time_series_data([dates_subset], aVariable,\
-                                  sFilename_out,\
-                                  iReverse_y_in = 0, \
-                                  dMax_y_in = dMax_y_in,\
-                                  dMin_y_in = dMin_y_in,\
-                                  sTitle_in = '', \
-                                  sLabel_y_in= sLabel_Y,\
-                                  sFormat_y_in= '%.1e' ,\
-                                  aLabel_legend_in = [sLabel_legend], \
-                                  aMarker_in=['+'],\
-                                  iSize_x_in = 12,\
-                                  iSize_y_in = 5)
+        aData_all.append(aVariable2)
+        aLabel_legend.append(sLabel_legend)
+        pass
+
+    #aData_all = np.log10(aData_all)
+    ##set inf to min
+    #bad_index = np.where( np.isinf(  aData_all) == True  )
+    #aData_all[bad_index] = dMin_y_in
+
+
+    sFilename_out = sWorkspace_analysis_case_domain + slash \
+        + sVariable + '_tsplot' +'.png'
+
+    aDate_all = [dates_subset, dates_subset, dates_subset,dates_subset]
+    aColor = create_diverge_rgb_color_hex(4, iFlag_reverse_in=1)
+    plot_time_series_data(aDate_all,
+                          aData_all,\
+                          sFilename_out,\
+                          iReverse_y_in = 1, \
+                          #iFlag_log_in = 1,\
+                          ncolumn_in = 4,\
+                          dMax_y_in = dMax_y_in,\
+                          dMin_y_in = dMin_y_in,\
+                          dSpace_y_in = dSpace_y_in, \
+                          sTitle_in = sTitle_in, \
+                          sLabel_y_in= sLabel_Y,\
+                          sFormat_y_in= '%1d' ,\
+                          aLabel_legend_in = aLabel_legend, \
+                          aColor_in = aColor,\
+                          aMarker_in = ['o','.','*','+'],\
+                          sLocation_legend_in = 'lower right' ,\
+                          aLocation_legend_in = (1.0, 0.0),\
+                          aLinestyle_in = ['-','--','-.' ,'solid'],\
+                          iSize_x_in = 12,\
+                          iSize_y_in = 5)
 
     print("finished")
 

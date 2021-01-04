@@ -25,7 +25,7 @@ from pyes.system.define_global_variables import *
 
 from pyes.gis.gdal.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
 
-def fmt(x, pos):
+def fomatter(x, pos):
     a, b = '{:.2e}'.format(x).split('e')
     b = int(b)
     return r'${} \times 10^{{{}}}$'.format(a, b)

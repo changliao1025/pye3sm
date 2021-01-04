@@ -24,6 +24,8 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
                                                     oCase_in, \
+                                                         iFlag_log_in = None,\
+                                                             iReverse_y_in =None,\
                                                     dMin_x_in = None, \
                                                     dMax_x_in = None, \
                                                     dMin_y_in = None, \
@@ -127,12 +129,20 @@ def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
         for i in np.arange(0, pShape[0], 1):
             aVariable0[i, :,:] = aVariable_total_subset[i, :,:]
             aVariable0[i][dummy_mask1!=1] = np.nan
-            aVariable2[i] = np.nanmean(aVariable0[i, :,:])
+            dummy1 = aVariable0[i, :,:]
+            dummy2 = remove_outliers(dummy1, 0.05)
+            aVariable2[i] = np.nanmean(dummy2)
             pass
 
+        x= dates_subset
+        y = aVariable2
 
-        #aData_all.append(aVariable2)
-        #pass
+        if iFlag_log_in == 1:
+            aData_y = np.log10(y)
+            #set inf to min
+            bad_index = np.where( np.isinf(  aData_y) == True  )
+            aData_y[bad_index] = dMin_y_in
+            y=aData_y
 
         sFilename_out = sWorkspace_analysis_case_domain + slash \
             + sVariable + '_tsaplot_' + sDomain +'.png'
@@ -140,17 +150,18 @@ def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
 
 
 
-        plot_time_series_analysis(dates_subset, \
-                                  aVariable2,\
+        plot_time_series_analysis(x, \
+                                  y,\
                                   sFilename_out,\
-                                    sLabel_y_in,\
-                                  iReverse_y_in = 0, \
+                                  sLabel_y_in,\
+                                      iFlag_log_in =iFlag_log_in,\
+                                  iReverse_y_in = iReverse_y_in, \
                                   dMin_x_in = dMin_x_in, \
                                   dMax_x_in = dMax_x_in, \
-                                  #dMin_y_in = 5, \
-                                  #dMax_y_in = 20, \
-                                  dSpace_x_in = 1, \
-                                  dSpace_y_in = 5, \
+                                  dMin_y_in = dMin_y_in, \
+                                  dMax_y_in = dMax_y_in, \
+                                  dSpace_x_in = dSpace_x_in, \
+                                  dSpace_y_in = dSpace_y_in, \
                                   sTitle_in = sDomain, \
                                   sLabel_x_in = sLabel_x_in,\
                                   iSize_x_in = 10,\

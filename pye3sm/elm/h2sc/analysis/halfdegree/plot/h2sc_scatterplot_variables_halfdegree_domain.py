@@ -17,6 +17,7 @@ from pye3sm.elm.general.halfdegree.plot.elm_scatterplot_variables_halfdegree_dom
 def h2sc_scatterplot_variables_halfdegree_domain(oE3SM_in, \
                                                  oCase_x_in, \
                                                  oCase_y_in,\
+                                                       iFlag_log_y_in=None,\
                                                  dMin_x_in = None, \
                                                  dMax_x_in = None, \
                                                  dMin_y_in = None, \
@@ -30,6 +31,7 @@ def h2sc_scatterplot_variables_halfdegree_domain(oE3SM_in, \
     elm_scatterplot_variables_halfdegree_domain(oE3SM_in, \
                                                 oCase_x_in, \
                                                 oCase_y_in,\
+                                                    iFlag_log_y_in=iFlag_log_y_in,\
                                                 dMin_x_in = dMin_x_in, \
                                                 dMax_x_in = dMax_x_in, \
                                                 dMin_y_in = dMin_y_in, \
@@ -67,9 +69,7 @@ if __name__ == '__main__':
     print(aParameter_e3sm)
     oE3SM = pye3sm(aParameter_e3sm)
 
-    sLabel_x = 'Surface slope (percent)'
-    sLabel_y = 'Water table depth (m)'
-
+    
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
@@ -88,6 +88,10 @@ if __name__ == '__main__':
         #print(aParameter_case)
         oCase_x  = pycase(aParameter_case)
         sVariable = 'zwt'
+        sVariable = 'qdrai'
+        sLabel_x = r'Surface slope (percent)'
+        sLabel_y = r'Water table depth (m)'
+        sLabel_y = r'Groundwater drainage ($mm \times s^{-1}$)'
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
                                                                iYear_start_in = iYear_start, \
@@ -96,15 +100,25 @@ if __name__ == '__main__':
                                                                sVariable_in = sVariable )
         #print(aParameter_case)
         oCase_y  = pycase(aParameter_case)
+        dMin_y = 0
+        dMax_y= 40
+        dMin_y = 0
+        dMax_y= 40
+        dMin_y = -6
+        dMax_y= -3
+        dSpace_x = 2
+        dSpace_y =1
+        iFlag_log_y = 1
         h2sc_scatterplot_variables_halfdegree_domain(oE3SM, \
                                                      oCase_x,\
                                                      oCase_y,\
+                                                     iFlag_log_y_in = iFlag_log_y,\
                                                      dMin_x_in = 0,\
                                                      dMax_x_in = 10, \
-                                                     dMin_y_in = 0, \
-                                                     dMax_y_in = 40, \
-                                                     dSpace_x_in = 1, \
-                                                     dSpace_y_in = 10, \
+                                                     dMin_y_in = dMin_y, \
+                                                     dMax_y_in = dMax_y, \
+                                                     dSpace_x_in = dSpace_x, \
+                                                     dSpace_y_in = dSpace_y, \
                                                      sLabel_x_in = sLabel_x, \
                                                      sLabel_y_in = sLabel_y)
 

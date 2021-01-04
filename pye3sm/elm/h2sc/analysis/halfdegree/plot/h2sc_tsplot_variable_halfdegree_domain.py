@@ -24,21 +24,23 @@ from pye3sm.elm.general.halfdegree.plot.elm_tsplot_variable_halfdegree_domain im
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def h2sc_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in, \
-                                           iYear_subset_start_in = None, \
-                                           iYear_subset_end_in = None,\
+def h2sc_tsplot_variable_halfdegree_domain(oE3SM_in, \
+    oCase_in, \
                                            dMax_y_in = None,\
-                                           dMin_y_in= None  ):
+                                           dMin_y_in= None ,\
+                                               dSpace_y_in = None ):
 
-    elm_tsplot_variable_halfdegree_domain(oE3SM_in, oCase_in, \
+    elm_tsplot_variable_halfdegree_domain(oE3SM_in, \
+        oCase_in, \
                                           dMax_y_in = dMax_y_in,\
-                                          dMin_y_in = dMin_y_in )
+                                          dMin_y_in = dMin_y_in,\
+                                              dSpace_y_in = dSpace_y_in)
 
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 1
-        iIndex_end = 1
+        iIndex_start = 9
+        iIndex_end = 9
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -57,9 +59,9 @@ if __name__ == '__main__':
     iYear_subset_start = 2000
     iYear_subset_end = 2008
 
-
-    sVariable = 'wt_slp'
-    #sVariable='zwt'
+    sVariable = 'qdrai'
+    #sVariable = 'wt_slp'
+    sVariable='zwt'
     #sVariable = 'RAIN'
     #sVariable = 'SNOW'
     #sVariable = 'QSOIL'
@@ -70,12 +72,13 @@ if __name__ == '__main__':
     
     sLabel_y = r'Water table slope'
     #sLabel_y = r'Rain (mm/s)'
-    #sLabel_y = r'Water table depth (m)'
+    sLabel_y = r'Water table depth (m)'
     #sLabel_y = r'Soil evaporation (mm/s)'
     #sLabel_y = r'Vegetation evaporation (mm/s)'
     #sLabel_y = r'Vegetation transpiration (mm/s)'
     #sLabel_y = r'Groundwater drainage (mm/s)'
     #sLabel_y = r'Overland runoff (mm/s)'
+    #sLabel_y =   r'Drainage ($mm \times s^{-1}$)'
   
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
@@ -89,12 +92,13 @@ if __name__ == '__main__':
 
     oE3SM = pye3sm(aParameter_e3sm)
     for iCase_index in (aCase_index):
+     
 
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
                                                                iFlag_same_grid_in = iFlag_same_grid, \
                                                                iYear_start_in = iYear_start, \
-                                                               iYear_end_in =iYear_end,\
+                                                               iYear_end_in = iYear_end,\
                                                                iYear_subset_start_in = iYear_subset_start, \
                                                                iYear_subset_end_in = iYear_subset_end, \
                                                                sDate_in= sDate,\
@@ -103,6 +107,14 @@ if __name__ == '__main__':
 
         oCase = pycase(aParameter_case)
 
-        h2sc_tsplot_variable_halfdegree_domain(oE3SM, oCase)
+        dMin_y = 0
+        dMax_y = 60
+        dSpace_y = 10        
+
+        h2sc_tsplot_variable_halfdegree_domain(oE3SM, \
+                                                 oCase,\
+                                                 dMin_y_in = dMin_y, \
+                                                 dMax_y_in = dMax_y, \
+                                                 dSpace_y_in = dSpace_y)
 
     print('finished')

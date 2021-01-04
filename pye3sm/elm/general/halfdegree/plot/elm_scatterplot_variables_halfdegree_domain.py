@@ -2,6 +2,7 @@ import os, sys
 import numpy as np
 
 import datetime
+import scipy.stats
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
@@ -20,6 +21,7 @@ from pye3sm.shared.case import pycase
 def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
                                                 oCase_x_in,\
                                                 oCase_y_in, \
+                                                      iFlag_log_y_in=None,\
                                                 dMin_x_in = None, \
                                                 dMax_x_in = None, \
                                                 dMin_y_in = None, \
@@ -111,11 +113,20 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
         x2= x1[good_index]
         y2= y1[good_index]
 
-        good_index = np.where(  (x2 > 0.001)&(y2 < 40)  )
-        x = x2[good_index]
-        y = y2[good_index]
+        aCorrelation = scipy.stats.kendalltau(x2, y2)
+        print(aCorrelation)
 
-        x = x * oCase_x_in.dConversion
+        x = x2 * oCase_x_in.dConversion
+        y = y2 * oCase_y_in.dConversion
+
+        if iFlag_log_y_in == 1:
+            aData_y = np.log10(y)
+            #set inf to min
+            bad_index = np.where( np.isinf(  aData_y) == True  )
+            aData_y[bad_index] = dMin_y_in
+            y=aData_y
+
+        
 
         sFilename_out = sWorkspace_analysis_case_grid + slash \
             + sVariable_x + '-' +  sVariable_y +'-'+ sDomain + '_scatterplot.png'
@@ -124,6 +135,7 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
                                   sFilename_out,\
                                   iSize_x_in = 8,\
                                   iSize_y_in = 8, \
+                                       iFlag_log_y_in =iFlag_log_y_in,\
                                   dMin_x_in = dMin_x_in, \
                                   dMax_x_in = dMax_x_in, \
                                   dMin_y_in = dMin_y_in, \

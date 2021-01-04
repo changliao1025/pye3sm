@@ -33,8 +33,8 @@ def h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
 if __name__ == '__main__':
     iFlag_debug = 0
     if iFlag_debug == 1:
-        iIndex_start = 1
-        iIndex_end = 1
+        iIndex_start = 9
+        iIndex_end = 9
     else:
         parser = argparse.ArgumentParser()        
         parser.add_argument("--iIndex_start", help = "the path",   type = int)      
@@ -45,12 +45,12 @@ if __name__ == '__main__':
     
     sModel = 'h2sc'
     sRegion = 'global'
-    sDate = '20200212'
-    sDate = '20200602'
+    
+    sDate = '20200924'
 
     
 
-    iYear_start = 1980
+    iYear_start = 1979
     iYear_end = 2008
 
     sVariable = 'zwt'
@@ -62,10 +62,27 @@ if __name__ == '__main__':
 
         #iCase_index = 240       
     for iCase_index in (aCase_index):
-        h2sc_tsplot_variable_halfdegree(sFilename_configuration, \
-                                    iCase_index,\
-                                    iYear_start_in = iYear_start, \
-                                    iYear_end_in =iYear_end,\
-                                    sDate_in= sDate)
+        aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+                                                               iCase_index_in =  iCase_index ,\
+                                                               iFlag_same_grid_in = iFlag_same_grid, \
+                                                               iYear_start_in = iYear_start, \
+                                                               iYear_end_in = iYear_end,\
+                                                               iYear_subset_start_in = iYear_subset_start, \
+                                                               iYear_subset_end_in = iYear_subset_end, \
+                                                               sDate_in= sDate,\
+                                                               sLabel_y_in =  sLabel_y, \
+                                                               sVariable_in = sVariable )
+
+        oCase = pycase(aParameter_case)
+
+        dMin_y = -6
+        dMax_y = -3
+        dSpace_y = 1        
+
+        h2sc_tsplot_variable_halfdegree_domain(oE3SM, \
+                                                 oCase,\
+                                                 dMin_y_in = dMin_y, \
+                                                 dMax_y_in = dMax_y, \
+                                                 dSpace_y_in = dSpace_y)
 
     print('finished')

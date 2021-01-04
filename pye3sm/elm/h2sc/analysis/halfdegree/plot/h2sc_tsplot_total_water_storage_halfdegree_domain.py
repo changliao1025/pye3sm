@@ -73,16 +73,15 @@ if __name__ == '__main__':
 
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
-                                                                    iYear_subset_start_in = 2004, \
-                                                          iYear_subset_end_in =2008,\
+                                                               iYear_subset_start_in = 2004, \
+                                                               iYear_subset_end_in =2008,\
                                                                iFlag_same_grid_in = iFlag_same_grid, \
                                                                iYear_start_in = iYear_start, \
-                                                               iYear_end_in =iYear_end,\
+                                                               iYear_end_in = iYear_end,\
                                                                sDate_in= sDate)
 
         oCase = pycase(aParameter_case)
 
-        h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM, \
-            oCase                                                         )
+        h2sc_tsplot_total_water_storage_halfdegree_domain(oE3SM,   oCase    )
 
     print('finished')

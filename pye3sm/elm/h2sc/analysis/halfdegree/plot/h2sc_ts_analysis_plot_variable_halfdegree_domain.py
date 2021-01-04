@@ -22,6 +22,7 @@ from pye3sm.elm.general.halfdegree.plot.elm_ts_analysis_plot_variable_halfdegree
 
 def h2sc_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in, \
                                              oCase_in,\
+                                             iFlag_log_in = None,\
                                              dMin_x_in = None, \
                                              dMax_x_in = None, \
                                              dMin_y_in = None, \
@@ -33,6 +34,7 @@ def h2sc_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in, \
 
     elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
                                             oCase_in, \
+                                            iFlag_log_in = iFlag_log_in,\
                                             dMin_y_in = dMin_y_in, \
                                             dMax_y_in = dMax_y_in, \
                                             dSpace_x_in = dSpace_x_in, \
@@ -80,6 +82,18 @@ if __name__ == '__main__':
         #iCase_index = 240
     for iCase_index in (aCase_index):
         sVariable = 'zwt'
+        sVariable = 'qdrai'
+        sLabel_y = r'Water table depth (m)'
+        sLabel_y = r'Drainage ($mm s^{-1}$)'
+        dMin_y = 0
+        dMax_y= 40
+        dMin_y = 0
+        dMax_y= 40
+        dMin_y = -6
+        dMax_y= -3
+        dSpace_x = 2
+        dSpace_y =1
+        iFlag_log = 1
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
                                                                iYear_start_in = iYear_start, \
@@ -92,11 +106,11 @@ if __name__ == '__main__':
         oCase  = pycase(aParameter_case)
         h2sc_ts_analysis_plot_variable_halfdegree_domain(oE3SM, \
                                                  oCase,\
-                                                 dMin_y_in = 0, \
-                                                 dMax_y_in = 40, \
-                                                 dSpace_y_in = 10, \
-                                               
+                                                     iFlag_log_in = iFlag_log,\
+                                                 dMin_y_in = dMin_y, \
+                                                 dMax_y_in = dMax_y, \
+                                                 dSpace_y_in = dSpace_y, \
                                                  sLabel_x_in = 'Year',\
-                                                 sLabel_y_in = 'Water table depth (m)')
+                                                 sLabel_y_in = sLabel_y)
 
     print('finished')
