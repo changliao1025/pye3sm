@@ -27,8 +27,8 @@ def h2sc_save_variable_halfdegree_batch(oE3SM_in, oCase_in):
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 9
-        iIndex_end = 9
+        iIndex_start = 3
+        iIndex_end = 3
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -37,13 +37,16 @@ if __name__ == '__main__':
         iIndex_start = pArgs.iIndex_start
         iIndex_end = pArgs.iIndex_end
 
-    sDate = '20200924'
+    sDate = '20200924' #calibrated
+    sDate = '20201214' #default
+    #sDate = '20201218' #sensitivity analysis
     
     
     aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI', \
-        'wt_slp','sur_slp','ZWT','TWS_MONTH_BEGIN','TWS_MONTH_END']
+        'wt_slp','sur_slp','ZWT']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
     #aVariable = ['wt_slp','sur_slp','ZWT']
     #aVariable = ['TWS_MONTH_BEGIN','TWS_MONTH_END']
+    aVariable = ['ZWT']
     nvariable = len(aVariable)
     
   
@@ -56,6 +59,7 @@ if __name__ == '__main__':
     iYear_end = 2008
 
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
+    #aCase_index = np.array([2,4,8,16])
     
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'

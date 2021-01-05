@@ -15,7 +15,7 @@ from pyes.system.define_global_variables import *
 #from pyes.gis.envi.envi_write_header import envi_write_header
 from pyes.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
 
-from pyes.gis.gdal.write.gdal_write_geotiff_multiple_band import gdal_write_geotiff_multiple_band
+from pyes.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
@@ -38,6 +38,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
             aDimension = [ 96, 144]
         else:
             pass    
+        
     dConversion = oCase_in.dConversion   
     sVariable  = oCase_in.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster
@@ -66,6 +67,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
         if "ele0" == sKey:
             aEle0 = (aValue[:]).data            
             break
+
     nrow_new = 360
     ncolumn_new = 720
     aEle0 = aEle0.reshape(nrow_new, ncolumn_new)
@@ -221,7 +223,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
 
     sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable + sExtension_tiff
 
-    gdal_write_geotiff_multiple_band(sFilename_tiff, aGrid_stack,\
+    gdal_write_geotiff_file_multiple_band(sFilename_tiff, aGrid_stack,\
         float(pHeaderParameters['pixelSize']),\
          float(pHeaderParameters['ULlon']),\
               float(pHeaderParameters['ULlat']),\

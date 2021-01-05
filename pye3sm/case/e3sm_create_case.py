@@ -312,19 +312,20 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 16
+    iCase = 3
 
-    iFlag_default = 0
+    iFlag_default = 1
     iFlag_debug = 0
     iFlag_branch = 0
-    iFlag_initial = 1
+    iFlag_initial = 0
     iFlag_spinup = 0
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
-    sDate = '20201218'
-    #sDate_spinup = '20200412'
-    sDate_spinup = '20200923'
+    sDate = '20201214'
+    #sDate = '20201218'
+    sDate_spinup = '20200412'
+    #sDate_spinup = '20200923'
     sCase = sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
