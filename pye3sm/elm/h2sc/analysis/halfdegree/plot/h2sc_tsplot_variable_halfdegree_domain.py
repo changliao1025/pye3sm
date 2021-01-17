@@ -39,8 +39,8 @@ def h2sc_tsplot_variable_halfdegree_domain(oE3SM_in, \
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 2
-        iIndex_end = 2
+        iIndex_start = 3
+        iIndex_end = 3
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -53,6 +53,7 @@ if __name__ == '__main__':
 
     sDate = '20200924'
     sDate = '20201214'
+    sDate = '20210108'
 
 
     iYear_start = 1979
@@ -63,6 +64,7 @@ if __name__ == '__main__':
     sVariable = 'qdrai'
     #sVariable = 'wt_slp'
     sVariable='zwt'
+    sVariable='gage_height'
     #sVariable = 'RAIN'
     #sVariable = 'SNOW'
     #sVariable = 'QSOIL'
@@ -80,7 +82,7 @@ if __name__ == '__main__':
     #sLabel_y = r'Groundwater drainage (mm/s)'
     #sLabel_y = r'Overland runoff (mm/s)'
     #sLabel_y =   r'Drainage ($mm \times s^{-1}$)'
-  
+    sLabel_y = r'Gage height (m)'
     iCase_index_start = iIndex_start
     iCase_index_end = iIndex_end
     aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
@@ -94,7 +96,7 @@ if __name__ == '__main__':
     oE3SM = pye3sm(aParameter_e3sm)
     for iCase_index in (aCase_index):
      
-
+        dConversion = 1.0
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
                                                                iFlag_same_grid_in = iFlag_same_grid, \
@@ -102,6 +104,7 @@ if __name__ == '__main__':
                                                                iYear_end_in = iYear_end,\
                                                                iYear_subset_start_in = iYear_subset_start, \
                                                                iYear_subset_end_in = iYear_subset_end, \
+                                                                   dConversion_in = dConversion,\
                                                                sDate_in= sDate,\
                                                                sLabel_y_in =  sLabel_y, \
                                                                sVariable_in = sVariable )
@@ -109,8 +112,8 @@ if __name__ == '__main__':
         oCase = pycase(aParameter_case)
 
         dMin_y = 0
-        dMax_y = 60
-        dSpace_y = 10        
+        dMax_y = 10
+        dSpace_y = 5        
 
         h2sc_tsplot_variable_halfdegree_domain(oE3SM, \
                                                  oCase,\

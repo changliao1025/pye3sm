@@ -26,7 +26,6 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
                                                      oCase_in, \
-
                                                      dMax_y_in = None,\
                                                      dMin_y_in =None):
 
@@ -168,13 +167,13 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
                 if(i==3):
                     dummy1 = remove_outliers(dummy1, 0.1)
                     pass
-                    
-                aVariable2[iStress-1] = np.nanmean(dummy1)  
-            
+
+                aVariable2[iStress-1] = np.nanmean(dummy1)
+
             #shoule we shift one time step
 
             aVariable2 = np.roll(aVariable2, 1)
-        
+
             aVariable_all[i-1, :] = aVariable2
             #use the equation here
             #S = Rain + Snow - (qsoil + qvege + qvegt) - (Runoff)
@@ -192,6 +191,7 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
             dummy1[dummy1==-9999] = np.nan
             aVariable6[iStress-1] = np.nanmean(dummy1)
             #use regional mean instead of grid
+
         if np.isnan(aVariable_all).all():
             pass
         else:
@@ -214,7 +214,7 @@ def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
                                   sLabel_y_in= sLabel_Y,\
                                   sFormat_y_in = '%.1e',\
                                   sLocation_legend_in = 'upper right' ,\
-                                      aColor_in= aColor,\
+                                  aColor_in= aColor,\
                                   aLabel_legend_in = aVariable, \
                                   iSize_x_in = 12,\
                                   iSize_y_in = 5)

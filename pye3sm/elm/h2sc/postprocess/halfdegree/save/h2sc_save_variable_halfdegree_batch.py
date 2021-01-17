@@ -39,6 +39,7 @@ if __name__ == '__main__':
 
     sDate = '20200924' #calibrated
     sDate = '20201214' #default
+    sDate = '20210108' #default
     #sDate = '20201218' #sensitivity analysis
     
     
@@ -46,7 +47,8 @@ if __name__ == '__main__':
         'wt_slp','sur_slp','ZWT']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
     #aVariable = ['wt_slp','sur_slp','ZWT']
     #aVariable = ['TWS_MONTH_BEGIN','TWS_MONTH_END']
-    aVariable = ['ZWT']
+    aVariable = ['ZWT', 'gage_height','QDRAI']
+    aVariable = ['wt_slp']
     nvariable = len(aVariable)
     
   

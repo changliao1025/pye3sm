@@ -24,8 +24,8 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
                                                     oCase_in, \
-                                                         iFlag_log_in = None,\
-                                                             iReverse_y_in =None,\
+                                                    iFlag_log_in = None,\
+                                                    iReverse_y_in =None,\
                                                     dMin_x_in = None, \
                                                     dMax_x_in = None, \
                                                     dMin_y_in = None, \
@@ -154,7 +154,8 @@ def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
                                   y,\
                                   sFilename_out,\
                                   sLabel_y_in,\
-                                      iFlag_log_in =iFlag_log_in,\
+                                  iFlag_without_raw_in =1,\
+                                  iFlag_log_in =iFlag_log_in,\
                                   iReverse_y_in = iReverse_y_in, \
                                   dMin_x_in = dMin_x_in, \
                                   dMax_x_in = dMax_x_in, \

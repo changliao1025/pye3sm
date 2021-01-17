@@ -20,7 +20,10 @@ from pye3sm.elm.general.halfdegree.plot.elm_scatterplot_variables_halfdegree imp
 def h2sc_scatterplot_variables_halfdegree(oE3SM_in, \
                                           oCase_x_in, \
                                           oCase_y_in,\
-                                              iFlag_log_y_in=None,\
+                                               iFlag_scientific_notation_x_in=None,\
+                        iFlag_scientific_notation_y_in=None,\
+                                                     iFlag_log_x_in=None,\
+                                                       iFlag_log_y_in=None,\
                                           dMin_x_in = None, \
                                           dMax_x_in = None, \
                                           dMin_y_in = None, \
@@ -34,8 +37,11 @@ def h2sc_scatterplot_variables_halfdegree(oE3SM_in, \
     elm_scatterplot_variables_halfdegree(oE3SM_in,\
                                          oCase_x_in,\
                                          oCase_y_in,\
-                                             iFlag_log_y_in=iFlag_log_y_in,\
-                                         dMin_x_in = 0, \
+                                            iFlag_scientific_notation_x_in=iFlag_scientific_notation_x_in,\
+                                                        iFlag_scientific_notation_y_in=iFlag_scientific_notation_y_in,\
+                                                               iFlag_log_x_in=iFlag_log_x_in,\
+                                                    iFlag_log_y_in=iFlag_log_y_in,\
+                                         dMin_x_in = dMin_x_in, \
                                          dMax_x_in = dMax_x_in, \
                                          dMin_y_in = dMin_y_in, \
                                          dMax_y_in = dMax_y_in, \
@@ -81,6 +87,7 @@ if __name__ == '__main__':
         #iCase_index = 240
     for iCase_index in (aCase_index):
         sVariable = 'sur_slp'
+        sLabel_x = r'Surface slope (percent)'
         dConversion = 100
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
@@ -91,11 +98,14 @@ if __name__ == '__main__':
                                                                sVariable_in = sVariable )
         #print(aParameter_case)
         oCase_x  = pycase(aParameter_case)
-        #sVariable = 'zwt'
+        
         sVariable = 'qdrai'
-        sLabel_x = r'Surface slope (percent)'
-        sLabel_y = r'Water table depth (m)'
+        sVariable = 'zwt'
+        
+        
         sLabel_y = r'Groundwater drainage ($mm \times s^{-1}$)'
+        sLabel_y = r'Water table depth (m)'
+        dConversion = 1.0
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                iCase_index_in =  iCase_index ,\
                                                                iYear_start_in = iYear_start, \
@@ -104,19 +114,27 @@ if __name__ == '__main__':
                                                                sVariable_in = sVariable )
         #print(aParameter_case)
         oCase_y  = pycase(aParameter_case)
+        dMin_x = 0
+        dMax_x= 10
         dMin_y = 0
         dMax_y= 40
-        dMin_y = -6
-        dMax_y= -3
+        #dMin_y = -6
+        #dMax_y= -3
         dSpace_x = 2
-        dSpace_y =1
-        iFlag_log_y = 1
+        dSpace_y =10
+        iFlag_log_x = 0
+        iFlag_log_y = 0
+        iFlag_scientific_notation_x = 0
+        iFlag_scientific_notation_y = 0
         h2sc_scatterplot_variables_halfdegree(oE3SM, \
                                               oCase_x,\
                                               oCase_y,\
-                                            iFlag_log_y_in = iFlag_log_y,\
-                                              dMin_x_in = 0,\
-                                              dMax_x_in = 10, \
+                                             iFlag_scientific_notation_x_in=iFlag_scientific_notation_x,\
+                                                     iFlag_scientific_notation_y_in =iFlag_scientific_notation_y,\
+                                                     iFlag_log_x_in= iFlag_log_x,\
+                                                     iFlag_log_y_in = iFlag_log_y,\
+                                              dMin_x_in = dMin_x,\
+                                              dMax_x_in = dMax_x, \
                                               dMin_y_in = dMin_y, \
                                               dMax_y_in = dMax_y, \
                                               dSpace_x_in = dSpace_x, \

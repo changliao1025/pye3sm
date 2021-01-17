@@ -17,7 +17,6 @@ from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
-
                                    iCase_index, \
                                    iYear_start_in = None,\
                                    iYear_end_in = None,\
@@ -55,6 +54,7 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             aDimension = [96, 144]
         else:
             pass
+
     dConversion = oE3SM.dConversion
     sVariable = oE3SM.sVariable.lower()
     sCase = oE3SM.sCase
@@ -63,10 +63,10 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
 
     iFlag_optional = 1
 
-    
+
     nrow = 360
     ncolumn = 720
-    
+
     dates = list()
     nyear = iYear_end - iYear_start + 1
     for iYear in range(iYear_start, iYear_end + 1):
@@ -75,10 +75,10 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             dates.append( dSimulation )
 
     iStress = 1
-    
+
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable.lower() +    slash + 'dat'
 
-   
+
     #read the stack data
 
     sFilename = sWorkspace_variable_dat + slash + sVariable.lower()  + sExtension_envi
@@ -91,19 +91,20 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
+
     sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'tsplot_grid'
     if not os.path.exists(sWorkspace_analysis_case_grid):
         os.makedirs(sWorkspace_analysis_case_grid)
 
     sLabel_Y =r'Water table depth (m)'
     sLabel_legend = 'Simulated water table depth'
-    for iRow in np.arange(1, nrow+1, 10): 
-        sRow = "{:03d}".format(iRow)               
-        for iColumn in np.arange(1, ncolumn+1, 10): 
+    for iRow in np.arange(1, nrow+1, 10):
+        sRow = "{:03d}".format(iRow)
+        for iColumn in np.arange(1, ncolumn+1, 10):
             sColumn = "{:03d}".format(iColumn)
 
             sGrid =  sRow + '_' +sColumn
-            
+
             sFilename_out = sWorkspace_analysis_case_grid + slash + 'wtd_tsplot_' + sGrid +'.png'
 
 
@@ -111,15 +112,15 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
             if np.isnan(aVariable).all():
                 pass
             else:
-            
+
                 plot_time_series_data_monthly(dates, aVariable,\
-                                          sFilename_out,\
-                                          iReverse_Y_in = 1, \
-                                          sTitle_in = '', \
-                                          sLabel_Y_in= sLabel_Y,\
-                                          sLabel_legend_in = sLabel_legend, \
-                                          iSize_X_in = 12,\
-                                          iSize_Y_in = 5)
+                                              sFilename_out,\
+                                              iReverse_Y_in = 1, \
+                                              sTitle_in = '', \
+                                              sLabel_Y_in= sLabel_Y,\
+                                              sLabel_legend_in = sLabel_legend, \
+                                              iSize_X_in = 12,\
+                                              iSize_Y_in = 5)
 
     print("finished")
 

@@ -11,6 +11,8 @@ from pyes.system.define_global_variables import *
 from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
 from pyes.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
+from pyes.visual.scatter.scatter_plot_data import scatter_plot_data
+
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
 sys.path.append(sPath_pye3sm)
 from pye3sm.shared.e3sm import pye3sm
@@ -19,7 +21,10 @@ from pye3sm.shared.case import pycase
 def elm_scatterplot_variables_halfdegree(oE3SM_in,\
                                          oCase_x_in,\
                                          oCase_y_in, \
-                                             iFlag_log_y_in=None,\
+                                         iFlag_scientific_notation_x_in=None,\
+                                         iFlag_scientific_notation_y_in=None,\
+                                         iFlag_log_x_in=None,\
+                                         iFlag_log_y_in=None,\
                                          dMin_x_in = None, \
                                          dMax_x_in = None, \
                                          dMin_y_in = None, \
@@ -43,7 +48,7 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
     sVariable_x = oCase_x_in.sVariable
     sVariable_y = oCase_y_in.sVariable
     sCase = oCase_x_in.sCase
-    
+
     sWorkspace_analysis_case = oCase_x_in.sWorkspace_analysis_case
 
     iFlag_optional = 1
@@ -84,10 +89,10 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
 
     aCorrelation = scipy.stats.kendalltau(x, y)
     print(aCorrelation)
-   
+
     x = x * oCase_x_in.dConversion
     y = y * oCase_y_in.dConversion
-    
+
     sFilename_out = sWorkspace_analysis_case_grid + slash + sVariable_x + '-' + sVariable_y + '_scatterplot.png'
 
     if iFlag_log_y_in == 1:
@@ -95,12 +100,12 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
         #set inf to min
         bad_index = np.where( np.isinf(  aData_y) == True  )
         aData_y[bad_index] = dMin_y_in
-    
+
         #we can also calculate correlation here
-    
+
         y= aData_y
 
-    
+
 
 
     #we could have two options to produce simple scatter plot or density map
@@ -109,7 +114,10 @@ def elm_scatterplot_variables_halfdegree(oE3SM_in,\
                               sFilename_out,\
                               iSize_x_in = 8,\
                               iSize_y_in = 8, \
-                            iFlag_log_y_in =iFlag_log_y_in,\
+                              iFlag_scientific_notation_x_in=iFlag_scientific_notation_x_in,\
+                              iFlag_scientific_notation_y_in=iFlag_scientific_notation_y_in,\
+                              iFlag_log_x_in=iFlag_log_x_in,\
+                              iFlag_log_y_in=iFlag_log_y_in,\
                               dMin_x_in = dMin_x_in, \
                               dMax_x_in = dMax_x_in, \
                               dMin_y_in = dMin_y_in, \

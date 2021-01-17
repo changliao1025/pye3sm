@@ -11,6 +11,7 @@ from pyes.system.define_global_variables import *
 
 from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
 
+from pyes.visual.scatter.scatter_plot_data import scatter_plot_data
 from pyes.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
@@ -21,7 +22,10 @@ from pye3sm.shared.case import pycase
 def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
                                                 oCase_x_in,\
                                                 oCase_y_in, \
-                                                      iFlag_log_y_in=None,\
+                                                iFlag_scientific_notation_x_in=None,\
+                                                iFlag_scientific_notation_y_in=None,\
+                                                iFlag_log_x_in=None,\
+                                                iFlag_log_y_in=None,\
                                                 dMin_x_in = None, \
                                                 dMax_x_in = None, \
                                                 dMin_y_in = None, \
@@ -102,7 +106,7 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
         sFilename_basin = sWorkspace_data_auxiliary_basin + slash + sDomain + slash + sDomain + '.tif'
         dummy = gdal_read_geotiff_file(sFilename_basin)
         dummy_mask1 = dummy[0]
-        
+
 
         dummy_index = np.where(dummy_mask1 ==1)
         x1 = x0[dummy_index]
@@ -126,26 +130,29 @@ def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
             aData_y[bad_index] = dMin_y_in
             y=aData_y
 
-        
+
 
         sFilename_out = sWorkspace_analysis_case_grid + slash \
             + sVariable_x + '-' +  sVariable_y +'-'+ sDomain + '_scatterplot.png'
 
-        scatter_plot_data_density(x, y,\
-                                  sFilename_out,\
-                                  iSize_x_in = 8,\
-                                  iSize_y_in = 8, \
-                                       iFlag_log_y_in =iFlag_log_y_in,\
-                                  dMin_x_in = dMin_x_in, \
-                                  dMax_x_in = dMax_x_in, \
-                                  dMin_y_in = dMin_y_in, \
-                                  dMax_y_in = dMax_y_in, \
-                                  dSpace_x_in = dSpace_x_in, \
-                                  dSpace_y_in = dSpace_y_in, \
-                                  sTitle_in = '', \
-                                  sLabel_x_in= sLabel_x_in,\
-                                  sLabel_y_in= sLabel_y_in,\
-                                  sLabel_legend_in = sLabel_legend)
+        scatter_plot_data(x, y,\
+                          sFilename_out,\
+                          iSize_x_in = 8,\
+                          iSize_y_in = 8, \
+                          iFlag_scientific_notation_x_in=iFlag_scientific_notation_x_in,\
+                          iFlag_scientific_notation_y_in=iFlag_scientific_notation_y_in,\
+                          iFlag_log_x_in=iFlag_log_x_in,\
+                          iFlag_log_y_in=iFlag_log_y_in,\
+                          dMin_x_in = dMin_x_in, \
+                          dMax_x_in = dMax_x_in, \
+                          dMin_y_in = dMin_y_in, \
+                          dMax_y_in = dMax_y_in, \
+                          dSpace_x_in = dSpace_x_in, \
+                          dSpace_y_in = dSpace_y_in, \
+                          sTitle_in = '', \
+                          sLabel_x_in= sLabel_x_in,\
+                          sLabel_y_in= sLabel_y_in,\
+                          sLabel_legend_in = sLabel_legend)
         pass
 
     print("finished")
