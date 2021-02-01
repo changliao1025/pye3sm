@@ -119,10 +119,10 @@ if __name__ == '__main__':
         #print(aParameter_case)
         oCase_y  = pycase(aParameter_case)
         dMin_x = 0
-        dMax_x= 10
+        dMax_x = 10
         
         dMin_y = 0
-        dMax_y= 40
+        dMax_y = 40
         #dMin_y = -6
         #dMax_y= -3
         dSpace_x = 2

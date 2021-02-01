@@ -30,7 +30,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 def h2sc_analyze_hillslope_water_table_depth_with_situ_halfdegree_multicases(oE3SM_in, \
                                                                   oCase_in,\
-                                                                      aCase_in,\
+                                                                  aCase_in,\
                                                                   dMin_in = None, \
                                                                   dMax_in = None, \
                                                                   dMin_x_in = None, \

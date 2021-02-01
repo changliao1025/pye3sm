@@ -39,6 +39,8 @@ iFlag_short = 0
 #sDate_spinup = '20200504'
 sDate_spinup = '20200905'
 sDate = '20200906'
+sDate = '20210127'
+sDate_spinup = '20210126'
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'

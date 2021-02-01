@@ -22,9 +22,9 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                         iFlag_branch_in = None, \
                                         iFlag_continue_in = None, \
                                         iFlag_debug_in = None, \
-
                                    iFlag_short_in =None,\
-                                        iFlag_resubmit_in = None):
+                                        iFlag_resubmit_in = None,\
+                                           sCIME_directory_in = None ):
 
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
@@ -55,7 +55,11 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_short = 0
 
 
-        
+    if sCIME_directory_in is not None:
+        sCIME_directory = sCIME_directory_in
+    else:
+        sCIME_directory = sWorkspace_code + slash \
+        + 'fortran/e3sm/TRIGRID/cime/scripts'
 
     #update these controls
     config['iFlag_branch'] = "{:01d}".format(iFlag_branch)
@@ -64,8 +68,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
 
-    sCIME_directory = sWorkspace_code + slash \
-        + 'fortran/e3sm/TRIGRID/cime/scripts'
+    
     config['sCIME_directory'] = sCIME_directory
 
     return config
@@ -106,7 +109,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     sCase_index = "{:03d}".format(iCase_index)
     #important change here
-    config['iCase_index'] = "{:04d}".format(iCase_index)
+    config['iCase_index'] = "{:03d}".format(iCase_index)
     sCase = sModel + sDate + sCase_index
     config['sDate'] = sDate
     config['sCase'] = sCase

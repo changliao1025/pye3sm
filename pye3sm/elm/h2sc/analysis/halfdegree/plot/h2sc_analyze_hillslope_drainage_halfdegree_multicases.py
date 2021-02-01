@@ -26,11 +26,11 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
+from pyes.visual.timeseries.plot_time_series_data import plot_time_series_data
 
-
-def h2sc_analyze_hillslope_water_table_depth_with_situ_halfdegree_multicases(oE3SM_in, \
+def h2sc_analyze_hillslope_drainage_halfdegree_multicases(oE3SM_in, \
                                                                   oCase_in,\
-                                                                      aCase_in,\
+                                                                  aCase_in,\
                                                                   dMin_in = None, \
                                                                   dMax_in = None, \
                                                                   dMin_x_in = None, \
@@ -48,121 +48,33 @@ def h2sc_analyze_hillslope_water_table_depth_with_situ_halfdegree_multicases(oE3
     iYear_end = oCase_in.iYear_end
     sVariable = oCase_in.sVariable
     sWorkspace_auxiliary = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'auxiliary'
-    #read obs
-    #the obs time period is limited, so we will use only 2001 -2008 here
-    #also, there are several sites with missing value, we need a better way to present the data
-
-    sFilename = sWorkspace_auxiliary + slash + 'situ' + slash + 'INPA-LBA_WellData_2001_2016.xlsx'
-    xl = pd.ExcelFile(sFilename)
-    aSheet = xl.sheet_names  # see all sheet names 14, last one is summary
-    aElevation = np.array([59, 59, 60, 61, 60, 87,87, 81, 101, 96, 101,101, 101 ])
-    aDate_host=list()
-    nyear = iYear_end - iYear_start + 1
-    for iYear in range(iYear_start, iYear_end + 1):
-        for iMonth in range(1,13):
-            dom = day_in_month(iYear, iMonth)
-            for iDay in range(1, dom+1):
-                dSimulation = datetime.datetime(iYear, iMonth, iDay)
-                aDate_host.append( dSimulation )
-                pass
-
-    aDate_host=np.array(aDate_host)
-    nobs_host = len(aDate_host)
-    aData_host = np.full( (13,nobs_host), np.nan, dtype=float)
-    # we skip some data because language is not in english
-    #4 of them not used
-    aFlag = np.full( 13, 0, dtype=int )
-    for iSheet in np.arange(1,14, 1):
-        sSheet = aSheet[iSheet-1]
-        if sSheet == 'PZ_PT-07':
-            continue
-        if sSheet == 'PP03':
-            continue
-        if sSheet == 'PP2':
-            continue
-        if sSheet == 'PP01':
-            continue
-
-        print(sSheet)
-        aFlag[iSheet -1 ] =1
-        df = pd.read_excel(sFilename, \
-                           sheet_name=sSheet, \
-                           header=None, \
-                           skiprows=range(5), \
-                           usecols='A,E')
-        df.columns = ['Date','WTD']
-        dummy1 = df['Date']
-        dummy2 = np.array(dummy1)
-        dummy3 = dt2cal(dummy2)
-        #aDate_obs = pd.to_datetime(np.array(dummy1))
-        nobs =len(dummy3)
-        aDate_obs = list()
-        for iObs in range(nobs):
-            d1=dummy3[iObs,0]
-            d2=dummy3[iObs,1]
-            d3= dummy3[iObs,2]
-            dummy4= datetime.datetime(d1,d2 , d3 )
-            aDate_obs.append( dummy4 )
-            pass
-
-        aDate_obs= np.array(aDate_obs)
-        dummy5 = df['WTD']
-        aWTD_obs_dummy = np.array(dummy5)  # mg/l
-
-        #now fit the data inside the host
-
-        #the existing data is outside limit,
-
-        dummy_index = aDate_obs-aDate_host[0]
-        #dummy_index1 = dummy_index[0].days
-        dummy_index1 = [x.days for x in dummy_index ]
-        dummy_index1 = np.array(dummy_index1)
-        dummy_index2 = np.where( dummy_index1 < nobs_host )
-
-        dummy_obs= aWTD_obs_dummy[dummy_index2]
-        dummy_index3 = dummy_index1[dummy_index2]
-        aData_host[iSheet-1, dummy_index3 ] = dummy_obs
-        pass
-
-    #need index
-
-    #remove unused sites
-    dummy = np.where( aFlag == 1)
-    aElevation1= aElevation[dummy]
-
-    aElevation2 , indices = np.unique(aElevation1, return_index=True)
-    #aOrder  = np.argsort(aElevation)
-    #aElevation_sort = np.sort(aElevation2)
-    dummy2 = dummy[0][indices]
-    aData_host2 = aData_host[dummy2, :  ]
-
-
-
-    #get the average
-    aWTD_obs = np.nanmean(aData_host2, axis=1)
-    aWT_obs = aElevation2 - aWTD_obs
-
+   
 
     #obs is at much high resolution, we need to plot twice
     aDate_sim = list()
     nyear = iYear_end - iYear_start + 1
     for iYear in range(iYear_start, iYear_end + 1):
         for iMonth in range(1,13):
-            dSimulation = datetime.datetime(iYear, iMonth, 15)
+            dSimulation = datetime.datetime(iYear, iMonth, 1)
             aDate_sim.append( dSimulation )
             pass
         #do the subset
         #convert date to juliday
 
     lJulian_start = gcal2jd(iYear_start, 1, 1)
-    iYear_subset_start = 2007
-    iYear_subset_end = 2007
-    iMonth = 5
+    iYear_subset_start = 2004
+    iYear_subset_end = 2008
+    iMonth = 1
     #select subset by date range
 
-
+    subset_index_start = (iYear_subset_start-iYear_start) * 12 + iMonth - 1
+    subset_index_end = (iYear_subset_end-iYear_start) * 12 + iMonth -1
+    subset_index = np.arange( subset_index_start,subset_index_end+1, 1 )
+    aDate_sim = np.array(aDate_sim)
+    aDate_sim_subset = aDate_sim[subset_index]
     #read sim
-    y22=[]
+    aDraiange = np.full( (5, len(aDate_sim_subset)), 0.0, float )
+    i =0 
     for iCase_index in aCase_in:
 
         if iCase_index == 9:
@@ -185,86 +97,69 @@ def h2sc_analyze_hillslope_water_table_depth_with_situ_halfdegree_multicases(oE3
         sVariable = oCase_in.sVariable
         sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
         sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable + slash + 'tiff'
-        sVariable2 = 'wt_slp'
-        sWorkspace_analysis_case_variable2 = sWorkspace_analysis_case + slash + sVariable2
-        sWorkspace_variable_dat2 = sWorkspace_analysis_case + slash + sVariable2 + slash + 'tiff'
+        
         #read the stack data
 
         sFilename1 = sWorkspace_variable_dat + slash + sVariable  + sExtension_tiff
-        sFilename2 = sWorkspace_variable_dat2 + slash + sVariable2  + sExtension_tiff
+        
 
-        subset_index_start = (iYear_subset_start-iYear_start) * 12 + iMonth - 1
-        subset_index_end = (iYear_subset_end-iYear_start) * 12 + iMonth -1
-        subset_index = np.arange( subset_index_start,subset_index_end+1, 1 )
-
-
-        aDate_sim = np.array(aDate_sim)
-        aDate_sim_subset = aDate_sim[subset_index]
-
-
+        
 
         aData_all = gdal_read_geotiff_file_multiple_band(sFilename1)
         aVariable_all = aData_all[0]
         aVariable_total_subset = aVariable_all[ subset_index,:,:]
 
-        #read wtd slp
-        aData_all2 = gdal_read_geotiff_file_multiple_band(sFilename2)
-        aVariable_all2 = aData_all2[0]
-        aVariable_total_subset2 = aVariable_all2[ subset_index,:,:]
-
-
         #pick the pixel by lat/lon
         dLongitude = -60.2
         dLatitude = -2.6
-        lColumn = int((dLongitude - (-180)) / 0.5 ) -1
-        lRow = int( (90 - (dLatitude)) / 0.5 ) -1
+        lColumn = int((dLongitude - (-180)) / 0.5 ) #-1
+        lRow = int( (90 - (dLatitude)) / 0.5 ) #-1
         #print(lRow, lColumn)
-        aWTD_sim = aVariable_total_subset[:, lRow, lColumn]
+        aDrai_sim = aVariable_total_subset[:, lRow, lColumn]
+        aDraiange[i, :] = aDrai_sim
+        i = i+1
         
-        aWTD_slp_sim = aVariable_total_subset2[:, lRow, lColumn]
         
-        dslp = (np.max(aElevation2) - np.min(aElevation2)) / 850.0
+    dMin_y_in = -5
+    dMax_y_in = -4
+    iFlag_log_y_in= 1
+    sLabel_y = r'Drainage ($mm \times s^{-1}$)'
+    aLabel_legend = ['Slope 1x','2x','4x','8x','16x']
+    if iFlag_log_y_in == 1:
+        aData_y = np.log10(aDraiange)
+        #set inf to min
+        bad_index = np.where( np.isinf(  aData_y) == True  )
+        aData_y[bad_index] = dMin_y_in
+        aDraiange=aData_y    
 
-        x = (  aElevation2- np.min(aElevation2)  ) / dslp  #np.array([5]) #aElevation2
-        y0 = aElevation2
-        y1 = aWT_obs
-        dem_grid = 61.6
-        print(aWTD_sim, aWTD_slp_sim)
-        y2 = dem_grid - aWTD_sim + aWTD_slp_sim * x
-
-        y22.append(y2)
-
-    x_all = np.tile(x, (7,1))
-    y_all = [y0, y1, y22[0], y22[1], y22[2], y22[3], y22[4]]
+    
     sFilename_out =  sWorkspace_analysis_case + slash \
-        + sVariable + slash + 'amazon' + '_wt_situ_hillslope_all' + '.png'
-
-    aColor = ['black', 'red', 'blue']
-    aColor = create_qualitative_rgb_color_hex(7)
-    #aTick_labels_x = ['PZ_PR-09','PZ_PR-08', 'PZ_PR-07','PZ_PT-06', 'PZ_PR-06', 'PZ_PR-05','PZ_PT-09']
-    aTick_labels_x = ['PR-09','08', '07','PZ_PT-06', 'PZ_PR-06', 'PZ_PR-05','PZ_PT-09']
-    plot_xy_data(x_all, \
-                 y_all, \
-                 sFilename_out,\
-                ncolumn_in =3,\
-                sLocation_legend_in = 'upper left' ,\
-                aLocation_legend_in = (0.0, 1.0),\
-                 iReverse_y_in=0,\
-                 iSize_x_in = 8, \
-                 iSize_y_in = 5, \
-                 dMax_x_in = 900, \
-                 dMin_x_in = 0, \
-                 dMax_y_in = 140, \
-                 dMin_y_in = 0, \
-                 dSpace_y_in = 20.0,\
-                 sLabel_x_in = 'Distance (m)', \
-                 sLabel_y_in = 'Elevation (m)', \
-                 aColor_in = aColor,\
-                 aLabel_point_in = aTick_labels_x, \
-                 aMarker_in = ['o','*','+','+','+','+','+' ],\
-                 aLinestyle_in = ['-','--','-.','-.','-.','-.','-.' ],\
-                 aLabel_legend_in = ['Surface elevation','Observed WT',\
-                     'Simulated WT','Simulated WT (slopex2)','Simulated WT (slopex4)','Simulated WT (slopex8)','Simulated WT (slopex16)'])
+        + sVariable + slash + 'situ' + '_drainage_hillslope_all' + '.png'
+    print(sFilename_out)
+    aDate_all  = np.tile(aDate_sim_subset,(5,1))
+    aData_all = aDraiange
+    aColor = create_diverge_rgb_color_hex(5, iFlag_reverse_in=1)
+    plot_time_series_data(aDate_all,
+                          aData_all,\
+                          sFilename_out,\
+                          iReverse_y_in = 0, \
+                          iFlag_log_in = 1,\
+                          ncolumn_in = 5,\
+                          dMax_y_in = dMax_y_in,\
+                          dMin_y_in = dMin_y_in,\
+                          dSpace_y_in = 0.2, \
+                          sTitle_in = sTitle_in, \
+                          sLabel_y_in= sLabel_y,\
+                          sFormat_y_in= '%.1f' ,\
+                          aLabel_legend_in = aLabel_legend, \
+                          aColor_in = aColor,\
+                          aMarker_in = ['o','.','*','+', '1'],\
+                          sLocation_legend_in = 'upper right' ,\
+                          aLocation_legend_in = (1.0, 1.0),\
+                          aLinestyle_in = ['-','--','-.' ,'solid', 'dashdot'],\
+                          iSize_x_in = 12,\
+                          iSize_y_in = 5)
+    
 
     return
 if __name__ == '__main__':
@@ -289,7 +184,7 @@ if __name__ == '__main__':
     iYear_start = 1979
     iYear_end = 2008
 
-    sVariable = 'zwt'
+    sVariable = 'qdrai'
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
 
@@ -318,11 +213,11 @@ if __name__ == '__main__':
         #print(aParameter_case)
     oCase = pycase(aParameter_case)
     
-    h2sc_analyze_hillslope_water_table_depth_with_situ_halfdegree_multicases(oE3SM,\
+    h2sc_analyze_hillslope_drainage_halfdegree_multicases(oE3SM,\
                                                                       oCase,\
                                                                           aCase,\
-                                                                      dMin_in = 0, \
-                                                                      dMax_in = 60, \
+                                                                      dMin_in = -6, \
+                                                                      dMax_in = -3, \
                                                                       sDate_in= sDate, \
                                                                       sLabel_x_in=sLabel,\
                                                                       #sLabel_y_in='Distribution [%]',\

@@ -27,8 +27,8 @@ def h2sc_save_variable_halfdegree_batch(oE3SM_in, oCase_in):
 if __name__ == '__main__':
     iFlag_debug = 1
     if iFlag_debug == 1:
-        iIndex_start = 3
-        iIndex_end = 3
+        iIndex_start = 1
+        iIndex_end = 17
     else:
         parser = argparse.ArgumentParser()
         parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -37,9 +37,10 @@ if __name__ == '__main__':
         iIndex_start = pArgs.iIndex_start
         iIndex_end = pArgs.iIndex_end
 
-    sDate = '20200924' #calibrated
-    sDate = '20201214' #default
-    sDate = '20210108' #default
+    sDate = '20210127' #to be calibrated
+    #sDate = '20200924' #calibrated
+    #sDate = '20201214' #default
+    #sDate = '20210108' #cali
     #sDate = '20201218' #sensitivity analysis
     
     
@@ -47,8 +48,8 @@ if __name__ == '__main__':
         'wt_slp','sur_slp','ZWT']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
     #aVariable = ['wt_slp','sur_slp','ZWT']
     #aVariable = ['TWS_MONTH_BEGIN','TWS_MONTH_END']
-    aVariable = ['ZWT', 'gage_height','QDRAI']
-    aVariable = ['wt_slp']
+    aVariable = ['ZWT']#, 'gage_height','QDRAI']
+    #aVariable = ['wt_slp']
     nvariable = len(aVariable)
     
   

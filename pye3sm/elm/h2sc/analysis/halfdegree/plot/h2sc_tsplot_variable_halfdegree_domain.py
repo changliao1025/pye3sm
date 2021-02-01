@@ -79,7 +79,7 @@ if __name__ == '__main__':
     #sLabel_y = r'Soil evaporation (mm/s)'
     #sLabel_y = r'Vegetation evaporation (mm/s)'
     #sLabel_y = r'Vegetation transpiration (mm/s)'
-    #sLabel_y = r'Groundwater drainage (mm/s)'
+
     #sLabel_y = r'Overland runoff (mm/s)'
     #sLabel_y =   r'Drainage ($mm \times s^{-1}$)'
     sLabel_y = r'Gage height (m)'

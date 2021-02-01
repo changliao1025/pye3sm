@@ -14,9 +14,9 @@ sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
 #import global variable
 from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff
-from pyes.gis.gdal.read.gdal_read_geotiff_multiple_band import gdal_read_geotiff_multiple_band
-from pyes.gis.gdal.write.gdal_write_geotiff import gdal_write_geotiff
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
+from pyes.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
 from pyes.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
@@ -73,7 +73,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
     #read the observed WTD data
     sFilename_in = sWorkspace_data + slash + sModel + slash + sRegion+ slash + 'raster' + slash \
     + 'wtd' + slash  + 'wtd_halfdegree'  + sExtension_tiff
-    pWTD = gdal_read_geotiff(sFilename_in)
+    pWTD = gdal_read_geotiff_file(sFilename_in)
     aWTD_obs = pWTD[0]
     dX_origin = pWTD[2]
     dY_origin = pWTD[3]
@@ -123,7 +123,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
         sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable \
              +  sExtension_tiff
         if os.path.isfile(sFilename_tiff):
-            pWTD = gdal_read_geotiff_multiple_band(sFilename_tiff)
+            pWTD = gdal_read_geotiff_file_multiple_band(sFilename_tiff)
             aData_all[iCase -1, : :,: ] = (pWTD[0])[subset_index,:,:]
         else:
             print('file does not exist: ' + sFilename_tiff)
@@ -181,7 +181,7 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
                     ax.set_xlim(dMin -0.25, dMax + 0.25)
                     ax.set_ylim(85, 0)
                     ax.set_aspect(aspect=0.02)
-                    ax.legend((ln, bp["boxes"][0]), ('Observed WTD', 'Simulated WTD'),\
+                    ax.legend((ln, bp["boxes"][0]), ('Observed WTD', 'Modeled WTD'),\
                          bbox_to_anchor=(1.0,0.0), loc="lower right",\
                         fontsize=14)
 
@@ -229,14 +229,14 @@ def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
         pSpatialRef.ImportFromEPSG(4326)
         sFilename_tiff = sWorkspace_analysis_wtd + slash + 'qc' + sRecord  + sExtension_tiff
         print(sFilename_tiff)
-        gdal_write_geotiff(sFilename_tiff, aQC, dPixelWidth,\
+        gdal_write_geotiff_file(sFilename_tiff, aQC, dPixelWidth,\
             dX_origin, dY_origin,  dMissing_value,\
           pSpatialRef)
 
         sFilename_tiff = sWorkspace_analysis_wtd + slash + 'optimal' \
             + sRecord + sExtension_tiff
         print(sFilename_tiff)    
-        gdal_write_geotiff(sFilename_tiff, aAnisotropy_optimal, dPixelWidth,\
+        gdal_write_geotiff_file(sFilename_tiff, aAnisotropy_optimal, dPixelWidth,\
              dX_origin, dY_origin,  dMissing_value, \
          pSpatialRef)
     print('finished')
@@ -256,6 +256,7 @@ if __name__ == '__main__':
         iIndex_end = 360
    
     sDate = '20200906'
+    sDate = '20210127'
     sVariable = 'ZWT'
     
     

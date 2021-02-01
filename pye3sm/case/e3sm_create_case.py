@@ -72,7 +72,7 @@ def e3sm_create_case(oE3SM_in, \
 
     else:
         sQueue = 'slurm'
-        sWalltime = '4:00:00'
+        sWalltime = '4:00:00'#sWalltime = '10:00:00'
         sNode = '-40'
         sYear = '30'
         pass
@@ -312,17 +312,18 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 3
+    iCase = 7
 
-    iFlag_default = 0
+    iFlag_default = 1
     iFlag_debug = 0
     iFlag_branch = 0
-    iFlag_initial = 1
+    iFlag_initial = 0
     iFlag_spinup = 0
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
     sDate = '20210108'
+    sDate = '20201214'
     #sDate = '20201215'
     #sDate = '20201218'
     #sDate_spinup = '20200412'
@@ -339,15 +340,15 @@ if __name__ == '__main__':
             + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
         ofs.write(sCommand_out)
         if (iFlag_default ==1 ):
-            sLine = "use_h2sc = .false." + '\n'
-            ofs.write(sLine)
+            #sLine = "use_h2sc = .false." + '\n'
+            #ofs.write(sLine)
             pass
         else:
             sLine = "use_h2sc = .true." + '\n'
             ofs.write(sLine)
 
-        sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
-        ofs.write(sLine)
+            sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
+            ofs.write(sLine)
         ofs.close()
     else:
         ofs = open(sFilename_clm_namelist, 'w')
@@ -355,8 +356,8 @@ if __name__ == '__main__':
             + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
         ofs.write(sCommand_out)
         if (iFlag_default ==1 ):
-            sLine = "use_h2sc = .false." + '\n'
-            ofs.write(sLine)
+            #sLine = "use_h2sc = .false." + '\n'
+            #ofs.write(sLine)
             pass
         else:
             sLine = "use_h2sc = .true." + '\n'
@@ -403,12 +404,15 @@ if __name__ == '__main__':
 
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+
+    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/TRIGRID_ref/cime/scripts'
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
                                                           iFlag_debug_in = iFlag_debug, \
                                                           iFlag_branch_in = iFlag_branch,\
                                                           iFlag_continue_in = iFlag_continue,\
                                                           iFlag_resubmit_in = iFlag_resubmit,\
-                                                          iFlag_short_in = iFlag_short  )
+                                                          iFlag_short_in = iFlag_short ,\
+                                                              sCIME_directory_in = sCIME_directory )
 
     oE3SM = pye3sm(aParameter_e3sm)
 
