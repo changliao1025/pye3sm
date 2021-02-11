@@ -14,7 +14,7 @@ from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-
+import numpy as np
 
 def e3sm_create_case(oE3SM_in, \
                      oCase_in,\
@@ -312,22 +312,31 @@ if __name__ == '__main__':
 
     dHydraulic_anisotropy = 1.0
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    iCase = 7
+    aHydraulic_anisotropy_exp = np.arange(-3,1.1,0.25)
+    aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
+    print(aHydraulic_anisotropy)
+    iCase = 2
+    dHydraulic_anisotropy = aHydraulic_anisotropy[iCase-1]
+    dHydraulic_anisotropy = 1.0
+    sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
 
-    iFlag_default = 1
+    iFlag_default = 0
     iFlag_debug = 0
     iFlag_branch = 0
-    iFlag_initial = 0
+    iFlag_initial = 1
     iFlag_spinup = 0
     iFlag_short = 0
     iFlag_continue = 0
     iFlag_resubmit = 0
     sDate = '20210108'
-    sDate = '20201214'
+    sDate = '20201214'#test default
+    sDate = '20210127'
+    sDate = '20210209'
     #sDate = '20201215'
     #sDate = '20201218'
     #sDate_spinup = '20200412'
-    sDate_spinup = '20200923'
+    sDate_spinup = '20210126'
+    sDate_spinup = '20210209'
     #sDate_spinup = '20201215'
     sCase = sModel + sDate + "{:03d}".format(iCase)
 
@@ -337,7 +346,7 @@ if __name__ == '__main__':
         #normal case,
         ofs = open(sFilename_clm_namelist, 'w')
         sCommand_out = "fsurdat = " + "'" \
-            + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
+            + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc' + "'" + '\n'
         ofs.write(sCommand_out)
         if (iFlag_default ==1 ):
             #sLine = "use_h2sc = .false." + '\n'
@@ -353,7 +362,7 @@ if __name__ == '__main__':
     else:
         ofs = open(sFilename_clm_namelist, 'w')
         sCommand_out = "fsurdat = " + "'" \
-            + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
+            + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc' + "'" + '\n'
         ofs.write(sCommand_out)
         if (iFlag_default ==1 ):
             #sLine = "use_h2sc = .false." + '\n'
@@ -405,14 +414,13 @@ if __name__ == '__main__':
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
 
-    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/TRIGRID_ref/cime/scripts'
+    #sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/TRIGRID_ref/cime/scripts'
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
                                                           iFlag_debug_in = iFlag_debug, \
                                                           iFlag_branch_in = iFlag_branch,\
                                                           iFlag_continue_in = iFlag_continue,\
                                                           iFlag_resubmit_in = iFlag_resubmit,\
-                                                          iFlag_short_in = iFlag_short ,\
-                                                              sCIME_directory_in = sCIME_directory )
+                                                          iFlag_short_in = iFlag_short  )
 
     oE3SM = pye3sm(aParameter_e3sm)
 

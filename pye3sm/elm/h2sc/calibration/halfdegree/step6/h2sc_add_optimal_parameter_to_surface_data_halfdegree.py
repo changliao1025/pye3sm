@@ -12,7 +12,7 @@ sys.path.extend(sSystem_paths)
 #import global variable
 from pyes.system.define_global_variables import *    
 
-from pyes.gis.gdal.read.gdal_read_geotiff import gdal_read_geotiff      
+from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file      
 from pyes.toolbox.data.add_variable_to_netcdf import add_variable_to_netcdf
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
@@ -33,9 +33,9 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(oE3SM_in, oCase_in):
     if not os.path.exists(sWorkspace_analysis_wtd):
         os.makedirs(sWorkspace_analysis_wtd)  
     
-    sRecord = '20200906'
+    sRecord = '20210127'
     sFilename_in = sWorkspace_analysis_wtd + slash + 'optimal' + sRecord + sExtension_tiff
-    dummy = gdal_read_geotiff(sFilename_in)
+    dummy = gdal_read_geotiff_file(sFilename_in)
     aAnisotropy_optimal = dummy[0]
     #we need to flip the data here
     aAnisotropy_optimal = np.flip(aAnisotropy_optimal, 0) 
@@ -44,7 +44,7 @@ def h2sc_add_optimal_parameter_to_surface_data_halfdegree(oE3SM_in, oCase_in):
         
     sFilename_old = '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025.nc'
     
-    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025_log10.nc'
+    sFilename_new= '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
     aData_in=aAnisotropy_optimal
     sVariable_in= 'anisotropy'
     sUnit_in= 'none'
@@ -57,10 +57,11 @@ if __name__ == '__main__':
 
 
 
+    
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration    )
-    sDate = '20200906'
+    sDate = '20210127'
     oE3SM = pye3sm(aParameter_e3sm)
     aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                      iYear_start_in = 1979, \
