@@ -2,8 +2,6 @@ import os, sys
 import numpy as np
 
 import datetime
-from pyevtk.hl import  unstructuredGridToVTK
-from pyevtk.vtk import  VtkQuad
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
 sys.path.extend(sSystem_paths)
@@ -72,6 +70,7 @@ def elm_surface_plot_variable_halfdegree_domain(oE3SM_in,\
             dates.append( dSimulation )
             pass
         pass
+
     dates=np.array(dates)
 
     nstress = nyear * nmonth
