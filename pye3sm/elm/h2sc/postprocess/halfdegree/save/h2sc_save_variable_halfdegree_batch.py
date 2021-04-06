@@ -42,18 +42,16 @@ if __name__ == '__main__':
     #sDate = '20201214' #default
     #sDate = '20210108' #cali
     #sDate = '20201218' #sensitivity analysis
+
     sDate = '20210209' #cali
-    
-    aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI', \
-        'wt_slp','sur_slp','ZWT']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
     #aVariable = ['wt_slp','sur_slp','ZWT']
     #aVariable = ['TWS_MONTH_BEGIN','TWS_MONTH_END']
     #aVariable = ['ZWT']#, 'gage_height','QDRAI']
-    #aVariable = ['wt_slp']
-    nvariable = len(aVariable)
+    #aVariable = ['wt_slp']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
     
-  
-
+    aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI', \
+        'wt_slp','sur_slp','ZWT']
+    nvariable = len(aVariable)
     #start loop
 
     iCase_index_start = iIndex_start

@@ -1,0 +1,19 @@
+# python things
+__pycache__/
+*.py[co]
+build/
+dist/
+unused/
+pye3sm.egg-info/
+.vscode/
+.core*
+.pypi*
+*~
+
+# data files, etc
+*.nc
+*.grd
+*.vtk
+*.off
+*.obj
+*.stl
