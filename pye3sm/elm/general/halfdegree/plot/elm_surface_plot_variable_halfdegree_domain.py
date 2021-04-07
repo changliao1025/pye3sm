@@ -3,22 +3,21 @@ import numpy as np
 
 import datetime
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
 
-from pyes.toolbox.data.remove_outliers import remove_outliers
-from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file, gdal_read_envi_file_multiple_band
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
+from pyearth.system.define_global_variables import *
 
-
-from pyes.visual.surface.convert_array_to_vtk_polygon import convert_array_to_vtk_polygon
+from pyearth.toolbox.data.remove_outliers import remove_outliers
+from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file, gdal_read_envi_file_multiple_band
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
 
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
+from pyearth.visual.surface.convert_array_to_vtk_polygon import convert_array_to_vtk_polygon
+
+
+ 
+ 
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
 
 
 def elm_surface_plot_variable_halfdegree_domain(oE3SM_in,\

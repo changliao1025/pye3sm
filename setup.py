@@ -19,7 +19,8 @@ KEYWORDS = "Earth Science"
 REQUIRED = [
     "numpy", 
     "matplotlib",
-    "pyearth"
+    "pyearth",
+    "cartopy"
 ]
 
 CLASSIFY = [

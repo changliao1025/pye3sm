@@ -4,16 +4,16 @@ import sys
 import numpy as np
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
+ 
+from pyearth.system.define_global_variables import *
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
+ 
+ 
 
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 from pye3sm.elm.general.halfdegree.stat.elm_calculate_variable_time_series_average_halfdegree import elm_calculate_variable_time_series_average_halfdegree
 

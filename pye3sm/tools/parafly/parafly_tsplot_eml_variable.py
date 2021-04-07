@@ -3,10 +3,10 @@ import os,sys
 
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
-from pyes.toolbox.slurm.parafly.prepare_parafly_python_command_file import prepare_parafly_python_command_file
-from pyes.toolbox.slurm.parafly.prepare_parafly_slurm_job_script import prepare_parafly_slurm_job_script
+ 
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.slurm.parafly.prepare_parafly_python_command_file import prepare_parafly_python_command_file
+from pyearth.toolbox.slurm.parafly.prepare_parafly_slurm_job_script import prepare_parafly_slurm_job_script
 
 def parafly_tsplot_elm_variable():
 

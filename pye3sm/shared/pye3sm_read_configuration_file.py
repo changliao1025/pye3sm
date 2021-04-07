@@ -1,19 +1,19 @@
 import os, sys
 import datetime
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 
-from pyes.system.define_global_variables import *
-from pyes.toolbox.reader.parse_xml_file import parse_xml_file
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.reader.parse_xml_file import parse_xml_file
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
+ 
+ 
 print(sPath_pye3sm)
 print('Debug path:')
 print(sys.path)
 
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
 
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)

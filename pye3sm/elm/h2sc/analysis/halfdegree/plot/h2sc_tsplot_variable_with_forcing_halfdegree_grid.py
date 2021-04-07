@@ -5,17 +5,17 @@ import datetime
 from jdcal import gcal2jd, jd2gcal
 from netCDF4 import Dataset #it maybe be replaced by gdal
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 
-from pyes.system.define_global_variables import *
-from pyes.toolbox.date.day_in_month import day_in_month
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.date.day_in_month import day_in_month
+from pyearth.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
-from pyes.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_two_y_axis import plot_time_series_data_multiple_temporal_resolution_two_y_axis
+from pyearth.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_two_y_axis import plot_time_series_data_multiple_temporal_resolution_two_y_axis
 
 #import package
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
+ 
 from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 def h2sc_tsplot_variable_with_forcing_halfdegree_grid(sFilename_configuration_in,\

@@ -5,23 +5,16 @@ import argparse
 import subprocess
 import numpy as np
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system import define_global_variables
-from pyes.system.define_global_variables import *
+from pyearth.system.define_global_variables import *
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-from pye3sm.case.e3sm_create_case import e3sm_create_case
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from ..case.e3sm_create_case import e3sm_create_case
 
 sModel = 'h2sc'
-sRegion ='global'
-      
+sRegion ='global'      
 
 aHydraulic_anisotropy_exp = np.arange(-3,1.1,0.25)
 aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)

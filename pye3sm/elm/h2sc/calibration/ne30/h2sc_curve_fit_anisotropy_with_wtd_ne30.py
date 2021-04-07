@@ -13,18 +13,18 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 
 #import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 #import global variable
-from pyes.system import define_global_variables
-from pyes.system.define_global_variables import *
+from pyearth.system import define_global_variables
+from pyearth.system.define_global_variables import *
 
-from pyes.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
-from pyes.gis.gdal.gdal_write_geotiff import gdal_write_geotiff
-from pyes.toolbox.reader.read_configuration_file import read_configuration_file
-from pyes.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
+from pyearth.gis.gdal.gdal_read_geotiff import gdal_read_geotiff
+from pyearth.gis.gdal.gdal_write_geotiff import gdal_write_geotiff
+from pyearth.toolbox.reader.read_configuration_file import read_configuration_file
+from pyearth.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
+ 
 
 
 sModel = 'h2sc'

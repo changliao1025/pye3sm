@@ -8,13 +8,13 @@ import numpy as np
 import multiprocessing
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system import define_global_variables
-from pyes.system.define_global_variables import *
+ 
+from pyearth.system import define_global_variables
+from pyearth.system.define_global_variables import *
 
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
+ 
 from e3sm.elm.general.halfdegree.map.elm_map_variable_halfdegree import elm_map_variable_halfdegree
 
 

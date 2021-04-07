@@ -4,20 +4,16 @@ import numpy as np
 import datetime
 import scipy.stats
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+from pyearth.system.define_global_variables import *
 
-from pyes.system.define_global_variables import *
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
 
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
+from pyearth.visual.scatter.scatter_plot_data import scatter_plot_data
+from pyearth.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
-from pyes.visual.scatter.scatter_plot_data import scatter_plot_data
-from pyes.visual.scatter.scatter_plot_data_density import scatter_plot_data_density
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
 
 def elm_scatterplot_variables_halfdegree_domain(oE3SM_in,\
                                                 oCase_x_in,\

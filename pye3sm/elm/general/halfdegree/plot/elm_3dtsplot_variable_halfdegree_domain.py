@@ -3,23 +3,19 @@ import numpy as np
 import numpy.ma as ma
 import datetime
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
 
-from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
+from pyearth.system.define_global_variables import *
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
+from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
-from pyes.visual.timeseries.fill.plot3d_time_series_data_fill import plot3d_time_series_data_fill
+from pyearth.visual.timeseries.fill.plot3d_time_series_data_fill import plot3d_time_series_data_fill
 
-from pyes.toolbox.data.remove_outliers import remove_outliers
+from pyearth.toolbox.data.remove_outliers import remove_outliers
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
                                             oCase_in, \

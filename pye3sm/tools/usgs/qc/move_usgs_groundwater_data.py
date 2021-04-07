@@ -6,8 +6,8 @@ from pathlib import Path
 import argparse
 from shutil import copy2
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
+ 
+from pyearth.system.define_global_variables import *
 
 def move_usgs_groundwater_data(iIndex_start, iIndex_end):
     for i in range(iIndex_start, iIndex_end+1): 

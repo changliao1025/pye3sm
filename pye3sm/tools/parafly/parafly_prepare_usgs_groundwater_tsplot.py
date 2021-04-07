@@ -7,9 +7,9 @@ import glob
 
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
-from pyes.toolbox.slurm.slurm_prepare_job_script_parafly import slurm_prepare_job_script_parafly
+ 
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.slurm.slurm_prepare_job_script_parafly import slurm_prepare_job_script_parafly
 
 
 def usgs_prepare_parafly():

@@ -15,22 +15,16 @@ from cartopy.mpl.geoaxes import GeoAxes
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 from mpl_toolkits.axes_grid1 import AxesGrid
 
-#import library
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-#import global variable
-from pyes.system import define_global_variables
-from pyes.system.define_global_variables import *
-
-
-from pyes.gis.gdal.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
+from pyearth.system.define_global_variables import *
+from pyearth.gis.gdal.gdal_read_envi_file import gdal_read_envi_file_multiple
 
 def fomatter(x, pos):
     a, b = '{:.2e}'.format(x).split('e')
     b = int(b)
     return r'${} \times 10^{{{}}}$'.format(a, b)
 
-def elm_map_variable_halfdegree(sFilename_configuration_in, iCase_index, \
+def elm_map_variable_halfdegree(sFilename_configuration_in, \
+    iCase_index, \
     iFlag_same_grid_in = None, \
     iYear_start_in = None, \
     iYear_end_in = None, \

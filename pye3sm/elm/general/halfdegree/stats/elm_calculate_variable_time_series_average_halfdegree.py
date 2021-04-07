@@ -5,15 +5,15 @@ import numpy as np
 from osgeo import gdal #the default operator
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+ 
+from pyearth.system.define_global_variables import *
+from pyearth.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
+ 
+ 
 
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
 
 # we may be only interested in a subset of the time series
 

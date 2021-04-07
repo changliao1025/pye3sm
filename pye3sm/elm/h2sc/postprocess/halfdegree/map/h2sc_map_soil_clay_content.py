@@ -3,13 +3,13 @@ import numpy as np
 from netCDF4 import Dataset
 from osgeo import gdal #the default operator
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
+ 
+from pyearth.system.define_global_variables import *
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
+ 
 
-from pyes.gis.envi.envi_write_header import envi_write_header
+from pyearth.gis.envi.envi_write_header import envi_write_header
 
 from e3sm.shared import oE3SM
 from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file

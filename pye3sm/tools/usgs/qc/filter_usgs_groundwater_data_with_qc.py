@@ -10,11 +10,11 @@ import argparse
 from shutil import copy2
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
+ 
+from pyearth.system.define_global_variables import *
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
+ 
 
 from e3sm.tools.usgs.qc.usgs_groundwater_data_qc import usgs_groundwater_data_qc
 

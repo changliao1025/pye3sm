@@ -5,23 +5,22 @@ from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
 
+sProj = os.environ['PROJ_LIB']
+if sProj is None:
+    print("The proj library is missing.")
+    os.environ['PROJ_LIB'] = '/qfs/people/liao313/.conda/envs/gdalenv/share/proj'
 
-os.environ['PROJ_LIB'] = '/qfs/people/liao313/.conda/envs/gdalenv/share/proj'
+from pyearth.system.define_global_variables import *     
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
 
-from pyes.system.define_global_variables import *     
-#from pyes.gis.envi.envi_write_header import envi_write_header
-from pyes.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
+from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
 
-from pyes.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
+ 
+ 
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
 
 def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
 

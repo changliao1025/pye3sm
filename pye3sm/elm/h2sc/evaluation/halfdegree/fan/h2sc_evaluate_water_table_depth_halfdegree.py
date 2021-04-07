@@ -4,24 +4,24 @@ import numpy as np
 from netCDF4 import Dataset #it maybe be replaced by gdal 
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 
-from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
-
-
-from pyes.visual.histogram.histogram_plot import histogram_plot
-from pyes.visual.histogram.histogram_plot_multiple import histogram_plot_multiple
+from pyearth.system.define_global_variables import *
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file, gdal_read_geotiff_file_multiple_band
 
 
+from pyearth.visual.histogram.histogram_plot import histogram_plot
+from pyearth.visual.histogram.histogram_plot_multiple import histogram_plot_multiple
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
+
+
+ 
+ 
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
 from pye3sm.elm.general.halfdegree.save.elm_save_variable_halfdegree import elm_save_variable_halfdegree
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 def h2sc_evaluate_water_table_depth_halfdegree(oE3SM_in, \
                                                oCase_in,\

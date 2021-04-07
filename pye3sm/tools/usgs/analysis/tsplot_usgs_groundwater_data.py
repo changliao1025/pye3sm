@@ -10,12 +10,12 @@ import numpy as np
 import argparse
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
-from pyes.toolbox.reader.text_reader_string import text_reader_string
+ 
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.reader.text_reader_string import text_reader_string
 
 
-from pyes.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
+from pyearth.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
 
 
 def tsplot_usgs_groundwate_data(iIndex_start, iIndex_end):

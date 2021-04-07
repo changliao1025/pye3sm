@@ -4,9 +4,9 @@ import scipy.ndimage as ndimage
 from osgeo import gdal, osr
 from scipy.interpolate import griddata #generate grid
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 
-from pyes.system.define_global_variables import *
+from pyearth.system.define_global_variables import *
 
 nrow = 360
 ncolumn = 720

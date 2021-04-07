@@ -7,9 +7,9 @@ from pathlib import Path
 import argparse
 import urllib.request
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
-from pyes.toolbox.reader.text_reader_string import text_reader_string
+ 
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.reader.text_reader_string import text_reader_string
 
 def download_usgs_groundwater_data_mpi(iRank, lSize, sName, iStart, iEnd):
     #msg = "Hello World! I am process {0} of {1} on {2}.\n"

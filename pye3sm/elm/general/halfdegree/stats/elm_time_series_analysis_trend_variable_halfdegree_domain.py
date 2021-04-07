@@ -4,19 +4,17 @@ import pymannkendall as mk
 import datetime
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 
-from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pyes.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
+from pyearth.system.define_global_variables import *
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
+from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
+from pyearth.toolbox.data.remove_outliers import remove_outliers
 
-from pyes.toolbox.data.remove_outliers import remove_outliers
-
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
+ 
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
 
 def elm_time_series_analysis_trend_variable_halfdegree_domain(oE3SM_in,\
                                                     oCase_in):

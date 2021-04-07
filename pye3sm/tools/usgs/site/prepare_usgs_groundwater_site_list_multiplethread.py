@@ -6,13 +6,13 @@ import numpy as np
 import multiprocessing as mp
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 
-from pyes.system.define_global_variables import *
-from pyes.toolbox.reader.read_configuration_file import read_configuration_file
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.reader.read_configuration_file import read_configuration_file
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
+ 
 
 from e3sm.shared import oE3SM
 

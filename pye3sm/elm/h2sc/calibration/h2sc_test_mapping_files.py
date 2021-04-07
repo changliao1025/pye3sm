@@ -11,11 +11,11 @@ from scipy.sparse import csr_matrix
 
 #import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 #import global variable
-from pyes.system import define_global_variables
-from pyes.system.define_global_variables import *
-from pyes.gis.envi.envi_write_header import envi_write_header
+from pyearth.system import define_global_variables
+from pyearth.system.define_global_variables import *
+from pyearth.gis.envi.envi_write_header import envi_write_header
 
 sVariable = 'wtd'
 

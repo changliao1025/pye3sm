@@ -3,18 +3,18 @@ import numpy as np
 import datetime
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 
-from pyes.system.define_global_variables import *
-from pyes.gis.envi.envi_write_header import envi_write_header
-from pyes.gis.gdal.read.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
-from pyes.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
+from pyearth.system.define_global_variables import *
+from pyearth.gis.envi.envi_write_header import envi_write_header
+from pyearth.gis.gdal.read.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
+from pyearth.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
 
-sPath_pye3sm = sWorkspace_code + slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
 
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+ 
+
+from ..shared import oE3SM
+from ..shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
                                    iCase_index, \

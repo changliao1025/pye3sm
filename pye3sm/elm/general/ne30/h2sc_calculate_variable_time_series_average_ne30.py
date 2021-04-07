@@ -10,12 +10,12 @@ import multiprocessing
 
 #import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 #import global variable
-from pyes.system import define_global_variables
-from pyes.system.define_global_variables import *
+from pyearth.system import define_global_variables
+from pyearth.system.define_global_variables import *
             
-from pyes.toolbox.reader.read_configuration_file import read_configuration_file
+from pyearth.toolbox.reader.read_configuration_file import read_configuration_file
 sModel = 'h2sc'
 sFilename_configuration = sWorkspace_scratch + slash + '03model' + slash \
              + sModel + slash + 'cases' + slash + 'h2sc_configuration_wtd' + sExtension_txt

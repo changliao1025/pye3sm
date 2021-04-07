@@ -11,21 +11,21 @@ import matplotlib.pyplot as plt
 
 #import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 #import global variable
-from pyes.system.define_global_variables import *
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
-from pyes.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
-from pyes.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
+from pyearth.system.define_global_variables import *
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
+from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
+from pyearth.toolbox.geometry.calculate_line_intersect_point import calculate_line_intersect_point
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
+ 
+ 
 
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 def h2sc_curve_fit_anisotropy_with_wtd_halfdegree(oE3SM_in, oCase_in, \
     iRow_start_in=None, iRow_end_in =None):

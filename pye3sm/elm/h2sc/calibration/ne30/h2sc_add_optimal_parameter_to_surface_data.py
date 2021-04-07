@@ -10,17 +10,17 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 
 #import library
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
+ 
 #import global variable
-from pyes.system import define_global_variables
-from pyes.system.define_global_variables import *
+from pyearth.system import define_global_variables
+from pyearth.system.define_global_variables import *
 
             
 
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
-sys.path.append(sPath_pye3sm)
+ 
 
-from pyes.toolbox.data.add_variable_to_netcdf import add_variable_to_netcdf
+from pyearth.toolbox.data.add_variable_to_netcdf import add_variable_to_netcdf
 
 
 sModel = 'h2sc'

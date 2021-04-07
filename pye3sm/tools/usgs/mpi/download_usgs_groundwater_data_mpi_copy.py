@@ -9,9 +9,9 @@ from pathlib import Path
 import multiprocessing as mp
 
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
-from pyes.toolbox.reader.text_reader_string import text_reader_string
+ 
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.reader.text_reader_string import text_reader_string
 
 
 sModel = 'h2sc'

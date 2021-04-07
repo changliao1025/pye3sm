@@ -6,24 +6,24 @@ import datetime
 from jdcal import gcal2jd, jd2gcal
 import openpyxl
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
-sys.path.extend(sSystem_paths)
-from pyes.system.define_global_variables import *
-from pyes.toolbox.date.dt2cal import dt2cal
-from pyes.toolbox.date.day_in_month import day_in_month
-from pyes.toolbox.data.remove_outliers import remove_outliers
-from pyes.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
+ 
+from pyearth.system.define_global_variables import *
+from pyearth.toolbox.date.dt2cal import dt2cal
+from pyearth.toolbox.date.day_in_month import day_in_month
+from pyearth.toolbox.data.remove_outliers import remove_outliers
+from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
-from pyes.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
 
-from pyes.visual.plot_xy_data import plot_xy_data
+from pyearth.visual.plot_xy_data import plot_xy_data
 
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'pye3sm'
-sys.path.append(sPath_pye3sm)
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+ 
+ 
+from ..shared.e3sm import pye3sm
+from ..shared.case import pycase
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
 
