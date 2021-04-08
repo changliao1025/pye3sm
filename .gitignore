@@ -1,17 +1,3 @@
-# python things
-unused/
-.vscode/
-.core*
-*~
-
-# data files, etc
-*.nc
-*.grd
-*.vtk
-*.off
-*.obj
-*.stl
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -141,3 +127,17 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# python things
+unused/
+.vscode/
+.core*
+*~
+
+# data files, etc
+*.nc
+*.grd
+*.vtk
+*.off
+*.obj
+*.stl
