@@ -5,10 +5,7 @@ from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
 
-sProj = os.environ['PROJ_LIB']
-if sProj is None:
-    print("The proj library is missing.")
-    os.environ['PROJ_LIB'] = '/qfs/people/liao313/.conda/envs/gdalenv/share/proj'
+
 
 from pyearth.system.define_global_variables import *     
 

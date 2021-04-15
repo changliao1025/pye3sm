@@ -6,7 +6,7 @@ from netCDF4 import Dataset
 from osgeo import ogr
 from osgeo import gdal, osr
 #workspace_data = "/people/liao313/data/hexwatershed/columbia_river_basin/vector/mosart/"
-os.environ['PROJ_LIB'] = '/qfs/people/liao313/.conda/envs/gdalenv/share/proj'
+
 aResolution = ['2th', '4th', '8th', '16th']
 
 

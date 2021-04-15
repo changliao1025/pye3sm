@@ -2,11 +2,11 @@ import os
 import numpy
 import numpy as np
 from netCDF4 import Dataset
-#import shapefile
+
 from osgeo import ogr
 from osgeo import gdal, osr
-#workspace_data = "/people/liao313/data/hexwatershed/columbia_river_basin/vector/mosart/"
-os.environ['PROJ_LIB'] = '/qfs/people/liao313/.conda/envs/gdalenv/share/proj'
+
+
 aResolution = ['2th', '4th', '8th', '16th']
 
 
@@ -109,7 +109,7 @@ for i in np.arange(len(aResolution)):
         else:
             pass
 
-      # Save and close everything
+    #Save and close everything
     
     pDataset = pLayer = pFeature  = None      
                 
