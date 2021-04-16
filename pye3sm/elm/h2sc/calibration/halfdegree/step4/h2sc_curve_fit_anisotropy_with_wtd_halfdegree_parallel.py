@@ -6,7 +6,7 @@ import numpy as np
 from osgeo import gdal,osr #the default operator
 import argparse
 import matplotlib as mpl
-mpl.use('Agg')
+
 import matplotlib.pyplot as plt
 
 #import library

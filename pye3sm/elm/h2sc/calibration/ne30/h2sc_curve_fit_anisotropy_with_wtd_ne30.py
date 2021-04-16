@@ -7,7 +7,7 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 from osgeo import gdal #the default operator
 import argparse
 import matplotlib as mpl
-mpl.use('Agg')
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import AxesGrid
 

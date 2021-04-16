@@ -5,7 +5,7 @@ import numpy as np
 import platform
 from pathlib import Path #get the home directory
 import matplotlib as mpl
-mpl.use('Agg')
+
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import cartopy.crs as ccrs
