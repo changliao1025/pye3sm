@@ -1,19 +1,11 @@
 import os, sys
 import datetime
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
- 
 
 from pyearth.system.define_global_variables import *
 from pyearth.toolbox.reader.parse_xml_file import parse_xml_file
 
- 
- 
-print(sPath_pye3sm)
-print('Debug path:')
-print(sys.path)
-
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
@@ -22,9 +14,9 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                         iFlag_branch_in = None, \
                                         iFlag_continue_in = None, \
                                         iFlag_debug_in = None, \
-                                   iFlag_short_in =None,\
+                                        iFlag_short_in =None,\
                                         iFlag_resubmit_in = None,\
-                                           sCIME_directory_in = None ):
+                                        sCIME_directory_in = None ):
 
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
@@ -58,8 +50,14 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     if sCIME_directory_in is not None:
         sCIME_directory = sCIME_directory_in
     else:
-        sCIME_directory = sWorkspace_code + slash \
-        + 'fortran/e3sm/TRIGRID/cime/scripts'
+        # a default e3sm CIME directory is needed
+        sCIME_directory =  sWorkspace_home + slash + 'workspace' +slash+'fortran' + slash + 'e3sm'  + slash + 'TRIGRID' + slash + 'cime' + slash + 'scripts'
+        if os.path.exists(sCIME_directory):
+            sLine = 'A default E3SM CIME was found at: ' + sCIME_directory + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            print(sLine)
+        else:
+            print('A default E3SM CIME was not found, you will not be able to submit E3SM case without specifying it first.' )
+            
 
     #update these controls
     config['iFlag_branch'] = "{:01d}".format(iFlag_branch)
@@ -67,11 +65,10 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
-
-    
     config['sCIME_directory'] = sCIME_directory
 
     return config
+
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         iFlag_spinup_in = None, \
                                         iFlag_same_grid_in= None,\
@@ -87,11 +84,15 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         sLabel_y_in = None, \
                                         sVariable_in = None, \
                                         sFilename_clm_namelist_in = None,\
-                                        sFilename_datm_namelist_in = None):
+                                        sFilename_datm_namelist_in = None, \
+                                        sFilename_mosart_mask_in = None,\
+                                            sWorkspace_data_in = None,\
+                                        sWorkspace_scratch_in=None):
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
 
     sModel = config['sModel']
+
     if iFlag_spinup_in is not None:
         iFlag_spinup = iFlag_spinup_in
     else:
@@ -108,12 +109,13 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         iCase_index = 0
 
     sCase_index = "{:03d}".format(iCase_index)
-    #important change here
+   
     config['iCase_index'] = "{:03d}".format(iCase_index)
     sCase = sModel + sDate + sCase_index
     config['sDate'] = sDate
     config['sCase'] = sCase
 
+    #the grid system will affect how some analysis will be used, especially whether spatial interpolation is needed.
     if iFlag_same_grid_in is not None:
         iFlag_same_grid = iFlag_same_grid_in
     else:
@@ -149,7 +151,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         iYear_data_end = int(config['iYear_data_end'])
 
-    
+    #the conversion for the variable of interest
     if dConversion_in is not None:
         dConversion = dConversion_in
     else:
@@ -171,7 +173,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['iYear_subset_end'] =  "{:04d}".format(iYear_subset_end)
     config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
     config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
-    
+
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
     config['iFlag_spinup'] = "{:01d}".format(iFlag_spinup)
 
@@ -185,28 +187,72 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sVariable'] = sVariable.lower()
     config['sLabel_y'] = sLabel_y
 
+    
+    if sWorkspace_data_in is not None:
+        sWorkspace_data = sWorkspace_data_in
+        if os.path.exists(sWorkspace_data):
+            sLine = 'The workspace data will be used as : ' + sWorkspace_data 
+            print(sLine)
+        else:
+            print('The provided data workspace does not exist.')
+    else:        
+        sWorkspace_data = sWorkspace_home + slash + 'data'
+        sLine = 'The default workspace data will be used: ' + sWorkspace_data 
+        print(sLine)
 
+    if sWorkspace_scratch_in is not None:
+        sWorkspace_scratch = sWorkspace_scratch_in
+        if os.path.exists(sWorkspace_scratch):
+            sLine = 'The workspace scratch will be used as : ' + sWorkspace_scratch 
+            print(sLine)
+        else:
+            print('The provided scratch does not exist.')
+    else:        
+        sLine = 'The default workspace scratch will be used: ' + sWorkspace_scratch 
+        print(sLine)
+
+    #several namelist maybe used if we need to change parameters
     if sFilename_clm_namelist_in is not None:
         sFilename_clm_namelist = sFilename_clm_namelist_in
     else:
         sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
-            + sModel + slash \
+            + sModel + slash + sRegion + slash \
             + 'cases' + slash + 'user_nl_clm'
+        if os.path.exists(sFilename_clm_namelist):
+            sLine = 'A default ELM namelist was found at: ' + sFilename_clm_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            print(sLine)
+        else:
+            print('A default ELM namelist was not found, you will not be able to use it without specifying it first.' )
 
     if sFilename_datm_namelist_in is not None:
         sFilename_datm_namelist = sFilename_datm_namelist_in
     else:
         sFilename_datm_namelist = sWorkspace_scratch + slash + '04model' + slash \
-            + sModel + slash \
+            + sModel + slash + sRegion + slash \
             + 'cases' + slash + 'user_nl_datm'
+        if os.path.exists(sFilename_datm_namelist):
+            sLine = 'A default DATM namelist was found at: ' + sFilename_datm_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            print(sLine)
+        else:
+            print('A default datm namelist was not found, it may be created.' )
 
     #update mask if region changes
-    sFilename_mask = sWorkspace_data + slash \
-        + sModel + slash + sRegion + slash \
-        + 'raster' + slash + 'dem' + slash \
-        + 'MOSART_Global_half_20180606c.chang_9999.nc'
-
-    config['sFilename_mask'] = sFilename_mask
+    if sFilename_mosart_mask_in is not None:
+        sFilename_mosart_mask = sFilename_mosart_mask_in
+    else:
+        sFilename_mosart_mask = sWorkspace_data + slash \
+            + sModel + slash + sRegion + slash \
+            + 'raster' + slash + 'dem' + slash \
+            + 'MOSART_Global_half_20180606c.chang_9999.nc'
+        if os.path.exists(sFilename_mosart_mask):
+            sLine = 'A default MOSART mask was found at: ' + sFilename_mosart_mask + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            print(sLine)
+        else:
+            print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
+    
+    
+    
+    
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
     if not os.path.isdir(sWorkspace_analysis):
@@ -218,7 +264,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash \
         + sRegion + '/cases/'
     config['sWorkspace_cases'] = sDirectory_case
-    sDirectory_run = '/compyfs/liao313/e3sm_scratch'
+    sDirectory_run = sWorkspace_scratch +  slash +'e3sm_scratch'
 
     config['sDirectory_case'] = sDirectory_case
     config['sDirectory_run'] = sDirectory_run
@@ -231,6 +277,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     config['sFilename_clm_namelist'] = sFilename_clm_namelist
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
+    config['sFilename_mosart_mask'] = sFilename_mosart_mask
+
     return config
 
 if __name__ == '__main__':

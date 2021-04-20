@@ -44,11 +44,11 @@ def h2sc_evaluate_drainage_sensitivity_to_shape_parameter(sFilename_configuratio
     sRegion = oE3SM.sRegion
     nCase = len(aCase_index)
     aCase = np.full(nCase, '')
-    sFilename_mask = sWorkspace_data + slash \
+    sFilename_mosart_mask = sWorkspace_data + slash \
         + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
     #read in mask
-    aDatasets = Dataset(sFilename_mask)
+    aDatasets = Dataset(sFilename_mosart_mask)
     for sKey, aValue in aDatasets.variables.items():
         if "ele0" == sKey:
             aEle0 = (aValue[:]).data

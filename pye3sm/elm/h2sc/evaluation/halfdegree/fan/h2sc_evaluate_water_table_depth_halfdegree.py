@@ -51,9 +51,9 @@ def h2sc_evaluate_water_table_depth_halfdegree(oE3SM_in, \
 
     iYear_subset_end = oCase_in.iYear_subset_end
     #read obs 
-    sFilename_mask = oCase_in.sFilename_mask
+    sFilename_mosart_mask = oCase_in.sFilename_mosart_mask
     #read in mask
-    aDatasets = Dataset(sFilename_mask)
+    aDatasets = Dataset(sFilename_mosart_mask)
     netcdf_format = aDatasets.file_format
     print(netcdf_format)
     print("Print dimensions:")

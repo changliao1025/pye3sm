@@ -50,9 +50,9 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
         os.makedirs(sWorkspace_analysis_case)
     
     #read in global 0.5 * 0.5 mask
-    sFilename_mask = oCase_in.sFilename_mask
+    sFilename_mosart_mask = oCase_in.sFilename_mosart_mask
 
-    aDatasets = Dataset(sFilename_mask)
+    aDatasets = Dataset(sFilename_mosart_mask)
     netcdf_format = aDatasets.file_format
     print(netcdf_format)
     print("Print dimensions:")

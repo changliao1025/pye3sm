@@ -23,16 +23,16 @@ def h2sc_convert_observation_wtd_data_to_halfdegree(sFilename_configuration_in):
     sRegion = oE3SM.sRegion
     dConversion = 1.0
     sVariable = 'wtd'
-    sFilename_mask = oE3SM.sFilename_mask
+    sFilename_mosart_mask = oE3SM.sFilename_mosart_mask
     sFilename_wtd = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'raster' + slash \
         + 'wtd' + slash + 'Global_wtd_lowres.nc'
 
-    if os.path.isfile(sFilename_mask):
+    if os.path.isfile(sFilename_mosart_mask):
         pass
     else:
         error_code = 0
         exit()
-    aDatasets = Dataset(sFilename_mask)
+    aDatasets = Dataset(sFilename_mosart_mask)
     netcdf_format = aDatasets.file_format
     print(netcdf_format)
     print("Print dimensions:")

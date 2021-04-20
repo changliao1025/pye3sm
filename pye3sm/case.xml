@@ -4,158 +4,171 @@
   </header>
 
   <group id="pycase">
-   <entry id="iFlag_spinup" value="0">
+    <entry id="iFlag_spinup" value="0">
       <type>int</type>
       <desc>
-        The scratch workspace
+        Is this a spinup case simulation
       </desc>
     </entry>
     <entry id="iCase_index" value="0">
       <type>int</type>
       <desc>
-        The scratch workspace
+        The index of the case
       </desc>
     </entry>
     <entry id="iYear_start" value="1979">
       <type>int</type>
       <desc>
-        The scratch workspace
+        The case start year
       </desc>
     </entry>
     <entry id="iYear_end" value="2008">
       <type>int</type>
       <desc>
-        The scratch workspace
+         The case end year
       </desc>
     </entry>
     <entry id="iYear_data_start" value="1980">
       <type>int</type>
       <desc>
-        The scratch workspace
+         The forcing data start year
       </desc>
     </entry>
     <entry id="iYear_data_end" value="2008">
       <type>int</type>
       <desc>
-        The scratch workspace
+        The forcing data start year
       </desc>
     </entry>
     <entry id="iFlag_same_grid" value="1">
       <type>int</type>
       <desc>
-        The scratch workspace
+        Whether meshes are the same/overlap
       </desc>
     </entry>
 
     <entry id="nMonth" value="0">
       <type>int</type>
       <desc>
-        The scratch workspace
+        The total months 
       </desc>
     </entry>
     <entry id="nYear" value="0">
       <type>int</type>
       <desc>
-        The scratch workspace
+        The total years
       </desc>
     </entry>
     <entry id="dConversion" value="1.0">
       <type>float</type>
       <desc>
-        The scratch workspace
+        The conversion factor of the variable
       </desc>
     </entry>
     <entry id="sModel" value="h2sc">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The model/component of interest
       </desc>
     </entry>
     <entry id="sRegion" value="global">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The region name
       </desc>
     </entry>
     <entry id="sCase" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The case string name
       </desc>
     </entry>
     <entry id="sDirectory_case" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The directory of the case
       </desc>
     </entry>
     <entry id="sDirectory_run" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The directory of the case run
       </desc>
     </entry>
     <entry id="sVariable" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The variable of interest
       </desc>
     </entry>
     <entry id="sLabel_y" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The label of variable if needed
+      </desc>
+    </entry>
+    <entry id="sWorkspace_scratch" value="">
+      <type>char</type>
+      <desc>
+        The workspace of scartch
       </desc>
     </entry>
     <entry id="sWorkspace_cases" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The workspace of cases
       </desc>
     </entry>
 
     <entry id="sWorkspace_case" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The workspace of case create
       </desc>
     </entry>
     <entry id="sWorkspace_analysis_case" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The workspace of case analysis
       </desc>
     </entry>
     <entry id="sWorkspace_simulation_case_run" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The workspace of case simulation
       </desc>
     </entry>
     <entry id="sWorkspace_simulation_case" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The workspace of case
       </desc>
     </entry>
     <entry id="sWorkspace_simulation_case_build" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The workspace of case build
       </desc>
     </entry>
     <entry id="sFilename_clm_namelist" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The filename of ELM namelist
       </desc>
     </entry>
-  <entry id="sFilename_datm_namelist" value="">
+    <entry id="sFilename_datm_namelist" value="">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The filename of atm namelist
       </desc>
     </entry>
+    <entry id="sFilename_mosart_mask" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
+
   </group>
 
 </file>

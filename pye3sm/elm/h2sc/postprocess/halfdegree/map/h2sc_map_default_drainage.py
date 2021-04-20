@@ -33,7 +33,7 @@ sWorkspace_analysis = sWorkspace_scratch + slash + '03model' + slash \
 if not os.path.isdir(sWorkspace_analysis):
     os.makedirs(sWorkspace_analysis)
 
-sFilename_mask = sWorkspace_data + slash \
+sFilename_mosart_mask = sWorkspace_data + slash \
     + 'h2sc' + slash + 'raster' + slash + 'dem' + slash \
     + 'MOSART_Global_half_20180606c.chang_9999.nc'
 #we only need to change the case number, all variables will be processed one by one
@@ -62,8 +62,8 @@ iMonth_start = 1
 iMonth_end = 12
 
 #read in mask
-print(sFilename_mask)
-aDatasets = Dataset(sFilename_mask)
+print(sFilename_mosart_mask)
+aDatasets = Dataset(sFilename_mosart_mask)
 
 netcdf_format = aDatasets.file_format
 print(netcdf_format)

@@ -30,7 +30,7 @@ class pycase(object):
     sWorkspace_simulation_case=''
     sWorkspace_simulation_case_build=''
     sWorkspace_simulation_case_run=''
-    sFilename_mask=''
+    sFilename_mosart_mask=''
     sFilename_clm_namelist=''
     sFilename_datm_namelist=''
 
@@ -119,8 +119,8 @@ class pycase(object):
         if 'sWorkspace_simulation_case_run' in aParameter:
             self.sWorkspace_simulation_case_run= aParameter[ 'sWorkspace_simulation_case_run']
 
-        if 'sFilename_mask' in aParameter:
-            self.sFilename_mask               = aParameter[ 'sFilename_mask']
+        if 'sFilename_mosart_mask' in aParameter:
+            self.sFilename_mosart_mask               = aParameter[ 'sFilename_mosart_mask']
 
         if 'sFilename_clm_namelist' in aParameter:
             self.sFilename_clm_namelist      = aParameter[ 'sFilename_clm_namelist']

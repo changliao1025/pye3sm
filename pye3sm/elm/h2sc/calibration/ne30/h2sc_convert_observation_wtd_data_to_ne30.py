@@ -34,11 +34,11 @@ def h2sc_convert_observation_wtd_data_to_ne30():
         + 'wtd' + slash + 'Global_wtd_lowres.nc'
 
     sFilename_map = '/compyfs/inputdata/lnd/clm2/mappingdata/maps/ne30np4' + slash +    'map_0.5x0.5_nomask_to_ne30np4_nomask_aave_da_c121019.nc'
-    sFilename_mask = sWorkspace_data + slash \
+    sFilename_mosart_mask = sWorkspace_data + slash \
             + 'h2sc' + slash + 'raster' + slash + 'dem' + slash \
             + 'MOSART_Global_half_20180606c.chang_9999.nc'
     sFilename_location = '/compyfs/inputdata/lnd/clm2/surfdata_map' + slash + 'surfdata_ne30np4_simyr2000_c190730.nc'
-    aDatasets = Dataset(sFilename_mask)
+    aDatasets = Dataset(sFilename_mosart_mask)
     netcdf_format = aDatasets.file_format
     print(netcdf_format)
     print("Print dimensions:")

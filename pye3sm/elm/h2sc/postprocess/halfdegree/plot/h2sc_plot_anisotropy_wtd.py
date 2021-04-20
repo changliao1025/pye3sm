@@ -49,17 +49,17 @@ sWorkspace_analysis = sWorkspace_scratch + slash + '03model' + slash \
         + sModel + slash + 'analysis'
 
 
-sFilename_mask = sWorkspace_data + slash \
+sFilename_mosart_mask = sWorkspace_data + slash \
         + 'h2sc' + slash + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
 sFilename_wtd = sWorkspace_data + slash + sModel + slash + 'raster' + slash \
     + 'wtd' + slash + 'wtd.tif'
-if os.path.isfile(sFilename_mask):
+if os.path.isfile(sFilename_mosart_mask):
     pass
 else:
     error_code = 0
     exit()
-aDatasets = Dataset(sFilename_mask)
+aDatasets = Dataset(sFilename_mosart_mask)
 netcdf_format = aDatasets.file_format
 print(netcdf_format)
 print("Print dimensions:")
