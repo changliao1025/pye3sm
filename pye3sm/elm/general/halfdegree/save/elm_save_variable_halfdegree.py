@@ -16,8 +16,8 @@ from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_fi
  
  
 
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
 

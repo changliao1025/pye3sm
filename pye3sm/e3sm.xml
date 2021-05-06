@@ -78,7 +78,13 @@
     <entry id="MACH" value="compy">
       <type>char</type>
       <desc>
-        The workspace of pest calibration
+        The HPC machine
+      </desc>
+    </entry>
+    <entry id="Email" value="chang.liao@pnnl.gov">
+      <type>char</type>
+      <desc>
+        The email for job notification
       </desc>
     </entry>
     <entry id="sCIME_directory" value="/qfs/people/liao313/workspace/fortran/e3sm/TRIGRID/cime/scripts">

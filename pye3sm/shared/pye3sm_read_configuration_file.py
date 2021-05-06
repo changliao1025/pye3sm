@@ -208,6 +208,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         else:
             print('The provided scratch does not exist.')
     else:        
+        
         sLine = 'The default workspace scratch will be used: ' + sWorkspace_scratch 
         print(sLine)
 

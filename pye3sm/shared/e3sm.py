@@ -14,6 +14,7 @@ class pye3sm(object):
     MACH=''   
     sCIME_directory=''   
     sWorkspace_forcing=''    
+    sEmail=''
 
     def __init__(self, aParameter):
         print('pye3sm model is being initialized')
@@ -42,6 +43,9 @@ class pye3sm(object):
             self.PROJECT = aParameter['PROJECT']
         if 'MACH' in aParameter:
             self.MACH = aParameter['MACH']
+
+        if 'Email' in aParameter:
+            self.sEmail = aParameter['Email']
         
         if 'sCIME_directory' in aParameter:
             self.sCIME_directory    = aParameter[ 'sCIME_directory']
