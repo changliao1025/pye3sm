@@ -3,8 +3,8 @@ import os
 
 def create_elm_surface_data( sFilename_configuration, \
         sFilename_lon_lat_in, \
-        sFilename_vertex_lon_in, \
-        sFilename_vertex_lat_in, \
+        #sFilename_vertex_lon_in, \
+        #sFilename_vertex_lat_in, \
         sFilename_surface_data_in,\
             sFilename_domain_file_in,\
                 sFilename_surface_data_out,
@@ -26,20 +26,18 @@ def create_elm_surface_data( sFilename_configuration, \
     lat, lon   = ReadLatLon(sFilename_lon_lat_in)
     print('3) Computing latitude/longitude @ cell vertex')
     latv, lonv = ComputeLatLonAtVertex(lat, \
-        lon,\
-        sFilename_vertex_lat_in, \
-            sFilename_vertex_lon_in)
+        lon, cfg['dlat'], cfg['dlon'])
 
     print('4) Creating CLM surface dataset')
     fsurdat    = CreateCLMUgridSurfdatForCLM45(lat, lon, \
                     sFilename_surface_data_in, \
-                    sFilename_surface_data_out \
+                    sFilename_surface_data_out, \
                     cfg['set_natural_veg_frac_to_one'])
                     
     print('5) Creating CLM domain')
     fdomain    = CreateCLMUgridDomainForCLM45(lat, lon, \
                     latv, lonv,\
-                         sFilename_domain_file_in \
+                         sFilename_domain_file_in, \
                    sFilename_domain_file_out)
 
     
