@@ -150,34 +150,35 @@
         The workspace of case build
       </desc>
     </entry>
-    <entry id="sFilename_clm_namelist" value="">
+    <entry id="sFilename_elm_namelist" value="">
       <type>char</type>
       <desc>
         The filename of ELM namelist
       </desc>
     </entry>
-    <entry id="sFilename_datm_namelist" value="">
+<entry id="sFilename_elm_domain" value="">
       <type>char</type>
       <desc>
-        The filename of atm namelist
+        The mask file of mosart
       </desc>
     </entry>
+    <entry id="sFilename_elm_surface_data" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
+  
     <entry id="sFilename_mosart_mask" value="">
       <type>char</type>
       <desc>
         The mask file of mosart
       </desc>
     </entry>
-    <entry id="sFilename_domain" value="">
+      <entry id="sFilename_datm_namelist" value="">
       <type>char</type>
       <desc>
-        The mask file of mosart
-      </desc>
-    </entry>
-    <entry id="sFilename_surface_data" value="">
-      <type>char</type>
-      <desc>
-        The mask file of mosart
+        The filename of atm namelist
       </desc>
     </entry>
 

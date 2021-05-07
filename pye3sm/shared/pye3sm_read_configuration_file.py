@@ -16,6 +16,8 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                         iFlag_debug_in = None, \
                                         iFlag_short_in =None,\
                                         iFlag_resubmit_in = None,\
+                                            RES_in = None,\
+                                            COMPSET_in= None,\
                                         sCIME_directory_in = None ):
 
     #read the default configuration
@@ -46,6 +48,15 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     else:
         iFlag_short = 0
 
+    if RES_in is not None:
+        RES = RES_in
+    else:
+        RES = 'ELM_USRDAT'
+    if COMPSET_in is not None:
+        COMPSET = COMPSET_in
+    else:
+        COMPSET = 'IELM'
+
 
     if sCIME_directory_in is not None:
         sCIME_directory = sCIME_directory_in
@@ -65,6 +76,8 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
+    config['RES'] = RES
+    config['COMPSET'] = COMPSET
     config['sCIME_directory'] = sCIME_directory
 
     return config
@@ -81,9 +94,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         iYear_subset_end_in = None, \
                                         dConversion_in = None, \
                                         sDate_in = None,\
+                                            sModel_in = None,\
+                                                sRegion_in = None,\
                                         sLabel_y_in = None, \
                                         sVariable_in = None, \
-                                        sFilename_clm_namelist_in = None,\
+                                        sFilename_elm_namelist_in = None,\
                                         sFilename_datm_namelist_in = None, \
                                         sFilename_mosart_mask_in = None,\
                                             sWorkspace_data_in = None,\
@@ -92,6 +107,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config = parse_xml_file(sFilename_configuration_in)
 
     sModel = config['sModel']
+    sRegion = config['sRegion']
 
     if iFlag_spinup_in is not None:
         iFlag_spinup = iFlag_spinup_in
@@ -156,11 +172,19 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         dConversion = dConversion_in
     else:
         dConversion = 1.0
+    
+    if sModel_in is not None:
+        sModel = sModel_in
+    
+
+    if sRegion_in is not None:
+        sRegion = sRegion_in
 
     if sVariable_in is not None:
         sVariable = sVariable_in
     else:
-        sVariable = config['sVariable']
+        sVariable=''
+    
 
     if sLabel_y_in is not None:
         sLabel_y = sLabel_y_in
@@ -183,7 +207,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['nMonth']=  "{:04d}".format(nMonth)
     config['dConversion']=  "{:0f}".format(dConversion)
 
-    sRegion = config['sRegion']
+    config['sModel'] = sModel
+    config['sRegion'] = sRegion
+    
     config['sVariable'] = sVariable.lower()
     config['sLabel_y'] = sLabel_y
 
@@ -213,8 +239,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         print(sLine)
 
     #several namelist maybe used if we need to change parameters
-    if sFilename_clm_namelist_in is not None:
-        sFilename_clm_namelist = sFilename_clm_namelist_in
+    if sFilename_elm_namelist_in is not None:
+        sFilename_clm_namelist = sFilename_elm_namelist_in
     else:
         sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
             + sModel + slash + sRegion + slash \

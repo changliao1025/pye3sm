@@ -1,30 +1,31 @@
 import os, sys, stat
+from pathlib import Path
 import argparse
 import subprocess
 import numpy as np
 from pyearth.system.define_global_variables import *
+
+import os, datetime
+from pye3sm.elm.grid.create_clm_surface_data import create_elm_surface_data
 
 from pye3sm.case.e3sm_create_case import e3sm_create_case
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-#import argparse
-#parser = argparse.ArgumentParser()
-#parser.add_argument("--iCase", help = "the id of the e3sm case", type=int, choices=range(1000))
-#args = parser.parse_args()
-sModel = 'default'
+
+sModel = 'e3sm'
 sRegion ='site'
+iCase = 1
 
 dHydraulic_anisotropy = 1.0
 sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
 aHydraulic_anisotropy_exp = np.arange(-3,1.1,0.25)
 aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
-print(aHydraulic_anisotropy)
-iCase = 1
 dHydraulic_anisotropy = aHydraulic_anisotropy[iCase-1]
-dHydraulic_anisotropy = 1.0
 sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
+
+
 iFlag_default = 1
 iFlag_debug = 0 #is this a debug run
 iFlag_branch = 0 
@@ -43,10 +44,9 @@ sDate = '20210209'
 #sDate = '20201218'
 sDate = '20210504'
 
-#sDate_spinup = '20200412'
+
 sDate_spinup = '20210126'
 sDate_spinup = '20210209'
-#sDate_spinup = '20201215'
 
 
 sCase = sModel + sDate + "{:03d}".format(iCase)
@@ -57,15 +57,61 @@ sWorkspace_scratch = '/compyfs/liao313'
 sWorkspace_region = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
     + 'cases'
 if not os.path.exists(sWorkspace_region):
-    os.mkdir(sWorkspace_region)
+    
+    Path(sWorkspace_region).mkdir(parents=True, exist_ok=True)
 
-sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
+sFilename_elm_namelist = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
     + 'cases' + slash + 'user_nl_clm_' + sCase
 
+sFilename_surface_data_default='/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc'
+sFilename_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
 
-sFilename_domain = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/singlegrid/surfdata_icom_1x1_sparse_grid_c210504.nc'
-sFilename_surface = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/singlegrid/surfdata_icom_1x1_sparse_grid_c210504.nc'
+
 #'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
+
+sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/elm_sparse_grid.cfg'
+
+#for a single grid case, we can create this file on the fly
+sPath = os.path.dirname(os.path.realpath(__file__))
+
+sFilename_lon_lat_in = sWorkspace_region + sCase +'.txt'
+
+dLongitude = 285.137151
+dLatitude =  39.167610
+#aLon aLat should be used for a list of location
+aLon =[dLongitude]
+aLat =[dLatitude]
+
+ofs = open(sFilename_lon_lat_in, 'w')
+ngrid = 1
+sGrid =  "{:0d}".format( ngrid)
+sLine = sGrid + '\n'
+ofs.write(sLine) 
+for i in range(ngrid):
+    dLatitude = aLat[i]
+    dLongitude = aLon[i]
+    sLine = "{:0f}".format( dLatitude) + ' ' + "{:0f}".format( dLongitude) + '\n'
+    ofs.write(sLine)
+
+ofs.close()
+
+
+
+
+pDate = datetime.datetime.today()
+sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
+sFilename_surface_data_out = sWorkspace_region + '/surfdata_' + sCase + '.nc'
+sFilename_domain_file_out = sWorkspace_region +  '/domain_' + sCase + '.nc'
+
+
+#create_elm_surface_data( sFilename_configuration, \
+#        sFilename_lon_lat_in, \
+#        #sFilename_vertex_lon_in, \
+#        #sFilename_vertex_lat_in, \
+#        sFilename_surface_data_default,\
+#            sFilename_domain_file_default,\
+#                sFilename_surface_data_out,
+#        sFilename_domain_file_out)
 
 sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(1)
 
@@ -75,9 +121,9 @@ sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
 
 if (iFlag_initial !=1):
     #normal case,
-    ofs = open(sFilename_clm_namelist, 'w')
+    ofs = open(sFilename_elm_namelist, 'w')
     sCommand_out = "fsurdat = " + "'" \
-        + sFilename_surface  + "'" + '\n'
+        + sFilename_surface_data_out  + "'" + '\n'
     ofs.write(sCommand_out)
     if (iFlag_default ==1 ):        
         pass
@@ -88,9 +134,9 @@ if (iFlag_initial !=1):
         ofs.write(sLine)
     ofs.close()
 else:
-    ofs = open(sFilename_clm_namelist, 'w')
+    ofs = open(sFilename_elm_namelist, 'w')
     sCommand_out = "fsurdat = " + "'" \
-        + sFilename_surface + "'" + '\n'
+        + sFilename_surface_data_out + "'" + '\n'
     ofs.write(sCommand_out)
     if (iFlag_default ==1 ):       
         pass
@@ -131,15 +177,22 @@ if (iFlag_spinup ==1):
 else:    
     pass
 
-sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/e3sm.xml'
-sFilename_case_configuration = '/qfs/people/liao313/workspace/python/e3sm/pye3sm/pye3sm/shared/case.xml'
+sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
+sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
+
+res='ELM_USRDAT'
+res='r05_r05'
+compset = 'IELM'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
                                                       iFlag_debug_in = iFlag_debug, \
                                                       iFlag_branch_in = iFlag_branch,\
                                                       iFlag_continue_in = iFlag_continue,\
                                                       iFlag_resubmit_in = iFlag_resubmit,\
-                                                      iFlag_short_in = iFlag_short  )
+                                                      iFlag_short_in = iFlag_short ,\
+                                                          RES_in =res,\
+                                                      COMPSET_in = compset ,\
+                                                          sCIME_directory_in = sCIME_directory)
 oE3SM = pye3sm(aParameter_e3sm)
 if (iFlag_spinup ==1):
     aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
@@ -150,8 +203,11 @@ if (iFlag_spinup ==1):
                                                           iYear_data_start_in = 1979   ,\
                                                           iCase_index_in = iCase, \
                                                           sDate_in = sDate, \
-                                                          sFilename_clm_namelist_in = sFilename_clm_namelist, \
-                                                          sFilename_datm_namelist_in = sFilename_datm_namelist )
+                                                              sModel_in = sModel,\
+                                                                  sRegion_in = sRegion,\
+                                                          sFilename_elm_namelist_in = sFilename_elm_namelist, \
+                                                          sFilename_datm_namelist_in = sFilename_datm_namelist ,\
+                                                              sWorkspace_scratch_in = sWorkspace_scratch)
 else:
     aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                           iFlag_spinup_in = iFlag_spinup,\
@@ -161,7 +217,7 @@ else:
                                                           iYear_data_start_in = 1979   , \
                                                           iCase_index_in = iCase, \
                                                           sDate_in = sDate, \
-                                                          sFilename_clm_namelist_in = sFilename_clm_namelist )
+                                                          sFilename_elm_namelist_in = sFilename_elm_namelist )
     #print(aParameter_case)
 oCase = pycase(aParameter_case)
 e3sm_create_case(oE3SM, oCase )

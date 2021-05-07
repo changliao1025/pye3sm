@@ -32,7 +32,11 @@ def e3sm_create_case(oE3SM_in, \
     sPython=''
     sModel = oCase_in.sModel #'h2sc'
     sCase = oCase_in.sCase
-    sFilename_clm_namelist = oCase_in.sFilename_clm_namelist
+    sFilename_elm_namelist = oCase_in.sFilename_elm_namelist
+
+    sFilename_elm_domain = oCase_in.sFilename_elm_domain
+    sFilename_elm_surface_data = oCase_in.sFilename_elm_surface_data
+
     sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
 
     #GIT_HASH=`git log -n 1 --format=%h`
@@ -200,6 +204,15 @@ def e3sm_create_case(oE3SM_in, \
             p.wait()
             pass
 
+        sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  sFilename_elm_domain + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
+
+        sCommand = sPython + ' ./xmlchange ATM_DOMAIN_FILE=' +  sFilename_elm_domain + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
 
         sCommand = sPython + ' ./case.setup' + '\n'
         sCommand = sCommand.lstrip()
@@ -215,7 +228,7 @@ def e3sm_create_case(oE3SM_in, \
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
         #we will generate clm name list in real time
-        sCommand = 'cp ' + sFilename_clm_namelist + ' ./user_nl_clm' + '\n'
+        sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
