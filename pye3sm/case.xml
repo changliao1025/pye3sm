@@ -168,6 +168,18 @@
         The mask file of mosart
       </desc>
     </entry>
+    <entry id="sFilename_domain" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
+    <entry id="sFilename_surface_data" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
 
   </group>
 

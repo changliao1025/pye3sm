@@ -1,27 +1,46 @@
 import numpy as np
 import os
 
-def main():
-    print('1) Reading configuration file')
-    print( os.getcwd())
+def create_elm_surface_data( sFilename_configuration, \
+        sFilename_lon_lat_in, \
+        sFilename_vertex_lon_in, \
+        sFilename_vertex_lat_in, \
+        sFilename_surface_data_in,\
+            sFilename_domain_file_in,\
+                sFilename_surface_data_out,
+        sFilename_domain_file_out):
 
-    print(os.path.dirname(os.path.realpath(__file__)))
-    path = os.path.dirname(os.path.realpath(__file__))
-    os.chdir(path)
-    cfg        = ReadConfigurationFile('./icom_1x1_sparse_grid.cfg')
+
+
+    print('1) Reading configuration file')
+    #print( os.getcwd())
+
+    #print(os.path.dirname(os.path.realpath(__file__)))
+    #path = os.path.dirname(os.path.realpath(__file__))
+    #os.chdir(path)
+    #cfg        = ReadConfigurationFile('./icom_1x1_sparse_grid.cfg')
+    cfg        = ReadConfigurationFile(sFilename_configuration)
+
     print('2) Reading latitude/longitude @ cell centroid')
-    lat, lon   = ReadLatLon(cfg['site_latlon_filename'])
+    #lat, lon   = ReadLatLon(cfg['site_latlon_filename'])
+    lat, lon   = ReadLatLon(sFilename_lon_lat_in)
     print('3) Computing latitude/longitude @ cell vertex')
-    latv, lonv = ComputeLatLonAtVertex(lat, lon, cfg['dlat'], cfg['dlon'])
+    latv, lonv = ComputeLatLonAtVertex(lat, \
+        lon,\
+        sFilename_vertex_lat_in, \
+            sFilename_vertex_lon_in)
+
     print('4) Creating CLM surface dataset')
     fsurdat    = CreateCLMUgridSurfdatForCLM45(lat, lon, \
-                    cfg['clm_gridded_surfdata_filename'], \
-                    cfg['out_netcdf_dir'], cfg['clm_usrdat_name'], \
+                    sFilename_surface_data_in, \
+                    sFilename_surface_data_out \
                     cfg['set_natural_veg_frac_to_one'])
+                    
     print('5) Creating CLM domain')
     fdomain    = CreateCLMUgridDomainForCLM45(lat, lon, \
-                    latv, lonv, cfg['clm_gridded_domain_filename'], \
-                    cfg['out_netcdf_dir'], cfg['clm_usrdat_name'])
+                    latv, lonv,\
+                         sFilename_domain_file_in \
+                   sFilename_domain_file_out)
 
     
 
@@ -123,7 +142,7 @@ def ComputeLatLonAtVertex(lat, lon, dlat, dlon):
 
 def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
     clm_gridded_surfdata_filename, \
-    out_netcdf_dir, clm_usrdat_name, \
+    fname_out, \
     set_natural_veg_frac_to_one):
 
     from datetime import datetime
@@ -131,8 +150,8 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
     import getpass
     from netCDF4 import Dataset
 
-    fname_out = '%s/surfdata_%s_%s.nc' % \
-                (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
+    #fname_out = '%s/surfdata_%s_%s.nc' % \
+    #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
 
     print('  surface_dataset: ' + fname_out)
 
@@ -400,14 +419,14 @@ def PerformFractionCoverCheck(varname, data, set_natural_veg_frac_to_one):
 
 def CreateCLMUgridDomainForCLM45(lat_region, lon_region, \
     latv_region, lonv_region, clm_gridded_domain_filename, \
-    out_netcdf_dir, clm_usrdat_name):
+    fname_out):
 
     from datetime import datetime
     from scipy.io import netcdf
     import getpass
 
-    fname_out = '%s/domain_%s_%s.nc' % \
-                (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
+    #fname_out = '%s/domain_%s_%s.nc' % \
+    #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
     print('  domain: ' + fname_out)
 
     # Check if the file is available
@@ -495,5 +514,3 @@ def CreateCLMUgridDomainForCLM45(lat_region, lon_region, \
 
     return fname_out
 
-if __name__ == '__main__':
-    main()

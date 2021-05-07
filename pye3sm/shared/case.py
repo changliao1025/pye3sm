@@ -33,6 +33,8 @@ class pycase(object):
     sFilename_mosart_mask=''
     sFilename_clm_namelist=''
     sFilename_datm_namelist=''
+    sFilename_surface_data=''
+    sFilename_domain=''
 
     def __init__(self, aParameter):
         print('E3SM case model is being initialized')
@@ -127,6 +129,12 @@ class pycase(object):
 
         if 'sFilename_datm_namelist' in aParameter:
             self.sFilename_datm_namelist      = aParameter[ 'sFilename_datm_namelist']
+        
+        if 'sFilename_domain' in aParameter:
+            self.sFilename_domain      = aParameter[ 'sFilename_domain']
+
+        if 'sFilename_surface_data' in aParameter:
+            self.sFilename_surface_data      = aParameter[ 'sFilename_surface_data']
 
         sCase_index = "{:03d}".format( self.iCase_index )
         sCase = self.sModel + self.sDate + sCase_index
