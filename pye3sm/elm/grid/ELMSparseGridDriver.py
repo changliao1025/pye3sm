@@ -31,7 +31,23 @@ def main():
                     latv, lonv, cfg['clm_gridded_domain_filename'],\
                     cfg['out_netcdf_dir'], cfg['clm_usrdat_name'])
 
-    
+def generate_ELM_domain_surface_file(cfgfilename):
+
+    print('1) Reading configuration file: ' + cfgfilename)
+    cfg        = ReadConfigurationFile(cfgfilename)
+    print('2) Reading latitude/longitude @ cell centroid')
+    lat, lon   = ReadLatLon(cfg['site_latlon_filename'])
+    print('3) Computing latitude/longitude @ cell vertex')
+    latv, lonv = ComputeLatLonAtVertex(lat, lon, cfg['dlat'], cfg['dlon'])
+    print('4) Creating ELM surface dataset')
+    fsurdat    = CreateCLMUgridSurfdatForELM(lat, lon,             \
+                    cfg['clm_gridded_surfdata_filename'],          \
+                    cfg['out_netcdf_dir'], cfg['clm_usrdat_name'], \
+                    cfg['set_natural_veg_frac_to_one'])
+    print('5) Creating ELM domain')
+    fdomain    = CreateCLMUgridDomainForELM(lat, lon,              \
+                    latv, lonv, cfg['clm_gridded_domain_filename'],\
+                    cfg['out_netcdf_dir'], cfg['clm_usrdat_name'])    
 
 def ReadConfigurationFile(fname):
     # Initialization
