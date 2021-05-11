@@ -16,7 +16,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 sModel = 'e3sm'
 sRegion ='site'
-iCase = 4
+iCase = 5
 
 dHydraulic_anisotropy = 1.0
 sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
