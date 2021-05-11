@@ -150,13 +150,26 @@
         The workspace of case build
       </desc>
     </entry>
+    <entry id="sFilename_atm_domain" value="">
+      <type>char</type>
+      <desc>
+        The filename of atm namelist
+      </desc>
+    </entry>
+    <entry id="sFilename_datm_namelist" value="">
+      <type>char</type>
+      <desc>
+        The filename of atm namelist
+      </desc>
+    </entry>
+
     <entry id="sFilename_elm_namelist" value="">
       <type>char</type>
       <desc>
         The filename of ELM namelist
       </desc>
     </entry>
-<entry id="sFilename_elm_domain" value="">
+    <entry id="sFilename_elm_domain" value="">
       <type>char</type>
       <desc>
         The mask file of mosart
@@ -175,12 +188,13 @@
         The mask file of mosart
       </desc>
     </entry>
-      <entry id="sFilename_datm_namelist" value="">
+    <entry id="sFilename_mosart_domain" value="">
       <type>char</type>
       <desc>
-        The filename of atm namelist
+        The mask file of mosart
       </desc>
     </entry>
+      
 
   </group>
 

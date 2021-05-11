@@ -101,7 +101,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         sFilename_elm_namelist_in = None,\
                                         sFilename_datm_namelist_in = None, \
                                         sFilename_mosart_mask_in = None,\
-                                            sWorkspace_data_in = None,\
+                                            sFilename_atm_domain_in = None,
+                                            sFilename_elm_domain_in=None,\
+                                                sFilename_mosart_domain_in=None,
+                                        sWorkspace_data_in = None,\
                                         sWorkspace_scratch_in=None):
     #read the default configuration
     config = parse_xml_file(sFilename_configuration_in)
@@ -213,6 +216,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sVariable'] = sVariable.lower()
     config['sLabel_y'] = sLabel_y
 
+    sFilename_atm_domain= config['sFilename_atm_domain']
+    sFilename_elm_domain= config['sFilename_elm_domain']
+    sFilename_mosart_domain= config['sFilename_mosart_domain']
+
     
     if sWorkspace_data_in is not None:
         sWorkspace_data = sWorkspace_data_in
@@ -277,7 +284,17 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         else:
             print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
     
+    if sFilename_atm_domain_in is not None:
+        sFilename_atm_domain = sFilename_atm_domain_in
+        
+
+    if sFilename_elm_domain_in is not None:
+        sFilename_elm_domain = sFilename_elm_domain_in
+
+    if sFilename_mosart_domain_in is not None:
+        sFilename_mosart_domain = sFilename_mosart_domain_in
     
+
     
     
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
@@ -302,10 +319,17 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sWorkspace_simulation_case_build'] = sDirectory_run + slash + sCase + slash +'build'
     config['sWorkspace_analysis_case'] = sWorkspace_analysis + slash + sCase
 
-    config['sFilename_clm_namelist'] = sFilename_clm_namelist
-    config['sFilename_datm_namelist'] = sFilename_datm_namelist
-    config['sFilename_mosart_mask'] = sFilename_mosart_mask
+    config['sFilename_atm_domain'] = sFilename_atm_domain
 
+   
+    config['sFilename_datm_namelist'] = sFilename_datm_namelist
+
+    config['sFilename_elm_namelist'] = sFilename_clm_namelist
+    config['sFilename_elm_domain'] = sFilename_elm_domain
+
+    config['sFilename_mosart_mask'] = sFilename_mosart_mask 
+    
+    config['sFilename_mosart_domain'] = sFilename_mosart_domain
     return config
 
 if __name__ == '__main__':

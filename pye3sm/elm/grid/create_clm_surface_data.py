@@ -1,6 +1,11 @@
 import numpy as np
 import os
 
+from datetime import datetime
+from scipy.io import netcdf
+import getpass
+from netCDF4 import Dataset
+
 def create_elm_surface_data( sFilename_configuration, \
         sFilename_lon_lat_in, \
         #sFilename_vertex_lon_in, \
@@ -143,10 +148,7 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
     fname_out, \
     set_natural_veg_frac_to_one):
 
-    from datetime import datetime
-    from scipy.io import netcdf
-    import getpass
-    from netCDF4 import Dataset
+    
 
     #fname_out = '%s/surfdata_%s_%s.nc' % \
     #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
@@ -157,7 +159,7 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
         raise NameError('File not found: ' + clm_gridded_surfdata_filename)
     
     ncid_inq = Dataset(clm_gridded_surfdata_filename, 'r')
-    ncid_out = Dataset(fname_out, 'w')
+    ncid_out = Dataset(fname_out, 'w',format="NETCDF3_CLASSIC")
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #
@@ -433,7 +435,10 @@ def CreateCLMUgridDomainForCLM45(lat_region, lon_region, \
       
     ncid_inq = netcdf.netcdf_file(clm_gridded_domain_filename, 'r', \
                                   mmap = False, maskandscale=True, version = 2)
-    ncid_out = netcdf.netcdf_file(fname_out, 'w', version = 2)
+    #ncid_out = netcdf.netcdf_file(fname_out, 'w', version = 2)
+    ncid_out = Dataset(fname_out, 'w',format="NETCDF3_CLASSIC")
+
+    
     
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #

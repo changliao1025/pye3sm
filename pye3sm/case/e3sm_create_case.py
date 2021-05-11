@@ -32,12 +32,17 @@ def e3sm_create_case(oE3SM_in, \
     sPython=''
     sModel = oCase_in.sModel #'h2sc'
     sCase = oCase_in.sCase
+
+
+    sFilename_atm_domain = oCase_in.sFilename_atm_domain
+    sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
+
     sFilename_elm_namelist = oCase_in.sFilename_elm_namelist
 
     sFilename_elm_domain = oCase_in.sFilename_elm_domain
     sFilename_elm_surface_data = oCase_in.sFilename_elm_surface_data
 
-    sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
+    
 
     #GIT_HASH=`git log -n 1 --format=%h`
 
@@ -124,10 +129,10 @@ def e3sm_create_case(oE3SM_in, \
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
 
-        sCommand = ' ./xmlchange --mail-user=' + sEmail +' --force' + '\n'
-        sCommand = sCommand.lstrip()
-        p = subprocess.Popen(sCommand, shell= True)
-        p.wait()
+        #sCommand = ' ./xmlchange mail-user=' + sEmail +' --force' + '\n'
+        #sCommand = sCommand.lstrip()
+        #p = subprocess.Popen(sCommand, shell= True)
+        #p.wait()
 
         #env_mach_pes.xml: Sets component machine-specific processor layout (see changing pe layout ).
         #The settings in this are critical to a well-load-balanced simulation (see load balancing).
@@ -204,34 +209,50 @@ def e3sm_create_case(oE3SM_in, \
             p.wait()
             pass
 
-        sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  sFilename_elm_domain + '\n'
+        
+
+        sCommand = sPython + ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
 
-        sCommand = sPython + ' ./xmlchange ATM_DOMAIN_FILE=' +  sFilename_elm_domain + '\n'
+        sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_elm_domain) + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
 
-        sCommand = sPython + ' ./case.setup' + '\n'
+        
+
+        #get path
+        sPath_atm_domain = os.path.dirname(sFilename_atm_domain)
+        sCommand = sPython + ' ./xmlchange ATM_DOMAIN_PATH=' +  sPath_atm_domain + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
 
+        sPath_elm_domain = os.path.dirname(sFilename_elm_domain)
+        sCommand = sPython + ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
+
+        
 
 
         #copy namelist
         #the mosart will be constant
-        sCommand = 'cp ../user_nl_mosart ./user_nl_mosart' + '\n'
-        sCommand = sCommand.lstrip()
-        p = subprocess.Popen(sCommand, shell= True)
-        p.wait()
+        #sCommand = 'cp ../user_nl_mosart ./user_nl_mosart' + '\n'
+        #sCommand = sCommand.lstrip()
+        #p = subprocess.Popen(sCommand, shell= True)
+        #p.wait()
         #we will generate clm name list in real time
         sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
+
+
+        
 
         if(iFlag_spinup==1):
             sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
@@ -247,6 +268,11 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
             pass
+            
+        sCommand = sPython + ' ./case.setup' + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
 
         sCommand = sPython + ' ./case.build' + '\n'
         sCommand = sCommand.lstrip()

@@ -31,14 +31,18 @@ class pycase(object):
     sWorkspace_simulation_case_build=''
     sWorkspace_simulation_case_run=''
 
+    #atm
+    sFilename_datm_namelist=''
+    sFilename_atm_domain=''
+
     #elm    
     sFilename_elm_namelist=''    
     sFilename_elm_surface_data=''
     sFilename_elm_domain=''
     #mosart
     sFilename_mosart_mask=''
-    #atm
-    sFilename_datm_namelist=''
+    sFilename_mosart_domain=''
+    
 
     def __init__(self, aParameter):
         print('E3SM case model is being initialized')
@@ -125,25 +129,30 @@ class pycase(object):
         if 'sWorkspace_simulation_case_run' in aParameter:
             self.sWorkspace_simulation_case_run= aParameter[ 'sWorkspace_simulation_case_run']
 
+        #atm       
+
+        if 'sFilename_datm_namelist' in aParameter:
+            self.sFilename_datm_namelist      = aParameter[ 'sFilename_datm_namelist']
+        
+        if 'sFilename_atm_domain' in aParameter:
+            self.sFilename_atm_domain      = aParameter[ 'sFilename_atm_domain']
 
         #elm
         if 'sFilename_elm_namelist' in aParameter:
-            self.sFilename_clm_namelist      = aParameter[ 'sFilename_elm_namelist']
+            self.sFilename_elm_namelist      = aParameter[ 'sFilename_elm_namelist']
 
         if 'sFilename_elm_domain' in aParameter:
             self.sFilename_elm_domain      = aParameter[ 'sFilename_elm_domain']
+
+        if 'sFilename_mosart_domain' in aParameter:
+            self.sFilename_mosart_domain      = aParameter[ 'sFilename_mosart_domain']
+
         if 'sFilename_elm_surface_data' in aParameter:
             self.sFilename_elm_surface_data      = aParameter[ 'sFilename_elm_surface_data']
         #mosart
         if 'sFilename_mosart_mask' in aParameter:
             self.sFilename_mosart_mask               = aParameter[ 'sFilename_mosart_mask']
 
-        #atm
-        
-
-        if 'sFilename_datm_namelist' in aParameter:
-            self.sFilename_datm_namelist      = aParameter[ 'sFilename_datm_namelist']
-        
         
 
         

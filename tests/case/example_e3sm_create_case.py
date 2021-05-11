@@ -16,7 +16,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 sModel = 'e3sm'
 sRegion ='site'
-iCase = 1
+iCase = 4
 
 dHydraulic_anisotropy = 1.0
 sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
@@ -104,14 +104,14 @@ sFilename_surface_data_out = sWorkspace_region + '/surfdata_' + sCase + '.nc'
 sFilename_domain_file_out = sWorkspace_region +  '/domain_' + sCase + '.nc'
 
 
-#create_elm_surface_data( sFilename_configuration, \
-#        sFilename_lon_lat_in, \
-#        #sFilename_vertex_lon_in, \
-#        #sFilename_vertex_lat_in, \
-#        sFilename_surface_data_default,\
-#            sFilename_domain_file_default,\
-#                sFilename_surface_data_out,
-#        sFilename_domain_file_out)
+create_elm_surface_data( sFilename_configuration, \
+        sFilename_lon_lat_in, \
+        #sFilename_vertex_lon_in, \
+        #sFilename_vertex_lat_in, \
+        sFilename_surface_data_default,\
+        sFilename_domain_file_default,\
+        sFilename_surface_data_out,
+        sFilename_domain_file_out)
 
 sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(1)
 
@@ -182,7 +182,7 @@ sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3
 sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
 
 res='ELM_USRDAT'
-res='r05_r05'
+#res='r05_r05'
 compset = 'IELM'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
                                                       iFlag_debug_in = iFlag_debug, \
@@ -205,8 +205,12 @@ if (iFlag_spinup ==1):
                                                           sDate_in = sDate, \
                                                               sModel_in = sModel,\
                                                                   sRegion_in = sRegion,\
-                                                          sFilename_elm_namelist_in = sFilename_elm_namelist, \
+                                                                       sFilename_atm_domain_in= sFilename_domain_file_out,\
                                                           sFilename_datm_namelist_in = sFilename_datm_namelist ,\
+
+                                                          sFilename_elm_namelist_in = sFilename_elm_namelist, \
+                                                             
+                                                                  sFilename_elm_domain_in=sFilename_domain_file_out, \
                                                               sWorkspace_scratch_in = sWorkspace_scratch)
 else:
     aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
