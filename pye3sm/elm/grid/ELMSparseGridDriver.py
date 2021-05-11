@@ -281,7 +281,7 @@ def CreateCLMUgridSurfdatForELM(lati_region, long_region, \
     for varname in ncid_inq.variables:
 
         if ncid_inq.variables[varname].dimensions == ():
-            data = ncid_inq.variables[varname]
+            data = ncid_inq.variables[varname][:]
         else:
             data = ncid_inq.variables[varname][:]
 
@@ -291,7 +291,7 @@ def CreateCLMUgridSurfdatForELM(lati_region, long_region, \
             var[varname][:] = long_region
         else:
             if len(ncid_inq.variables[varname].dimensions) == 0:
-                var[varname] = data
+                var[varname][:] = data
             elif len(ncid_inq.variables[varname].dimensions) == 1:
                 var[varname][:] = data
             elif len(ncid_inq.variables[varname].dimensions) == 2:
