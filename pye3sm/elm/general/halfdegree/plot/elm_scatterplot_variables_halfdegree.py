@@ -13,8 +13,8 @@ from pyearth.visual.scatter.scatter_plot_data_density import scatter_plot_data_d
 from pyearth.visual.scatter.scatter_plot_data import scatter_plot_data
 
 
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 def elm_scatterplot_variables_halfdegree(oE3SM_in,\
                                          oCase_x_in,\

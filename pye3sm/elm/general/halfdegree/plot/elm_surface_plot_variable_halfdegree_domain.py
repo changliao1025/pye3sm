@@ -16,8 +16,8 @@ from pyearth.visual.surface.convert_array_to_vtk_polygon import convert_array_to
 
  
  
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 
 def elm_surface_plot_variable_halfdegree_domain(oE3SM_in,\

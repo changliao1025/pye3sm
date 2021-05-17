@@ -20,10 +20,10 @@ from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_dat
 
  
  
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 def h2sc_evaluate_water_table_depth_with_situ_halfdegree(oE3SM_in, \
                                                          oCase_in,\

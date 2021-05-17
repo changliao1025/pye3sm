@@ -12,10 +12,10 @@ from pyearth.visual.timeseries.fill.plot3d_time_series_data_fill import plot3d_t
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 def elm_3dtsplot_variable_halfdegree_domain(oE3SM_in,\
                                             oCase_in, \

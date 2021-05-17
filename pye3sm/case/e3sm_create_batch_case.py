@@ -7,10 +7,10 @@ import numpy as np
 
 from pyearth.system.define_global_variables import *
 
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 from ..case.e3sm_create_case import e3sm_create_case
 
 sModel = 'h2sc'

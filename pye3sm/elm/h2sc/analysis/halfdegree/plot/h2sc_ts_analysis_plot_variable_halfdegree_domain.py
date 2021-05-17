@@ -14,10 +14,10 @@ from pyearth.system.define_global_variables import *
 
  
  
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 from pye3sm.elm.general.halfdegree.plot.elm_ts_analysis_plot_variable_halfdegree_domain import elm_ts_analysis_plot_variable_halfdegree_domain
 
 def h2sc_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in, \

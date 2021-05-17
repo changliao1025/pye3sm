@@ -1,5 +1,5 @@
 import os, datetime
-from pye3sm.elm.grid.create_clm_surface_data import create_elm_surface_data
+from pye3sm.elm.grid.create_elm_surface_data import create_elm_surface_data
 
 #the config only provide parameter so far
 sFilename_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/elm_sparse_grid.cfg'

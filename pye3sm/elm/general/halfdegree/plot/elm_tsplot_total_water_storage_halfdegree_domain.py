@@ -14,15 +14,8 @@ from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_dat
 from pyearth.visual.color.create_qualitative_rgb_color_hex import create_qualitative_rgb_color_hex
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 
-
- 
- 
-
-from ..shared.e3sm import pye3sm
-from ..shared.case import  pycase
-
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from ..shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 def elm_tsplot_total_water_storage_halfdegree_domain(oE3SM_in, \
                                                      oCase_in, \
                                                      dMax_y_in = None,\

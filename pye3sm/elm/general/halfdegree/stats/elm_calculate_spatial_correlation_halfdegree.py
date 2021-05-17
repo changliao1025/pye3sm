@@ -10,8 +10,8 @@ from pyearth.gis.envi.envi_write_header import envi_write_header
 from pyearth.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
 
  
-from ..shared import oE3SM
-from ..shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared import oE3SM
+from pye3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_calculate_spatial_correlation_halfdegree(sFilename_configuration_x_in,\
                                     sFilename_configuration_y_in, \

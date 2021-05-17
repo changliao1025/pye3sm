@@ -8,9 +8,9 @@ import glob
 
 from pyearth.system.define_global_variables import *
 
-from ..shared import oE3SM
+from pye3sm.shared import oE3SM
 
-from ..shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 
 

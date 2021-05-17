@@ -6,7 +6,7 @@ from netCDF4 import Dataset
 
 from pyearth.system.define_global_variables import *  
 from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file
-from ..shared import pye3sm
+from pye3sm.shared import pye3sm
 
 #prepare the header in
 pHeaderParameters = {}    

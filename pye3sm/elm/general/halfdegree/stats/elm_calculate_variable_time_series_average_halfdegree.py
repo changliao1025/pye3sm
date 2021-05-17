@@ -12,8 +12,8 @@ from pyearth.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_en
  
  
 
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 # we may be only interested in a subset of the time series
 

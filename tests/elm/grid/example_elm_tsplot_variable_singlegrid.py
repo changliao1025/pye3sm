@@ -6,11 +6,8 @@ import subprocess
 import numpy as np
 import multiprocessing
 
- 
 
 from pyearth.system.define_global_variables import *
-
- 
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase

@@ -2,47 +2,30 @@ import os, sys
 import numpy as np
 import datetime
  
-
 from pyearth.system.define_global_variables import *
 from pyearth.gis.envi.envi_write_header import envi_write_header
-from pyearth.gis.gdal.read.gdal_read_envi_file_multiple import gdal_read_envi_file_multiple
-from pyearth.visual.plot.plot_time_series_data_monthly import plot_time_series_data_monthly
+from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple
+from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
 
+def elm_tsplot_variable_halfdegree(oE3SM_in, \
+                                          oCase_in,\
+                                              iFlag_log_y_in=None,\
+                                          dMax_y_in = None,\
+                                          dMin_y_in = None,
+                                          dSpace_y_in = None,\
+                                          sLabel_x_in=None,\
+                                          sLabel_z_in = None,\
+                                          sTitle_in =None):
 
- 
+    
 
-from pye3sm.shared import oE3SM
-from pye3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+    sModel = oCase_in.sModel
+    sRegion = oCase_in.sRegion
+    iYear_start = oCase_in.iYear_start
+    iYear_end = oCase_in.iYear_end
 
-def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
-                                   iCase_index, \
-                                   iYear_start_in = None,\
-                                   iYear_end_in = None,\
-                                   iFlag_same_grid_in = None,\
-                                   sDate_in = None):
-
-    #extract information
-    e3sm_read_configuration_file(sFilename_configuration_in,\
-                                 iCase_index_in = iCase_index, \
-                                 iYear_start_in = iYear_start_in,\
-                                 iYear_end_in = iYear_end_in,\
-                                 sDate_in= sDate_in)
-
-    sModel = oE3SM.sModel
-    sRegion = oE3SM.sRegion
-    if iYear_start_in is not None:
-        iYear_start = iYear_start_in
-    else:
-        iYear_start = oE3SM.iYear_start
-    if iYear_end_in is not None:
-        iYear_end = iYear_end_in
-    else:
-        iYear_end = oE3SM.iYear_end
-
-    if iFlag_same_grid_in is not None:
-        iFlag_same_grid = iFlag_same_grid_in
-    else:
-        iFlag_same_grid = 0
+    iYear_subset_start = oCase_in.iYear_subset_start
+    iYear_subset_end = oCase_in.iYear_subset_end    
 
     print('The following model is processed: ', sModel)
     if (sModel == 'h2sc'):
@@ -53,11 +36,11 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
         else:
             pass
 
-    dConversion = oE3SM.dConversion
-    sVariable = oE3SM.sVariable.lower()
-    sCase = oE3SM.sCase
-    sWorkspace_simulation_case_run =oE3SM.sWorkspace_simulation_case_run
-    sWorkspace_analysis_case = oE3SM.sWorkspace_analysis_case
+    dConversion = oCase_in.dConversion
+    sVariable = oCase_in.sVariable
+    sCase = oCase_in.sCase
+    sWorkspace_simulation_case_run =oCase_in.sWorkspace_simulation_case_run
+    sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
     iFlag_optional = 1
 
@@ -111,7 +94,7 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
                 pass
             else:
 
-                plot_time_series_data_monthly(dates, aVariable,\
+                plot_time_series_data(dates, aVariable,\
                                               sFilename_out,\
                                               iReverse_Y_in = 1, \
                                               sTitle_in = '', \
@@ -123,5 +106,3 @@ def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
     print("finished")
 
 
-if __name__ == '__main__':
-    import argparse

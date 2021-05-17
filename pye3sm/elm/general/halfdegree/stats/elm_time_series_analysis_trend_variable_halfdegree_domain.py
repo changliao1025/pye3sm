@@ -13,8 +13,8 @@ from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multip
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 
  
-from ..shared.e3sm import pye3sm
-from ..shared.case import pycase
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
 
 def elm_time_series_analysis_trend_variable_halfdegree_domain(oE3SM_in,\
                                                     oCase_in):
