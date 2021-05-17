@@ -108,6 +108,13 @@ class pycase(object):
         if 'sLabel_y' in aParameter:
             self.sLabel_y               = aParameter[ 'sLabel_y']
 
+        if 'sWorkspace_data' in aParameter:
+            self.sWorkspace_data       = aParameter[ 'sWorkspace_data']
+
+
+        if 'sWorkspace_scratch' in aParameter:
+            self.sWorkspace_scratch       = aParameter[ 'sWorkspace_scratch']
+
         if 'sWorkspace_analysis' in aParameter:
             self.sWorkspace_analysis       = aParameter[ 'sWorkspace_analysis']
 

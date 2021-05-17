@@ -107,7 +107,7 @@
         The label of variable if needed
       </desc>
     </entry>
-    <entry id="sWorkspace_scratch" value="">
+    <entry id="sWorkspace_scratch" value="/compyfs/liao313/">
       <type>char</type>
       <desc>
         The workspace of scartch
