@@ -54,7 +54,7 @@ def e3sm_create_case(oE3SM_in, \
     sRunname = sSimname + slash + 'run'
 
     nYear = oCase_in.nyear
-    sYear =  "{:04d}".format(nYear)
+    sYear =  "{:0d}".format(nYear)
     sYear_start = "{:04d}".format(oCase_in.iYear_start)
     sYear_end = "{:04d}".format(oCase_in.iYear_end)
     sYear_data_start = "{:04d}".format(oCase_in.iYear_data_start)
@@ -63,15 +63,15 @@ def e3sm_create_case(oE3SM_in, \
     if (iFlag_short == 1 ):
         sQueue = 'short'
         sWalltime = '1:00:00'
-        sNode = '1'
-        sYear = '30'
+        sNtask = '1'
+        #sYear = '30'
         pass
 
     else:
         sQueue = 'slurm'
         sWalltime = '4:00:00'#sWalltime = '10:00:00'
-        sNode = '-40'
-        sYear = '30'
+        sNtask = '10'
+        #sYear = '30'
         pass
 
     if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit
@@ -136,7 +136,7 @@ def e3sm_create_case(oE3SM_in, \
 
         #env_mach_pes.xml: Sets component machine-specific processor layout (see changing pe layout ).
         #The settings in this are critical to a well-load-balanced simulation (see load balancing).
-        sCommand = sPython + ' ./xmlchange NTASKS=' + sNode + '\n'
+        sCommand = sPython + ' ./xmlchange NTASKS=' + sNtask + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
@@ -154,19 +154,26 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
 
-            sCommand = sPython + ' ./xmlchange REST_OPTION=nyears,REST_N=10' + '\n'
-            sCommand = sCommand.lstrip()
-            p = subprocess.Popen(sCommand, shell= True)
-            p.wait()
+            #sCommand = sPython + ' ./xmlchange REST_OPTION=nyears,REST_N=10' + '\n'
+            #sCommand = sCommand.lstrip()
+            #p = subprocess.Popen(sCommand, shell= True)
+            #p.wait()
 
             sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=' + sYear_data_start + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+
             sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_END=' + sYear_data_end + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+
+            sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + '1' + '\n'
+            sCommand = sCommand.lstrip()
+            p = subprocess.Popen(sCommand, shell= True)
+            p.wait()
+            
             pass
         else: ##branch run
             sCommand = sPython + ' ./xmlchange RUN_TYPE=branch' + '\n'
@@ -209,7 +216,23 @@ def e3sm_create_case(oE3SM_in, \
             p.wait()
             pass
 
+
+
         
+        sCommand = sPython + ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
+
+        sCommand = sPython + ' ./xmlchange -file env_run.xml -id DOUT_S             -val FALSE' + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
+
+        #sCommand = sPython + ' ./xmlchange -file env_run.xml -id INFO_DBUG          -val 2' + '\n'
+        #sCommand = sCommand.lstrip()
+        #p = subprocess.Popen(sCommand, shell= True)
+        #p.wait()
 
         sCommand = sPython + ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) + '\n'
         sCommand = sCommand.lstrip()
@@ -219,9 +242,7 @@ def e3sm_create_case(oE3SM_in, \
         sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_elm_domain) + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
-        p.wait()
-
-        
+        p.wait()        
 
         #get path
         sPath_atm_domain = os.path.dirname(sFilename_atm_domain)
@@ -252,13 +273,18 @@ def e3sm_create_case(oE3SM_in, \
         p.wait()
 
 
-        
+        sCommand = sPython + ' ./case.setup' + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
 
         if(iFlag_spinup==1):
             sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
+
+
 
         #Build and submit
         if (iFlag_debug == 1):
@@ -269,10 +295,7 @@ def e3sm_create_case(oE3SM_in, \
             p.wait()
             pass
             
-        sCommand = sPython + ' ./case.setup' + '\n'
-        sCommand = sCommand.lstrip()
-        p = subprocess.Popen(sCommand, shell= True)
-        p.wait()
+        
 
         sCommand = sPython + ' ./case.build' + '\n'
         sCommand = sCommand.lstrip()

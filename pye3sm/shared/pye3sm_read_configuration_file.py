@@ -127,6 +127,13 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         iCase_index = 0
 
+    if sModel_in is not None:
+        sModel = sModel_in
+    
+
+    if sRegion_in is not None:
+        sRegion = sRegion_in
+
     sCase_index = "{:03d}".format(iCase_index)
    
     config['iCase_index'] = "{:03d}".format(iCase_index)
@@ -176,12 +183,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         dConversion = 1.0
     
-    if sModel_in is not None:
-        sModel = sModel_in
     
-
-    if sRegion_in is not None:
-        sRegion = sRegion_in
 
     if sVariable_in is not None:
         sVariable = sVariable_in
@@ -215,6 +217,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     
     config['sVariable'] = sVariable.lower()
     config['sLabel_y'] = sLabel_y
+
+    sWorkspace_scratch = config['sWorkspace_scratch']
 
     sFilename_atm_domain= config['sFilename_atm_domain']
     sFilename_elm_domain= config['sFilename_elm_domain']

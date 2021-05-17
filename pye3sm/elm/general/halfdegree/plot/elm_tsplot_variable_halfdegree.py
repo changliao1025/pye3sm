@@ -1,8 +1,6 @@
 import os, sys
 import numpy as np
 import datetime
-
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
  
 
 from pyearth.system.define_global_variables import *
@@ -13,8 +11,8 @@ from pyearth.visual.plot.plot_time_series_data_monthly import plot_time_series_d
 
  
 
-from ..shared import oE3SM
-from ..shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared import oE3SM
+from pye3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
 def elm_tsplot_variable_halfdegree(sFilename_configuration_in,\
                                    iCase_index, \
