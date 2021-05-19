@@ -69,8 +69,8 @@ def e3sm_create_case(oE3SM_in, \
 
     else:
         sQueue = 'slurm'
-        sWalltime = '4:00:00'#sWalltime = '10:00:00'
-        sNtask = '10'
+        sWalltime = '20:00:00'#sWalltime = '10:00:00'
+        sNtask = '1'
         #sYear = '30'
         pass
 
