@@ -7,10 +7,12 @@ from pyearth.system.define_global_variables import *
 
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
 
-def elm_tsplot_variable_singlegrid(oE3SM_in, \
+def elm_tsplot_variable_ratio_singlegrid(oE3SM_in, \
                                                      oCase_in, \
-                                                         iFlag_scientific_notation_in=None,\
+                                                         sVariable_a,\
+                                                             sVariable_b,\
                                                           iFlag_log_y_in=None,\
+                                                              iFlag_scientific_notation_in=None,\
                                                                iReverse_y_in = None, \
                                                      dMax_y_in = None,\
                                                      dMin_y_in =None,\
@@ -40,10 +42,8 @@ def elm_tsplot_variable_singlegrid(oE3SM_in, \
     sCase = oCase_in.sCase
     sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
-    sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
-    if not os.path.exists(sWorkspace_analysis_case_variable):
-        os.makedirs(sWorkspace_analysis_case_variable)
-        pass
+    sWorkspace_analysis_case_tws = sWorkspace_analysis_case + slash + 'tws'
+    Path( sWorkspace_analysis_case_tws ).mkdir(parents=True, exist_ok=True)
 
     
     
@@ -66,7 +66,8 @@ def elm_tsplot_variable_singlegrid(oE3SM_in, \
     aDate_subset = aDate[subset_index]
     nstress_subset= len(aDate_subset)
 
-    aData_out = np.full(nstress_subset,missing_value, dtype=float)
+    aData_out_a = np.full(nstress_subset,missing_value, dtype=float)
+    aData_out_b = np.full(nstress_subset,missing_value, dtype=float)
     iStress=1
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
@@ -92,34 +93,46 @@ def elm_tsplot_variable_singlegrid(oE3SM_in, \
     
             #read the actual data
             for sKey, aValue in aDatasets.variables.items():
-                if sVariable == sKey.lower():
+                if sVariable_a == sKey.lower():
                     #for attrname in aValue.ncattrs():
                     #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
                     aData = (aValue[:]).data                     
                     #print(aData)
                     missing_value1 = np.max(aData)       
-                    aData_out[iStress-1]= aData
-                    iStress= iStress + 1
+                    aData_out_a[iStress-1]= aData
+                    
                     pass
                     
-                else:
+                if sVariable_b == sKey.lower():
+                    #for attrname in aValue.ncattrs():
+                    #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
+                    aData = (aValue[:]).data                     
+                    #print(aData)
+                    missing_value1 = np.max(aData)       
+                    aData_out_b[iStress-1]= aData
+                    
                     pass
+            
+            iStress= iStress + 1
     
-    sFilename_out = sWorkspace_analysis_case_variable + slash \
-                +  sVariable + '_tsplot' + sExtension_png
-    
-    aTime = np.array([aDate_subset])
-    aData = np.array([aData_out])
+    sFilename_out = sWorkspace_analysis_case_tws + slash \
+                +  sVariable_a + '_' + sVariable_b + '_tsplot' + sExtension_png
+    #aData_out = aData_out_a + aData_out_b
+
+    #nan_index = np.where( aData_out <0   )
+    #aData_out[nan_index] = missing_value
+    aTime = np.array([aDate_subset, aDate_subset])
+    aData = np.array([aData_out_a, aData_out_b])
     plot_time_series_data( aTime , aData,\
                                               sFilename_out,\
-                              iFlag_scientific_notation_in=iFlag_scientific_notation_in,\
                                               iReverse_y_in = iReverse_y_in, \
+                                                  iFlag_scientific_notation_in=iFlag_scientific_notation_in,\
                                               sTitle_in = sTitle_in, \
                                               sLabel_y_in= sLabel_y_in,\
                                                    dMax_y_in = dMax_y_in,\
                                                      dMin_y_in =dMin_y_in,\
-                                              aColor_in = ['blue'] ,\
-                                                  aLabel_legend_in=aLabel_legend_in,\
+                                                         aLabel_legend_in=aLabel_legend_in,\
+                                              aColor_in = ['blue', 'red'] ,\
                                               iSize_x_in = 12,\
                                               iSize_y_in = 5)
 

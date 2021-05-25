@@ -59,7 +59,19 @@
         The total years
       </desc>
     </entry>
+     <entry id="nsoillayer" value="15">
+      <type>int</type>
+      <desc>
+        The total soil layer
+      </desc>
+    </entry>
     <entry id="dConversion" value="1.0">
+      <type>float</type>
+      <desc>
+        The conversion factor of the variable
+      </desc>
+    </entry>
+    <entry id="dOffset" value="0.0">
       <type>float</type>
       <desc>
         The conversion factor of the variable

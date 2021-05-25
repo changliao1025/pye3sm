@@ -93,6 +93,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         iYear_subset_start_in = None, \
                                         iYear_subset_end_in = None, \
                                         dConversion_in = None, \
+                                            dOffset_in = None, \
                                         sDate_in = None,\
                                             sModel_in = None,\
                                                 sRegion_in = None,\
@@ -183,7 +184,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         dConversion = 1.0
     
-    
+   
+    if dOffset_in is not None:
+        dOffset = dOffset_in
+    else:
+        dOffset = 0.0
 
     if sVariable_in is not None:
         sVariable = sVariable_in
@@ -211,6 +216,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     nMonth = nYear  * 12
     config['nMonth']=  "{:04d}".format(nMonth)
     config['dConversion']=  "{:0f}".format(dConversion)
+    config['dOffset']=  "{:0f}".format(dOffset)
 
     config['sModel'] = sModel
     config['sRegion'] = sRegion
@@ -296,16 +302,12 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sFilename_elm_domain = sFilename_elm_domain_in
 
     if sFilename_mosart_domain_in is not None:
-        sFilename_mosart_domain = sFilename_mosart_domain_in
-    
-
-    
+        sFilename_mosart_domain = sFilename_mosart_domain_in    
     
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
-    if not os.path.isdir(sWorkspace_analysis):
-        os.makedirs(sWorkspace_analysis)
-
+    Path(sWorkspace_analysis).mkdir(parents=True, exist_ok=True)
+    
     config['sWorkspace_analysis'] = sWorkspace_analysis
 
     #case setting

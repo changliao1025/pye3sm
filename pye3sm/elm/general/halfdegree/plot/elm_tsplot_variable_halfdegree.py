@@ -14,7 +14,7 @@ def elm_tsplot_variable_halfdegree(oE3SM_in, \
                                           dMin_y_in = None,
                                           dSpace_y_in = None,\
                                           sLabel_x_in=None,\
-                                          sLabel_z_in = None,\
+                                              sLabel_y_in=None,\
                                           sTitle_in =None):
 
     
@@ -96,12 +96,12 @@ def elm_tsplot_variable_halfdegree(oE3SM_in, \
 
                 plot_time_series_data(dates, aVariable,\
                                               sFilename_out,\
-                                              iReverse_Y_in = 1, \
+                                              iReverse_y_in = 1, \
                                               sTitle_in = '', \
-                                              sLabel_Y_in= sLabel_Y,\
+                                              sLabel_y_in= sLabel_Y,\
                                               sLabel_legend_in = sLabel_legend, \
-                                              iSize_X_in = 12,\
-                                              iSize_Y_in = 5)
+                                              iSize_x_in = 12,\
+                                              iSize_y_in = 5)
 
     print("finished")
 

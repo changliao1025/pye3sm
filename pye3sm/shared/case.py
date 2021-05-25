@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from abc import ABCMeta, abstractmethod
 
 class pycase(object):
@@ -14,7 +16,9 @@ class pycase(object):
     iFlag_same_grid=1
     nyear=0
     nmonth=0
+    nsoillayer=15
     dConversion=1.0  
+    dOffset =0.0
     sDirectory_case=''
     sDirectory_run=''   
     sModel='h2sc'
@@ -81,8 +85,14 @@ class pycase(object):
         if 'nmonth' in aParameter:
             self.nmonth             = int(aParameter[ 'nmonth'])
 
+        if 'nsoillayer' in aParameter:
+            self.nsoillayer             = int(aParameter[ 'nsoillayer'])
+
         if 'dConversion' in aParameter:
             self.dConversion             = float(aParameter[ 'dConversion'])
+        
+        if 'dOffset' in aParameter:
+            self.dOffset             = float(aParameter[ 'dOffset'])
        
         if 'sDirectory_case' in aParameter:
             self.sDirectory_case = aParameter['sDirectory_case']
@@ -117,18 +127,23 @@ class pycase(object):
 
         if 'sWorkspace_analysis' in aParameter:
             self.sWorkspace_analysis       = aParameter[ 'sWorkspace_analysis']
+            Path( self.sWorkspace_analysis ).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_cases' in aParameter:
             self.sWorkspace_cases    = aParameter[ 'sWorkspace_cases']
+            Path( self.sWorkspace_cases ).mkdir(parents=True, exist_ok=True)
        
         if 'sWorkspace_case' in aParameter:
             self.sWorkspace_case = aParameter[ 'sWorkspace_case']
+            Path( self.sWorkspace_case ).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_simulation_case' in aParameter:
             self.sWorkspace_simulation_case= aParameter[ 'sWorkspace_simulation_case']
+            Path(self.sWorkspace_simulation_case).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_analysis_case' in aParameter:
             self.sWorkspace_analysis_case= aParameter[ 'sWorkspace_analysis_case']
+            Path( self.sWorkspace_analysis_case ).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_simulation_case_build' in aParameter:
             self.sWorkspace_simulation_case_build= aParameter[ 'sWorkspace_simulation_case_build']

@@ -5,7 +5,7 @@ import pandas as pd
 import datetime
 from jdcal import gcal2jd, jd2gcal
 import openpyxl
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
+
  
 from pyearth.system.define_global_variables import *
 from pyearth.toolbox.date.dt2cal import dt2cal
