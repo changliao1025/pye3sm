@@ -72,7 +72,7 @@ for i in np.arange(len(aResolution)):
     pLayer = pDataset.CreateLayer('flowdir', pSrs, ogr.wkbLineString)
     # Add one attribute
     pLayer.CreateField(ogr.FieldDefn('id', ogr.OFTInteger))
-    #pLayer.CreateField(ogr.FieldDefn('dAccu', ogr.OFTReal))
+    pLayer.CreateField(ogr.FieldDefn('dAccu', ogr.OFTReal))
 
     pLayerDefn = pLayer.GetLayerDefn()
     pFeature = ogr.Feature(pLayerDefn)
@@ -98,6 +98,7 @@ for i in np.arange(len(aResolution)):
                 print(x_start, y_start, x_end, y_end)
                 pFeature.SetGeometry(pLine)
                 pFeature.SetField("id", lID)
+                pFeature.SetField("dAccu", dAccu)
                 pLayer.CreateFeature(pFeature)
             else:
                 print(aDn_index)

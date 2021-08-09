@@ -187,20 +187,20 @@
         The mask file of mosart
       </desc>
     </entry>
-    <entry id="sFilename_elm_surface_data" value="">
+    <entry id="sFilename_elm_surfacedata" value="">
       <type>char</type>
       <desc>
         The mask file of mosart
       </desc>
     </entry>
   
-    <entry id="sFilename_mosart_mask" value="">
+    <entry id="sFilename_mosart_namelist" value="">
       <type>char</type>
       <desc>
         The mask file of mosart
       </desc>
     </entry>
-    <entry id="sFilename_mosart_domain" value="">
+    <entry id="sFilename_mosart_input" value="">
       <type>char</type>
       <desc>
         The mask file of mosart

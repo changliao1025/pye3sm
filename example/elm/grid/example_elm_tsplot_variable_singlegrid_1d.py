@@ -24,15 +24,14 @@ for i in range(16, 20,1):
     sModel = 'e3sm'
     sRegion='site'
     sVariable = 'soilliq'
-    sVariable = 'soilice'
+    #sVariable = 'soilice'
     #sVariable = 'tsoi'
-
 
     sLabel_y = r'Depth (m)'
     sLabel_legend=r'Soil temperature (k)'
     sLabel_colorbar=r'Soil temperature (c)'
-    sLabel_colorbar = r'Soil liqulid water (km/m2)'
-    sLabel_colorbar = r'Soil ice water (km/m2)'
+    sLabel_colorbar = r'Soil liqulid water (kg/m2)'
+    #sLabel_colorbar = r'Soil ice water (kg/m2)'
     iReverse_y=1
     dMin_y=0
     #dMax_y=10

@@ -38,9 +38,10 @@ def e3sm_create_case(oE3SM_in, \
     sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
 
     sFilename_elm_namelist = oCase_in.sFilename_elm_namelist
+    sFilename_mosart_namelist = oCase_in.sFilename_mosart_namelist
 
     sFilename_elm_domain = oCase_in.sFilename_elm_domain
-    sFilename_elm_surface_data = oCase_in.sFilename_elm_surface_data
+    sFilename_elm_surfacedata = oCase_in.sFilename_elm_surfacedata
 
     
 
@@ -70,7 +71,7 @@ def e3sm_create_case(oE3SM_in, \
     else:
         sQueue = 'slurm'
         sWalltime = '20:00:00'#sWalltime = '10:00:00'
-        sNtask = '1'
+        sNtask = '-2'
         #sYear = '30'
         pass
 
@@ -257,26 +258,23 @@ def e3sm_create_case(oE3SM_in, \
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
 
-        
-
-
-        #copy namelist
-        #the mosart will be constant
-        #sCommand = 'cp ../user_nl_mosart ./user_nl_mosart' + '\n'
-        #sCommand = sCommand.lstrip()
-        #p = subprocess.Popen(sCommand, shell= True)
-        #p.wait()
-        #we will generate clm name list in real time
-        sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
-        sCommand = sCommand.lstrip()
-        p = subprocess.Popen(sCommand, shell= True)
-        p.wait()
-
-
         sCommand = sPython + ' ./case.setup' + '\n'
         sCommand = sCommand.lstrip()
         p = subprocess.Popen(sCommand, shell= True)
         p.wait()
+
+
+        #copy namelist
+        #the mosart will be constant
+        sCommand = 'cp ' +  sFilename_mosart_namelist + ' ./user_nl_mosart' + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()
+        #we will generate clm name list in real time
+        sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
+        sCommand = sCommand.lstrip()
+        p = subprocess.Popen(sCommand, shell= True)
+        p.wait()        
 
         if(iFlag_spinup==1):
             sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'

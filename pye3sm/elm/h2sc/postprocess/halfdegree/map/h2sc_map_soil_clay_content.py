@@ -43,9 +43,9 @@ def h2sc_map_soil_clay_content(sFilename_configuration_in, iCase_index):
         os.makedirs(sWorkspace_analysis_case)
     
     #read in global 0.5 * 0.5 mask
-    sFilename_mosart_mask = oE3SM.sFilename_mosart_mask
+    sFilename_mosart_input = oE3SM.sFilename_mosart_input
 
-    aDatasets = Dataset(sFilename_mosart_mask)
+    aDatasets = Dataset(sFilename_mosart_input)
     netcdf_format = aDatasets.file_format
     print(netcdf_format)
     print("Print dimensions:")

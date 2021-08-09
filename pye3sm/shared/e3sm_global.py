@@ -23,7 +23,7 @@ global nmonth
 global sRegion
 global dConversion
 global sVariable
-global sFilename_mosart_mask
+global sFilename_mosart_input
 
 global sWorkspace_analysis
 global sWorkspace_cases

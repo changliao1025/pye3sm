@@ -103,7 +103,7 @@ def elm_tsplot_variable_singlegrid_1d(oE3SM_in, \
     #data = aData_out
 
     aSoilthickness=  np.array([  0.0175128188,\
-        0.0275789686,\
+                        0.0275789686,\
                         0.0454700328, \
                         0.0749674141, \
                         0.123600364,  \

@@ -101,10 +101,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         sVariable_in = None, \
                                         sFilename_elm_namelist_in = None,\
                                         sFilename_datm_namelist_in = None, \
-                                        sFilename_mosart_mask_in = None,\
+                                     sFilename_mosart_namelist_in = None,\
                                             sFilename_atm_domain_in = None,
                                             sFilename_elm_domain_in=None,\
-                                                sFilename_mosart_domain_in=None,
+                                                sFilename_mosart_input_in=None,
                                         sWorkspace_data_in = None,\
                                         sWorkspace_scratch_in=None):
     #read the default configuration
@@ -228,7 +228,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     sFilename_atm_domain= config['sFilename_atm_domain']
     sFilename_elm_domain= config['sFilename_elm_domain']
-    sFilename_mosart_domain= config['sFilename_mosart_domain']
+
+    sFilename_mosart_namelist= config['sFilename_mosart_namelist']
+    sFilename_mosart_input= config['sFilename_mosart_input']
 
     
     if sWorkspace_data_in is not None:
@@ -281,15 +283,15 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
             print('A default datm namelist was not found, it may be created.' )
 
     #update mask if region changes
-    if sFilename_mosart_mask_in is not None:
-        sFilename_mosart_mask = sFilename_mosart_mask_in
+    if sFilename_mosart_input_in is not None:
+        sFilename_mosart_input = sFilename_mosart_input_in
     else:
-        sFilename_mosart_mask = sWorkspace_data + slash \
+        sFilename_mosart_input = sWorkspace_data + slash \
             + sModel + slash + sRegion + slash \
             + 'raster' + slash + 'dem' + slash \
             + 'MOSART_Global_half_20180606c.chang_9999.nc'
-        if os.path.exists(sFilename_mosart_mask):
-            sLine = 'A default MOSART mask was found at: ' + sFilename_mosart_mask + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+        if os.path.exists(sFilename_mosart_input):
+            sLine = 'A default MOSART mask was found at: ' + sFilename_mosart_input + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
             print(sLine)
         else:
             print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
@@ -301,8 +303,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     if sFilename_elm_domain_in is not None:
         sFilename_elm_domain = sFilename_elm_domain_in
 
-    if sFilename_mosart_domain_in is not None:
-        sFilename_mosart_domain = sFilename_mosart_domain_in    
+    if sFilename_mosart_namelist_in is not None:
+        sFilename_mosart_namelist = sFilename_mosart_namelist_in    
     
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
@@ -333,9 +335,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sFilename_elm_namelist'] = sFilename_clm_namelist
     config['sFilename_elm_domain'] = sFilename_elm_domain
 
-    config['sFilename_mosart_mask'] = sFilename_mosart_mask 
+    config['sFilename_mosart_namelist'] = sFilename_mosart_namelist 
     
-    config['sFilename_mosart_domain'] = sFilename_mosart_domain
+    config['sFilename_mosart_input'] = sFilename_mosart_input
     return config
 
 if __name__ == '__main__':

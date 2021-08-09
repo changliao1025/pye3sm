@@ -41,11 +41,11 @@ class pycase(object):
 
     #elm    
     sFilename_elm_namelist=''    
-    sFilename_elm_surface_data=''
+    sFilename_elm_surfacedata=''
     sFilename_elm_domain=''
     #mosart
-    sFilename_mosart_mask=''
-    sFilename_mosart_domain=''
+    sFilename_mosart_namelist=''
+    sFilename_mosart_input=''
     
 
     def __init__(self, aParameter):
@@ -166,14 +166,19 @@ class pycase(object):
         if 'sFilename_elm_domain' in aParameter:
             self.sFilename_elm_domain      = aParameter[ 'sFilename_elm_domain']
 
+        
+
+        if 'sFilename_elm_surfacedata' in aParameter:
+            self.sFilename_elm_surfacedata      = aParameter[ 'sFilename_elm_surfacedata']
+        #mosart
+
         if 'sFilename_mosart_domain' in aParameter:
             self.sFilename_mosart_domain      = aParameter[ 'sFilename_mosart_domain']
-
-        if 'sFilename_elm_surface_data' in aParameter:
-            self.sFilename_elm_surface_data      = aParameter[ 'sFilename_elm_surface_data']
-        #mosart
-        if 'sFilename_mosart_mask' in aParameter:
-            self.sFilename_mosart_mask               = aParameter[ 'sFilename_mosart_mask']
+        if 'sFilename_mosart_namelist' in aParameter:
+            self.sFilename_mosart_namelist               = aParameter[ 'sFilename_mosart_namelist']
+        
+        if 'sFilename_mosart_input' in aParameter:
+            self.sFilename_mosart_input               = aParameter[ 'sFilename_mosart_input']
 
         
 

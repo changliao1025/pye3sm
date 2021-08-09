@@ -1,22 +1,11 @@
 import os
 import sys
 #we will use datetime and julian package to operate date and time
-import datetime
-import julian
-import platform  
 
 import numpy as np
 
 
-
-
-
-
-sPath_current = os.path.dirname(os.path.abspath(__file__))
-sPath_package = sPath_current + slash + '..'  +  slash + '..'
-sys.path.append(sPath_package)
-
-from e3sm.elm.grid import global_variable
+from pye3sm.elm.grid import global_variable
 
 
 from e3sm.elm.grid.global_variable import *

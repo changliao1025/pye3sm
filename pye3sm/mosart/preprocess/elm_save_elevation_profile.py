@@ -54,10 +54,10 @@ if not os.path.exists(sWorkspace_analysis_case):
 
 
 #read in global 0.5 * 0.5 mask
-sFilename_mosart_mask = sWorkspace_data + slash \
+sFilename_mosart_input = sWorkspace_data + slash \
     + 'h2sc' + slash + 'raster' + slash + 'dem' + slash \
     + 'MOSART_Global_half_20180606c.chang_9999.nc'
-aDatasets = Dataset(sFilename_mosart_mask)
+aDatasets = Dataset(sFilename_mosart_input)
 netcdf_format = aDatasets.file_format
 print(netcdf_format)
 print("Print dimensions:")
@@ -108,7 +108,7 @@ iMonth_start = 2
 iMonth_end = 12
 
 #read in mask
-aDatasets = Dataset(sFilename_mosart_mask)
+aDatasets = Dataset(sFilename_mosart_input)
 netcdf_format = aDatasets.file_format
 print(netcdf_format)
 print("Print dimensions:")
