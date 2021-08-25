@@ -17,7 +17,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 sModel = 'e3sm'
-sRegion ='amazon'
+sRegion ='site'
 iCase = 1
 
 dHydraulic_anisotropy = 1.0
@@ -37,20 +37,12 @@ iFlag_short = 0 #do you run it on short queue
 iFlag_continue = 0 #is this a continue run
 iFlag_resubmit = 0 #is this a resubmit
 
-
-sDate = '20210108'
-sDate = '20201214'#test default
-sDate = '20210127'
-sDate = '20210209'
-#sDate = '20201215'
-#sDate = '20201218'
-sDate = '20210504'
-sDate = '20210527'
+iFlag_mosart =0
 
 
-sDate_spinup = '20210126'
+sDate = '20210807'
+
 sDate_spinup = '20210209'
-
 
 sWorkspace_scratch = '/compyfs/liao313'
 
@@ -91,7 +83,7 @@ aLat =[-2.6, -11.0,46, 66.0]
 
 ngrid = len(aLon)
 for i in range(1):
-    iCase = i +3
+    iCase = 7
     sCase = sModel + sDate + "{:03d}".format(iCase)
 
     sFilename_lon_lat_in = sWorkspace_region + sCase +'.txt'
@@ -121,27 +113,24 @@ for i in range(1):
         + sRegion + slash \
         + 'cases' + slash + 'user_nl_datm_' + sCase
 
-    #sFilename_surface_data_out = sWorkspace_region + '/surfdata_' + sCase + '.nc'
-    #sFilename_elm_domain_file_out = sWorkspace_region +  '/domain_' + sCase + '.nc'
+    sFilename_surface_data_out = sWorkspace_region + '/surfdata_' + sCase + '.nc'
+    sFilename_elm_domain_file_out = sWorkspace_region +  '/domain_' + sCase + '.nc'
+    create_elm_surface_data( sFilename_configuration, \
+                             sFilename_lon_lat_in, \
+                                 sFilename_surface_data_default,\
+                             sFilename_domain_file_default,\
+                             sFilename_surface_data_out,
+                             sFilename_elm_domain_file_out)
 
-    #create_elm_surface_data( sFilename_configuration, \
-    #                         sFilename_lon_lat_in, \
-    #                         #sFilename_vertex_lon_in, \
-    #                         #sFilename_vertex_lat_in, \
-    #                            sFilename_surface_data_default,\
-    #                         sFilename_domain_file_default,\
-    #                         sFilename_surface_data_out,
-    #                         sFilename_elm_domain_file_out)
-
-    sFilename_surfacedata_out = '/qfs/people/liao313/data/e3sm/amazon/elm/surfdata_amazon_half_c210526.nc'
-    sFilename_elm_domain_out = '/qfs/people/liao313/data/e3sm/amazon/elm/domain_lnd_amazon_half_c210526.nc'
+    #sFilename_surfacedata_out = '/qfs/people/liao313/data/e3sm/amazon/elm/surfdata_amazon_half_c210526.nc'
+    #sFilename_elm_domain_out = '/qfs/people/liao313/data/e3sm/amazon/elm/domain_lnd_amazon_half_c210526.nc'
     sFilename_mosart_input = '/qfs/people/liao313/data/e3sm/amazon/mosart/MOSART_amazon_half_c210526.nc'
 
     if (iFlag_initial !=1):
         #normal case,
         ofs = open(sFilename_elm_namelist, 'w')
         sCommand_out = "fsurdat = " + "'" \
-            + sFilename_surfacedata_out  + "'" + '\n'
+            + sFilename_surface_data_out  + "'" + '\n'
         ofs.write(sCommand_out)
         if (iFlag_default ==1 ):
             pass
@@ -157,7 +146,7 @@ for i in range(1):
     else:
         ofs = open(sFilename_elm_namelist, 'w')
         sCommand_out = "fsurdat = " + "'" \
-            + sFilename_surfacedata_out + "'" + '\n'
+            + sFilename_surface_data_out + "'" + '\n'
         ofs.write(sCommand_out)
         if (iFlag_default ==1 ):
             pass
@@ -174,18 +163,20 @@ for i in range(1):
         sLine = "finidat = " + "'"+ sFilename_initial +"'" + '\n'
         ofs.write(sLine)
         ofs.close()
-        #mosart
-        
-    ofs = open(sFilename_mosart_namelist, 'w')
-    #sLine = 'rtmhist_nhtfrq=0' + '\n'
-    #ofs.write(sLine)
-    sLine = 'frivinp_rtm = ' + "'" + sFilename_mosart_input + "'" + '\n'
-    ofs.write(sLine)
-    #sLine = 'rtmhist_fincl1= "area"' + '\n'
-    #ofs.write(sLine)
-    ofs.close()
 
-    if (iFlag_spinup ==1):
+    #mosart
+
+    if iFlag_mosart ==1:        
+        ofs = open(sFilename_mosart_namelist, 'w')
+        #sLine = 'rtmhist_nhtfrq=0' + '\n'
+        #ofs.write(sLine)
+        sLine = 'frivinp_rtm = ' + "'" + sFilename_mosart_input + "'" + '\n'
+        ofs.write(sLine)
+        #sLine = 'rtmhist_fincl1= "area"' + '\n'
+        #ofs.write(sLine)
+        ofs.close()
+
+    if iFlag_spinup ==1:
         #this is a case for spin up
         ofs = open(sFilename_datm_namelist, 'w')
         sLine = 'taxmode = "cycle", "cycle", "cycle"' + '\n'
@@ -201,7 +192,7 @@ for i in range(1):
 
     res='ELM_USRDAT'
     #res='r05_r05'
-    res = 'ELMMOS_USRDAT'
+    #res = 'ELMMOS_USRDAT'
     compset = 'IELM'
     
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
@@ -225,16 +216,17 @@ for i in range(1):
                                                               sDate_in = sDate, \
                                                               sModel_in = sModel,\
                                                               sRegion_in = sRegion,\
-                                                              sFilename_atm_domain_in=  sFilename_elm_domain_out,\
+                                                              sFilename_atm_domain_in=  sFilename_elm_domain_file_out,\
                                                               sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
                                                               sFilename_elm_namelist_in =   sFilename_elm_namelist, \
-                                                              sFilename_elm_domain_in=sFilename_elm_domain_out, \
+                                                              sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
                                                                   sFilename_mosart_input_in = sFilename_mosart_input, \
                                                               sWorkspace_scratch_in =   sWorkspace_scratch)
         pass
     else:
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                               iFlag_spinup_in = iFlag_spinup,\
+                                                                  iFlag_mosart_in= iFlag_mosart,\
                                                               iYear_start_in = 1980, \
                                                               iYear_end_in = 2010,\
                                                               iYear_data_end_in = 2010, \
@@ -243,10 +235,10 @@ for i in range(1):
                                                               sDate_in = sDate, \
                                                               sModel_in = sModel,\
                                                               sRegion_in = sRegion,\
-                                                              sFilename_atm_domain_in=  sFilename_elm_domain_out,\
+                                                              sFilename_atm_domain_in=  sFilename_elm_domain_file_out,\
                                                               sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
                                                               sFilename_elm_namelist_in =   sFilename_elm_namelist, \
-                                                              sFilename_elm_domain_in=sFilename_elm_domain_out, \
+                                                              sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
                                                                   sFilename_mosart_namelist_in = sFilename_mosart_namelist, \
                                                                   sFilename_mosart_input_in = sFilename_mosart_input, \
                                                               sWorkspace_scratch_in =   sWorkspace_scratch )

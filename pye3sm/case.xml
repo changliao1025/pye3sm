@@ -10,6 +10,24 @@
         Is this a spinup case simulation
       </desc>
     </entry>
+     <entry id="iFlag_elm" value="1">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+     <entry id="iFlag_mosart" value="0">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+     <entry id="iFlag_atm" value="0">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
     <entry id="iCase_index" value="0">
       <type>int</type>
       <desc>

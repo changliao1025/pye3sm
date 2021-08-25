@@ -8,8 +8,6 @@ sFilename_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/el
 sPath = os.path.dirname(os.path.realpath(__file__))
 
 sFilename_lon_lat_in = sPath + '/lon_lat.txt'
-#sFilename_vertex_lon_in = 'lon_lat.txt'
-#sFilename_vertex_lat_in = 'lon_lat.txt'
 
 dLongitude =	285.137151
 dLatitude =  39.167610
@@ -42,8 +40,6 @@ sFilename_domain_file_out = sPath +  '/domain_'+sDate_default + '.nc'
 
 create_elm_surface_data( sFilename_configuration, \
         sFilename_lon_lat_in, \
-        #sFilename_vertex_lon_in, \
-        #sFilename_vertex_lat_in, \
         sFilename_surface_data_in,\
             sFilename_domain_file_in,\
                 sFilename_surface_data_out,

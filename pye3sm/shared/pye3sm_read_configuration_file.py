@@ -85,6 +85,9 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         iFlag_spinup_in = None, \
                                         iFlag_same_grid_in= None,\
+                                            iFlag_elm_in =None,\
+                                                iFlag_mosart_in = None,\
+                                            iFlag_atm_in= None,\
                                         iCase_index_in = None, \
                                         iYear_start_in = None,\
                                         iYear_end_in = None, \
@@ -117,6 +120,21 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         iFlag_spinup = iFlag_spinup_in
     else:
         iFlag_spinup = 0
+    
+    if iFlag_elm_in is not None:
+        iFlag_elm = iFlag_elm_in
+    else:
+        iFlag_elm = 1
+
+    if iFlag_mosart_in is not None:
+        iFlag_mosart = iFlag_mosart_in
+    else:
+        iFlag_mosart = 0
+
+    if iFlag_atm_in is not None:
+        iFlag_atm = iFlag_atm_in
+    else:
+        iFlag_atm = 0
 
     if sDate_in is not None:
         sDate = sDate_in

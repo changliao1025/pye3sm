@@ -4,8 +4,12 @@ from abc import ABCMeta, abstractmethod
 
 class pycase(object):
     __metaclass__ = ABCMeta   
-
+    iFlag_debug = 0
     iFlag_spinup=0
+    iFlag_elm = 1
+    iFlag_mosart = 0 
+    iFlag_atm = 0
+    iFlag_ocn =0 
     iCase_index=0
     iYear_start=0
     iYear_end=0
@@ -53,10 +57,20 @@ class pycase(object):
         #self.aParameter = aParameter
 
         #required with default variables
-
+        if 'iFlag_debug' in aParameter:
+            self.iFlag_debug             = int(aParameter[ 'iFlag_debug'])
         #optional
         if 'iFlag_spinup' in aParameter:
             self.iFlag_spinup             = int(aParameter[ 'iFlag_spinup'])
+        
+        if 'iFlag_elm' in aParameter:
+            self.iFlag_elm             = int(aParameter[ 'iFlag_elm'])
+
+        if 'iFlag_mosart' in aParameter:
+            self.iFlag_mosart            = int(aParameter[ 'iFlag_mosart'])
+
+        if 'iFlag_atm' in aParameter:
+            self.iFlag_atm             = int(aParameter[ 'iFlag_atm'])
 
         if 'iCase_index' in aParameter:
             self.iCase_index             = int(aParameter[ 'iCase_index'])
