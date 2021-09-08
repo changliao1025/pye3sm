@@ -38,6 +38,7 @@ iFlag_continue = 0 #is this a continue run
 iFlag_resubmit = 0 #is this a resubmit
 
 iFlag_mosart =0
+iFlag_elm=1
 
 
 sDate = '20210807'
@@ -191,9 +192,11 @@ for i in range(1):
     sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
 
     res='ELM_USRDAT'
+    res='ELMMOS_USRDAT'
     #res='r05_r05'
     #res = 'ELMMOS_USRDAT'
     compset = 'IELM'
+    COMPSET='IELM45'
     
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
                                                           iFlag_debug_in = iFlag_debug, \
@@ -226,6 +229,7 @@ for i in range(1):
     else:
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                               iFlag_spinup_in = iFlag_spinup,\
+                                                                   iFlag_elm_in= iFlag_elm,\
                                                                   iFlag_mosart_in= iFlag_mosart,\
                                                               iYear_start_in = 1980, \
                                                               iYear_end_in = 2010,\

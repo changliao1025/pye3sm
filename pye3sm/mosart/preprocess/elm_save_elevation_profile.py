@@ -8,11 +8,6 @@ from pathlib import Path #get the home directory
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal #the default operator
 
-
-
-sPath_library_python = sWorkspace_code +  slash + 'python' + slash + 'library' + slash + 'pyes_python'
-print(sPath_library_python)
-sys.path.append(sPath_library_python)
 from envi.envi_write_header import envi_write_header
 
 missing_value = -9999.0 #used to save binary
