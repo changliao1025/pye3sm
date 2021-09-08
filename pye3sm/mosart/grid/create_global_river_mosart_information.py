@@ -67,7 +67,7 @@ def create_global_river_mosart_information(sFilename_csv, sFilename_out):
             dummy_index3 = dummy_index[0][dummy_index2]
             dummy_index4 = dummy_index[1][dummy_index2]
             lID  = aID[ dummy_index3, dummy_index4]
-            print(sRiver, max_accu/1.0E6, dDraiange, int(lID[0])
+            print(sRiver, max_accu/1.0E6, dDraiange, int(lID[0]))
             
             #print(aAccu[ dummy_index3, dummy_index4])
             aRiver[i][6] = "{:0d}".format(int(lID[0]))
