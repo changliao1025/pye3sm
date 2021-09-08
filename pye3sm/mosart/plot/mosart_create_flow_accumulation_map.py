@@ -63,7 +63,14 @@ def mosart_create_flow_accumulation_map(sFilename_netcdf, sFilename_shapefile_ou
     pLayerDefn = pLayer.GetLayerDefn()
     pFeature = ogr.Feature(pLayerDefn)
 
+    aID=np.ravel(aID)
+    aDnID=np.ravel(aDnID)
+    aAccu=np.ravel(aAccu)
+    aLongitude=np.ravel(aLongitude)
+    aLatitude=np.ravel(aLatitude)
     nPoint = len(aID)
+
+
     for i in np.arange(0, nPoint, 1):
 
         lID = aID[i]
