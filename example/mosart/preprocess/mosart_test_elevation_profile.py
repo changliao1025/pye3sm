@@ -25,7 +25,6 @@ for sLine in ifs:
             dElevation11 = float(sDummy[2] )
 
         
-        
         lIndex = lIndex + 1
     else:
         pass   

@@ -9,8 +9,8 @@ from netCDF4 import Dataset
 def create_elm_surface_data( sFilename_configuration, \
         sFilename_lon_lat_in, \
         sFilename_surface_data_in,\
-            sFilename_domain_file_in,\
-                sFilename_surface_data_out,
+        sFilename_domain_file_in,\
+        sFilename_surface_data_out,
         sFilename_domain_file_out):
 
 
