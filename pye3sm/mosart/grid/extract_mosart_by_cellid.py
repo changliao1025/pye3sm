@@ -28,41 +28,126 @@ def extract_mosart_by_cellid(sFilenamae_mosart_in, filename_netcdf_out, aCellID_
             aDnID = (aValue[:]).data            
            
         if "ID" == sKey:
-            aID = (aValue[:]).data            
+            aID = (aValue[:]).data  
 
-    #aID=np.ravel(aID)
-    #aDnID=np.ravel(aDnID)
-    ncell = aID.size
-    ncell_extract = len(aCellID_in)
-    aIndex=list()
-    for i in range(ncell_extract):
-        lCellID = aCellID_in[i]
-        dummy_index = np.where( aID == lCellID)
-        aIndex.append(dummy_index)
+    #check it is 1d or 2d       
+    # 
+    aShape = aID.shape
+    iDimension = len(aShape)
+    if iDimension ==1:
+        iFlag_1d =1
+    else:
+        nrow_original = aShape[0]
+        ncolumn_original = aShape[1]
+        iFlag_1d = 0
+    iFlag_1d =0 
 
-    dummy_row_index = aIndex[0]
-    dummy_column_index = aIndex[1]
-    min_row = np.min(dummy_row_index)
-    max_row = np.max(dummy_row_index)
-    min_column = np.min(dummy_column_index)
-    max_column = np.max(dummy_column_index)
+    if iFlag_1d ==1:
+        aID=np.ravel(aID)
+        aDnID=np.ravel(aDnID)
+        ncell = aID.size
+        ncell_extract = len(aCellID_in)
+        aIndex=list()
+        for i in range(ncell_extract):
+            lCellID = aCellID_in[i]
+            dummy_index = np.where( aID == lCellID)
+            aIndex.append(dummy_index)
+        pass
 
-    nrow = max_row - min_row + 1
-    ncolumn = max_column - min_column + 1
+        datasets_out.createDimension('ncell', ncell_extract )
+    else:
+        #2d case
+        ncell_extract = len(aCellID_in)
+        
+        aIndex_row=list()
+        aIndex_column=list()
+        for i in range(ncell_extract):
+            lCellID = aCellID_in[i]
+            
 
-
-
-    if ('lat' in pDimension) & ('lon' in pDimension) :
-        #this should be a 2d
+            dummy_row_index, dummy_column_index  = np.where( aID == lCellID)
+            aIndex_row.append(dummy_row_index[0])
+            aIndex_column.append(dummy_column_index[0])
+        
+        
+        min_row = np.min(aIndex_row)
+        max_row = np.max(aIndex_row)
+        min_column = np.min(aIndex_column)
+        max_column = np.max(aIndex_column)
+    
+        nrow = max_row - min_row + 1
+        ncolumn = max_column - min_column + 1
+        
         datasets_out.createDimension('lon', ncolumn )
         datasets_out.createDimension('lat', nrow )
 
+        #now extract variables
+        #get     
+        missing_value = -9999
+        for sKey, aValue in aDatasets.variables.items():    
 
-        pass
-    else:
-        #this is a 1d domain
-        datasets_out.createDimension('ncell', ncell_extract )
-        pass
+            aDimenion_value = aValue.shape 
+            if len(aDimenion_value) ==1:
+                outVar = datasets_out.createVariable(sKey, aValue.datatype, aValue.dimensions)
+                aData = (aValue[:]).data
+                iFlag_missing_vale=0
+                for sAttribute in aValue.ncattrs():                
+                    if( sAttribute.lower() =='_fillvalue' ):
+                        missing_value0 = aValue.getncattr(sAttribute)                    
+                        outVar.setncatts( { '_FillValue': missing_value } )                        
+                        iFlag_missing_vale = 1
+                    else:                                        
+                        outVar.setncatts( { sAttribute: aValue.getncattr(sAttribute) } )
+
+                if iFlag_missing_vale ==1:
+                    dummy_index = np.where(  aData == missing_value0 ) 
+                    aData[dummy_index] = missing_value    
+
+                if sKey.lower() == 'lat':
+                    aData0 = np.full( nrow_original, missing_value, dtype= aValue.datatype)
+                    aData0[aIndex_row] = aData[aIndex_row]
+                    #extract
+                    outVar[:] = aData0[ min_row:max_row+1 ]                    
+
+                if sKey.lower() == 'lon':
+                    aData0 = np.full( ncolumn_original, missing_value, dtype= aValue.datatype)
+                    aData0[aIndex_column] = aData[aIndex_column]
+                    outVar[:] = aData0[min_column:max_column+1 ]      
+                
+                pass
+            else:
+                if len(aDimenion_value) == 2:
+                    #id or 2d      
+                    outVar = datasets_out.createVariable(sKey, aValue.datatype, ('lat','lon'))
+                    aData = (aValue[:]).data
+                    iFlag_missing_vale=0
+                    for sAttribute in aValue.ncattrs():                
+                        if( sAttribute.lower() =='_fillvalue' ):
+                            missing_value0 = aValue.getncattr(sAttribute)                    
+                            outVar.setncatts( { '_FillValue': missing_value } )                        
+                            iFlag_missing_vale = 1
+                        else:                                        
+                            outVar.setncatts( { sAttribute: aValue.getncattr(sAttribute) } )
+
+                    outVar.setncatts( { '_FillValue': missing_value } ) 
+
+                    if iFlag_missing_vale ==1:
+                        dummy_index = np.where(  aData == missing_value0 ) 
+                        aData[dummy_index] = missing_value        
+
+                    aData0 = np.full( (nrow_original, ncolumn_original), missing_value, dtype= aValue.datatype)
+
+                    aData0[aIndex_row, aIndex_column] = aData[aIndex_row, aIndex_column]
+
+                    #extract
+                    outVar[:] = aData0[ min_row:max_row+1 , min_column:max_column+1 ]
+                else:
+                    #3d array are skiped
+                    pass
+    
+    #close the dataset
+    datasets_out.close()
+
 
     
 

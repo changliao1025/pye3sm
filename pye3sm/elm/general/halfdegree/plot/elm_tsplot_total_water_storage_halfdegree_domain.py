@@ -5,7 +5,6 @@ import datetime
 import calendar
 import scipy.ndimage as ndimage
 
-
 from pyearth.system.define_global_variables import *
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
