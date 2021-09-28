@@ -19,4 +19,4 @@ def create_customized_mosart_domain(sFilenamae_mosart_in, sFilename_netcdf_out, 
 
 
 
-    return
+    return sFilename_netcdf_out
