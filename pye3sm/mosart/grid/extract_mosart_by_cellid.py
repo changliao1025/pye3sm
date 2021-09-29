@@ -40,7 +40,7 @@ def extract_mosart_by_cellid(sFilenamae_mosart_in, filename_netcdf_out, aCellID_
         nrow_original = aShape[0]
         ncolumn_original = aShape[1]
         iFlag_1d = 0
-    iFlag_1d =0 
+    
 
     if iFlag_1d ==1:
         aID=np.ravel(aID)

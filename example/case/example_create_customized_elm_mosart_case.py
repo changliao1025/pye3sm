@@ -1,14 +1,14 @@
 import os, sys, stat
 from pathlib import Path
-import argparse
-import subprocess
+
 import numpy as np
 import datetime
+from shutil import copyfile
 from pyearth.system.define_global_variables import *
 from pyearth.gis.location.convert_lat_lon_range import convert_180_to_360
 
 
-from pye3sm.elm.grid.create_elm_surface_data import create_elm_surface_data
+from pye3sm.elm.grid.elm_create_surface_data import elm_create_surface_data
 
 from pye3sm.case.e3sm_create_case import e3sm_create_case
 from pye3sm.shared.e3sm import pye3sm
@@ -16,9 +16,26 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 from pye3sm.mosart.grid.create_customized_mosart_domain import create_customized_mosart_domain
+
+from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 sModel = 'e3sm'
+#sRegion ='site'
 sRegion ='amazon'
-iCase = 1
+iCase = 12
+iFlag_mosart =1
+iFlag_elm=1
+iFlag_elmmosart =1
+
+if iFlag_elmmosart == 1:
+    res='ELMMOS_USRDAT'
+    compset = 'IELM'
+else:
+    if iFlag_mosart ==1:
+        pass
+    else:    
+        res='ELM_USRDAT'      
+        compset = 'IELM'
+
 
 dHydraulic_anisotropy = 1.0
 sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
@@ -33,105 +50,126 @@ iFlag_short = 0 #do you run it on short queue
 iFlag_continue = 0 #is this a continue run
 iFlag_resubmit = 0 #is this a resubmit
 
-iFlag_mosart =0
-iFlag_elm=1
+
 
 
 sDate = '20210928'
-#sDate_spinup = '20210209'
+sDate_spinup = '20210209'
 
 sWorkspace_scratch = '/compyfs/liao313'
 
 #prepare a ELM namelist based on your input
 sWorkspace_region = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
     + 'cases'
+
+sWorkspace_region1 = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
+    + 'cases_aux'
 if not os.path.exists(sWorkspace_region):
     Path(sWorkspace_region).mkdir(parents=True, exist_ok=True)
 
-
+if not os.path.exists(sWorkspace_region1):
+    Path(sWorkspace_region1).mkdir(parents=True, exist_ok=True)
 
 sFilename_surface_data_default='/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc'
-sFilename_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
+sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
 
 
 #'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
+iFlag_create_mosart_grid = 0
 
-#generate mosart first then use the mosart lat/lon information for elm
-
-sFilename_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
-    
-lCellID_outlet_in=128418
-
-sFilename_netcdf_out = '/qfs/people/liao313/data/e3sm/mosart/amazon/mosart_half_degree.nc'
-
-create_customized_mosart_domain(sFilename_netcdf,sFilename_netcdf_out, lCellID_outlet_in)
-
+iFlag_create_elm_grid = 1
+iFlag_create_case = 1 
+iFlag_submit_case = 0
 
 sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/elm_sparse_grid.cfg'
 
 #for a single grid case, we can create this file on the fly
 sPath = os.path.dirname(os.path.realpath(__file__))
-
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
-
 sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(1)
-
 sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
         + sCase_spinup + '/run/' \
         + sCase_spinup +  '.elm2.rh0.1979-01-01-00000.nc'
 
-dLongitude = -74.86284899999998
-dLatitude =  39.16761
-#aLon aLat should be used for a list of location
 
-aLon =[-60.2, -66.5,-119,-147.0]
-aLat =[-2.6, -11.0,46, 66.0]
+sCase_date = sDate + "{:03d}".format(iCase)
+sCase = sModel + sDate + "{:03d}".format(iCase)
 
-ngrid = len(aLon)
-for i in range(1):
-    iCase = 7
-    sCase = sModel + sDate + "{:03d}".format(iCase)
+sWorkspace_region2 = sWorkspace_region1 + slash + sCase
+if not os.path.exists(sWorkspace_region2):
+    Path(sWorkspace_region2).mkdir(parents=True, exist_ok=True)
 
-    sFilename_lon_lat_in = sWorkspace_region + sCase +'.txt'
-    ofs = open(sFilename_lon_lat_in, 'w')
+#generate mosart first then use the mosart lat/lon information for elm
+sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
+
+lCellID_outlet_in=128418
+
+sFilename_mosart_netcdf_out = '/qfs/people/liao313/data/e3sm/mosart/amazon/mosart_half_degree.nc'
+
+if iFlag_create_mosart_grid ==1: 
+
+    sFilename_mosart_netcdf_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '.nc'
     
-    sGrid =  "{:0d}".format( 1)
+
+    create_customized_mosart_domain(sFilename_mosart_netcdf,sFilename_mosart_netcdf_out, lCellID_outlet_in)
+
+
+sFilename_mosart_input = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
+
+if not os.path.exists(sFilename_mosart_input):    
+    copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_input)
+
+
+if iFlag_create_elm_grid ==1:
+    aLon, aLat = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
+
+    aLon0=np.ravel(aLon)
+    aLat0=np.ravel(aLat)
+    dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
+
+    aLon = aLon0[dummy_index]
+    aLat = aLat0[dummy_index]
+
+    ngrid = len(aLon)
+
+    sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+    ofs = open(sFilename_lon_lat_in, 'w')
+    sGrid =  "{:0d}".format( ngrid )
     sLine = sGrid + '\n'
     ofs.write(sLine)
-    dLatitude = aLat[i]
-    dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
-    sLine = "{:0f}".format( dLatitude) + ' ' + "{:0f}".format( dLongitude) + '\n'
-    ofs.write(sLine)
+
+
+
+    for i in range(ngrid):
+        dLatitude = aLat[i]
+        dLongitude = aLon[i]
+        #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
+        sLine = "{:0f}".format( dLatitude) + ' ' + "{:0f}".format( dLongitude) + '\n'
+        ofs.write(sLine)
+
     ofs.close()
 
-    sFilename_elm_namelist = sWorkspace_scratch + slash \
-        + '04model'    + slash + sModel + slash + \
-            sRegion + slash \
-     + 'cases' + slash + 'user_nl_elm_' + sCase
 
-    sFilename_mosart_namelist = sWorkspace_scratch + slash \
-                + '04model' + slash + sModel + slash \
-                + sRegion + slash \
-                + 'cases' + slash + 'user_nl_rtm_' + sCase
+if iFlag_create_case ==1:
+
+    sFilename_elm_namelist = sWorkspace_region2 + slash + 'user_nl_elm_' + sCase_date
+
+    sFilename_mosart_namelist = sWorkspace_region2 + slash + 'user_nl_rtm_' + sCase_date
     
-    sFilename_datm_namelist = sWorkspace_scratch + slash \
-        + '04model' + slash + sModel + slash \
-        + sRegion + slash \
-        + 'cases' + slash + 'user_nl_datm_' + sCase
+    sFilename_datm_namelist = sWorkspace_region2 + slash + 'user_nl_datm_' + sCase_date
 
-    sFilename_surface_data_out = sWorkspace_region + '/surfdata_' + sCase + '.nc'
-    sFilename_elm_domain_file_out = sWorkspace_region +  '/domain_' + sCase + '.nc'
-    create_elm_surface_data( sFilename_configuration, \
+    sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '.nc'
+    sFilename_elm_domain_file_out = sWorkspace_region2 + slash +  'elm_domain_' + sCase_date + '.nc'
+
+    elm_create_surface_data( sFilename_configuration, \
                              sFilename_lon_lat_in, \
-                                 sFilename_surface_data_default,\
-                             sFilename_domain_file_default,\
+                             sFilename_surface_data_default,\
+                             sFilename_elm_domain_file_default,\
                              sFilename_surface_data_out,
                              sFilename_elm_domain_file_out)
 
-    #sFilename_surfacedata_out = '/qfs/people/liao313/data/e3sm/amazon/elm/surfdata_amazon_half_c210526.nc'
-    #sFilename_elm_domain_out = '/qfs/people/liao313/data/e3sm/amazon/elm/domain_lnd_amazon_half_c210526.nc'
-    sFilename_mosart_input = '/qfs/people/liao313/data/e3sm/amazon/mosart/MOSART_amazon_half_c210526.nc'
+    
 
     if (iFlag_initial !=1):
         #normal case,
@@ -197,13 +235,7 @@ for i in range(1):
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
     sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
 
-    res='ELM_USRDAT'
-    res='ELMMOS_USRDAT'
-    #res='r05_r05'
-    #res = 'ELMMOS_USRDAT'
-    compset = 'IELM'
-    COMPSET='IELM45'
-    
+
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
                                                           iFlag_debug_in = iFlag_debug, \
                                                           iFlag_branch_in = iFlag_branch,\
@@ -229,14 +261,14 @@ for i in range(1):
                                                               sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
                                                               sFilename_elm_namelist_in =   sFilename_elm_namelist, \
                                                               sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
-                                                                  sFilename_mosart_input_in = sFilename_mosart_input, \
+                                                              sFilename_mosart_input_in = sFilename_mosart_input, \
                                                               sWorkspace_scratch_in =   sWorkspace_scratch)
         pass
     else:
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                               iFlag_spinup_in = iFlag_spinup,\
-                                                                   iFlag_elm_in= iFlag_elm,\
-                                                                  iFlag_mosart_in= iFlag_mosart,\
+                                                              iFlag_elm_in= iFlag_elm,\
+                                                              iFlag_mosart_in= iFlag_mosart,\
                                                               iYear_start_in = 1980, \
                                                               iYear_end_in = 2010,\
                                                               iYear_data_end_in = 2010, \
@@ -249,8 +281,8 @@ for i in range(1):
                                                               sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
                                                               sFilename_elm_namelist_in =   sFilename_elm_namelist, \
                                                               sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
-                                                                  sFilename_mosart_namelist_in = sFilename_mosart_namelist, \
-                                                                  sFilename_mosart_input_in = sFilename_mosart_input, \
+                                                              sFilename_mosart_namelist_in = sFilename_mosart_namelist, \
+                                                              sFilename_mosart_input_in = sFilename_mosart_input, \
                                                               sWorkspace_scratch_in =   sWorkspace_scratch )
         pass
         #print(aParameter_case)

@@ -136,6 +136,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         iFlag_atm = 0
 
+    
+
     if sDate_in is not None:
         sDate = sDate_in
     else:
@@ -218,6 +220,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sLabel_y = sLabel_y_in
     else:
         sLabel_y = ''
+
+    config['iFlag_elm'] =  "{:01d}".format(iFlag_elm)
+    config['iFlag_mosart'] =  "{:01d}".format(iFlag_mosart)
 
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
