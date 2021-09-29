@@ -51,7 +51,7 @@ def e3sm_create_case(oE3SM_in, \
 
     #GIT_HASH=`git log -n 1 --format=%h`
 
-    sCasename = sDirectory_case  + sCase
+    sCasename = sDirectory_case + slash + sCase
     sJobname = sModel + sCase
     print(sCasename)
     sSimname = sDirectory_run + slash  + sCase
@@ -521,5 +521,11 @@ def e3sm_create_case(oE3SM_in, \
         ofs.write(sLine)
         ofs.close()
         os.chmod(sFilename_bash, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
+
+
+        #change directory
+        os.chdir(sDirectory_case)
+        sCommand = './' + sCase + '.sh'
+        p = subprocess.Popen(sCommand, shell= True)
 
     print('Finished case: ' + sCasename)
