@@ -338,10 +338,13 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     #case setting
     sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash \
         + sRegion + '/cases/'
+    sDirectory_case_aux = sWorkspace_scratch + '/04model/' + sModel + slash \
+        + sRegion + '/cases_aux/'
     config['sWorkspace_cases'] = sDirectory_case
     sDirectory_run = sWorkspace_scratch +  slash +'e3sm_scratch'
 
     config['sDirectory_case'] = sDirectory_case
+    config['sDirectory_case_aux'] = sDirectory_case_aux
     config['sDirectory_run'] = sDirectory_run
 
     config['sWorkspace_case'] = sDirectory_case + slash + sCase

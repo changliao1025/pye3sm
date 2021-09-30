@@ -24,6 +24,7 @@ class pycase(object):
     dConversion=1.0  
     dOffset =0.0
     sDirectory_case=''
+    sDirectory_case_aux=''
     sDirectory_run=''   
     sModel='h2sc'
     sRegion='global'
@@ -110,6 +111,10 @@ class pycase(object):
        
         if 'sDirectory_case' in aParameter:
             self.sDirectory_case = aParameter['sDirectory_case']
+
+        if 'sDirectory_case_aux' in aParameter:
+            self.sDirectory_case_aux = aParameter['sDirectory_case_aux']
+            
 
         if 'sDirectory_run' in aParameter:
             self.sDirectory_run       = aParameter[ 'sDirectory_run' ]
