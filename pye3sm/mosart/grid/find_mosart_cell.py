@@ -33,10 +33,7 @@ def find_mosart_cell( sFilenamae_mosart_in, lCellID_outlet_in ):
           
         if "area" == sKey:
             aArea = (aValue[:]).data            
-   
 
-    
-    
     #find the id of the 
     aID_basin = list()
 

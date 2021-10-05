@@ -53,7 +53,7 @@ iFlag_resubmit = 0 #is this a resubmit
 
 
 
-sDate = '20210928'
+sDate = '20211005'
 sDate_spinup = '20210209'
 
 sWorkspace_scratch = '/compyfs/liao313'

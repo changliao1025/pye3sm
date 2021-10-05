@@ -1,21 +1,37 @@
 import os
+import numpy as np
 from pye3sm.mosart.grid.find_mosart_cell import find_mosart_cell
 
 from pye3sm.mosart.grid.extract_mosart_by_cellid import extract_mosart_by_cellid
 
 def create_customized_mosart_domain(sFilenamae_mosart_in, sFilename_netcdf_out, lCellID_outlet_in):
 
+    iFlag_save =0
+    iFlag_reload = 1
 
-    aCell_basin, aCell_basin_w_ocean_buffer = find_mosart_cell(sFilenamae_mosart_in, lCellID_outlet_in)
+    if iFlag_reload ==0:
+        aCell_basin, aCell_basin_w_ocean_buffer = find_mosart_cell(sFilenamae_mosart_in, lCellID_outlet_in)
+    
 
     
+    #save it to reduce rerun
+    sFilename_cellid = '/qfs/people/liao313/data/e3sm/mosart/amazon/mosart_half_degree.txt'
+    if iFlag_save ==1:
+        
+
+        np.savetxt(sFilename_cellid, aCell_basin, delimiter=",")
+    else:
+        pass
+
+    if iFlag_reload ==1:
+        aCell_basin = np.loadtxt(sFilename_cellid)
 
     extract_mosart_by_cellid(sFilenamae_mosart_in, sFilename_netcdf_out, aCell_basin)
 
-    sFilename = os.path.splitext(sFilename_netcdf_out)[0]
-    filename_netcdf_ocean_out = sFilename + '_w_ocean_buffer.nc'
+    #sFilename = os.path.splitext(sFilename_netcdf_out)[0]
+    #filename_netcdf_ocean_out = sFilename + '_w_ocean_buffer.nc'
 
-    extract_mosart_by_cellid(sFilenamae_mosart_in, filename_netcdf_ocean_out, aCell_basin_w_ocean_buffer)
+    #extract_mosart_by_cellid(sFilenamae_mosart_in, #filename_netcdf_ocean_out, aCell_basin_w_ocean_buffer)
 
 
 
