@@ -63,11 +63,15 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
         
         aIndex_row=list()
         aIndex_column=list()
+        aIndex_1d=list()
         for i in range(ncell_extract):
             lCellID = aCellID_in[i]        
             dummy_row_index, dummy_column_index  = np.where( aID == lCellID)
             aIndex_row.append(dummy_row_index[0])
             aIndex_column.append(dummy_column_index[0])
+            aIndex_1d.append( dummy_row_index[0] * ncolumn_original + dummy_column_index[0] )
+
+        
         
         
         min_row = np.min(aIndex_row)
@@ -171,85 +175,80 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
             for sKey, aValue in aDatasets.variables.items():            
                 aDimenion_value = aValue.shape 
                 if len(aDimenion_value) ==1:
-                    outVar = datasets_out.createVariable(sKey, aValue.datatype, ('ngridcell'))
-                    aData = (aValue[:]).data
-                    iFlag_missing_vale=0
-                    for sAttribute in aValue.ncattrs():                
-                        if( sAttribute.lower() =='_fillvalue' ):
-                            missing_value0 = aValue.getncattr(sAttribute)                    
-                            outVar.setncatts( { '_FillValue': missing_value } )                        
-                            iFlag_missing_vale = 1
-                        else:                                        
-                            outVar.setncatts( { sAttribute: aValue.getncattr(sAttribute) } )        
-                    if iFlag_missing_vale ==1:
-                        dummy_index = np.where(  aData == missing_value0 ) 
-                        aData[dummy_index] = missing_value          
-                    if sKey.lower() == 'lat':
-                        aData0 = np.full( nrow_original, missing_value, dtype= aValue.datatype)
-                        aData0[aIndex_row] = aData[aIndex_row]
-                        #extract
-                        outVar[:] = aData0[ min_row:max_row+1 ]                         
-                    if sKey.lower() == 'lon':
-                        aData0 = np.full( ncolumn_original, missing_value, dtype= aValue.datatype)
-                        aData0[aIndex_column] = aData[aIndex_column]
-                        outVar[:] = aData0[min_column:max_column+1 ]      
+                    #save later     
 
                     pass
                 else:
                     if len(aDimenion_value) == 2:
-                        #id or 2d      
-                        outVar = datasets_out.createVariable(sKey, aValue.datatype, ('ngridcell'))
-                        aData = (aValue[:]).data
-                        iFlag_missing_vale=0
-                        for sAttribute in aValue.ncattrs():                
-                            if( sAttribute.lower() =='_fillvalue' ):
-                                missing_value0 = aValue.getncattr(sAttribute)                    
-                                outVar.setncatts( { '_FillValue': missing_value } )                        
-                                iFlag_missing_vale = 1
-                            else:                                        
-                                outVar.setncatts( { sAttribute: aValue.getncattr(sAttribute) } )        
-                        outVar.setncatts( { '_FillValue': missing_value } )         
-                        if iFlag_missing_vale ==1:
-                            dummy_index = np.where(  aData == missing_value0 ) 
-                            aData[dummy_index] = missing_value              
-                        aData0 = np.full( (nrow_original, ncolumn_original), missing_value, dtype= aValue.datatype)     
-                        aData0[aIndex_row, aIndex_column] = aData[aIndex_row, aIndex_column]        
-                        #extract
-                        aData1= aData0[ min_row:max_row+1 , min_column:max_column+1 ]       
-                        outVar[:]  = aData1[np.where(aData1 != missing_value)]
-
-
                         if sKey == 'ID':
-                            aData0 = np.full( ncell_extract, missing_value, dtype= aValue.datatype)
+                            aData_id = np.full( (nrow, ncolumn), missing_value, dtype= aValue.datatype)
                             kk = 1
-                            for ii in range(ncell_extract):
-                                aData0[ii] = kk
-                                kk = kk + 1
+                            for ii in range(nrow):
+                                for jj in range(ncolumn):
+                                    dummy_index = (ii+min_row) * ncolumn_original + jj+min_column
+                                    if( dummy_index in  aIndex_1d):
+                                        aData_id[ii, jj] = kk
+                                        kk = kk + 1
+                                    else:
+                                        pass
 
-                            outVar[:] = aData0
-
-                        if sKey == 'dnID':
-                            aData0 = np.full( (nrow, ncolumn), missing_value, dtype= aValue.datatype)
-                            for ii in range(ncell_extract):
-                                lCellID = aCellID_in[ii]
-                                dummy_index = np.where( aID == lCellID)
-                                dummy_index0 = convert_index_between_array(nrow_original, ncolumn_original, dummy_index, nrow, ncolumn, min_row, min_column)
-                                dnID=aDnID[dummy_index]
-                                if dnID == -9999:
-                                
-                                    aData0[dummy_index0[0],dummy_index0[1]]= -9999
-
-                                else:
-                                    dummy_index1 = np.where( aID == dnID)
-                                    dummy_index2 = convert_index_between_array(nrow_original, ncolumn_original, dummy_index1, nrow, ncolumn, min_row, min_column)
-                                    kk = (dummy_index2[0]) * ncolumn + dummy_index2[1] + 1
-                                    #print(dummy_index0, kk)        
-                                    aData0[dummy_index0[0],dummy_index0[1]]= kk
-
-                            outVar[:] = aData0      
+                        else:
+                            if sKey == 'dnID':
+                                pass
+                            else: #others
+                                outVar = datasets_out.createVariable(sKey, aValue.datatype, ('ngridcell'))
+                                aData = (aValue[:]).data
+                                iFlag_missing_vale=0
+                                for sAttribute in aValue.ncattrs():                
+                                    if( sAttribute.lower() =='_fillvalue' ):
+                                        missing_value0 = aValue.getncattr(sAttribute)                    
+                                        outVar.setncatts( { '_FillValue': missing_value } )                        
+                                        iFlag_missing_vale = 1
+                                    else:                                        
+                                        outVar.setncatts( { sAttribute: aValue.getncattr(sAttribute) } )        
+                                outVar.setncatts( { '_FillValue': missing_value } )         
+                                if iFlag_missing_vale ==1:
+                                    dummy_index = np.where(  aData == missing_value0 ) 
+                                    aData[dummy_index] = missing_value              
+                                aData0 = np.full( (nrow_original, ncolumn_original), missing_value, dtype= aValue.datatype)     
+                                aData0[aIndex_row, aIndex_column] = aData[aIndex_row, aIndex_column]        
+                                #extract
+                                aData1= aData0[ min_row:max_row+1 , min_column:max_column+1 ]       
+                                outVar[:]  = aData1[np.where(aData1 != missing_value)]    
                     else:
                         #3d array are skiped
                         pass
+            
+            #now 
+            outVar = datasets_out.createVariable('ID', aValue.datatype, ('ngridcell'))
+            aID2 = aData_id[np.where(aData_id != missing_value)]
+            aID2=np.ravel(aID2)
+            outVar[:] = aID2
+
+            outVar = datasets_out.createVariable('dnID', aValue.datatype, ('ngridcell'))
+
+            aData_dnid = np.full( (nrow, ncolumn), missing_value, dtype= aValue.datatype)
+
+            for ii in range(nrow):
+                for jj in range(ncolumn): 
+                    dummy_index = (ii+min_row) * ncolumn_original + jj+min_column
+                    if( dummy_index in  aIndex_1d):  
+                        #find dnid
+                        dnid = aDnID[(ii+min_row), jj+min_column ]
+                        
+                        if dnid == missing_value:
+                            aData_dnid[ii,jj] =-1
+                            pass
+                        else:
+                            dummy_index = np.where(aID==dnid)
+
+                            aData_dnid[ii,jj] = aData_id[ dummy_index[0]-min_row, dummy_index[1]-min_column]
+                        
+
+                        pass 
+            aDnid2  = aData_dnid[np.where(aData_dnid != missing_value)]
+            outVar[:]  = np.ravel(aDnid2)
+
 
 
     #close the dataset
