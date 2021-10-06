@@ -171,7 +171,7 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
     
         else:
             #we change 2d to 1d 
-            datasets_out.createDimension('ngridcell', ncell_extract )
+            datasets_out.createDimension('gridcell', ncell_extract )
             for sKey, aValue in aDatasets.variables.items():            
                 aDimenion_value = aValue.shape 
                 if len(aDimenion_value) ==1:
@@ -196,7 +196,7 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
                             if sKey == 'dnID':
                                 pass
                             else: #others
-                                outVar = datasets_out.createVariable(sKey, aValue.datatype, ('ngridcell'))
+                                outVar = datasets_out.createVariable(sKey, aValue.datatype, ('gridcell'))
                                 aData = (aValue[:]).data
                                 iFlag_missing_vale=0
                                 for sAttribute in aValue.ncattrs():                
@@ -214,18 +214,27 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
                                 aData0[aIndex_row, aIndex_column] = aData[aIndex_row, aIndex_column]        
                                 #extract
                                 aData1= aData0[ min_row:max_row+1 , min_column:max_column+1 ]       
-                                outVar[:]  = aData1[np.where(aData1 != missing_value)]    
+                                outVar[:]  = aData1[np.where(aData1 != missing_value)]   
+
+                                if sKey == 'latixy':
+                                    aLat_out = aData1[np.where(aData1 != missing_value)] 
+
+                                    pass
+                                
+                                if sKey == 'longxy':
+                                    aLon_out = aData1[np.where(aData1 != missing_value)] 
+                                    pass
                     else:
                         #3d array are skiped
                         pass
             
             #now 
-            outVar = datasets_out.createVariable('ID', aValue.datatype, ('ngridcell'))
+            outVar = datasets_out.createVariable('ID', aValue.datatype, ('gridcell'))
             aID2 = aData_id[np.where(aData_id != missing_value)]
             aID2=np.ravel(aID2)
             outVar[:] = aID2
 
-            outVar = datasets_out.createVariable('dnID', aValue.datatype, ('ngridcell'))
+            outVar = datasets_out.createVariable('dnID', aValue.datatype, ('gridcell'))
 
             aData_dnid = np.full( (nrow, ncolumn), missing_value, dtype= aValue.datatype)
 
@@ -247,7 +256,14 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
 
                         pass 
             aDnid2  = aData_dnid[np.where(aData_dnid != missing_value)]
+            aDnid2[np.where(aDnid2==-1)] = missing_value
             outVar[:]  = np.ravel(aDnid2)
+
+            #lat and lon
+            outVar = datasets_out.createVariable('lat', aValue.datatype, ('gridcell'))            
+            outVar[:] = aLat_out
+            outVar = datasets_out.createVariable('lon', aValue.datatype, ('gridcell'))            
+            outVar[:] = aLon_out
 
 
 

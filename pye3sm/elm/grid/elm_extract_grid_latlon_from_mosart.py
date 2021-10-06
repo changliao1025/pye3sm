@@ -40,6 +40,7 @@ def elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_in):
     iDimension = len(aShape)
     if iDimension ==1:
         iFlag_1d =1
+
     else:
         nrow_original = aShape[0]
         ncolumn_original = aShape[1]
@@ -47,7 +48,9 @@ def elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_in):
     
 
     if iFlag_1d == 1:
-        pass
+        aLat = aLatixy
+        aLon = aLongxy
+       
     else:
         #there are also missing value
         #we can export them in 2d as well

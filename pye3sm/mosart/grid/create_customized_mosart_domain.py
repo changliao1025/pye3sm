@@ -15,7 +15,7 @@ def create_customized_mosart_domain(sFilenamae_mosart_in, sFilename_netcdf_out, 
 
     
     #save it to reduce rerun
-    sFilename_cellid = '/qfs/people/liao313/data/e3sm/mosart/amazon/mosart_half_degree.txt'
+    sFilename_cellid = '/qfs/people/liao313/data/e3sm/amazon/mosart/mosart_half_degree.txt'
     if iFlag_save ==1:
         
 

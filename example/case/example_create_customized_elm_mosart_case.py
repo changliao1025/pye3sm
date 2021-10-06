@@ -21,7 +21,7 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iCase = 2
+iCase = 5
 iFlag_mosart =1
 iFlag_elm=1
 iFlag_elmmosart =1
@@ -76,7 +76,6 @@ sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r
 
 #'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
 iFlag_create_mosart_grid = 1
-
 iFlag_create_elm_grid = 1
 iFlag_create_case = 1 
 iFlag_submit_case = 0
@@ -105,7 +104,7 @@ sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_2021
 
 lCellID_outlet_in=128418
 
-sFilename_mosart_netcdf_out = '/qfs/people/liao313/data/e3sm/mosart/amazon/mosart_half_degree.nc'
+sFilename_mosart_netcdf_out = '/qfs/people/liao313/data/e3sm/amazon/mosart/mosart_half_degree.nc'
 
 if iFlag_create_mosart_grid ==1: 
 
