@@ -21,7 +21,7 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iCase = 26
+iCase = 2
 iFlag_mosart =1
 iFlag_elm=1
 iFlag_elmmosart =1
@@ -75,7 +75,7 @@ sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r
 
 
 #'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
-iFlag_create_mosart_grid = 0
+iFlag_create_mosart_grid = 1
 
 iFlag_create_elm_grid = 1
 iFlag_create_case = 1 
@@ -110,10 +110,7 @@ sFilename_mosart_netcdf_out = '/qfs/people/liao313/data/e3sm/mosart/amazon/mosar
 if iFlag_create_mosart_grid ==1: 
 
     sFilename_mosart_netcdf_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '.nc'
-    
-
     create_customized_mosart_domain(sFilename_mosart_netcdf,sFilename_mosart_netcdf_out, lCellID_outlet_in)
-
 
 sFilename_mosart_input = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
 

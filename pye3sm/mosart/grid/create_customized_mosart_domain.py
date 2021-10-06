@@ -25,8 +25,8 @@ def create_customized_mosart_domain(sFilenamae_mosart_in, sFilename_netcdf_out, 
 
     if iFlag_reload ==1:
         aCell_basin = np.loadtxt(sFilename_cellid)
-
-    extract_mosart_by_cellid(sFilenamae_mosart_in, sFilename_netcdf_out, aCell_basin)
+    iFlag_2d_to_1d = 1
+    extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilename_netcdf_out, aCell_basin)
 
     #sFilename = os.path.splitext(sFilename_netcdf_out)[0]
     #filename_netcdf_ocean_out = sFilename + '_w_ocean_buffer.nc'
