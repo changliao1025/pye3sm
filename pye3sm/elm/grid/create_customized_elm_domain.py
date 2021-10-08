@@ -6,40 +6,41 @@ from scipy.io import netcdf
 import getpass
 from netCDF4 import Dataset
 
-def elm_create_surface_data( sFilename_configuration, \
-        sFilename_lon_lat_in, \
+def create_customized_elm_domain( aLon, aLat, dLon, dLat, \
+        sFilename_configuration, \
         sFilename_surface_data_in,\
         sFilename_domain_file_in,\
         sFilename_surface_data_out,
         sFilename_domain_file_out):
 
-
+    aShape = aLon.shape
+    iDimension = len(aShape)
+    if iDimension ==1:
+        iFlag_1d = 1
+    else:
+        iFlag_1d = 0
 
     print('1) Reading configuration file')
-    #print( os.getcwd())
 
-    #print(os.path.dirname(os.path.realpath(__file__)))
-    #path = os.path.dirname(os.path.realpath(__file__))
-    #os.chdir(path)
-    #cfg        = ReadConfigurationFile('./icom_1x1_sparse_grid.cfg')
-    cfg        = ReadConfigurationFile(sFilename_configuration)
+    cfg = ReadConfigurationFile(sFilename_configuration)
 
     print('2) Reading latitude/longitude @ cell centroid')
-    #lat, lon   = ReadLatLon(cfg['site_latlon_filename'])
-    lat, lon   = ReadLatLon(sFilename_lon_lat_in)
+   
+   
     print('3) Computing latitude/longitude @ cell vertex')
-    latv, lonv = ComputeLatLonAtVertex(lat, \
-        lon, cfg['dlat'], cfg['dlon'])
+    aLatV, aLonV = ComputeLatLonAtVertex(iFlag_1d, \
+        aLon,aLat, \
+         dLon, dLat)
 
     print('4) Creating CLM surface dataset')
-    fsurdat    = CreateCLMUgridSurfdatForCLM45(lat, lon, \
+    fsurdat    = CreateCLMUgridSurfdatForCLM45(iFlag_1d, aLon, aLat, \
                     sFilename_surface_data_in, \
                     sFilename_surface_data_out, \
                     cfg['set_natural_veg_frac_to_one'])
                     
     print('5) Creating CLM domain')
-    fdomain    = CreateCLMUgridDomainForCLM45(lat, lon, \
-                    latv, lonv,\
+    fdomain    = CreateCLMUgridDomainForCLM45(iFlag_1d, aLat, aLon, \
+                    aLatV, aLonV,\
                          sFilename_domain_file_in, \
                    sFilename_domain_file_out)
 
@@ -48,11 +49,11 @@ def elm_create_surface_data( sFilename_configuration, \
 def ReadConfigurationFile(fname):
     # Initialization
     cfg = {'site_latlon_filename':'', \
-           'clm_gridded_surfdata_filename':'', \
-           'clm_gridded_domain_filename':'', \
+           'sFilename_surface_data_in':'', \
+           'sFilename_domain_file_in':'', \
            'clm_usrdat_name':'', \
-           'dlat':[0], \
-           'dlon':[0], \
+           'dLat':[0], \
+           'dLon':[0], \
            'lon_min':[-999], \
            'lon_max':[-999], \
            'set_natural_veg_frac_to_one': [0], \
@@ -66,16 +67,16 @@ def ReadConfigurationFile(fname):
                 s = line.split()
                 if 'site_latlon_filename' in line.lower():
                     cfg['site_latlon_filename'] = s[1]
-                elif 'clm_gridded_surfdata_filename' in line.lower():
-                    cfg['clm_gridded_surfdata_filename'] = s[1]
-                elif 'clm_gridded_domain_filename' in line.lower():
-                    cfg['clm_gridded_domain_filename'] = s[1]
+                elif 'sFilename_surface_data_in' in line.lower():
+                    cfg['sFilename_surface_data_in'] = s[1]
+                elif 'sFilename_domain_file_in' in line.lower():
+                    cfg['sFilename_domain_file_in'] = s[1]
                 elif 'clm_usrdat_name' in line.lower():
                     cfg['clm_usrdat_name'] = s[1]
-                elif 'dlat' in line.lower():
-                    cfg['dlat'] = float(s[1])
-                elif 'dlon' in line.lower():
-                    cfg['dlon'] = float(s[1])
+                elif 'dLat' in line.lower():
+                    cfg['dLat'] = float(s[1])
+                elif 'dLon' in line.lower():
+                    cfg['dLon'] = float(s[1])
                 elif 'lon_min' in line.lower():
                     cfg['lon_min'] = float(s[1])
                 elif 'lon_max' in line.lower():
@@ -101,10 +102,10 @@ def ReadLatLon(fname):
     fname = fname.strip()
     tmp_str = fname.split('.')
     if tmp_str[1] == 'txt':
-        lat, lon = ReadLatLonFromTxt(fname)
+        aLat, aLon = ReadLatLonFromTxt(fname)
     else:
-        raise NameError('Unsupported format to read site level lat/lon')
-    return lat, lon
+        raise NameError('Unsupported format to read site level aLat/aLon')
+    return aLat, aLon
 def ReadLatLonFromTxt(fname):
 
     with open(fname) as fid:
@@ -113,12 +114,12 @@ def ReadLatLonFromTxt(fname):
         while line:
             if cnt == 0:
                 num_of_sites = int(line)
-                lat  = np.empty((num_of_sites,))
-                lon  = np.empty((num_of_sites,))
+                aLat  = np.empty((num_of_sites,))
+                aLon  = np.empty((num_of_sites,))
             else:
                 ss = line.split()
-                lat[cnt-1] = float(ss[0])
-                lon[cnt-1] = float(ss[1])
+                aLat[cnt-1] = float(ss[0])
+                aLon[cnt-1] = float(ss[1])
 
             line = fid.readline()
             cnt = cnt + 1
@@ -126,45 +127,64 @@ def ReadLatLonFromTxt(fname):
         raise NameError('Lat Lon size does not matach!')
 
     fid.close()
-    return lat,lon
+    return aLat,aLon
 
-def ComputeLatLonAtVertex(lat, lon, dlat, dlon):
+def ComputeLatLonAtVertex(iFlag_1d,  aLon, aLat, dLon, dLat):
 
-    npts = len(lat)
 
-    latv = np.empty((npts,4))
-    lonv = np.empty((npts,4))
+    if iFlag_1d == 1:
+        npts = len(aLat)
 
-    for i in range(npts):
-        lonv[i,:] = [lon[i]-dlon/2, lon[i]+dlon/2, lon[i]+dlon/2, lon[i]-dlon/2]
-        latv[i,:] = [lat[i]-dlat/2, lat[i]-dlat/2, lat[i]+dlat/2, lat[i]+dlat/2]
+        aLatV = np.empty((npts,4))
+        aLonV = np.empty((npts,4))
+
+        for i in range(npts):
+            aLonV[i,:] = [aLon[i]-dLon/2, aLon[i]+dLon/2, aLon[i]+dLon/2, aLon[i]-dLon/2]
+            aLatV[i,:] = [aLat[i]-dLat/2, aLat[i]-dLat/2, aLat[i]+dLat/2, aLat[i]+dLat/2]
+    else:
+        aLon = np.array(aLon)
+        aShape = aLon.shape
+        nrow_original = aShape[0]
+        ncolumn_original = aShape[1]
+
+        npts = nrow_original * ncolumn_original
+        aLatV = np.empty((nrow_original,ncolumn_original ,4))
+        aLonV = np.empty((nrow_original,ncolumn_original ,4))
+
+        for i in range(nrow_original):
+            for j in range(ncolumn_original):
+                aLonV[i,j,:] = [aLon[i,j]-dLon/2, aLon[i,j]+dLon/2, aLon[i,j]+dLon/2, aLon[i,j]-dLon/2]
+                aLatV[i,j,:] = [aLat[i,j]-dLat/2, aLat[i,j]-dLat/2, aLat[i,j]+dLat/2, aLat[i,j]+dLat/2]
+
+
+        pass
     
-    return latv, lonv
+    return aLatV, aLonV
 
-def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
-    clm_gridded_surfdata_filename, \
-    fname_out, \
+def CreateCLMUgridSurfdatForCLM45(iFlag_1d, aLon_region, aLat_region, \
+    sFilename_surface_data_in, \
+    sFilename_surface_data_out, \
     set_natural_veg_frac_to_one):
 
     
 
-    #fname_out = '%s/surfdata_%s_%s.nc' % \
+    #sFilename_surface_data_out = '%s/surfdata_%s_%s.nc' % \
     #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
 
-    print('  surface_dataset: ' + fname_out)
+    print('  surface_dataset: ' + sFilename_surface_data_out)
 
-    if not os.path.exists(clm_gridded_surfdata_filename):
-        raise NameError('File not found: ' + clm_gridded_surfdata_filename)
+    if not os.path.exists(sFilename_surface_data_in):
+        raise NameError('File not found: ' + sFilename_surface_data_in)
     
-    ncid_inq = Dataset(clm_gridded_surfdata_filename, 'r')
-    ncid_out = Dataset(fname_out, 'w',format="NETCDF3_CLASSIC")
+    ncid_inq = Dataset(sFilename_surface_data_in, 'r')
+    ncid_out = Dataset(sFilename_surface_data_out, 'w',format="NETCDF3_CLASSIC")
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #
     #                           Define dimensions
     #
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    idim = 1
+    idim = 2
     lonlat_found = 0
 
     # Need to declare first in the list of dimensions for a variabl
@@ -177,7 +197,7 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
                 lon_dimid = idim
             if lonlat_found == 0:
                 lonlat_found = 1
-                ncid_out.createDimension('gridcell', len(long_region))
+                ncid_out.createDimension('gridcell', len(aLon_region))
         elif dimname == 'time':
             #print(ncid_out.dimensions[dimname])
             pass
@@ -221,7 +241,7 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
     ncid_out.setncattr('Created_on',datetime.now().strftime('%c'))
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # Find the nearest neighbor index for (long_region,lati_xy) within global
+    # Find the nearest neighbor index for (aLon_region,lati_xy) within global
     # dataset
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     
@@ -232,15 +252,15 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
     # Read in global pft mask 1 = valid, 0 = invalid
     pftmask = ncid_inq.variables['PFTDATA_MASK'][:]
     i = pftmask == 0
-    # mark invalid gridcells as [lon, lat] [-9999, -9999]
+    # mark invalid gridcells as [aLon, aLat] [-9999, -9999]
     latixy[pftmask==0] = -9999
     longxy[pftmask==0] = -9999
 
     # allcate memory for the index of interpolated coordinates
-    if len(long_region.shape) == 2:
-        nii, njj = long_region.shape
-    elif len(long_region.shape) == 1:
-        nii = len(long_region)
+    if len(aLon_region.shape) == 2:
+        nii, njj = aLon_region.shape
+    elif len(aLon_region.shape) == 1:
+        nii = len(aLon_region)
         njj = 1
 
     ii_idx = np.zeros( (nii,njj),dtype=int )
@@ -248,22 +268,22 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
     
     for ii in range(nii):
         for jj in range(njj):
-            if lati_region.ndim == 2:
-                dist = np.sqrt((latixy - lati_region[ii,jj])**2 + \
-                            (longxy - long_region[ii,jj])**2)
-            elif lati_region.ndim == 1:
+            if aLat_region.ndim == 2:
+                dist = np.sqrt((latixy - aLat_region[ii,jj])**2 + \
+                            (longxy - aLon_region[ii,jj])**2)
+            elif aLat_region.ndim == 1:
                 assert(jj == 0)
-                dist = np.sqrt((latixy - lati_region[ii])**2 + \
-                            (longxy - long_region[ii])**2)
+                dist = np.sqrt((latixy - aLat_region[ii])**2 + \
+                            (longxy - aLon_region[ii])**2)
             #ind = np.unravel_index(np.argmin(dist, axis=None), dist.shape)
             ind = np.where(dist == dist.min())
             if len(ind[0]) > 1:
-                if len(lati_region.shape) == 1:
-                    msg = '  WARNING: Site with (lat,lon) = (%f,%f) has more than one cells ' % \
-                        (lati_region[ii],long_region[ii])
-                elif len(lati_region.shape) == 2:
-                    msg = '  WARNING: Site with (lat,lon) = (%f,%f) has more than one cells ' % \
-                        (lati_region[ii,jj],long_region[ii,jj])
+                if len(aLat_region.shape) == 1:
+                    msg = '  WARNING: Site with (aLat,aLon) = (%f,%f) has more than one cells ' % \
+                        (aLat_region[ii],aLon_region[ii])
+                elif len(aLat_region.shape) == 2:
+                    msg = '  WARNING: Site with (aLat,aLon) = (%f,%f) has more than one cells ' % \
+                        (aLat_region[ii,jj],aLon_region[ii,jj])
                 print(msg)
                 for kk in range(len(ind[0])):
                     msg = '\t\tPossible grid cells: %f %f' % \
@@ -280,9 +300,9 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
             data = ncid_inq.variables[varname][:]
 
         if varname == 'LATIXY':
-            var[varname][:] = lati_region
+            var[varname][:] = aLat_region
         elif varname == 'LONGXY':
-            var[varname][:] = long_region
+            var[varname][:] = aLon_region
         else:
             if len(ncid_inq.variables[varname].dimensions) == 0:
                 var[varname][:] = data
@@ -293,11 +313,11 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
                    'lsmlon' in ncid_inq.variables[varname].dimensions:
                     assert(ncid_inq.variables[varname].dimensions.index('lsmlat') < \
                            ncid_inq.variables[varname].dimensions.index('lsmlon'))
-                    if len(long_region.shape) == 1:
-                        nx = len(long_region)
+                    if len(aLon_region.shape) == 1:
+                        nx = len(aLon_region)
                         ny = 1
                     else:
-                        nx, ny = long_region.shape
+                        nx, ny = aLon_region.shape
 
                     data_2d = np.zeros( (nx,ny) )
                     for ii in range(nx):
@@ -305,10 +325,9 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
                             data_2d[ii,jj] = data[ii_idx[ii,jj],jj_idx[ii,jj]]
 
                     data_2d_new = data_2d.reshape( (nx*ny,) )
-                    data_2d = data_2d_new
-                    del data_2d_new
+                    
 
-                    data_2d = PerformFractionCoverCheck(varname,data_2d,set_natural_veg_frac_to_one)
+                    data_2d = PerformFractionCoverCheck(varname,data_2d_new,set_natural_veg_frac_to_one)
                     var[varname][:] = data_2d
 
                 else:
@@ -316,11 +335,11 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
             elif len(ncid_inq.variables[varname].dimensions) == 3:
                 if 'lsmlat' in ncid_inq.variables[varname].dimensions and \
                    'lsmlon' in ncid_inq.variables[varname].dimensions:
-                    if len(long_region.shape) == 1:
-                        nx = len(long_region)
+                    if len(aLon_region.shape) == 1:
+                        nx = len(aLon_region)
                         ny = 1
                     else:
-                        nx, ny = long_region.shape
+                        nx, ny = aLon_region.shape
 
                     nz = ncid_inq.variables[varname].shape[0]
                     dims = (nz,nx,ny)
@@ -331,10 +350,9 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
                             for kk in range(nz):
                                 data_3d[kk,ii,jj] = data[kk,ii_idx[ii,jj],jj_idx[ii,jj]]
                     data_3d_new = data_3d.reshape( (nz,nx*ny) )
-                    data_3d     = data_3d_new
-                    del data_3d_new
+                    
 
-                    data_3d = PerformFractionCoverCheck(varname,data_3d,set_natural_veg_frac_to_one)
+                    data_3d = PerformFractionCoverCheck(varname,data_3d_new,set_natural_veg_frac_to_one)
                     var[varname][:] = data_3d
                 
                 else:
@@ -343,11 +361,11 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
             elif len(ncid_inq.variables[varname].dimensions) == 4:
                 if 'lsmlat' in ncid_inq.variables[varname].dimensions and \
                    'lsmlon' in ncid_inq.variables[varname].dimensions:
-                    if len(long_region.shape) == 1:
-                        nx = len(long_region)
+                    if len(aLon_region.shape) == 1:
+                        nx = len(aLon_region)
                         ny = 1
                     else:
-                        nx, ny = long_region.shape
+                        nx, ny = aLon_region.shape
 
                     nz = ncid_inq.variables[varname].shape[0]
                     na = ncid_inq.variables[varname].shape[1]
@@ -373,7 +391,7 @@ def CreateCLMUgridSurfdatForCLM45(lati_region, long_region, \
     ncid_inq.close()
     ncid_out.close()
 
-    return fname_out
+    return sFilename_surface_data_out
 
 def PerformFractionCoverCheck(varname, data, set_natural_veg_frac_to_one):
 
@@ -416,25 +434,25 @@ def PerformFractionCoverCheck(varname, data, set_natural_veg_frac_to_one):
     return data
 
 def CreateCLMUgridDomainForCLM45(lat_region, lon_region, \
-    latv_region, lonv_region, clm_gridded_domain_filename, \
-    fname_out):
+    latv_region, lonv_region, sFilename_domain_file_in, \
+    sFilename_domain_file_out):
 
     from datetime import datetime
     from scipy.io import netcdf
     import getpass
 
-    #fname_out = '%s/domain_%s_%s.nc' % \
+    #sFilename_domain_file_out = '%s/domain_%s_%s.nc' % \
     #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
-    print('  domain: ' + fname_out)
+    print('  domain: ' + sFilename_domain_file_out)
 
     # Check if the file is available
-    if not os.path.exists(clm_gridded_domain_filename):
-        raise NameError('File not found: ' + clm_gridded_domain_filename)
+    if not os.path.exists(sFilename_domain_file_in):
+        raise NameError('File not found: ' + sFilename_domain_file_in)
       
-    ncid_inq = netcdf.netcdf_file(clm_gridded_domain_filename, 'r', \
+    ncid_inq = netcdf.netcdf_file(sFilename_domain_file_in, 'r', \
                                   mmap = False, maskandscale=True, version = 2)
-    #ncid_out = netcdf.netcdf_file(fname_out, 'w', version = 2)
-    ncid_out = Dataset(fname_out, 'w',format="NETCDF3_CLASSIC")
+    #ncid_out = netcdf.netcdf_file(sFilename_domain_file_out, 'w', version = 2)
+    ncid_out = Dataset(sFilename_domain_file_out, 'w',format="NETCDF3_CLASSIC")
 
     
     
@@ -513,5 +531,5 @@ def CreateCLMUgridDomainForCLM45(lat_region, lon_region, \
     ncid_inq.close()
     ncid_out.close()
 
-    return fname_out
+    return sFilename_domain_file_out
 

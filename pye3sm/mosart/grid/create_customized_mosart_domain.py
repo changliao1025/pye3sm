@@ -4,9 +4,9 @@ from pye3sm.mosart.grid.find_mosart_cell import find_mosart_cell
 
 from pye3sm.mosart.grid.extract_mosart_by_cellid import extract_mosart_by_cellid
 
-def create_customized_mosart_domain(sFilenamae_mosart_in, sFilename_netcdf_out, lCellID_outlet_in):
+def create_customized_mosart_domain(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilename_netcdf_out, lCellID_outlet_in):
 
-    iFlag_save =0
+    iFlag_save = 0
     iFlag_reload = 1
 
     if iFlag_reload ==0:
@@ -25,7 +25,7 @@ def create_customized_mosart_domain(sFilenamae_mosart_in, sFilename_netcdf_out, 
 
     if iFlag_reload ==1:
         aCell_basin = np.loadtxt(sFilename_cellid)
-    iFlag_2d_to_1d = 1
+    #iFlag_2d_to_1d = 0
     extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilename_netcdf_out, aCell_basin)
 
     #sFilename = os.path.splitext(sFilename_netcdf_out)[0]

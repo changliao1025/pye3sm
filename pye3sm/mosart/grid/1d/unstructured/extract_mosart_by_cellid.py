@@ -108,11 +108,13 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
                         aData0 = np.full( nrow_original, missing_value, dtype= aValue.datatype)
                         aData0[aIndex_row] = aData[aIndex_row]
                         #extract
-                        outVar[:] = aData0[ min_row:max_row+1 ]                         
+                        dummy_data =  aData0[ min_row:max_row+1 ] 
+                        outVar[:] =  dummy_data                      
                     if sKey.lower() == 'lon':
                         aData0 = np.full( ncolumn_original, missing_value, dtype= aValue.datatype)
                         aData0[aIndex_column] = aData[aIndex_column]
-                        outVar[:] = aData0[min_column:max_column+1 ]      
+                        dummy_data = aData0[min_column:max_column+1 ]      
+                        outVar[:] = dummy_data
 
                     pass
                 else:
@@ -134,8 +136,15 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
                             aData[dummy_index] = missing_value              
                         aData0 = np.full( (nrow_original, ncolumn_original), missing_value, dtype= aValue.datatype)     
                         aData0[aIndex_row, aIndex_column] = aData[aIndex_row, aIndex_column]        
+
+                        
                         #extract
                         outVar[:] = aData0[ min_row:max_row+1 , min_column:max_column+1 ]       
+
+                        if sKey == 'latixy':
+                            outVar[:] = aData[min_row:max_row+1,min_column:max_column+1 ]
+                        if sKey == 'longxy':
+                            outVar[:] = aData[min_row:max_row+1,min_column:max_column+1]
                         if sKey == 'ID':
                             aData0 = np.full( (nrow, ncolumn), missing_value, dtype= aValue.datatype)
                             kk = 1

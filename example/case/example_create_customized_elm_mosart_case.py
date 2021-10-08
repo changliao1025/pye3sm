@@ -21,7 +21,7 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iCase = 5
+iCase = 7
 iFlag_mosart =1
 iFlag_elm=1
 iFlag_elmmosart =1
@@ -77,6 +77,7 @@ sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r
 #'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
 iFlag_create_mosart_grid = 1
 iFlag_create_elm_grid = 1
+iFlag_2d_to_1d = 0 
 iFlag_create_case = 1 
 iFlag_submit_case = 0
 
@@ -109,42 +110,69 @@ sFilename_mosart_netcdf_out = '/qfs/people/liao313/data/e3sm/amazon/mosart/mosar
 if iFlag_create_mosart_grid ==1: 
 
     sFilename_mosart_netcdf_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '.nc'
-    create_customized_mosart_domain(sFilename_mosart_netcdf,sFilename_mosart_netcdf_out, lCellID_outlet_in)
+    create_customized_mosart_domain(iFlag_2d_to_1d, sFilename_mosart_netcdf,sFilename_mosart_netcdf_out, lCellID_outlet_in)
 
 sFilename_mosart_input = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
 
 if not os.path.exists(sFilename_mosart_input):    
     copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_input)
 
+dResolution = 0.5
 
 if iFlag_create_elm_grid ==1:
     aLon, aLat = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
 
-    aLon0=np.ravel(aLon)
-    aLat0=np.ravel(aLat)
-    dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
-
-    aLon = aLon0[dummy_index]
-    aLat = aLat0[dummy_index]
-
-    ngrid = len(aLon)
-
-    sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
-    ofs = open(sFilename_lon_lat_in, 'w')
-    sGrid =  "{:0d}".format( ngrid )
-    sLine = sGrid + '\n'
-    ofs.write(sLine)
-
-
-
-    for i in range(ngrid):
-        dLatitude = aLat[i]
-        dLongitude = aLon[i]
-        #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
-        sLine = "{:0f}".format( dLatitude) + ' ' + "{:0f}".format( dLongitude) + '\n'
+    if iFlag_2d_to_1d == 0:
+        
+        lon_min = np.min(aLon)
+        lon_max = np.max(aLon)
+        lat_min = np.min(aLat)
+        lat_max = np.max(aLat)
+        nrow = int((lat_max-lat_min) / dResolution + 1)
+        ncolumn = int( (lon_max-lon_min) / dResolution + 1 )
+        ngrid = ncolumn * nrow
+        sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+        ofs = open(sFilename_lon_lat_in, 'w')
+        sGrid =  "{:0d}".format( ngrid )
+        sLine = sGrid + '\n'
         ofs.write(sLine)
 
-    ofs.close()
+        aLon = np.full( (nrow, ncolumn), missing_value, dtype=float )
+        aLat = np.full( (nrow, ncolumn), missing_value, dtype=float )
+
+        for i in range(nrow):
+            for j in range(ncolumn):
+                aLon[i,j] = lon_min + j * dResolution
+                aLat[i,j] = lat_min + i * dResolution
+                sLine = "{:0f}".format( aLat[i,j]) + ' ' + "{:0f}".format( aLon[i,j] ) + '\n'
+                ofs.write(sLine)
+        
+        ofs.close()
+    
+    else:
+        aLon0=np.ravel(aLon)
+        aLat0=np.ravel(aLat)
+        dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
+        aLon = aLon0[dummy_index]
+        aLat = aLat0[dummy_index]
+        ngrid = len(aLon)
+
+        sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+        ofs = open(sFilename_lon_lat_in, 'w')
+        sGrid =  "{:0d}".format( ngrid )
+        sLine = sGrid + '\n'
+        ofs.write(sLine)
+
+
+
+        for i in range(ngrid):
+            dLatitude = aLat[i]
+            dLongitude = aLon[i]
+            #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
+            sLine = "{:0f}".format( dLatitude) + ' ' + "{:0f}".format( dLongitude) + '\n'
+            ofs.write(sLine)
+
+        ofs.close()
 
 
 if iFlag_create_case ==1:
@@ -158,8 +186,9 @@ if iFlag_create_case ==1:
     sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '.nc'
     sFilename_elm_domain_file_out = sWorkspace_region2 + slash +  'elm_domain_' + sCase_date + '.nc'
 
-    elm_create_surface_data( sFilename_configuration, \
-                             sFilename_lon_lat_in, \
+    elm_create_surface_data( aLon, aLat, dResolution, dResolution, \
+        sFilename_configuration, \
+                             #sFilename_lon_lat_in, \
                              sFilename_surface_data_default,\
                              sFilename_elm_domain_file_default,\
                              sFilename_surface_data_out,
