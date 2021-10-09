@@ -8,7 +8,7 @@ from netCDF4 import Dataset
 
 from pye3sm.mosart.grid.convert_index_between_array import convert_index_between_array
 
-def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netcdf_out, aCellID_in):
+def extract_mosart_by_cellid_2d(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netcdf_out, aCellID_in):
 
     aDatasets = Dataset(sFilenamae_mosart_in)
 
@@ -56,7 +56,7 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
             aIndex.append(dummy_index)
         pass
 
-        datasets_out.createDimension('ncell', ncell_extract )
+        datasets_out.createDimension('gridcell', ncell_extract )
     else:
         #2d case
         ncell_extract = len(aCellID_in)
@@ -70,9 +70,6 @@ def extract_mosart_by_cellid(iFlag_2d_to_1d, sFilenamae_mosart_in, filename_netc
             aIndex_row.append(dummy_row_index[0])
             aIndex_column.append(dummy_column_index[0])
             aIndex_1d.append( dummy_row_index[0] * ncolumn_original + dummy_column_index[0] )
-
-        
-        
         
         min_row = np.min(aIndex_row)
         max_row = np.max(aIndex_row)

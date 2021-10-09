@@ -2,10 +2,9 @@
 import numpy as np
 import os
 
-from datetime import datetime
-from scipy.io import netcdf
-import getpass
+
 from netCDF4 import Dataset
+
 def find_mosart_cell( sFilenamae_mosart_in, lCellID_outlet_in ):
 
     iOption = 2
@@ -74,9 +73,7 @@ def find_mosart_cell( sFilenamae_mosart_in, lCellID_outlet_in ):
             iFlag_done = 0
         else:
             iFlag_done = 1
-    
 
-    
 
     return aCell_basin_out, sFaCell_basin_rectangle
 

@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from pye3sm.mosart.grid.find_mosart_cell import find_mosart_cell
+from pye3sm.mosart.grid.unstructured.find_mosart_cell import find_mosart_cell
 
 from pye3sm.mosart.grid.extract_mosart_by_cellid import extract_mosart_by_cellid
 
