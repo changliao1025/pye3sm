@@ -2,8 +2,8 @@ import os
 import numpy as np
 import getpass
 from netCDF4 import Dataset
-def create_customized_elm_domain_file_1d(lat_region, lon_region, \
-    latv_region, lonv_region, sFilename_domain_file_in, \
+def create_customized_elm_domain_file_1d(aLon_region, aLat_region, \
+   aLonV_region, aLatV_region,  sFilename_domain_file_in, \
     sFilename_domain_file_out):
 
     from datetime import datetime
@@ -30,7 +30,7 @@ def create_customized_elm_domain_file_1d(lat_region, lon_region, \
     #                           Define dimensions
     #
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-    ni, nv = lonv_region.shape
+    ni, nv = aLonV_region.shape
     nj = 1
 
     for dimname in ncid_inq.dimensions:
@@ -68,29 +68,29 @@ def create_customized_elm_domain_file_1d(lat_region, lon_region, \
     for varname in ncid_inq.variables:
 
         if varname == 'xc':
-            data = lon_region
+            data = aLon_region
         elif varname == 'yc':
-            data = lat_region
+            data = aLat_region
         elif varname == 'xv':
-            data = lonv_region
+            data = aLonV_region
         elif varname == 'yv':
-            data = latv_region
+            data = aLatV_region
         elif varname == 'mask':
-            data = np.ones( (1,len(lon_region)) )
+            data = np.ones( (1,len(aLon_region)) )
         elif varname == 'frac':
-            data = np.ones( (1,len(lon_region)) )
+            data = np.ones( (1,len(aLon_region)) )
         elif varname == 'area':
-            if lonv_region.shape[1] == 3:
-                ax = lonv_region[:,0]
-                ay = latv_region[:,0]
-                bx = lonv_region[:,1]
-                by = latv_region[:,1]
-                cx = lonv_region[:,2]
-                cy = lonv_region[:,2]
+            if aLonV_region.shape[1] == 3:
+                ax = aLonV_region[:,0]
+                ay = aLatV_region[:,0]
+                bx = aLonV_region[:,1]
+                by = aLatV_region[:,1]
+                cx = aLonV_region[:,2]
+                cy = aLonV_region[:,2]
 
                 data = 0.5*(ax*(by-cy) + bx*(cy-ay) + cx*(ay-by))
-            elif lonv_region.shape[1] == 4:
-                data = (lonv_region[:,0] - lonv_region[:,1]) * (latv_region[:,0] - latv_region[:,2])
+            elif aLonV_region.shape[1] == 4:
+                data = (aLonV_region[:,0] - aLonV_region[:,1]) * (aLatV_region[:,0] - aLatV_region[:,2])
             else:
                 raise NameError('Added area computation')
         

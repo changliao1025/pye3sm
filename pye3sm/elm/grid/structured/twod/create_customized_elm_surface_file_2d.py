@@ -30,7 +30,12 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
     #
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     idim = 2
-    lonlat_found = 0
+    lonlat_found = 1
+
+    aLon = np.array(aLon_region)
+    aShape = aLon.shape
+    nrow_original = aShape[0]
+    ncolumn_original = aShape[1]
 
     # Need to declare first in the list of dimensions for a variabl
     ncid_out.createDimension('time', None)
@@ -38,8 +43,10 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
         if dimname == 'lsmlat' or dimname == 'lsmlon':
             if dimname == 'lsmlat':
                 lat_dimid = idim
+                ncid_out.createDimension(dimname, nrow_original)
             elif dimname == 'lsmlon':
                 lon_dimid = idim
+                ncid_out.createDimension(dimname, ncolumn_original)
             if lonlat_found == 0:
                 lonlat_found = 1
                 ncid_out.createDimension('gridcell', len(aLon_region))
@@ -66,9 +73,9 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
             newdims = []
             for i in range(len(dims)):
                 if dims[i] == 'lsmlat':
-                    newdims.append('gridcell')
+                    newdims.append('lsmlat')
                 elif dims[i] == 'lsmlon':
-                    pass
+                    newdims.append('lsmlon')                    
                 else:
                     newdims.append(dims[i])
             newdims = tuple(newdims)
@@ -169,10 +176,10 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
                         for jj in range(ny):
                             data_2d[ii,jj] = data[ii_idx[ii,jj],jj_idx[ii,jj]]
 
-                    data_2d_new = data_2d.reshape( (nx*ny,) )
-                    
+                    data_2d_new = data_2d.reshape( (nx*ny,) )                   
+                    data_2d_new = PerformFractionCoverCheck(varname,data_2d_new,set_natural_veg_frac_to_one)
 
-                    data_2d = PerformFractionCoverCheck(varname,data_2d_new,set_natural_veg_frac_to_one)
+                    data_2d = data_2d_new.reshape( nx,ny)
                     var[varname][:] = data_2d
 
                 else:
@@ -194,10 +201,10 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
                         for jj in range(ny):
                             for kk in range(nz):
                                 data_3d[kk,ii,jj] = data[kk,ii_idx[ii,jj],jj_idx[ii,jj]]
-                    data_3d_new = data_3d.reshape( (nz,nx*ny) )
-                    
 
-                    data_3d = PerformFractionCoverCheck(varname,data_3d_new,set_natural_veg_frac_to_one)
+                    data_3d_new = data_3d.reshape( (nz,nx*ny) )                    
+                    data_3d_new = PerformFractionCoverCheck(varname,data_3d_new,set_natural_veg_frac_to_one)
+                    data_3d = data_3d_new.reshape( nz,nx,ny )
                     var[varname][:] = data_3d
                 
                 else:
@@ -222,9 +229,10 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
                             for kk in range(nz):
                                 for ll in range(na):
                                     data_4d[kk,ll,ii,jj] = data[kk,ll,ii_idx[ii,jj],jj_idx[ii,jj]]
-                    data_4d_new = data_4d.reshape( (nz,na,nx*ny) )
-                    data_4d     = data_4d_new
-                    del data_4d_new
+
+                    #data_4d_new = data_4d.reshape( (nz,na,nx*ny) )
+                    #data_4d     = data_4d_new
+                    #del data_4d_new
 
                     var[varname][:] = data_4d
                 
