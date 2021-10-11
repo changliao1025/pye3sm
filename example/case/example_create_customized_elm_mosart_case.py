@@ -8,7 +8,7 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.location.convert_lat_lon_range import convert_180_to_360
 
 
-from pye3sm.elm.grid.elm_create_surface_data import elm_create_surface_data
+from pye3sm.elm.grid.create_customized_elm_domain import create_customized_elm_domain
 
 from pye3sm.case.e3sm_create_case import e3sm_create_case
 from pye3sm.shared.e3sm import pye3sm
@@ -21,7 +21,7 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iCase = 7
+iCase = 8
 iFlag_mosart =1
 iFlag_elm=1
 iFlag_elmmosart =1
@@ -186,9 +186,8 @@ if iFlag_create_case ==1:
     sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '.nc'
     sFilename_elm_domain_file_out = sWorkspace_region2 + slash +  'elm_domain_' + sCase_date + '.nc'
 
-    elm_create_surface_data( aLon, aLat, dResolution, dResolution, \
+    create_customized_elm_domain( aLon, aLat, dResolution, dResolution, \
         sFilename_configuration, \
-                             #sFilename_lon_lat_in, \
                              sFilename_surface_data_default,\
                              sFilename_elm_domain_file_default,\
                              sFilename_surface_data_out,
