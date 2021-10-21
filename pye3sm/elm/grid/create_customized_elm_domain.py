@@ -15,7 +15,7 @@ from pye3sm.elm.grid.structured.twod.create_customized_elm_domain_file_2d import
 from pye3sm.elm.grid.unstructured.create_customized_elm_surface_file_1d import create_customized_elm_surface_file_1d
 from pye3sm.elm.grid.unstructured.create_customized_elm_domain_file_1d import create_customized_elm_domain_file_1d
 
-def create_customized_elm_domain( aLon, aLat, dLon, dLat, \
+def create_customized_elm_domain( aLon, aLat, aMask_in, dLon, dLat, \
         sFilename_configuration, \
         sFilename_surface_data_in,\
         sFilename_domain_file_in,\
@@ -58,13 +58,13 @@ def create_customized_elm_domain( aLon, aLat, dLon, dLat, \
     else:
 
         print('4) Creating CLM surface dataset')
-        fsurdat    = create_customized_elm_surface_file_2d( aLon, aLat, \
+        fsurdat    = create_customized_elm_surface_file_2d( aLon, aLat,aMask_in, \
                         sFilename_surface_data_in, \
                         sFilename_surface_data_out, \
                         cfg['set_natural_veg_frac_to_one'])
 
         print('5) Creating CLM domain')
-        fdomain    = create_customized_elm_domain_file_2d(aLon, aLat,  \
+        fdomain    = create_customized_elm_domain_file_2d(aLon, aLat, aMask_in, \
                       aLonV,  aLatV, \
                              sFilename_domain_file_in, \
                        sFilename_domain_file_out)

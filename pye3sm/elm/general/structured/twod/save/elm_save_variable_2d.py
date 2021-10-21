@@ -1,6 +1,7 @@
 import os , sys
 
 import numpy as np
+from numpy.lib.function_base import _average_dispatcher
 from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
@@ -13,13 +14,13 @@ from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_mul
 
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
 
- 
+from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
  
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
-def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
+def elm_save_variable_2d(oE3SM_in, oCase_in):
 
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
@@ -48,42 +49,72 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
     
     if not os.path.exists(sWorkspace_analysis_case):
         os.makedirs(sWorkspace_analysis_case)
-    
+
+
+    #the following part was removed to use the e3sm case based approach to retrieve the info
     #read in global 0.5 * 0.5 mask
-    sFilename_mosart_input = oCase_in.sFilename_mosart_input
+    #sFilename_mosart_input = oCase_in.sFilename_mosart_input
+    #aDatasets = Dataset(sFilename_mosart_input)
+    #netcdf_format = aDatasets.file_format
+    #print(netcdf_format)
+    #print("Print dimensions:")
+    #print(aDatasets.dimensions.keys())
+    #print("Print variables:")
+    #print(aDatasets.variables.keys())
+    #for sKey, aValue in aDatasets.variables.items():
+    #    if "ele0" == sKey:
+    #        aEle0 = (aValue[:]).data            
+    #        break
+    #nrow = 360
+    #ncolumn = 720
+    #aEle0 = aEle0.reshape(nrow, ncolumn)
+    ##remember that mask latitude start from -90, so need to flip it    
+    #aEle0 = np.flip(aEle0, 0) 
+    #aMask = np.where(aEle0 == missing_value)
 
-    aDatasets = Dataset(sFilename_mosart_input)
-    netcdf_format = aDatasets.file_format
-    print(netcdf_format)
-    print("Print dimensions:")
-    print(aDatasets.dimensions.keys())
-    print("Print variables:")
-    print(aDatasets.variables.keys())
+    #new approach
+    sFilename_lnd_in = sWorkspace_simulation_case_run + slash + 'lnd_in'
+
+    aParameter_lnd = convert_namelist_to_dict(sFilename_lnd_in)
+    sFilename_domain = aParameter_lnd['fatmlndfrc']
+    aDatasets = Dataset(sFilename_domain)
+    netcdf_format = aDatasets.file_format    
     for sKey, aValue in aDatasets.variables.items():
-        if "ele0" == sKey:
-            aEle0 = (aValue[:]).data            
-            break
+        if "mask" == sKey:
+            aMask = (aValue[:]).data            
+        
+        if "xc" == sKey:
+            aLon = (aValue[:]).data            
 
-    nrow_new = 360
-    ncolumn_new = 720
-    aEle0 = aEle0.reshape(nrow_new, ncolumn_new)
-    #remember that mask latitude start from -90, so need to flip it    
-    aEle0 = np.flip(aEle0, 0) 
-    aMask = np.where(aEle0 == missing_value)
+        if "yc" == sKey:
+            aLat = (aValue[:]).data            
+
+
+    #dimension
+    nrow = np.array(aMask).shape[0]
+    ncolumn = np.array(aMask).shape[1]
+
+    #resolution
+    dLon_min = np.min(aLon)
+    dLon_max = np.max(aLon)
+    dLat_min = np.min(aLat)
+    dLat_max = np.max(aLat)
+    dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
+    dResolution_y = (dLat_max - dLat_min) / (nrow-1)
 
 
     print('Prepare the map grid')
    
-    longitude = np.arange(-179.75, 180., 0.5)
-    latitude = np.arange(89.75, -90, -0.5)
+    longitude = np.arange(dLon_min, dLon_max , dResolution_x)
+    latitude = np.arange( dLat_max, dLat_min, -1*dResolution_y)
     grid_x, grid_y = np.meshgrid(longitude, latitude)
     #prepare the header in
     pHeaderParameters = {}    
-    pHeaderParameters['ncolumn'] = '720'
-    pHeaderParameters['nrow'] = '360'
-    pHeaderParameters['ULlon'] = '-180'
-    pHeaderParameters['ULlat'] = '90'
-    pHeaderParameters['pixelSize'] = '0.5'
+    pHeaderParameters['ncolumn'] = "{:0d}".format(ncolumn)
+    pHeaderParameters['nrow'] = "{:0d}".format(nrow)
+    pHeaderParameters['ULlon'] = "{:0f}".format(dLon_min-0.5 * dResolution_x)
+    pHeaderParameters['ULlat'] = "{:0f}".format(dLat_min-0.5 * dResolution_y)
+    pHeaderParameters['pixelSize'] = "{:0f}".format(dResolution_x)
     pHeaderParameters['nband'] = '1'
     pHeaderParameters['offset'] = '0'
     pHeaderParameters['data_type'] = '4'
@@ -108,12 +139,13 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
         os.makedirs(sWorkspace_variable_tiff)
         
     sFilename_output = sWorkspace_variable_netcdf + slash + sVariable +  sExtension_netcdf
+    #should we use the same netcdf format? 
     pFile = Dataset(sFilename_output, 'w', format='NETCDF4') 
-    pDimension_longitude = pFile.createDimension('lon', ncolumn_new) 
-    pDimension_latitude = pFile.createDimension('lat', nrow_new) 
+    pDimension_longitude = pFile.createDimension('lon', ncolumn) 
+    pDimension_latitude = pFile.createDimension('lat', nrow) 
 
     nmonth = (iYear_end - iYear_start +1) * 12
-    aGrid_stack= np.full((nmonth, nrow_new, ncolumn_new), -9999.0, dtype= float)
+    aGrid_stack= np.full((nmonth, nrow, ncolumn), -9999.0, dtype= float)
     i=0
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
@@ -121,7 +153,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
         for iMonth in range(iMonth_start, iMonth_end + 1):
             sMonth = str(iMonth).zfill(2)
     
-            sDummy = '.clm2.h0.' + sYear + '-' + sMonth + sExtension_netcdf
+            sDummy = '.elm.h0.' + sYear + '-' + sMonth + sExtension_netcdf
             sFilename = sWorkspace_simulation_case_run + slash + sCase + sDummy
     
             #read before modification
@@ -137,14 +169,10 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
     
             for sKey, aValue in aDatasets.variables.items():
             
-                if (sKey == 'lon'):
-                    #print(aValue.datatype)
-                    #print(aValue.dimensions)
+                if (sKey == 'lon'):                   
                     aLongitude = (aValue[:]).data
                     continue
-                if (sKey == 'lat'):
-                    #print(aValue.datatype)
-                    #print(aValue.dimensions)
+                if (sKey == 'lat'):                    
                     aLatitude = (aValue[:]).data
                     continue
             
@@ -161,7 +189,7 @@ def elm_save_variable_halfdegree(oE3SM_in, oCase_in):
                     #print(aData)
                     missing_value1 = np.max(aData)           
                     if(iFlag_same_grid == 1 ): #no need to resample if there are the same grid
-                        aData = aData.reshape(nrow_new, ncolumn_new)      
+                        aData = aData.reshape(nrow, ncolumn)      
                         aData = np.flip(aData, 0)    
                         dummy_index = np.where( aData == missing_value1 ) 
                         aData[dummy_index] = missing_value

@@ -21,6 +21,10 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                         sCIME_directory_in = None ):
 
     #read the default configuration
+    if not os.path.exists(sFilename_configuration_in):
+        print('The configuration file does not exist!')
+        return
+
     config = parse_xml_file(sFilename_configuration_in)
 
     if iFlag_branch_in is not None:
@@ -111,6 +115,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         sWorkspace_data_in = None,\
                                         sWorkspace_scratch_in=None):
     #read the default configuration
+    if not os.path.exists(sFilename_configuration_in):
+        print('The configuration file does not exist!')
+        return
+
     config = parse_xml_file(sFilename_configuration_in)
 
     sModel = config['sModel']

@@ -6,7 +6,7 @@ import getpass
 from netCDF4 import Dataset
 
 from pye3sm.elm.grid.unstructured.PerformFractionCoverCheck import PerformFractionCoverCheck
-def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
+def create_customized_elm_surface_file_2d( aLon_region, aLat_region, aMask_in,\
     sFilename_surface_data_in, \
     sFilename_surface_data_out, \
     set_natural_veg_frac_to_one):
@@ -29,6 +29,7 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
     #                           Define dimensions
     #
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    mask_index = np.where(aMask_in !=-9999)
     idim = 2
     lonlat_found = 1
 
@@ -61,7 +62,7 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
     #                           Define variables
     #
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+    missing_value =-9999
     var = dict()
     for varname in ncid_inq.variables:
         dtype = ncid_inq.variables[varname].dtype
@@ -83,9 +84,24 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
             var[varname] = ncid_out.createVariable(varname, dtype, newdims)
         else:
             var[varname] = ncid_out.createVariable(varname, dtype, dims)
+        
+        iFlag_missing_value=0
         for attname in ncid_inq.variables[varname].ncattrs():
             attvalue = ncid_inq.variables[varname].getncattr(attname)
             var[varname].setncattr(attname, attvalue)
+
+            if attname.lower() == '_fillvalue':
+                iFlag_missing_value = 1
+                if dtype == np.int:
+                    var[varname].setncatts( { '_FillValue': missing_value } )                     
+                else:
+                    var[varname].setncatts( { '_FillValue': float(missing_value) } ) 
+                pass
+        if iFlag_missing_value ==0 :
+            if dtype == np.int32:
+                var[varname].setncatts( { '_FillValue': missing_value } )                     
+            else:
+                var[varname].setncatts( { '_FillValue': float(missing_value) } ) 
         
 
     user_name = getpass.getuser()
@@ -105,8 +121,8 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, \
     pftmask = ncid_inq.variables['PFTDATA_MASK'][:]
     i = pftmask == 0
     # mark invalid gridcells as [aLon, aLat] [-9999, -9999]
-    latixy[pftmask==0] = -9999
-    longxy[pftmask==0] = -9999
+    latixy[pftmask==0] = missing_value
+    longxy[pftmask==0] = missing_value
 
     # allcate memory for the index of interpolated coordinates
     if len(aLon_region.shape) == 2:

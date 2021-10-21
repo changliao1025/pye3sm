@@ -21,7 +21,7 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iCase = 8
+iCase = 10
 iFlag_mosart =1
 iFlag_elm=1
 iFlag_elmmosart =1
@@ -120,7 +120,7 @@ if not os.path.exists(sFilename_mosart_input):
 dResolution = 0.5
 
 if iFlag_create_elm_grid ==1:
-    aLon, aLat = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
+    aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
 
     if iFlag_2d_to_1d == 0:
         
@@ -186,7 +186,7 @@ if iFlag_create_case ==1:
     sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '.nc'
     sFilename_elm_domain_file_out = sWorkspace_region2 + slash +  'elm_domain_' + sCase_date + '.nc'
 
-    create_customized_elm_domain( aLon, aLat, dResolution, dResolution, \
+    create_customized_elm_domain( aLon, aLat, aMask, dResolution, dResolution, \
         sFilename_configuration, \
                              sFilename_surface_data_default,\
                              sFilename_elm_domain_file_default,\

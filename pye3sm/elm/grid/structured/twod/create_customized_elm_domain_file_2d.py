@@ -5,7 +5,7 @@ from netCDF4 import Dataset
 from datetime import datetime
 from scipy.io import netcdf
 import getpass
-def create_customized_elm_domain_file_2d(aLon_region,aLat_region,  \
+def create_customized_elm_domain_file_2d(aLon_region,aLat_region,aMask_in, \
     aLonV_region,aLatV_region,  sFilename_domain_file_in, \
     sFilename_domain_file_out):
 
@@ -35,6 +35,7 @@ def create_customized_elm_domain_file_2d(aLon_region,aLat_region,  \
     aShape = aLon_region.shape
     nrow_original = aShape[0]
     ncolumn_original = aShape[1]
+    mask_index = np.where(aMask_in !=-9999)
 
 
     nj,ni, nv = aLonV_region.shape
@@ -83,9 +84,12 @@ def create_customized_elm_domain_file_2d(aLon_region,aLat_region,  \
         elif varname == 'yv':
             data = aLatV_region
         elif varname == 'mask':
-            data = np.ones( (nj, ni) )
+            data = np.zeros( (nj, ni) )
+            data[mask_index] = 1
+
         elif varname == 'frac':
-            data = np.ones( (nj, ni) )
+            data = np.zeros( (nj, ni) )
+            data[mask_index] = 1
         elif varname == 'area':
             if aLonV_region.shape[2] == 3:
                 ax = aLonV_region[:,:,0]
