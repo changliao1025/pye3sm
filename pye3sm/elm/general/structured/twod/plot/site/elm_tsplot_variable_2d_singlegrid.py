@@ -14,8 +14,10 @@ from pyearth.toolbox.data.remove_outliers import remove_outliers
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
+ 
 
-def elm_tsplot_variable_halfdegree_domain(oE3SM_in, \
+def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
                                           oCase_in,\
                                           dMax_y_in = None,\
                                           dMin_y_in = None,
@@ -42,16 +44,29 @@ def elm_tsplot_variable_halfdegree_domain(oE3SM_in, \
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
 
-    nrow = 360
-    ncolumn = 720
+    aMask, aLon, aLat=elm_retrieve_case_dimension_info(oCase_in)
+
+
+    #dimension
+    nrow = np.array(aMask).shape[0]
+    ncolumn = np.array(aMask).shape[1]
+    aMask = np.where(aMask==0)
+
+    #resolution
+    dLon_min = np.min(aLon)
+    dLon_max = np.max(aLon)
+    dLat_min = np.min(aLat)
+    dLat_max = np.max(aLat)
+    dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
+    dResolution_y = (dLat_max - dLat_min) / (nrow-1)
 
     #read basin mask
-    sWorkspace_data_auxiliary_basin = sWorkspace_data + slash  \
-        + sModel + slash + sRegion + slash \
-        + 'auxiliary' + slash + 'basins'
-    aBasin = ['amazon','congo','mississippi','yangtze']
+    #sWorkspace_data_auxiliary_basin = sWorkspace_data + slash  \
+    #    + sModel + slash + sRegion + slash \
+    #    + 'auxiliary' + slash + 'basins'
+    #aBasin = ['amazon','congo','mississippi','yangtze']
 
-    nDomain = len(aBasin)
+    #nDomain = len(aBasin)
 
     dates = list()
     nyear = iYear_end - iYear_start + 1
@@ -89,45 +104,43 @@ def elm_tsplot_variable_halfdegree_domain(oE3SM_in, \
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + 'tsplot_domain'
-    if not os.path.exists(sWorkspace_analysis_case_domain):
-        os.makedirs(sWorkspace_analysis_case_domain)
+    sWorkspace_analysis_case_site = sWorkspace_analysis_case_variable + slash + 'tsplot_singlegrid'
+    if not os.path.exists(sWorkspace_analysis_case_site):
+        os.makedirs(sWorkspace_analysis_case_site)
         pass
 
     aData_all=[]
     aLabel_legend=[]
-    for iDomain in np.arange(1, nDomain+1, 1):
 
-        sDomain = aBasin[iDomain-1]
-        sLabel_legend = sDomain.title()
-        sFilename_out = sWorkspace_analysis_case_domain + slash \
-            + sVariable + '_tsplot_' + sDomain +'.png'
-        sFilename_basin = sWorkspace_data_auxiliary_basin + slash + sDomain + slash + sDomain + '.tif'
-        dummy = gdal_read_geotiff_file(sFilename_basin)
-        dummy_mask1 = dummy[0]
+    sSite=''
+    
 
-        pShape = aVariable_total_subset.shape
-        aVariable0= np.full(pShape, np.nan, dtype=float)
-        aVariable2 = np.full(nstress_subset, -9999, dtype=float)
-        for i in np.arange(0, pShape[0], 1):
-            aVariable0[i, :,:] = aVariable_total_subset[i, :,:]
-            aVariable0[i][dummy_mask1!=1] = np.nan
-            dummy1 = aVariable0[i, :,:]
-            dummy2 = remove_outliers(dummy1, 0.05)
-            aVariable2[i] = np.nanmean(dummy2)
-            pass
-
-        aData_all.append(aVariable2)
-        aLabel_legend.append(sLabel_legend)
+    sLabel_legend = sSite.title()
+    sFilename_out = sWorkspace_analysis_case_site + slash \
+        + sVariable + '_tsplot_' + sSite +'.png'
+    sFilename_basin = sWorkspace_data_auxiliary_basin + slash + sSite + slash + sSite + '.tif'
+    dummy = gdal_read_geotiff_file(sFilename_basin)
+    dummy_mask1 = dummy[0]
+    pShape = aVariable_total_subset.shape
+    aVariable0= np.full(pShape, np.nan, dtype=float)
+    aVariable2 = np.full(nstress_subset, -9999, dtype=float)
+    for i in np.arange(0, pShape[0], 1):
+        aVariable0[i, :,:] = aVariable_total_subset[i, :,:]
+        aVariable0[i][dummy_mask1!=1] = np.nan
+        dummy1 = aVariable0[i, :,:]
+        dummy2 = remove_outliers(dummy1, 0.05)
+        aVariable2[i] = np.nanmean(dummy2)
         pass
+    aData_all.append(aVariable2)
+    aLabel_legend.append(sLabel_legend)
+    
 
     #aData_all = np.log10(aData_all)
     ##set inf to min
     #bad_index = np.where( np.isinf(  aData_all) == True  )
     #aData_all[bad_index] = dMin_y_in
 
-
-    sFilename_out = sWorkspace_analysis_case_domain + slash \
+    sFilename_out = sWorkspace_analysis_case_site + slash \
         + sVariable + '_tsplot' +'.png'
 
     aDate_all = [dates_subset, dates_subset, dates_subset,dates_subset]

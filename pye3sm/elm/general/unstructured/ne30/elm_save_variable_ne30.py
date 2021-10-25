@@ -14,13 +14,13 @@ from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_mul
 
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
 
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
+from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
  
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
-def elm_save_variable_2d(oE3SM_in, oCase_in):
+def elm_save_variable_ne30(oE3SM_in, oCase_in):
 
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
@@ -74,11 +74,27 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     #aMask = np.where(aEle0 == missing_value)
 
     #new approach
-    aMask, aLon, aLat=elm_retrieve_case_dimension_info(oCase_in)
+    sFilename_lnd_in = sWorkspace_simulation_case_run + slash + 'lnd_in'
+
+    aParameter_lnd = convert_namelist_to_dict(sFilename_lnd_in)
+    sFilename_domain = aParameter_lnd['fatmlndfrc']
+    aDatasets = Dataset(sFilename_domain)
+    netcdf_format = aDatasets.file_format    
+    print(netcdf_format)
+    for sKey, aValue in aDatasets.variables.items():
+        if "mask" == sKey:
+            aMask = (aValue[:]).data            
+        
+        if "xc" == sKey:
+            aLon = (aValue[:]).data            
+
+        if "yc" == sKey:
+            aLat = (aValue[:]).data            
+
+
     #dimension
     nrow = np.array(aMask).shape[0]
     ncolumn = np.array(aMask).shape[1]
-    aMask = np.where(aMask==0)
 
     #resolution
     dLon_min = np.min(aLon)
@@ -125,7 +141,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
         
     sFilename_output = sWorkspace_variable_netcdf + slash + sVariable +  sExtension_netcdf
     #should we use the same netcdf format? 
-    pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
+    pFile = Dataset(sFilename_output, 'w', format = netcdf_format ) #'NETCDF4') 
     pDimension_longitude = pFile.createDimension('lon', ncolumn) 
     pDimension_latitude = pFile.createDimension('lat', nrow) 
 
@@ -174,12 +190,20 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
                     #print(aData)
                     missing_value1 = np.max(aData)           
                     
-                    aData = aData.reshape(nrow, ncolumn)      
-                    aData = np.flip(aData, 0)    #why
-                    dummy_index = np.where( aData == missing_value1 ) 
-                    aData[dummy_index] = missing_value
-                    aGrid_data = aData
                        
+                    dummy_index = np.where( (aLongitude < 180 ) & ( aLatitude < 90 )  &(aData !=missing_value1 ) )
+                    #use the missing value mask to choose the points
+                    aLongitude_subset = aLongitude[dummy_index]
+                    aLatitude_subset = aLatitude[dummy_index]
+                    aData_subset = aData[dummy_index]
+                    points = np.vstack((aLongitude_subset, aLatitude_subset))
+                    points = np.transpose(points)
+                    values = aData_subset * dConversion
+                    if(np.isnan( values ).any()) :
+                        print('nan')
+                    #resample
+                    aGrid_data = griddata(points, values,\
+                                 (grid_x, grid_y), method='nearest')
                     #save output
                     aGrid_data[aMask] = missing_value
 
@@ -224,6 +248,13 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
 
     print("finished")
 
+if __name__ == '__main__':
 
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("iCase", help = "the id of the e3sm case",
+                        type=int)
+    args = parser.parse_args()
+    iCase = args.iCase
 
     
