@@ -16,15 +16,19 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 from pye3sm.mosart.grid.create_customized_mosart_domain import create_customized_mosart_domain
-
 from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
+
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-
 iFlag_mosart = 1
 iFlag_elm=1
 iFlag_elmmosart =1
+iFlag_create_mosart_grid = 1
+iFlag_create_elm_grid = 1
+iFlag_2d_to_1d = 0 
+iFlag_create_case = 1 
+iFlag_submit_case = 0
 sDate = '20211115'
 sDate_spinup = '20210209'
 
@@ -60,11 +64,6 @@ if not os.path.exists(sWorkspace_region1):
 sFilename_surface_data_default='/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc'
 sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
 #'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
-iFlag_create_mosart_grid = 1
-iFlag_create_elm_grid = 1
-iFlag_2d_to_1d = 0 
-iFlag_create_case = 1 
-iFlag_submit_case = 0
 
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
@@ -74,6 +73,7 @@ sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/gr
 #for a single grid case, we can create this file on the fly
 sPath = os.path.dirname(os.path.realpath(__file__))
 pDate = datetime.datetime.today()
+
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(1)
 sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
@@ -82,21 +82,17 @@ sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
 
 #generate mosart first then use the mosart lat/lon information for elm
 sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
-sFilename_mosart_netcdf_out = '/qfs/people/liao313/data/e3sm/amazon/mosart/mosart_half_degree.nc'
+
 lCellID_outlet_in=128418
 dResolution = 0.5
 ncase = 100
 
-
-
-for iCase in range(ncase):
-    
+for iCase in range(ncase):   
 
     dHydraulic_anisotropy = aHydraulic_anisotropy[iCase]
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
     dFover = aFover[iCase]
-    sFover = "{:0f}".format( dFover)
-    
+    sFover = "{:0f}".format( dFover)    
 
     sCase_date = sDate + "{:03d}".format(iCase)
     sCase = sModel + sDate + "{:03d}".format(iCase)
