@@ -7,9 +7,9 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_save_variable_2d
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20211005'
+sDate = '20211101'
 
-iCase_index = 10
+iCase_index = 5
 iYear_start = 2000
 iYear_end = 2010
 #from now, to maintain consistancy, we will the same variable name for all processes.

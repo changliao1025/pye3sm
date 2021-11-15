@@ -75,7 +75,7 @@ def e3sm_create_case(oE3SM_in, \
 
     else:
         sQueue = 'slurm'
-        sWalltime = '10:00:00'#sWalltime = '10:00:00'
+        sWalltime = '6:00:00'#sWalltime = '10:00:00'
         sNtask = '-2'
         #sYear = '30'
         pass
@@ -553,6 +553,7 @@ def e3sm_create_case(oE3SM_in, \
         sLine = sLine.lstrip()
         ofs.write(sLine)
         
+        #if you want to submit it
         sLine =  ' ./case.submit' + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)

@@ -39,40 +39,35 @@ else:
         compset = 'IELM'
 
 
-dHydraulic_anisotropy = 1.0
-sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
 
-dFover = 0.6 
-sFover = "{:0f}".format( dFover)
+for iCase in range(ncase):
 
+    dHydraulic_anisotropy = aHydraulic_anisotropy[iCase]
+    sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
+    dFover = aFover[iCase]
+    sFover = "{:0f}".format( dFover)
+    iFlag_default = 0
+    iFlag_debug = 0 #is this a debug run
+    iFlag_branch = 0
+    iFlag_initial = 0 #use restart file as initial
+    iFlag_spinup = 0 #is this a spinup run
+    iFlag_short = 0 #do you run it on short queue
+    iFlag_continue = 0 #is this a continue run
+    iFlag_resubmit = 0 #is this a resubmit
+    sWorkspace_scratch = '/compyfs/liao313'
+    #prepare a ELM namelist based on your input
+    sWorkspace_region = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
+        + 'cases'
+    sWorkspace_region1 = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
+        + 'cases_aux'
+    if not os.path.exists(sWorkspace_region):
+        Path(sWorkspace_region).mkdir(parents=True, exist_ok=True)
 
-iFlag_default = 0
-iFlag_debug = 0 #is this a debug run
-iFlag_branch = 0
-iFlag_initial = 0 #use restart file as initial
-iFlag_spinup = 0 #is this a spinup run
-iFlag_short = 0 #do you run it on short queue
-iFlag_continue = 0 #is this a continue run
-iFlag_resubmit = 0 #is this a resubmit
+    if not os.path.exists(sWorkspace_region1):
+        Path(sWorkspace_region1).mkdir(parents=True, exist_ok=True)
 
-
-
-sWorkspace_scratch = '/compyfs/liao313'
-
-#prepare a ELM namelist based on your input
-sWorkspace_region = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
-    + 'cases'
-
-sWorkspace_region1 = sWorkspace_scratch + slash + '04model' + slash + sModel + slash + sRegion + slash \
-    + 'cases_aux'
-if not os.path.exists(sWorkspace_region):
-    Path(sWorkspace_region).mkdir(parents=True, exist_ok=True)
-
-if not os.path.exists(sWorkspace_region1):
-    Path(sWorkspace_region1).mkdir(parents=True, exist_ok=True)
-
-sFilename_surface_data_default='/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc'
-sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
+    sFilename_surface_data_default='/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc'
+    sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
 
 
 #'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'

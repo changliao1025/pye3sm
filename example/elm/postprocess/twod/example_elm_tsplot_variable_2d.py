@@ -11,15 +11,15 @@ from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.elm.general.structured.twod.plot.elm_tsplot_variable_2d_singlegrid import elm_tsplot_variable_2d_singlegrid
+from pye3sm.elm.general.structured.twod.plot.elm_tsplot_variable_2d import elm_tsplot_variable_2d
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-sDate = '20211005'
+sDate = '20211101'
 
 dLon_in = -60.0
 dLat_in = -2.9
-iCase_index = 10
+iCase_index = 2
 iYear_start = 2000
 iYear_end = 2010
 sModel = 'e3sm'
@@ -53,7 +53,7 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_tsplot_variable_2d_singlegrid(oE3SM, oCase,  \
+elm_tsplot_variable_2d(oE3SM, oCase,  \
   aLon_in=  [dLon_in]  ,   aLat_in= [dLat_in],\
   iReverse_y_in= iReverse_y,\
      dMax_y_in = dMax_y,\
