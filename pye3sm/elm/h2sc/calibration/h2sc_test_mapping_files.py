@@ -9,8 +9,7 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 import netCDF4 as nc
 from scipy.sparse import csr_matrix
 
-#import library
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
+
  
 #import global variable
 from pyearth.system import define_global_variables

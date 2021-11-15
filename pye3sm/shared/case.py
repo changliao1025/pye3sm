@@ -1,9 +1,15 @@
+import os
+from pathlib import Path
 from abc import ABCMeta, abstractmethod
 
 class pycase(object):
     __metaclass__ = ABCMeta   
-
+    iFlag_debug = 0
     iFlag_spinup=0
+    iFlag_elm = 1
+    iFlag_mosart = 0 
+    iFlag_atm = 0
+    iFlag_ocn =0 
     iCase_index=0
     iYear_start=0
     iYear_end=0
@@ -14,8 +20,11 @@ class pycase(object):
     iFlag_same_grid=1
     nyear=0
     nmonth=0
+    nsoillayer=15
     dConversion=1.0  
+    dOffset =0.0
     sDirectory_case=''
+    sDirectory_case_aux=''
     sDirectory_run=''   
     sModel='h2sc'
     sRegion='global'
@@ -37,11 +46,11 @@ class pycase(object):
 
     #elm    
     sFilename_elm_namelist=''    
-    sFilename_elm_surface_data=''
+    sFilename_elm_surfacedata=''
     sFilename_elm_domain=''
     #mosart
-    sFilename_mosart_mask=''
-    sFilename_mosart_domain=''
+    sFilename_mosart_namelist=''
+    sFilename_mosart_input=''
     
 
     def __init__(self, aParameter):
@@ -49,10 +58,20 @@ class pycase(object):
         #self.aParameter = aParameter
 
         #required with default variables
-
+        if 'iFlag_debug' in aParameter:
+            self.iFlag_debug             = int(aParameter[ 'iFlag_debug'])
         #optional
         if 'iFlag_spinup' in aParameter:
             self.iFlag_spinup             = int(aParameter[ 'iFlag_spinup'])
+        
+        if 'iFlag_elm' in aParameter:
+            self.iFlag_elm             = int(aParameter[ 'iFlag_elm'])
+
+        if 'iFlag_mosart' in aParameter:
+            self.iFlag_mosart            = int(aParameter[ 'iFlag_mosart'])
+
+        if 'iFlag_atm' in aParameter:
+            self.iFlag_atm             = int(aParameter[ 'iFlag_atm'])
 
         if 'iCase_index' in aParameter:
             self.iCase_index             = int(aParameter[ 'iCase_index'])
@@ -81,11 +100,21 @@ class pycase(object):
         if 'nmonth' in aParameter:
             self.nmonth             = int(aParameter[ 'nmonth'])
 
+        if 'nsoillayer' in aParameter:
+            self.nsoillayer             = int(aParameter[ 'nsoillayer'])
+
         if 'dConversion' in aParameter:
             self.dConversion             = float(aParameter[ 'dConversion'])
+        
+        if 'dOffset' in aParameter:
+            self.dOffset             = float(aParameter[ 'dOffset'])
        
         if 'sDirectory_case' in aParameter:
             self.sDirectory_case = aParameter['sDirectory_case']
+
+        if 'sDirectory_case_aux' in aParameter:
+            self.sDirectory_case_aux = aParameter['sDirectory_case_aux']
+            
 
         if 'sDirectory_run' in aParameter:
             self.sDirectory_run       = aParameter[ 'sDirectory_run' ]
@@ -117,18 +146,23 @@ class pycase(object):
 
         if 'sWorkspace_analysis' in aParameter:
             self.sWorkspace_analysis       = aParameter[ 'sWorkspace_analysis']
+            Path( self.sWorkspace_analysis ).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_cases' in aParameter:
             self.sWorkspace_cases    = aParameter[ 'sWorkspace_cases']
+            Path( self.sWorkspace_cases ).mkdir(parents=True, exist_ok=True)
        
         if 'sWorkspace_case' in aParameter:
             self.sWorkspace_case = aParameter[ 'sWorkspace_case']
+            Path( self.sWorkspace_case ).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_simulation_case' in aParameter:
             self.sWorkspace_simulation_case= aParameter[ 'sWorkspace_simulation_case']
+            Path(self.sWorkspace_simulation_case).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_analysis_case' in aParameter:
             self.sWorkspace_analysis_case= aParameter[ 'sWorkspace_analysis_case']
+            Path( self.sWorkspace_analysis_case ).mkdir(parents=True, exist_ok=True)
 
         if 'sWorkspace_simulation_case_build' in aParameter:
             self.sWorkspace_simulation_case_build= aParameter[ 'sWorkspace_simulation_case_build']
@@ -151,14 +185,19 @@ class pycase(object):
         if 'sFilename_elm_domain' in aParameter:
             self.sFilename_elm_domain      = aParameter[ 'sFilename_elm_domain']
 
+        
+
+        if 'sFilename_elm_surfacedata' in aParameter:
+            self.sFilename_elm_surfacedata      = aParameter[ 'sFilename_elm_surfacedata']
+        #mosart
+
         if 'sFilename_mosart_domain' in aParameter:
             self.sFilename_mosart_domain      = aParameter[ 'sFilename_mosart_domain']
-
-        if 'sFilename_elm_surface_data' in aParameter:
-            self.sFilename_elm_surface_data      = aParameter[ 'sFilename_elm_surface_data']
-        #mosart
-        if 'sFilename_mosart_mask' in aParameter:
-            self.sFilename_mosart_mask               = aParameter[ 'sFilename_mosart_mask']
+        if 'sFilename_mosart_namelist' in aParameter:
+            self.sFilename_mosart_namelist               = aParameter[ 'sFilename_mosart_namelist']
+        
+        if 'sFilename_mosart_input' in aParameter:
+            self.sFilename_mosart_input               = aParameter[ 'sFilename_mosart_input']
 
         
 

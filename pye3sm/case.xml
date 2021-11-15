@@ -10,6 +10,24 @@
         Is this a spinup case simulation
       </desc>
     </entry>
+     <entry id="iFlag_elm" value="1">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+     <entry id="iFlag_mosart" value="0">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+     <entry id="iFlag_atm" value="0">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
     <entry id="iCase_index" value="0">
       <type>int</type>
       <desc>
@@ -59,7 +77,19 @@
         The total years
       </desc>
     </entry>
+     <entry id="nsoillayer" value="15">
+      <type>int</type>
+      <desc>
+        The total soil layer
+      </desc>
+    </entry>
     <entry id="dConversion" value="1.0">
+      <type>float</type>
+      <desc>
+        The conversion factor of the variable
+      </desc>
+    </entry>
+    <entry id="dOffset" value="0.0">
       <type>float</type>
       <desc>
         The conversion factor of the variable
@@ -175,20 +205,20 @@
         The mask file of mosart
       </desc>
     </entry>
-    <entry id="sFilename_elm_surface_data" value="">
+    <entry id="sFilename_elm_surfacedata" value="">
       <type>char</type>
       <desc>
         The mask file of mosart
       </desc>
     </entry>
   
-    <entry id="sFilename_mosart_mask" value="">
+    <entry id="sFilename_mosart_namelist" value="">
       <type>char</type>
       <desc>
         The mask file of mosart
       </desc>
     </entry>
-    <entry id="sFilename_mosart_domain" value="">
+    <entry id="sFilename_mosart_input" value="">
       <type>char</type>
       <desc>
         The mask file of mosart

@@ -9,7 +9,7 @@ import glob
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
  
 from pyearth.system.define_global_variables import *
-from pyearth.toolbox.slurm.slurm_prepare_job_script_parafly import slurm_prepare_job_script_parafly
+from pyearth.toolbox.slurm.slurm_prepare_job_script_python import slurm_prepare_job_script_python
 
 
 def usgs_prepare_parafly():
@@ -57,7 +57,7 @@ def usgs_prepare_parafly():
     sJob_name = 'parafly_tsplot'
     iWalltime = 20
     
-    slurm_prepare_job_script_parafly( sDirectory_job, \
+    slurm_prepare_job_script_python( sDirectory_job, \
         sBasename_job, \
         sBasename_parafly, \
         sJob_name, \

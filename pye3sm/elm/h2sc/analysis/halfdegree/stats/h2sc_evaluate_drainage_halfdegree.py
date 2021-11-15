@@ -45,11 +45,11 @@ def h2sc_evaluate_drainage_halfdegree(sFilename_configuration_in, \
     sRegion = oE3SM.sRegion
     sCase = oE3SM.sCase
     #read obs 
-    sFilename_mosart_mask = sWorkspace_data + slash \
+    sFilename_mosart_input = sWorkspace_data + slash \
         + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
     #read in mask
-    aDatasets = Dataset(sFilename_mosart_mask)
+    aDatasets = Dataset(sFilename_mosart_input)
     netcdf_format = aDatasets.file_format
     print(netcdf_format)
     print("Print dimensions:")

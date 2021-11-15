@@ -32,23 +32,18 @@ def h2sc_evaluate_drainage_sensitivity_to_shape_parameter(sFilename_configuratio
                                                sLabel_y_in = None, \
                                                aLabel_legend_in = None, \
                                                sTitle_in=None):
-    iCase_index = iCase
-    e3sm_read_configuration_file(sFilename_configuration_in,\
-                             iCase_index_in = iCase_index, \
-                             iYear_start_in = iYear_start_in,\
-                             iYear_end_in = iYear_end_in,\
-                             sDate_in= sDate_in)
+    
     sCase = oE3SM.sCase
     
     sModel = oE3SM.sModel
     sRegion = oE3SM.sRegion
     nCase = len(aCase_index)
     aCase = np.full(nCase, '')
-    sFilename_mosart_mask = sWorkspace_data + slash \
+    sFilename_mosart_input = sWorkspace_data + slash \
         + 'h2sc' + slash +  sRegion + slash + 'raster' + slash + 'dem' + slash \
         + 'MOSART_Global_half_20180606c.chang_9999.nc'
     #read in mask
-    aDatasets = Dataset(sFilename_mosart_mask)
+    aDatasets = Dataset(sFilename_mosart_input)
     for sKey, aValue in aDatasets.variables.items():
         if "ele0" == sKey:
             aEle0 = (aValue[:]).data

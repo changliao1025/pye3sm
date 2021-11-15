@@ -101,7 +101,7 @@
       </desc>
     </entry>
    
-    <entry id="sFilename_mosart_mask" value="">
+    <entry id="sFilename_mosart_input" value="">
       <type>char</type>
       <desc>
         The workspace of pest calibration

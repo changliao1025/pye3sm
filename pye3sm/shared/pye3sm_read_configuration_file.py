@@ -21,6 +21,10 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                         sCIME_directory_in = None ):
 
     #read the default configuration
+    if not os.path.exists(sFilename_configuration_in):
+        print('The configuration file does not exist!')
+        return
+
     config = parse_xml_file(sFilename_configuration_in)
 
     if iFlag_branch_in is not None:
@@ -85,6 +89,9 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         iFlag_spinup_in = None, \
                                         iFlag_same_grid_in= None,\
+                                            iFlag_elm_in =None,\
+                                                iFlag_mosart_in = None,\
+                                            iFlag_atm_in= None,\
                                         iCase_index_in = None, \
                                         iYear_start_in = None,\
                                         iYear_end_in = None, \
@@ -93,6 +100,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         iYear_subset_start_in = None, \
                                         iYear_subset_end_in = None, \
                                         dConversion_in = None, \
+                                            dOffset_in = None, \
                                         sDate_in = None,\
                                             sModel_in = None,\
                                                 sRegion_in = None,\
@@ -100,13 +108,17 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                         sVariable_in = None, \
                                         sFilename_elm_namelist_in = None,\
                                         sFilename_datm_namelist_in = None, \
-                                        sFilename_mosart_mask_in = None,\
+                                     sFilename_mosart_namelist_in = None,\
                                             sFilename_atm_domain_in = None,
                                             sFilename_elm_domain_in=None,\
-                                                sFilename_mosart_domain_in=None,
+                                                sFilename_mosart_input_in=None,
                                         sWorkspace_data_in = None,\
                                         sWorkspace_scratch_in=None):
     #read the default configuration
+    if not os.path.exists(sFilename_configuration_in):
+        print('The configuration file does not exist!')
+        return
+
     config = parse_xml_file(sFilename_configuration_in)
 
     sModel = config['sModel']
@@ -116,6 +128,23 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         iFlag_spinup = iFlag_spinup_in
     else:
         iFlag_spinup = 0
+    
+    if iFlag_elm_in is not None:
+        iFlag_elm = iFlag_elm_in
+    else:
+        iFlag_elm = 1
+
+    if iFlag_mosart_in is not None:
+        iFlag_mosart = iFlag_mosart_in
+    else:
+        iFlag_mosart = 0
+
+    if iFlag_atm_in is not None:
+        iFlag_atm = iFlag_atm_in
+    else:
+        iFlag_atm = 0
+
+    
 
     if sDate_in is not None:
         sDate = sDate_in
@@ -183,7 +212,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         dConversion = 1.0
     
-    
+   
+    if dOffset_in is not None:
+        dOffset = dOffset_in
+    else:
+        dOffset = 0.0
 
     if sVariable_in is not None:
         sVariable = sVariable_in
@@ -195,6 +228,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sLabel_y = sLabel_y_in
     else:
         sLabel_y = ''
+
+    config['iFlag_elm'] =  "{:01d}".format(iFlag_elm)
+    config['iFlag_mosart'] =  "{:01d}".format(iFlag_mosart)
 
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
@@ -211,6 +247,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     nMonth = nYear  * 12
     config['nMonth']=  "{:04d}".format(nMonth)
     config['dConversion']=  "{:0f}".format(dConversion)
+    config['dOffset']=  "{:0f}".format(dOffset)
 
     config['sModel'] = sModel
     config['sRegion'] = sRegion
@@ -222,7 +259,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     sFilename_atm_domain= config['sFilename_atm_domain']
     sFilename_elm_domain= config['sFilename_elm_domain']
-    sFilename_mosart_domain= config['sFilename_mosart_domain']
+
+    sFilename_mosart_namelist= config['sFilename_mosart_namelist']
+    sFilename_mosart_input= config['sFilename_mosart_input']
 
     
     if sWorkspace_data_in is not None:
@@ -275,15 +314,15 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
             print('A default datm namelist was not found, it may be created.' )
 
     #update mask if region changes
-    if sFilename_mosart_mask_in is not None:
-        sFilename_mosart_mask = sFilename_mosart_mask_in
+    if sFilename_mosart_input_in is not None:
+        sFilename_mosart_input = sFilename_mosart_input_in
     else:
-        sFilename_mosart_mask = sWorkspace_data + slash \
+        sFilename_mosart_input = sWorkspace_data + slash \
             + sModel + slash + sRegion + slash \
             + 'raster' + slash + 'dem' + slash \
             + 'MOSART_Global_half_20180606c.chang_9999.nc'
-        if os.path.exists(sFilename_mosart_mask):
-            sLine = 'A default MOSART mask was found at: ' + sFilename_mosart_mask + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+        if os.path.exists(sFilename_mosart_input):
+            sLine = 'A default MOSART mask was found at: ' + sFilename_mosart_input + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
             print(sLine)
         else:
             print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
@@ -295,26 +334,25 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     if sFilename_elm_domain_in is not None:
         sFilename_elm_domain = sFilename_elm_domain_in
 
-    if sFilename_mosart_domain_in is not None:
-        sFilename_mosart_domain = sFilename_mosart_domain_in
-    
-
-    
+    if sFilename_mosart_namelist_in is not None:
+        sFilename_mosart_namelist = sFilename_mosart_namelist_in    
     
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
-    if not os.path.isdir(sWorkspace_analysis):
-        os.makedirs(sWorkspace_analysis)
-
+    Path(sWorkspace_analysis).mkdir(parents=True, exist_ok=True)
+    
     config['sWorkspace_analysis'] = sWorkspace_analysis
 
     #case setting
     sDirectory_case = sWorkspace_scratch + '/04model/' + sModel + slash \
         + sRegion + '/cases/'
+    sDirectory_case_aux = sWorkspace_scratch + '/04model/' + sModel + slash \
+        + sRegion + '/cases_aux/'
     config['sWorkspace_cases'] = sDirectory_case
     sDirectory_run = sWorkspace_scratch +  slash +'e3sm_scratch'
 
     config['sDirectory_case'] = sDirectory_case
+    config['sDirectory_case_aux'] = sDirectory_case_aux
     config['sDirectory_run'] = sDirectory_run
 
     config['sWorkspace_case'] = sDirectory_case + slash + sCase
@@ -331,9 +369,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sFilename_elm_namelist'] = sFilename_clm_namelist
     config['sFilename_elm_domain'] = sFilename_elm_domain
 
-    config['sFilename_mosart_mask'] = sFilename_mosart_mask 
+    config['sFilename_mosart_namelist'] = sFilename_mosart_namelist 
     
-    config['sFilename_mosart_domain'] = sFilename_mosart_domain
+    config['sFilename_mosart_input'] = sFilename_mosart_input
     return config
 
 if __name__ == '__main__':
