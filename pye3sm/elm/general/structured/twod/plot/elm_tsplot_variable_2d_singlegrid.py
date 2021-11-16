@@ -101,9 +101,9 @@ def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_domain = sWorkspace_analysis_case_variable + slash + 'tsplot_singlegrid'
-    if not os.path.exists(sWorkspace_analysis_case_domain):
-        os.makedirs(sWorkspace_analysis_case_domain)
+    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'tsplot_singlegrid'
+    if not os.path.exists(sWorkspace_analysis_case_region):
+        os.makedirs(sWorkspace_analysis_case_region)
         pass
 
     aData_all=[]
@@ -111,7 +111,7 @@ def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
     
 
     sLabel_legend = sRegion.title()
-    sFilename_out = sWorkspace_analysis_case_domain + slash \
+    sFilename_out = sWorkspace_analysis_case_region + slash \
         + sVariable + '_tsplot_' +'.png'
     
     pShape = aVariable_total_subset.shape
@@ -142,7 +142,7 @@ def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
     #aData_all[bad_index] = dMin_y_in
 
 
-    sFilename_out = sWorkspace_analysis_case_domain + slash \
+    sFilename_out = sWorkspace_analysis_case_region + slash \
         + sVariable + '_tsplot' +'.png'
 
     aDate_all = np.array([dates_subset])
