@@ -56,7 +56,7 @@ def elm_map_variable_2d(oE3SM_in, \
     dLat_max = np.max(aLat)
     dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
     dResolution_y = (dLat_max - dLat_min) / (nrow-1)
-    aImage_extent =  [dLon_min, dLat_min, dLon_max, dLat_max]
+    aImage_extent =  [dLon_min- dResolution_x ,dLon_max + dResolution_x, dLat_min -dResolution_x,  dLat_max+dResolution_x]
 
     print('Prepare the map grid')
    
@@ -121,8 +121,7 @@ def elm_map_variable_2d(oE3SM_in, \
         #aData_all[bad_index] = dMin_y_in
         aData_all = np.array(aImage)                  
         
-        map_raster_data(aData_all,
-                              aImage_extent,\
+        map_raster_data(aData_all,  aImage_extent,\
                               sFilename_out,\
                                   dMissing_value_in = -9999)
                                 

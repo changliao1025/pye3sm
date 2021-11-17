@@ -4,6 +4,10 @@ from pathlib import Path
 import numpy as np
 import datetime
 from shutil import copyfile
+
+from scipy.stats import qmc
+
+
 from pyearth.system.define_global_variables import *
 from pyearth.gis.location.convert_lat_lon_range import convert_180_to_360
 
@@ -29,7 +33,7 @@ iFlag_create_elm_grid = 1
 iFlag_2d_to_1d = 0 
 iFlag_create_case = 1 
 iFlag_submit_case = 0
-sDate = '20211115'
+sDate = '20211116'
 sDate_spinup = '20210209'
 
 if iFlag_elmmosart == 1:
@@ -85,13 +89,25 @@ sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_2021
 
 lCellID_outlet_in=128418
 dResolution = 0.5
-ncase = 100
+ncase = 50
 
-for iCase in range(ncase):   
+sampler = qmc.LatinHypercube(d=2)
+sample = sampler.random(n=ncase)
+l_bounds = [-3, 0.1]
+u_bounds = [1, 5]
+aParameter = qmc.scale(sample, l_bounds, u_bounds)
+aHydraulic_anisotropy_exp = aParameter[:,0]
+aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
+aFover = aParameter[:,1]
 
-    dHydraulic_anisotropy = aHydraulic_anisotropy[iCase]
+
+
+for iCase_index in range(ncase):   
+    iCase = iCase_index + 1
+
+    dHydraulic_anisotropy = aHydraulic_anisotropy[iCase_index]
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
-    dFover = aFover[iCase]
+    dFover = aFover[iCase_index]
     sFover = "{:0f}".format( dFover)    
 
     sCase_date = sDate + "{:03d}".format(iCase)
@@ -282,3 +298,26 @@ for iCase in range(ncase):
 
         oCase = pycase(aParameter_case)
         e3sm_create_case(oE3SM, oCase )
+
+
+#save a copy of parameter as well
+sFilename_parameter = sWorkspace_region1 + slash + sDate + '.csv'
+np.savetxt(sFilename_parameter, aParameter, delimiter=",")
+
+#write a large sh to run all the 
+sFilename_bash = sWorkspace_region1 + slash + 'run_batch.sh'
+ofs = open(sFilename_bash, 'w')
+sLine = '#!/bin/bash' + '\n'
+ofs.write(sLine) 
+for iCase_index in range(ncase):   
+    iCase = iCase_index + 1
+    sCase_date = sDate + "{:03d}".format(iCase)
+    sCase = sModel + sDate + "{:03d}".format(iCase)
+    sWorkspace_region2 = sWorkspace_region1 + slash + sCase
+    sLine = 'cd ' + sWorkspace_region2 +  '\n'     
+    ofs.write(sLine)
+    sLine = './' + sCase + '.sh' +  '\n'
+    ofs.write(sLine)
+ofs.close()
+os.chmod(sFilename_bash, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
+print('Finished')
