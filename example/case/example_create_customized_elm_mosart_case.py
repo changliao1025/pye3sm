@@ -21,7 +21,7 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iCase = 1
+iCase = 2
 iFlag_mosart = 1
 iFlag_elm=1
 iFlag_elmmosart =1
@@ -30,7 +30,7 @@ iFlag_create_elm_grid = 1
 iFlag_2d_to_1d = 0 
 iFlag_create_case = 1 
 iFlag_submit_case = 0
-sDate = '20211115'
+sDate = '20211117'
 sDate_spinup = '20210209'
 
 if iFlag_elmmosart == 1:
@@ -44,7 +44,11 @@ else:
         compset = 'IELM'
 
 
-
+#for a single grid case, we can create this file on the fly
+sPath = os.path.dirname(os.path.realpath(__file__))
+pDate = datetime.datetime.today()
+sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
+sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(1)
 
 
 iFlag_default = 0
@@ -52,7 +56,7 @@ iFlag_debug = 0 #is this a debug run
 iFlag_branch = 0
 iFlag_initial = 0 #use restart file as initial
 iFlag_spinup = 0 #is this a spinup run
-iFlag_short = 0 #do you run it on short queue
+iFlag_short = 1 #do you run it on short queue
 iFlag_continue = 0 #is this a continue run
 iFlag_resubmit = 0 #is this a resubmit
 
@@ -85,11 +89,7 @@ sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3
 sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
 sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/elm_sparse_grid.cfg'
 
-#for a single grid case, we can create this file on the fly
-sPath = os.path.dirname(os.path.realpath(__file__))
-pDate = datetime.datetime.today()
-sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
-sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(1)
+
 
 dHydraulic_anisotropy = 1.0
 sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
@@ -211,6 +211,10 @@ if iFlag_create_case ==1:
             sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
             ofs.write(sLine)
             sLine = "fover = " + sFover + '\n'
+            ofs.write(sLine)
+            sLine = 'hist_empty_htapes = .true.' + '\n'
+            ofs.write(sLine)
+            sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT' "  + '\n'
             ofs.write(sLine)
             pass
 

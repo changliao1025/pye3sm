@@ -68,14 +68,14 @@ def e3sm_create_case(oE3SM_in, \
 
     if (iFlag_short == 1 ):
         sQueue = 'short'
-        sWalltime = '1:00:00'
-        sNtask = '1'
+        sWalltime = '2:00:00'
+        sNtask = '-2'
         #sYear = '30'
         pass
 
     else:
         sQueue = 'slurm'
-        sWalltime = '6:00:00'#sWalltime = '10:00:00'
+        sWalltime = '6:00:00'
         sNtask = '-3'
         #sYear = '30'
         pass
@@ -514,7 +514,7 @@ def e3sm_create_case(oE3SM_in, \
         sLine = sLine.lstrip()
         ofs.write(sLine)
         
-        sLine =  ' ./xmlchange ELM_USRDAT_NAME=single_test' + '\n'
+        sLine =  ' ./xmlchange ELM_USRDAT_NAME=amazon' + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
 

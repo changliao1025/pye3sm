@@ -89,7 +89,7 @@ sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_2021
 
 lCellID_outlet_in=128418
 dResolution = 0.5
-ncase = 50
+ncase = 16
 
 sampler = qmc.LatinHypercube(d=2)
 sample = sampler.random(n=ncase)
@@ -200,6 +200,11 @@ for iCase_index in range(ncase):
                 ofs.write(sLine)
                 sLine = "fover = " + sFover + '\n'
                 ofs.write(sLine)
+
+                sLine = 'hist_empty_htapes = .true.' + '\n'
+                ofs.write(sLine)
+                sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT' "  + '\n'
+                ofs.write(sLine)
                 pass
 
             ofs.close()
@@ -305,7 +310,7 @@ sFilename_parameter = sWorkspace_region1 + slash + sDate + '.csv'
 np.savetxt(sFilename_parameter, aParameter, delimiter=",")
 
 #write a large sh to run all the 
-sFilename_bash = sWorkspace_region1 + slash + 'run_batch.sh'
+sFilename_bash = sWorkspace_region1 + slash + 'run_batch'+ sDate +'.sh'
 ofs = open(sFilename_bash, 'w')
 sLine = '#!/bin/bash' + '\n'
 ofs.write(sLine) 
