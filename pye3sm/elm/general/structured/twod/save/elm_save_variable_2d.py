@@ -73,7 +73,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     #aMask = np.where(aEle0 == missing_value)
 
     #new approach
-    aMask, aLon, aLat=elm_retrieve_case_dimension_info(oCase_in)
+    aMask, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
     nrow = np.array(aMask).shape[0]
     ncolumn = np.array(aMask).shape[1]
@@ -143,11 +143,11 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
             #read before modification
     
             if os.path.exists(sFilename):
-                print("Yep, I can read that file: " + sFilename)
+                print("Yep, I can read that file: " + sFilename)                
             else:
                 print(sFilename)
                 print("Nope, the path doesn't reach your file. Go research filepath in python")
-                quit()
+                return
     
             aDatasets = Dataset(sFilename)
     

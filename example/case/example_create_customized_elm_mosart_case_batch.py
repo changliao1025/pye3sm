@@ -89,7 +89,7 @@ sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_2021
 
 lCellID_outlet_in=128418
 dResolution = 0.5
-ncase = 16
+ncase = 24
 
 sampler = qmc.LatinHypercube(d=2)
 sample = sampler.random(n=ncase)

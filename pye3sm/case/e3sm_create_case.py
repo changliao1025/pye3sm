@@ -359,7 +359,14 @@ def e3sm_create_case(oE3SM_in, \
              + slash + sCase +'.sh'
         ofs = open(sFilename_bash, 'w')
         sLine = '#!/bin/bash' + '\n'
-        ofs.write(sLine)        
+        ofs.write(sLine)       
+        sLine = 'rm -rf '  + sCasename + '\n'
+        ofs.write(sLine)   
+        sLine = 'rm -rf '  + sBldname + '\n'
+        ofs.write(sLine)   
+        sLine = 'rm -rf '  + sRunname + '\n'
+        ofs.write(sLine)   
+
         if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit            
             #remove case directory
             if (os.path.exists(sCasename)):
@@ -384,7 +391,6 @@ def e3sm_create_case(oE3SM_in, \
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
                 pass
-
             
             sLine = 'sCIME_directory='+ sCIME_directory +  '\n'
             ofs.write(sLine)
