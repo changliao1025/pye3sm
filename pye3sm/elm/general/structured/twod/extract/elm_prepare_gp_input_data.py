@@ -2,6 +2,7 @@
 from pyearth.system.define_global_variables import *
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
 def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
+    #use the strucuture see the figure
 
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
