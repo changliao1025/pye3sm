@@ -67,12 +67,12 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     #aMask = np.where(aEle0 == missing_value)
 
     #new approach
-    aMask, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
+    aMask0, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask = np.flip(aMask, 0)
+    aMask = np.flip(aMask0, 0)
     nrow = np.array(aMask).shape[0]
     ncolumn = np.array(aMask).shape[1]
-    aMask = np.where(aMask==0)
+    aMask_index = np.where(aMask==0)
 
     #resolution
     dLon_min = np.min(aLon)
@@ -176,7 +176,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
                     aGrid_data = aData
                        
                     #save output
-                    aGrid_data[aMask] = missing_value
+                    aGrid_data[aMask_index] = missing_value
 
                     sDummy = sVariable + sYear + sMonth
                     pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
