@@ -126,6 +126,7 @@ for iCase_index in range(ncase):
         copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_input)    
 
     if iFlag_create_elm_grid ==1:
+        #mask is flipped
         aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
         if iFlag_2d_to_1d == 0:
             lon_min = np.min(aLon)

@@ -5,16 +5,10 @@ from numpy.lib.function_base import _average_dispatcher
 from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
-
-
-
 from pyearth.system.define_global_variables import *    
 from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
-
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
-
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
- 
+from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
@@ -75,6 +69,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     #new approach
     aMask, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
+    aMask = np.flip(aMask, 0)
     nrow = np.array(aMask).shape[0]
     ncolumn = np.array(aMask).shape[1]
     aMask = np.where(aMask==0)
@@ -97,7 +92,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     pHeaderParameters['ncolumn'] = "{:0d}".format(ncolumn)
     pHeaderParameters['nrow'] = "{:0d}".format(nrow)
     pHeaderParameters['ULlon'] = "{:0f}".format(dLon_min-0.5 * dResolution_x)
-    pHeaderParameters['ULlat'] = "{:0f}".format(dLat_min-0.5 * dResolution_y)
+    pHeaderParameters['ULlat'] = "{:0f}".format(dLat_max+0.5 * dResolution_y)
     pHeaderParameters['pixelSize'] = "{:0f}".format(dResolution_x)
     pHeaderParameters['nband'] = '1'
     pHeaderParameters['offset'] = '0'
@@ -143,10 +138,11 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
             #read before modification
     
             if os.path.exists(sFilename):
-                print("Yep, I can read that file: " + sFilename)                
+                #print("Yep, I can read that file: " + sFilename)                
+                pass
             else:
-                print(sFilename)
-                print("Nope, the path doesn't reach your file. Go research filepath in python")
+                print(sFilename + ' is missinge')
+                #print("Nope, the path doesn't reach your file. Go research filepath in python")
                 return
     
             aDatasets = Dataset(sFilename)
@@ -172,9 +168,9 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
                     aData = (aValue[:]).data                     
                     #print(aData)
                     missing_value1 = np.max(aData)           
-                    
-                    aData = aData.reshape(nrow, ncolumn)      
                     aData = np.flip(aData, 0)    #why
+                    aData = aData.reshape(nrow, ncolumn)      
+                    
                     dummy_index = np.where( aData == missing_value1 ) 
                     aData[dummy_index] = missing_value
                     aGrid_data = aData

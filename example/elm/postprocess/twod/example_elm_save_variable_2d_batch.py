@@ -7,10 +7,6 @@ import subprocess
 import numpy as np
 import multiprocessing
 
-
-
- 
- 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
@@ -18,12 +14,9 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_save_variable_2d
 
-
-
-
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 3
+    iIndex_start = 1
     iIndex_end = 24
 else:
     parser = argparse.ArgumentParser()
@@ -37,8 +30,8 @@ sModel = 'e3sm'
 sRegion ='amazon'
 sDate = '20211116'
 
-
-aVariable = ['ZWT']#, 'gage_height','QDRAI']
+aVariable = ['ZWT','QOVER']#,  'QRUNOFF']
+#aVariable = ['ZWT']#, 'gage_height','QDRAI']
 #aVariable = ['wt_slp']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
 
 #aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI', \

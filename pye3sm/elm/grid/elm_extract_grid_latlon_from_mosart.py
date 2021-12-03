@@ -46,7 +46,9 @@ def elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_in):
         ncolumn_original = aShape[1]
         iFlag_1d = 0
     
-    aMask= aDnID
+    aMask0= aDnID
+    #aMask = np.flip(aMask0, 0) 
+    aMask = aMask0
 
     if iFlag_1d == 1:
         aLat = aLatixy
@@ -58,5 +60,6 @@ def elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_in):
 
         aLat = aLatixy
         aLon = aLongxy
+
 
     return aLon, aLat, aMask
