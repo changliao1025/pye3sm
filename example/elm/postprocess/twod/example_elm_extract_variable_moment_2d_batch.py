@@ -1,23 +1,17 @@
-#this script should be run using Python 2.7.8 instead of Python 3
-#module load python/2.7.8
-
 import os, sys
 import argparse
-import subprocess
 import numpy as np
-import multiprocessing
-
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_save_variable_2d
 
+from pye3sm.elm.general.structured.twod.extract.elm_extract_variable_moment_2d import elm_extract_variable_moment_2d
 iFlag_debug = 1
 if iFlag_debug == 1:
     iIndex_start = 1
-    iIndex_end = 24
+    iIndex_end = 16
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -28,7 +22,7 @@ else:
 
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20211116'
+sDate = '20211117'
 
 aVariable = ['ZWT','QOVER','QRUNOFF']
 #aVariable = ['ZWT']#, 'gage_height','QDRAI']
@@ -65,5 +59,6 @@ for iCase_index in (aCase_index):
                                                        sVariable_in = sVariable )
         #print(aParameter_case)
         oCase = pycase(aParameter_case)
-        elm_save_variable_2d(oE3SM, oCase )
+        elm_extract_variable_moment_2d(oE3SM, oCase )
+
 print('finished')

@@ -104,12 +104,12 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     iFlag_optional = 1 
 
     #save netcdf
-    sWorkspace_variable_netcdf = sWorkspace_analysis_case + slash \
-        + sVariable + slash + 'netcdf'
+    sWorkspace_variable = sWorkspace_analysis_case + slash \
+        + sVariable 
+    sWorkspace_variable_netcdf = sWorkspace_variable + slash + 'netcdf'
     if not os.path.exists(sWorkspace_variable_netcdf):
         os.makedirs(sWorkspace_variable_netcdf)
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash \
-                            + sVariable + slash + 'dat'
+    sWorkspace_variable_dat = sWorkspace_variable + slash + 'dat'
     if not os.path.exists(sWorkspace_variable_dat):
         os.makedirs(sWorkspace_variable_dat)
     sWorkspace_variable_tiff = sWorkspace_analysis_case + slash \

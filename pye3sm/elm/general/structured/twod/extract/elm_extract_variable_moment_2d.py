@@ -3,7 +3,9 @@ import numpy as np
 from pyearth.system.define_global_variables import *    
 
 from netCDF4 import Dataset #read netcdf
+from osgeo import gdal, osr #the default operator
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
+from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
 def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
     ###
     ###this function read the saved output file and obtain the information at each grid
@@ -42,6 +44,18 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
     dLat_max = np.max(aLat)
     dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
     dResolution_y = (dLat_max - dLat_min) / (nrow-1)
+    pHeaderParameters = {}    
+    pHeaderParameters['ncolumn'] = "{:0d}".format(ncolumn)
+    pHeaderParameters['nrow'] = "{:0d}".format(nrow)
+    pHeaderParameters['ULlon'] = "{:0f}".format(dLon_min-0.5 * dResolution_x)
+    pHeaderParameters['ULlat'] = "{:0f}".format(dLat_max+0.5 * dResolution_y)
+    pHeaderParameters['pixelSize'] = "{:0f}".format(dResolution_x)
+    pHeaderParameters['nband'] = '1'
+    pHeaderParameters['offset'] = '0'
+    pHeaderParameters['data_type'] = '4'
+    pHeaderParameters['bsq'] = 'bsq'
+    pHeaderParameters['byte_order'] = '0'
+    pHeaderParameters['missing_value'] = '-9999'
     #get time 
     nmonth = (iYear_end - iYear_start +1) * 12
     aGrid_stack= np.full((nmonth, nrow, ncolumn), -9999.0, dtype= float)
@@ -49,8 +63,9 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
 
    
     #read data by variable name
-    sWorkspace_variable_netcdf = sWorkspace_analysis_case + slash \
-        + sVariable + slash + 'netcdf'
+    sWorkspace_variable = sWorkspace_analysis_case + slash \
+        + sVariable 
+    sWorkspace_variable_netcdf = sWorkspace_variable + slash + 'netcdf'
     sFilename_in = sWorkspace_variable_netcdf + slash + sVariable +  sExtension_netcdf
     #should we use the same netcdf format? 
     aDatasets = Dataset(sFilename_in)
@@ -77,19 +92,47 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
                 dMean = np.mean(aVariable_ts)
                 dPercent10 = np.percentile(aVariable_ts, 10)
                 dPercent90 = np.percentile(aVariable_ts, 90) 
+
+                aMoment_stack[0,i,j]= dMin
+                aMoment_stack[1,i,j]= dMax
+                aMoment_stack[2,i,j]= dMean
+                aMoment_stack[3,i,j]= dPercent10
+                aMoment_stack[4,i,j]= dPercent90
                 #save out?
                 pass
             else:
                 pass
+    
+    #save
+    sFilename_output = sWorkspace_variable + slash \
+        + sVariable +'_moment'+  sExtension_netcdf
+    pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
+    pDimension_longitude = pFile.createDimension('lon', ncolumn) 
+    pDimension_latitude = pFile.createDimension('lat', nrow) 
+    pDimension_moment = pFile.createDimension('nmoment', 5) 
 
-    #row_index = int( (dLatitude -dLat_min)/dResolution_y )
-    #coloumn_index = int( (dLongitude-dLon_min)/dResolution_x )
-    #aVariable_ts  = aGrid_stack[:, row_index, coloumn_index]
-    #dMin = np.min(aVariable_ts)
-    #dMax = np.max(aVariable_ts)
-    #dMean = np.mean(aVariable_ts)
-    #dPercent10 = np.percentile(aVariable_ts, 10)
-    #dPercent90 = np.percentile(aVariable_ts, 10) 
+    sDummy = sVariable 
+    pVar = pFile.createVariable( sDummy , 'f4', ('nmoment','lat' , 'lon')) 
+    pVar[:] = aMoment_stack
+    pVar.description = sDummy
+    #close netcdf file   
+    pFile.close()
+
+
+    pSpatial = osr.SpatialReference()
+    pSpatial.ImportFromEPSG(4326)
+    
+    sFilename_tiff = sWorkspace_variable + slash + sVariable +'_moment'+ sExtension_tiff
+
+    gdal_write_geotiff_file_multiple_band(sFilename_tiff, aMoment_stack,\
+        float(pHeaderParameters['pixelSize']),\
+         float(pHeaderParameters['ULlon']),\
+              float(pHeaderParameters['ULlat']),\
+                  -9999.0, pSpatial)
+    print("finished")
+
+
+    
 
     
 
