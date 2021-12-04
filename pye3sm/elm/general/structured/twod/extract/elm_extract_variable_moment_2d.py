@@ -29,12 +29,15 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
     sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
     #get domain
-    aMask, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
+    #new approach
+    aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask = np.flip(aMask, 0)
-    nrow = np.array(aMask).shape[0]
-    ncolumn = np.array(aMask).shape[1]
-    aMaskIndex = np.where(aMask==0)
+    aMask_ul = np.flip(aMask_ll, 0)
+    nrow = np.array(aMask_ll).shape[0]
+    ncolumn = np.array(aMask_ll).shape[1]
+    aMask_ll_index = np.where(aMask_ll==0)
+    aMask_ul_index = np.where(aMask_ul==0)
+
 
     #get comlumn and row number
     #resolution
@@ -81,7 +84,7 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
         
     for i in range(nrow):
         for j in range(ncolumn):
-            if aMask[i,j] ==1:
+            if aMask_ll[i,j] ==1:
                 #get time series data
                 aVariable_ts  = aGrid_stack[:, i, j]
     
@@ -118,7 +121,7 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
     #close netcdf file   
     pFile.close()
 
-
+    aMoment_stack = np.flip(aMoment_stack, 1)
     pSpatial = osr.SpatialReference()
     pSpatial.ImportFromEPSG(4326)
     

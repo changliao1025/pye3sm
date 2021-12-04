@@ -67,12 +67,13 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     #aMask = np.where(aEle0 == missing_value)
 
     #new approach
-    aMask0, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
+    aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask = np.flip(aMask0, 0)
-    nrow = np.array(aMask).shape[0]
-    ncolumn = np.array(aMask).shape[1]
-    aMask_index = np.where(aMask==0)
+    aMask_ul = np.flip(aMask_ll, 0)
+    nrow = np.array(aMask_ll).shape[0]
+    ncolumn = np.array(aMask_ll).shape[1]
+    aMask_ll_index = np.where(aMask_ll==0)
+    aMask_ul_index = np.where(aMask_ul==0)
 
     #resolution
     dLon_min = np.min(aLon)
@@ -165,29 +166,28 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
                 if sVariable == sKey.lower():
                     #for attrname in aValue.ncattrs():
                     #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
-                    aData = (aValue[:]).data                     
+                    aData_ll = (aValue[:]).data                     
                     #print(aData)
-                    missing_value1 = np.max(aData)           
-                    aData = np.flip(aData, 0)    #why
-                    aData = aData.reshape(nrow, ncolumn)      
+                    missing_value1 = np.max(aData_ll)  
+                    aData_ll = aData_ll.reshape(nrow, ncolumn)                          
+                    dummy_index = np.where( aData_ll == missing_value1 ) 
+                    aData_ll[dummy_index] = missing_value
                     
-                    dummy_index = np.where( aData == missing_value1 ) 
-                    aData[dummy_index] = missing_value
-                    aGrid_data = aData
-                       
+                    aData_ll[aMask_ll_index] = missing_value
+                    aData_ul = np.flip(aData_ll, 0)   
                     #save output
-                    aGrid_data[aMask_index] = missing_value
+                    
 
                     sDummy = sVariable + sYear + sMonth
                     pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
-                    pVar[:] = aGrid_data
+                    pVar[:] = aData_ll
                     pVar.description = sDummy
                     pVar.unit = 'm' 
                     iFlag_netcdf_first = 0
                     
                     if(iFlag_optional == 1):
                         #stack data
-                        aGrid_stack[i, :,: ] =  aGrid_data
+                        aGrid_stack[i, :,: ] =  aData_ul
                         i=i+1
                     break
                 else:
