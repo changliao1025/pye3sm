@@ -11,7 +11,7 @@ from pye3sm.elm.general.structured.twod.extract.elm_extract_variable_moment_2d i
 iFlag_debug = 1
 if iFlag_debug == 1:
     iIndex_start = 1
-    iIndex_end = 16
+    iIndex_end = 24
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -22,7 +22,7 @@ else:
 
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20211117'
+sDate = '20211116'
 
 aVariable = ['ZWT','QOVER','QRUNOFF']
 #aVariable = ['ZWT']#, 'gage_height','QDRAI']

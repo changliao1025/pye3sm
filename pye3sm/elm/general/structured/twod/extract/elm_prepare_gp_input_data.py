@@ -19,12 +19,13 @@ def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
     iYear_start = oCase_in.iYear_start        
     iYear_end = oCase_in.iYear_end    
     #new approach
-    aMask, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
+    aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask = np.flip(aMask, 0)
-    nrow = np.array(aMask).shape[0]
-    ncolumn = np.array(aMask).shape[1]
-    #aMask = np.where(aMask==0)      
+    aMask_ul = np.flip(aMask_ll, 0)
+    nrow = np.array(aMask_ll).shape[0]
+    ncolumn = np.array(aMask_ll).shape[1]
+    aMask_ll_index = np.where(aMask_ll==0)
+    aMask_ul_index = np.where(aMask_ul==0)
 
     sWorkspace_scratch = '/compyfs/liao313'
     sWorkspace_analysis = oCase_in.sWorkspace_analysis

@@ -17,7 +17,7 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
     iYear_start = oCase_in.iYear_start        
     iYear_end = oCase_in.iYear_end          
     iFlag_same_grid = oCase_in.iFlag_same_grid 
-    print('The following model is processed: ', sModel)
+    #print('The following model is processed: ', sModel)
     dConversion = oCase_in.dConversion   
     sVariable  = oCase_in.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster

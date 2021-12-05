@@ -9,7 +9,7 @@ sModel = 'e3sm'
 sRegion ='amazon'
 sDate = '20211116'
 
-iCase_index = 1
+iCase_index = 7
 iYear_start = 2000
 iYear_end = 2010
 #from now, to maintain consistancy, we will the same variable name for all processes.

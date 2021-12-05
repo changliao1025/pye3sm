@@ -142,8 +142,8 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
                 #print("Yep, I can read that file: " + sFilename)                
                 pass
             else:
-                print(sFilename + ' is missinge')
-                #print("Nope, the path doesn't reach your file. Go research filepath in python")
+                print(sFilename + ' is missing')
+                print("Nope, the path doesn't reach your file. Go research filepath in python")
                 return
     
             aDatasets = Dataset(sFilename)
