@@ -4,6 +4,8 @@ from stheno import EQ, GP
 from oilmm.jax import OILMM
 import numpy as np
 from netCDF4 import Dataset #read netcdf
+from sklearn.preprocessing import QuantileTransformer
+from sklearn.model_selection import train_test_split
 from pyearth.system.define_global_variables import *
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 def build_latent_processes(params):
@@ -64,20 +66,37 @@ def elm_train_gp(oE3SM_in, oCase_in):
                 y3 = aGrid_stack[:,4,i,j].reshape(40,1)
                 y4 = aGrid_stack[:,5,i,j].reshape(40,1)    
 
-                x  = np.hstack((x1, x2))
-                y = np.hstack((y1, y2, y3, y4))
+                qt = QuantileTransformer(output_distribution="uniform")
+
+                x1_new = qt.fit_transform(x1)
+                x2_new = qt.fit_transform(x2)
+                y1_new = qt.fit_transform(y1)
+                y2_new = qt.fit_transform(y2)
+                y3_new = qt.fit_transform(y3)
+                y4_new = qt.fit_transform(y4)
+
+                x  = np.hstack((x1_new, x2_new))
+                y = np.hstack((y1_new, y2_new, y3_new, y4_new))
+
+                X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
 
                 
                 if (np.min(y) == -9999):
                     print('error')
                 else:
-                    continue
+                    
                 # Fit OILMM.
-                    prior.fit(x, y, trace=True, jit=True)
+                    prior.fit(X_train, y_train, trace=True, jit=True)
                     prior.vs.print()  # Print all learned parameters.
                     # Make predictions.
-                    posterior = prior.condition(x, y)
-                    mean, var = posterior.predict(x)
+                    posterior = prior.condition(X_train, y_train)
+                    mean, var = posterior.predict(X_test)
                     lower = mean - 1.96 * np.sqrt(var)
                     upper = mean + 1.96 * np.sqrt(var)
+                    print(mean)
+                    print(lower)
+                    print(upper)
+                    print(y_test)
+                    y_12=qt.inverse_transform(mean)
+                    y_22= qt.inverse_transform(y_test)
                 
