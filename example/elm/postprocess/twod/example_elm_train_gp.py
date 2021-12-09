@@ -32,5 +32,5 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_train_gp(oE3SM, oCase )
+elm_train_gp( oE3SM, oCase )
 print('finished')

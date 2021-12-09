@@ -63,14 +63,15 @@ def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
     pDimension_longitude = pFile.createDimension('lon', ncolumn) 
     pDimension_latitude = pFile.createDimension('lat', nrow)
     pDimension_ncase = pFile.createDimension('ncase', 40) 
-    pDimension_nv = pFile.createDimension('nv', 6)
+    pDimension_nv = pFile.createDimension('nv', 4)
+    aMoment_index=[2,4]
     for i in range(nDate):
         sDate = aDate[i]
         iMax_index = aMax_index[i]
         
         for j in range(1, iMax_index+1, 1):
             case_index =  i * aMax_index[0] + j
-            aData_case = np.full((6, nrow,ncolumn), -9999, dtype=float)
+            aData_case = np.full((4, nrow,ncolumn), -9999, dtype=float)
             aData_case[0, :,:]=aParameter[case_index-1, 0]
             aData_case[1, :,:]=aParameter[case_index-1, 1]
 
@@ -97,12 +98,17 @@ def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
                         break
 
                 #re-org
-                a = aData_dummy[3, :, :]
-                b = aData_dummy[4, :, :]
-                a10 = a.reshape(nrow, ncolumn)
-                b90 = b.reshape(nrow, ncolumn)
-                aData_case[2 + k*2, :,:] = a10
-                aData_case[3 + k*2, :,:] = b90
+                #a = aData_dummy[3, :, :]
+                #b = aData_dummy[4, :, :]
+                #a10 = a.reshape(nrow, ncolumn)
+                #b90 = b.reshape(nrow, ncolumn)
+                #aData_case[2 + k*2, :,:] = a10
+                #aData_case[3 + k*2, :,:] = b90
+                a = aData_dummy[aMoment_index[k],:,:]
+                a_mean= a.reshape(nrow, ncolumn)
+                aData_case[2 + k, :,:] = a_mean
+
+                #use mean instead
 
             #aData_out[case_index, :,:,:] = aData_case
 
