@@ -4,8 +4,8 @@ import numpy.ma as ma
 import datetime
 
 from pyearth.system.define_global_variables import *
-from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
+
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
 from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
@@ -18,7 +18,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
                                           oCase_in, \
-                                              aLon_in, aLat_in, \
+                                           
                                                    iReverse_y_in= None,\
                                           dMax_y_in = None,\
                                           dMin_y_in = None,
@@ -46,11 +46,13 @@ def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
 
-    aMask, aLon, aLat=elm_retrieve_case_dimension_info(oCase_in)
+    aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
-    nrow = np.array(aMask).shape[0]
-    ncolumn = np.array(aMask).shape[1]
-    aMask = np.where(aMask==0)
+    aMask_ul = np.flip(aMask_ll, 0)
+    nrow = np.array(aMask_ll).shape[0]
+    ncolumn = np.array(aMask_ll).shape[1]
+    aMask_ll_index = np.where(aMask_ll==0)
+    aMask_ul_index = np.where(aMask_ul==0)
     dLon_min = np.min(aLon)
     dLon_max = np.max(aLon)
     dLat_min = np.min(aLat)
@@ -85,91 +87,79 @@ def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
 
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
-
-
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'tiff'
     #read the stack data
 
-    sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
+    sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_tiff
 
-    aData_all = gdal_read_envi_file_multiple_band(sFilename)
+    aData_all = gdal_read_geotiff_file_multiple_band(sFilename)
     aVariable_total = aData_all[0]
     aVariable_total_subset = aVariable_total[subset_index,:,:]
 
 
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
-    if not os.path.exists(sWorkspace_analysis_case_variable):
-        os.makedirs(sWorkspace_analysis_case_variable)
+    Path( sWorkspace_analysis_case_variable ).mkdir(parents=True, exist_ok=True)
 
-    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'tsplot_singlegrid'
-    if not os.path.exists(sWorkspace_analysis_case_region):
-        os.makedirs(sWorkspace_analysis_case_region)
-        pass
+    sWorkspace_analysis_case_grid = sWorkspace_analysis_case_variable + slash + 'tsplot_singlegrid'
+    Path( sWorkspace_analysis_case_grid ).mkdir(parents=True, exist_ok=True)
 
-    aData_all=[]
+
     aLabel_legend=[]
-    
-
-    sLabel_legend = sRegion.title()
-    sFilename_out = sWorkspace_analysis_case_region + slash \
-        + sVariable + '_tsplot_' +'.png'
+   
     
     pShape = aVariable_total_subset.shape
-    aVariable0= np.full(pShape, np.nan, dtype=float)
-    aVariable2 = np.full(nstress_subset, -9999, dtype=float)
 
+    
 
-    npoint = len(aLon_in)
+    for i  in range(nrow):
 
-    for ipoint in range(npoint):
-        dLon_in = aLon_in[ipoint] 
-        dLat_in = aLat_in[ipoint]
-        iColumn_index = int ( ( dLon_in - dLon_min ) / dResolution_x ) 
-        iRow_index = int ( ( dLat_max - dLat_in ) / dResolution_y ) 
-
-        for i in np.arange(0, pShape[0], 1):
-            aVariable2[i] =  aVariable_total_subset[i, iRow_index,iColumn_index]      
+        sRow = "{:03d}".format(i)
+        sWorkspace_analysis_case_row = sWorkspace_analysis_case_grid + slash + sRow
+        Path( sWorkspace_analysis_case_row ).mkdir(parents=True, exist_ok=True)
+        for j in range(ncolumn):
             
-        aData_all.append(aVariable2)
-    
-    
+            sColumn = "{:03d}".format(j)
+            sGrid = sRow+'-'+sColumn
+            if (aMask_ul[i,j] ==0):
+                continue
 
-    aData_all = np.array(aData_all)    
+            
+            aVariable =  aVariable_total_subset[:, i,j]      
+            aData_all = np.array([aVariable])
+            
 
-    #aData_all = np.log10(aData_all)
-    ##set inf to min
-    #bad_index = np.where( np.isinf(  aData_all) == True  )
-    #aData_all[bad_index] = dMin_y_in
+            #aData_all = np.log10(aData_all)
+            ##set inf to min
+            #bad_index = np.where( np.isinf(  aData_all) == True  )
+            #aData_all[bad_index] = dMin_y_in
 
 
-    sFilename_out = sWorkspace_analysis_case_region + slash \
-        + sVariable + '_tsplot' +'.png'
+            sFilename_out = sWorkspace_analysis_case_row + slash \
+                + sVariable + sGrid +'_tsplot' +'.png'
 
-    aDate_all = np.array([dates_subset])
-    aColor = ['red'] #create_diverge_rgb_color_hex(4, iFlag_reverse_in=1)
-    plot_time_series_data(aDate_all,
-                          aData_all,\
-                          sFilename_out,\
-                          iReverse_y_in = iReverse_y_in, \
-                          #iFlag_log_in = 1,\
-                          ncolumn_in = 1,\
-                          dMax_y_in = dMax_y_in,\
-                          dMin_y_in = dMin_y_in,\
-                          dSpace_y_in = dSpace_y_in, \
-                          sTitle_in = sTitle_in, \
-                          sLabel_y_in= sLabel_y,\
-                          sFormat_y_in= '%1d' ,\
-                          aLabel_legend_in = aLabel_legend_in, \
-                          aColor_in = aColor,\
-                          aMarker_in = ['+'],\
-                          sLocation_legend_in = 'lower right' ,\
-                          aLocation_legend_in = (1.0, 0.0),\
-                          aLinestyle_in = ['-'],\
-                          iSize_x_in = 12,\
-                          iSize_y_in = 5)
+            aDate_all = np.array([dates_subset])
+            aColor = ['red'] 
+            plot_time_series_data(aDate_all,
+                                  aData_all,\
+                                  sFilename_out,\
+                                  iReverse_y_in = iReverse_y_in, \
+                                  #iFlag_log_in = 1,\
+                                  ncolumn_in = 1,\
+                                 
+                        
+                                  sTitle_in = sTitle_in, \
+                                  sLabel_y_in= sLabel_y,\
+                                  
+                                  aLabel_legend_in = aLabel_legend_in, \
+                                  aColor_in = aColor,\
+                                  aMarker_in = ['+'],\
+                                  sLocation_legend_in = 'lower right' ,\
+                                  aLocation_legend_in = (1.0, 0.0),\
+                                  aLinestyle_in = ['-'],\
+                                  iSize_x_in = 12,\
+                                  iSize_y_in = 5)
 
     print("finished")
 
 
-if __name__ == '__main__':
-    import argparse
+

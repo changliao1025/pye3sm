@@ -11,31 +11,31 @@ from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.elm.general.structured.twod.map.elm_map_variable_2d import elm_map_variable_2d
+from pye3sm.elm.general.structured.twod.plot.elm_tsplot_variable_2d_singlegrid import elm_tsplot_variable_2d_singlegrid
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-
-sDate = '20211101'
-iCase_index = 5
+sDate = '20211116'
 
 
+iCase_index = 1
 iYear_start = 2000
 iYear_end = 2010
 sModel = 'e3sm'
 sRegion='amazon'
 sVariable = 'zwt'
 #sVariable = 'zwt_perch'
-#sVariable='qrunoff'
+sVariable='qrunoff'
 #sVariable='qover'
 #sVariable='qdrai'
 sLabel_y = r'Water table depth (m)'
 #sLabel_y = r'Perched water table depth (m)'
 #sLabel_y=r'Overland runoff (mm/s)'
 #sLabel_y=r'Subsurface runoff (mm/s)'
-iReverse_y=1
-dMin_y=0
-dMax_y=10
+sLabel_y=r'Total runoff (mm/s)'
+iReverse_y=0
+#dMin_y=0
+#dMax_y=10
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
@@ -53,5 +53,10 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_map_variable_2d(oE3SM, oCase )
+elm_tsplot_variable_2d_singlegrid(oE3SM, oCase,  \
+ 
+  iReverse_y_in= iReverse_y,\
+     
+                                                       sLabel_y_in=sLabel_y,\
+  aLabel_legend_in= [ sLabel_y] )
 print('finished')

@@ -63,7 +63,7 @@ def elm_train_gp(oE3SM_in, oCase_in):
         i=i+1
 
     icount = 0 
-    for i in range(5,nrow,1):
+    for i in range(0,nrow,1):
         sRow = "{:03d}".format(i)
         for j in range(0, ncolumn, 1):
             sColumn = "{:03d}".format(j)
