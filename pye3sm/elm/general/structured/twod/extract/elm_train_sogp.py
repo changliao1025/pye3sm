@@ -1,7 +1,6 @@
 import numpy as np
-import jax.numpy as jnp
-from stheno import EQ, GP
-from oilmm.jax import OILMM
+
+
 import numpy as np
 from netCDF4 import Dataset #read netcdf
 from sklearn.preprocessing import QuantileTransformer, StandardScaler, PowerTransformer
@@ -10,23 +9,12 @@ from pyearth.visual.scatter.scatter_plot_multiple_data import scatter_plot_multi
 from pyearth.system.define_global_variables import *
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 
-def build_latent_processes(params):
-    # Return models for latent processes, which are noise-contaminated GPs.
-    #print(type(params))
-    #print(params[0])
-    dummy=list()
-    for p, _ in zip(params, range(1)):
-        d = p.variance.positive(1)
-        e = p.length_scale.positive(1)
-        a =  d * GP( EQ().stretch(e) )
-        b = p.noise.positive(1e-2)
-        c = (a,b)
-        dummy.append(c)
-        pass
-   
-    return dummy
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF
 
-def elm_train_gp(oE3SM_in, oCase_in):
+import matplotlib.pyplot as plt
+
+def elm_train_sogp(oE3SM_in, oCase_in):
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
     iYear_start = oCase_in.iYear_start        
@@ -41,14 +29,11 @@ def elm_train_gp(oE3SM_in, oCase_in):
     aMask_ul_index = np.where(aMask_ul==0)
 
 
-    # Construct model.
-    prior = OILMM(jnp.float32, build_latent_processes, num_outputs=2)
-
     # Create some sample data.
     sWorkspace_scratch = '/compyfs/liao313'
 
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model/e3sm/amazon/analysis'
-    sFilename_in = sWorkspace_analysis + slash + 'gp' + sExtension_netcdf
+    sFilename_in = sWorkspace_analysis + slash + 'gp' +  slash + 'gp' + sExtension_netcdf
     aDatasets = Dataset(sFilename_in)
 
     sWorkspace_analysis_case_grid =  sWorkspace_analysis + slash + 'gp' 
@@ -102,7 +87,7 @@ def elm_train_gp(oE3SM_in, oCase_in):
                 #y4_new = qt.fit_transform(y4)
 
                 x  = np.hstack((x1_new, x2_new))
-                y = np.hstack((y1_new, y2_new)) #, y3_new, y4_new))
+                y = np.hstack((y2_new)) #, y3_new, y4_new))
 
                 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=42)
 
@@ -114,68 +99,45 @@ def elm_train_gp(oE3SM_in, oCase_in):
                     if result:
                         continue
 
+                    kernel = 1 * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2))
+                    gaussian_process = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=9)
+                    gaussian_process.fit(X_train, y_train)
+                    gaussian_process.kernel_
+
+                    
                     print('sGrid: '+ sGrid)
-                    # Fit OILMM.
-                    prior.fit(X_train, y_train, trace=True, jit=True)
-                    prior.vs.print()  # Print all learned parameters.
-                    # Make predictions.
-                    posterior = prior.condition(X_train, y_train)
-                    mean_train, var = posterior.predict(X_train)
-                    mean, var = posterior.predict(X_test)
+                    mean_train, std_prediction = gaussian_process.predict(X_train, return_std=True)
+                    mean_test, std_prediction = gaussian_process.predict(X_test, return_std=True)
+                 
+               
+                    
+                    rof_tran= scalerY2.inverse_transform(y_train.reshape(36,1))
+                    rof_pre0= scalerY2.inverse_transform(mean_train.reshape(36,1))
 
-                    lower = mean - 1.96 * np.sqrt(var)
-                    upper = mean + 1.96 * np.sqrt(var)
-                    #print(mean)
-                    #print(lower)
-                    #print(upper)
-
-                    zwt_tran= scalerY1.inverse_transform(y_train[:,0].reshape(36,1))
-                    zwt_pre0= scalerY1.inverse_transform(mean_train[:,0].reshape(36,1))
-                    rof_tran= scalerY2.inverse_transform(y_train[:,1].reshape(36,1))
-                    rof_pre0= scalerY2.inverse_transform(mean_train[:,1].reshape(36,1))
-
-                    zwt_tes= scalerY1.inverse_transform(y_test[:,0].reshape(4,1))
-                    zwt_pre= scalerY1.inverse_transform(mean[:,0].reshape(4,1))                    
-                    rof_tes= scalerY2.inverse_transform(y_test[:,1].reshape(4,1))
-                    rof_pre= scalerY2.inverse_transform(mean[:,1].reshape(4,1))
+                                 
+                    rof_tes= scalerY2.inverse_transform(y_test.reshape(4,1))
+                    rof_pre= scalerY2.inverse_transform(mean_test.reshape(4,1))
                     #print(zwt_tes - zwt_pre)
 
+
+                    #plt.plot(X, y, label=r"$f(x) = x \sin(x)$", linestyle="dotted")
+                    #plt.scatter(X_train, y_train, label="Observations")
+                    #plt.plot(X, mean_prediction, label="Mean prediction")
+                    #plt.fill_between(
+                    #    X.ravel(),
+                    #    mean_prediction - 1.96 * std_prediction,
+                    #    mean_prediction + 1.96 * std_prediction,
+                    #    alpha=0.5,
+                    #    label=r"95% confidence interval",
+                    #)
+                    #plt.legend()
+                    #plt.xlabel("$x$")
+                    #plt.ylabel("$f(x)$")
+                    #_ = plt.title("Gaussian process regression on noise-free dataset")
+
+
                     #plot 
-                    x = [zwt_tran, zwt_tes]
-                    y = [zwt_pre0, zwt_pre]
-                    if icount==0:
-                        zwt_tran_all = zwt_tran.flatten()
-                        zwt_tes_all = zwt_tes.flatten()
-                        zwt_pre0_all = zwt_pre0.flatten()
-                        zwt_pre_all = zwt_pre.flatten()
-                    else:
-                        zwt_tran_all = np.concatenate([zwt_tran_all, zwt_tran.flatten()])
-                        zwt_tes_all = np.concatenate([zwt_tes_all, zwt_tes.flatten()])
-                        zwt_pre0_all = np.concatenate([zwt_pre0_all, zwt_pre0.flatten()])
-                        zwt_pre_all = np.concatenate([zwt_pre_all, zwt_pre.flatten()])
-                        pass
-                    sFilename_out = sWorkspace_analysis_case_grid + slash  + 'zwt' + slash       + 'zwt' + '-' + sGrid +  '_scatterplot.png'
-
-                    result = np.max(zwt_pre) == np.min(zwt_pre)
-                    if result:
-                        continue
-                    else:                        
-                        pass
-
-                    #scatter_plot_multiple_data(x, y,\
-                    #      sFilename_out,sGrid,\
-                    #      iSize_x_in = 8,\
-                    #      iSize_y_in = 8, \
-                    #      dMin_x_in = 0, \
-                    #      dMax_x_in = 12, \
-                    #      dMin_y_in = 0, \
-                    #      dMax_y_in = 12, \
-                    #      dSpace_x_in = 2, \
-                    #      dSpace_y_in = 2, \
-                    #      sTitle_in = '', \
-                    #      sLabel_x_in= 'Prediction',\
-                    #      sLabel_y_in= 'Simulation',\
-                    #      aLabel_legend_in = ['Training','Testing'])
+                    
 
 
                     #plot runoff
@@ -203,43 +165,26 @@ def elm_train_gp(oE3SM_in, oCase_in):
                     else:
                         pass
 
-                    #scatter_plot_multiple_data(x, y,\
-                    #      sFilename_out,sGrid,\
-                    #      iSize_x_in = 8,\
-                    #      iSize_y_in = 8, \
-                    #          iFlag_scientific_notation_x_in=1,\
-                    #              iFlag_scientific_notation_y_in=1,\
-                    #      dMin_x_in = 0, \
-                    #      #dMax_x_in = 12, \
-                    #     dMin_y_in = 0, \
-                    #      #dMax_y_in = 12, \
-                    #      #dSpace_x_in = 2, \
-                    #      #dSpace_y_in = 2, \
-                    #      sTitle_in = '', \
-                    #      sLabel_x_in= 'Prediction',\
-                    #      sLabel_y_in= 'Simulation',\
-                    #      aLabel_legend_in = ['Training','Testing'])
-                    
-
-    x = [zwt_tran_all, zwt_tes_all]
-    y = [zwt_pre0_all, zwt_pre_all]
-    
-    
-    sFilename_out = sWorkspace_analysis_case_grid + slash          + 'zwt_all' + '-' +  '_scatterplot.png'
-    scatter_plot_multiple_data(x, y,\
+                    scatter_plot_multiple_data(x, y,\
                           sFilename_out,sGrid,\
                           iSize_x_in = 8,\
                           iSize_y_in = 8, \
+                              iFlag_scientific_notation_x_in=1,\
+                                  iFlag_scientific_notation_y_in=1,\
                           dMin_x_in = 0, \
-                          dMax_x_in = 12, \
+                          #dMax_x_in = 12, \
                           dMin_y_in = 0, \
-                          dMax_y_in = 12, \
-                          dSpace_x_in = 2, \
-                          dSpace_y_in = 2, \
+                          #dMax_y_in = 12, \
+                          #dSpace_x_in = 2, \
+                          #dSpace_y_in = 2, \
                           sTitle_in = '', \
                           sLabel_x_in= 'Prediction',\
                           sLabel_y_in= 'Simulation',\
                           aLabel_legend_in = ['Training','Testing'])
+                    
+
+    
+    
 
     x = [rof_tran_all, rof_tes_all]
     y = [rof_pre0_all, rof_pre_all]

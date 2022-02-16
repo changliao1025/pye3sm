@@ -10,10 +10,6 @@ from pyearth.visual.timeseries.analysis.plot_time_series_analysis import plot_ti
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-
-
 
 def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
                                                     oCase_in, \
@@ -127,7 +123,7 @@ def elm_ts_analysis_plot_variable_halfdegree_domain(oE3SM_in,\
             aVariable2[i] = np.nanmean(dummy2)
             pass
 
-        x= dates_subset
+        x = dates_subset
         y = aVariable2
 
         if iFlag_log_in == 1:

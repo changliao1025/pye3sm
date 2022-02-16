@@ -1,12 +1,13 @@
 import os , sys
 import numpy as np
+from scipy import fftpack
 from pyearth.system.define_global_variables import *    
 
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
-def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
+def elm_calculate_variable_signature_2d(oE3SM_in, oCase_in):
     ###
     ###this function read the saved output file and obtain the information at each grid
     #we provide different metrices/moment for different varaible
@@ -95,6 +96,11 @@ def elm_extract_variable_moment_2d(oE3SM_in, oCase_in):
                 dMean = np.mean(aVariable_ts)
                 dPercent10 = np.percentile(aVariable_ts, 10)
                 dPercent90 = np.percentile(aVariable_ts, 90) 
+
+                sig_noise_fft = fftpack.fft(aVariable_ts)
+                time = np.linspace(0, len(aVariable_ts), 1, endpoint=True)
+                sig_noise_amp = 2 / time.size * np.abs(sig_noise_fft)
+                #sig_noise_freq = np.abs(fftpack.fftfreq(time.size, 3/1000))
 
                 aMoment_stack[0,i,j]= dMin
                 aMoment_stack[1,i,j]= dMax

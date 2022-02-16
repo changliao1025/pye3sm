@@ -25,15 +25,15 @@ sModel = 'e3sm'
 sRegion='amazon'
 sVariable = 'zwt'
 #sVariable = 'zwt_perch'
-sVariable='qrunoff'
+#sVariable='qrunoff'
 #sVariable='qover'
 #sVariable='qdrai'
 sLabel_y = r'Water table depth (m)'
 #sLabel_y = r'Perched water table depth (m)'
 #sLabel_y=r'Overland runoff (mm/s)'
 #sLabel_y=r'Subsurface runoff (mm/s)'
-sLabel_y=r'Total runoff (mm/s)'
-iReverse_y=0
+#sLabel_y=r'Total runoff (mm/s)'
+iReverse_y=1
 #dMin_y=0
 #dMax_y=10
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
@@ -56,7 +56,8 @@ oCase = pycase(aParameter_case)
 elm_tsplot_variable_2d_singlegrid(oE3SM, oCase,  \
  
   iReverse_y_in= iReverse_y,\
-     
+       dMax_y_in = 10,\
+                                          dMin_y_in = 0,
                                                        sLabel_y_in=sLabel_y,\
   aLabel_legend_in= [ sLabel_y] )
 print('finished')

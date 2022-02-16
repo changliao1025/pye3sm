@@ -4,12 +4,12 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-from pye3sm.elm.general.structured.twod.extract.elm_extract_variable_moment_2d import elm_extract_variable_moment_2d
+from pye3sm.elm.general.structured.twod.extract.elm_train_sogp import elm_train_sogp
 sModel = 'e3sm'
 sRegion ='amazon'
 sDate = '20211116'
 
-iCase_index = 7
+iCase_index = 1
 iYear_start = 2000
 iYear_end = 2010
 #from now, to maintain consistancy, we will the same variable name for all processes.
@@ -32,5 +32,5 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_extract_variable_moment_2d(oE3SM, oCase )
+elm_train_sogp( oE3SM, oCase )
 print('finished')
