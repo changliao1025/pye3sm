@@ -7,11 +7,11 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-from pye3sm.elm.general.structured.twod.stats.elm_calculate_variable_signature_2d import elm_extract_variable_moment_2d
+from pye3sm.elm.general.structured.twod.stats.elm_calculate_variable_signature_2d import elm_calculate_variable_signature_2d
 iFlag_debug = 1
 if iFlag_debug == 1:
     iIndex_start = 1
-    iIndex_end = 24
+    iIndex_end = 16
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -22,7 +22,7 @@ else:
 
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20211116'
+sDate = '20211117'
 
 aVariable = ['ZWT','QOVER','QRUNOFF']
 #aVariable = ['ZWT']#, 'gage_height','QDRAI']
@@ -59,6 +59,6 @@ for iCase_index in (aCase_index):
                                                        sVariable_in = sVariable )
         #print(aParameter_case)
         oCase = pycase(aParameter_case)
-        elm_extract_variable_moment_2d(oE3SM, oCase )
+        elm_calculate_variable_signature_2d(oE3SM, oCase )
 
 print('finished')

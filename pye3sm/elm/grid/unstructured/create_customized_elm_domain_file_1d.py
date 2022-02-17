@@ -86,7 +86,7 @@ def create_customized_elm_domain_file_1d(aLon_region, aLat_region, \
                 bx = aLonV_region[:,1]
                 by = aLatV_region[:,1]
                 cx = aLonV_region[:,2]
-                cy = aLonV_region[:,2]
+                cy = aLatV_region[:,2]
 
                 data = 0.5*(ax*(by-cy) + bx*(cy-ay) + cx*(ay-by))
             elif aLonV_region.shape[1] == 4:

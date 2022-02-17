@@ -4,9 +4,17 @@ from netCDF4 import Dataset #read netcdf
 from pyearth.system.define_global_variables import *     
 from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
 def elm_retrieve_case_dimension_info(oCase_in):
-    ###
-    #should this support 2d or other scenarios
-    ###
+    """
+    should this support 2d or other scenarios
+
+    Args:
+        oCase_in (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    
+    
     sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
     sFilename_lnd_in = sWorkspace_simulation_case_run + slash + 'lnd_in'
 

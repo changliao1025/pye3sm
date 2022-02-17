@@ -42,29 +42,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
     
     if not os.path.exists(sWorkspace_analysis_case):
-        os.makedirs(sWorkspace_analysis_case)
-
-
-    #the following part was removed to use the e3sm case based approach to retrieve the info
-    #read in global 0.5 * 0.5 mask
-    #sFilename_mosart_input = oCase_in.sFilename_mosart_input
-    #aDatasets = Dataset(sFilename_mosart_input)
-    #netcdf_format = aDatasets.file_format
-    #print(netcdf_format)
-    #print("Print dimensions:")
-    #print(aDatasets.dimensions.keys())
-    #print("Print variables:")
-    #print(aDatasets.variables.keys())
-    #for sKey, aValue in aDatasets.variables.items():
-    #    if "ele0" == sKey:
-    #        aEle0 = (aValue[:]).data            
-    #        break
-    #nrow = 360
-    #ncolumn = 720
-    #aEle0 = aEle0.reshape(nrow, ncolumn)
-    ##remember that mask latitude start from -90, so need to flip it    
-    #aEle0 = np.flip(aEle0, 0) 
-    #aMask = np.where(aEle0 == missing_value)
+        os.makedirs(sWorkspace_analysis_case)    
 
     #new approach
     aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
@@ -164,10 +142,8 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
             #read the actual data
             for sKey, aValue in aDatasets.variables.items():
                 if sVariable == sKey.lower():
-                    #for attrname in aValue.ncattrs():
-                    #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
-                    aData_ll = (aValue[:]).data                     
-                    #print(aData)
+                                   
+                    aData_ll = (aValue[:]).data                                    
                     missing_value1 = np.max(aData_ll)  
                     aData_ll = aData_ll.reshape(nrow, ncolumn)                          
                     dummy_index = np.where( aData_ll == missing_value1 ) 

@@ -33,7 +33,7 @@ iFlag_create_elm_grid = 1
 iFlag_2d_to_1d = 0 
 iFlag_create_case = 1 
 iFlag_submit_case = 0
-sDate = '20211116'
+sDate = '20220201'
 sDate_spinup = '20210209'
 
 if iFlag_elmmosart == 1:
@@ -89,7 +89,7 @@ sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_2021
 
 lCellID_outlet_in=128418
 dResolution = 0.5
-ncase = 24
+ncase = 30
 
 sampler = qmc.LatinHypercube(d=2)
 sample = sampler.random(n=ncase)

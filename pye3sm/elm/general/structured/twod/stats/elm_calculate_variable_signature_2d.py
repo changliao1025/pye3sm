@@ -1,24 +1,31 @@
 import os , sys
 import numpy as np
-from scipy import fftpack
-from pyearth.system.define_global_variables import *    
-
+#from scipy import fftpack
+import datetime
+import pandas as pd
+from statsmodels.tsa.seasonal import STL
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
+
+from pyearth.system.define_global_variables import *    
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
+
 def elm_calculate_variable_signature_2d(oE3SM_in, oCase_in):
-    ###
-    ###this function read the saved output file and obtain the information at each grid
+    """   
+    this function read the saved output file and obtain the information at each grid
     #we provide different metrices/moment for different varaible
-    #we output the metric as a image/geotiff
-    ###
+    #we output the metric as a image/geotiff  
+    Args:
+        oE3SM_in (_type_): _description_
+        oCase_in (_type_): _description_
+    """
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
     iYear_start = oCase_in.iYear_start        
     iYear_end = oCase_in.iYear_end          
     iFlag_same_grid = oCase_in.iFlag_same_grid 
-    #print('The following model is processed: ', sModel)
+    
     dConversion = oCase_in.dConversion   
     sVariable  = oCase_in.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster
@@ -63,9 +70,11 @@ def elm_calculate_variable_signature_2d(oE3SM_in, oCase_in):
     #get time 
     nmonth = (iYear_end - iYear_start +1) * 12
     aGrid_stack= np.full((nmonth, nrow, ncolumn), -9999.0, dtype= float)
-    aMoment_stack= np.full((5, nrow, ncolumn), -9999.0, dtype= float)
+    
+    #how many moments will be used
+    nmoment=6
+    aMoment_stack= np.full((nmoment, nrow, ncolumn), -9999.0, dtype= float)
 
-   
     #read data by variable name
     sWorkspace_variable = sWorkspace_analysis_case + slash \
         + sVariable 
@@ -80,33 +89,44 @@ def elm_calculate_variable_signature_2d(oE3SM_in, oCase_in):
             aGrid_stack[i,:,:] = (aValue[:]).data
             i=i+1
 
-    dLongitude = -60.0
-    dLatitude =  -3.0   
+    dates = list()
+    nyear = iYear_end - iYear_start + 1
+    for iYear in range(iYear_start, iYear_end + 1):
+        for iMonth in range(1,13):
+            dSimulation = datetime.datetime(iYear, iMonth, 1)
+            dates.append( dSimulation )
+            pass
+    dates=np.array(dates)
         
     for i in range(nrow):
         for j in range(ncolumn):
             if aMask_ll[i,j] ==1:
                 #get time series data
-                aVariable_ts  = aGrid_stack[:, i, j]
-    
-                #process to single or other moments
-                #mean,? 10% 90%?
+                aVariable_ts  = aGrid_stack[:, i, j]    
+                
                 dMin = np.min(aVariable_ts)
                 dMax = np.max(aVariable_ts)
                 dMean = np.mean(aVariable_ts)
                 dPercent10 = np.percentile(aVariable_ts, 10)
-                dPercent90 = np.percentile(aVariable_ts, 90) 
-
-                sig_noise_fft = fftpack.fft(aVariable_ts)
-                time = np.linspace(0, len(aVariable_ts), 1, endpoint=True)
-                sig_noise_amp = 2 / time.size * np.abs(sig_noise_fft)
-                #sig_noise_freq = np.abs(fftpack.fftfreq(time.size, 3/1000))
+                dPercent90 = np.percentile(aVariable_ts, 90)            
 
                 aMoment_stack[0,i,j]= dMin
                 aMoment_stack[1,i,j]= dMax
                 aMoment_stack[2,i,j]= dMean
                 aMoment_stack[3,i,j]= dPercent10
                 aMoment_stack[4,i,j]= dPercent90
+
+                aData_tsa = pd.Series(aVariable_ts, index=pd.date_range(dates[0], \
+                                                     periods=len(dates), freq='M'), name = sVariable)
+                stl = STL(aData_tsa, seasonal=13)
+                aTSA = stl.fit()
+                dSeason = np.array(aTSA.seasonal)
+                dTrend = np.array(aTSA.trend)
+                dResi = np.array(aTSA.resid)
+                dummy = np.array([np.min(dTrend), np.max(dTrend)])
+                aMoment_stack[5,i,j]= np.mean(dTrend)
+               
+
                 #save out?
                 pass
             else:
@@ -118,7 +138,7 @@ def elm_calculate_variable_signature_2d(oE3SM_in, oCase_in):
     pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
     pDimension_longitude = pFile.createDimension('lon', ncolumn) 
     pDimension_latitude = pFile.createDimension('lat', nrow) 
-    pDimension_moment = pFile.createDimension('nmoment', 5) 
+    pDimension_moment = pFile.createDimension('nmoment', nmoment) 
 
     sDummy = sVariable 
     pVar = pFile.createVariable( sDummy , 'f4', ('nmoment','lat' , 'lon')) 

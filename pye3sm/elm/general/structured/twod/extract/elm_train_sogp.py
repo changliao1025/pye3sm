@@ -109,8 +109,6 @@ def elm_train_sogp(oE3SM_in, oCase_in):
                     mean_train, std_prediction = gaussian_process.predict(X_train, return_std=True)
                     mean_test, std_prediction = gaussian_process.predict(X_test, return_std=True)
                  
-               
-                    
                     rof_tran= scalerY2.inverse_transform(y_train.reshape(36,1))
                     rof_pre0= scalerY2.inverse_transform(mean_train.reshape(36,1))
 
@@ -134,11 +132,6 @@ def elm_train_sogp(oE3SM_in, oCase_in):
                     #plt.xlabel("$x$")
                     #plt.ylabel("$f(x)$")
                     #_ = plt.title("Gaussian process regression on noise-free dataset")
-
-
-                    #plot 
-                    
-
 
                     #plot runoff
                     #plot 
@@ -165,22 +158,22 @@ def elm_train_sogp(oE3SM_in, oCase_in):
                     else:
                         pass
 
-                    scatter_plot_multiple_data(x, y,\
-                          sFilename_out,sGrid,\
-                          iSize_x_in = 8,\
-                          iSize_y_in = 8, \
-                              iFlag_scientific_notation_x_in=1,\
-                                  iFlag_scientific_notation_y_in=1,\
-                          dMin_x_in = 0, \
-                          #dMax_x_in = 12, \
-                          dMin_y_in = 0, \
-                          #dMax_y_in = 12, \
-                          #dSpace_x_in = 2, \
-                          #dSpace_y_in = 2, \
-                          sTitle_in = '', \
-                          sLabel_x_in= 'Prediction',\
-                          sLabel_y_in= 'Simulation',\
-                          aLabel_legend_in = ['Training','Testing'])
+                    #scatter_plot_multiple_data(x, y,\
+                    #      sFilename_out,sGrid,\
+                    #      iSize_x_in = 8,\
+                    #      iSize_y_in = 8, \
+                    #          iFlag_scientific_notation_x_in=1,\
+                    #              iFlag_scientific_notation_y_in=1,\
+                    #      dMin_x_in = 0, \
+                    #      #dMax_x_in = 12, \
+                    #      dMin_y_in = 0, \
+                    #      #dMax_y_in = 12, \
+                    #      #dSpace_x_in = 2, \
+                    #      #dSpace_y_in = 2, \
+                    #      sTitle_in = '', \
+                    #      sLabel_x_in= 'Prediction',\
+                    #      sLabel_y_in= 'Simulation',\
+                    #      aLabel_legend_in = ['Training','Testing'])
                     
 
     

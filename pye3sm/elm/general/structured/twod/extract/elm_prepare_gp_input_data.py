@@ -4,7 +4,6 @@ from pyearth.system.define_global_variables import *
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 from pye3sm.shared.e3sm import pye3sm
@@ -12,7 +11,13 @@ from pye3sm.shared.case import pycase
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
-    #use the strucuture see the figure
+    """
+    Prepare a Gaussina Process model inputs
+
+    Args:
+        oE3SM_in (_type_): _description_
+        oCase_in (_type_): _description_
+    """
 
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
@@ -63,15 +68,15 @@ def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
     pDimension_longitude = pFile.createDimension('lon', ncolumn) 
     pDimension_latitude = pFile.createDimension('lat', nrow)
     pDimension_ncase = pFile.createDimension('ncase', 40) 
-    pDimension_nv = pFile.createDimension('nv', 4)
-    aMoment_index=[2,4]
+    pDimension_nv = pFile.createDimension('nv', nvariable + 2)
+    aMoment_index=[5,5]
     for i in range(nDate):
         sDate = aDate[i]
         iMax_index = aMax_index[i]
         
         for j in range(1, iMax_index+1, 1):
             case_index =  i * aMax_index[0] + j
-            aData_case = np.full((4, nrow,ncolumn), -9999, dtype=float)
+            aData_case = np.full((nvariable + 2, nrow,ncolumn), -9999, dtype=float)
             aData_case[0, :,:]=aParameter[case_index-1, 0]
             aData_case[1, :,:]=aParameter[case_index-1, 1]
 
@@ -97,13 +102,6 @@ def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
                         aData_dummy = (aValue[:]).data
                         break
 
-                #re-org
-                #a = aData_dummy[3, :, :]
-                #b = aData_dummy[4, :, :]
-                #a10 = a.reshape(nrow, ncolumn)
-                #b90 = b.reshape(nrow, ncolumn)
-                #aData_case[2 + k*2, :,:] = a10
-                #aData_case[3 + k*2, :,:] = b90
                 a = aData_dummy[aMoment_index[k],:,:]
                 a_mean= a.reshape(nrow, ncolumn)
                 aData_case[2 + k, :,:] = a_mean
@@ -117,15 +115,6 @@ def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
             pVar = pFile.createVariable( sCase , 'f4', ('nv', 'lat' , 'lon')) 
             pVar[:] = aData_case
             pVar.description = sCase
-            
+
 
     pFile.close()    
-
-
-               
-
-
-                
-
-                
-                        
