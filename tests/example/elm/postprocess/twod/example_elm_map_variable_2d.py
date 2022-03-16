@@ -53,5 +53,6 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_map_variable_2d(oE3SM, oCase , dData_max_in=12, dData_min_in=0)
+elm_map_variable_2d(oE3SM, oCase , dData_max_in=12, dData_min_in=0, iFlag_scientific_notation_colorbar_in = 1, sUnit_in = 'Unit: m',\
+ sTitle_in=  'Water table depth' )
 print('finished')

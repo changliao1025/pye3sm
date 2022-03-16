@@ -18,9 +18,10 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 def elm_map_variable_2d(oE3SM_in, \
                                           oCase_in,\
+                                        iFlag_scientific_notation_colorbar_in =None,   \
                                           dData_max_in = None,\
                                           dData_min_in = None,
-                                         
+                                         sUnit_in=None,\
                                           sTitle_in =None):
 
     sModel = oCase_in.sModel
@@ -121,6 +122,11 @@ def elm_map_variable_2d(oE3SM_in, \
         
         map_raster_data(aData_all,  aImage_extent,\
                               sFilename_out,\
+                                  sTitle_in = sTitle_in,\
+                                      sUnit_in=sUnit_in,\
+                                  iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
+                                       dData_max_in = dData_max_in,\
+                                          dData_min_in = dData_min_in,
                                   dMissing_value_in = -9999)
                                 
         print(sDate)
