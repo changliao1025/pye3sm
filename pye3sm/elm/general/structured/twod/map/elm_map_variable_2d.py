@@ -18,11 +18,9 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 def elm_map_variable_2d(oE3SM_in, \
                                           oCase_in,\
-                                          dMax_y_in = None,\
-                                          dMin_y_in = None,
-                                          dSpace_y_in = None,\
-                                          sLabel_x_in=None,\
-                                          sLabel_z_in = None,\
+                                          dData_max_in = None,\
+                                          dData_min_in = None,
+                                         
                                           sTitle_in =None):
 
     sModel = oCase_in.sModel

@@ -16,8 +16,8 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
-sDate = '20211101'
-iCase_index = 5
+sDate = '20220314'
+iCase_index = 2
 
 
 iYear_start = 2000
@@ -53,5 +53,5 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_map_variable_2d(oE3SM, oCase )
+elm_map_variable_2d(oE3SM, oCase , dData_max_in=12, dData_min_in=0)
 print('finished')

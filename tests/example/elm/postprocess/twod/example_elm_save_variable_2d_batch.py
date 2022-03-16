@@ -16,8 +16,8 @@ from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_sav
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 1
-    iIndex_end = 16
+    iIndex_start = 2
+    iIndex_end = 2
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -28,7 +28,7 @@ else:
 
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20211117'
+sDate = '20220314'
 
 aVariable = ['ZWT','QOVER','QRUNOFF']
 #aVariable = ['ZWT']#, 'gage_height','QDRAI']

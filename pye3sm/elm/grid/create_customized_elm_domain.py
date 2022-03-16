@@ -69,4 +69,6 @@ def create_customized_elm_domain( aLon, aLat, aMask_in, dLon, dLat, \
                              sFilename_domain_file_in, \
                        sFilename_domain_file_out)
 
+    return sFilename_surface_data_out
+
 

@@ -1,13 +1,14 @@
 import os, sys, stat
 from pathlib import Path
+from matplotlib.style import available
 
 import numpy as np
 import datetime
 from shutil import copyfile
 from pyearth.system.define_global_variables import *
 from pyearth.gis.location.convert_lat_lon_range import convert_180_to_360
-
-
+from pyearth.toolbox.data.beta.add_variable_to_netcdf import add_multiple_variable_to_netcdf
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pye3sm.elm.grid.create_customized_elm_domain import create_customized_elm_domain
 
 from pye3sm.case.e3sm_create_case import e3sm_create_case
@@ -16,6 +17,7 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 from pye3sm.mosart.grid.create_customized_mosart_domain import create_customized_mosart_domain
+from pye3sm.mosart.grid.structured.twod.extract_mosart_elevation_profile_for_elm import extract_mosart_elevation_profile_for_elm, extract_mosart_variable_for_elm
 
 from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 sModel = 'e3sm'
@@ -30,7 +32,17 @@ iFlag_create_elm_grid = 1
 iFlag_2d_to_1d = 0 
 iFlag_create_case = 1 
 iFlag_submit_case = 0
-sDate = '20211117'
+
+iFlag_default = 0
+iFlag_debug = 0 #is this a debug run
+iFlag_branch = 0
+iFlag_initial = 0 #use restart file as initial
+iFlag_spinup = 0 #is this a spinup run
+iFlag_short = 0 #do you run it on short queue
+iFlag_continue = 0 #is this a continue run
+iFlag_resubmit = 0 #is this a resubmit
+iFlag_optimal_parameter = 0
+sDate = '20220314'
 sDate_spinup = '20210209'
 
 if iFlag_elmmosart == 1:
@@ -49,16 +61,6 @@ sPath = os.path.dirname(os.path.realpath(__file__))
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 sCase_spinup =  sModel + sDate_spinup + "{:03d}".format(1)
-
-
-iFlag_default = 0
-iFlag_debug = 0 #is this a debug run
-iFlag_branch = 0
-iFlag_initial = 0 #use restart file as initial
-iFlag_spinup = 0 #is this a spinup run
-iFlag_short = 1 #do you run it on short queue
-iFlag_continue = 0 #is this a continue run
-iFlag_resubmit = 0 #is this a resubmit
 
 sWorkspace_scratch = '/compyfs/liao313'
 
@@ -82,7 +84,6 @@ sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
 #generate mosart first then use the mosart lat/lon information for elm
 sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
 
-#'/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_20210127.nc'
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
@@ -97,14 +98,15 @@ sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
 dFover = 0.6 
 sFover = "{:0f}".format( dFover)
 
+dHkdepth = 2.5
+sHkdepth = "{:0f}".format( dHkdepth)
+
 sCase_date = sDate + "{:03d}".format(iCase)
 sCase = sModel + sDate + "{:03d}".format(iCase)
 
 sWorkspace_region2 = sWorkspace_region1 + slash + sCase
 if not os.path.exists(sWorkspace_region2):
     Path(sWorkspace_region2).mkdir(parents=True, exist_ok=True)
-
-
 
 lCellID_outlet_in=128418
 dResolution = 0.5
@@ -114,6 +116,12 @@ if iFlag_create_mosart_grid ==1:
 
     sFilename_mosart_netcdf_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '.nc'
     create_customized_mosart_domain(iFlag_2d_to_1d, sFilename_mosart_netcdf,sFilename_mosart_netcdf_out, lCellID_outlet_in)
+    #exact elevation profile from mosart to elm
+    aElevation_profile = extract_mosart_elevation_profile_for_elm(sFilename_mosart_netcdf_out)
+    #other variable
+    aVariable_in=['gxr','rdep','hslp', 'rlen']
+    aVariable_mosart = extract_mosart_variable_for_elm(sFilename_mosart_netcdf_out, aVariable_in)
+
 
 sFilename_mosart_input = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
 
@@ -195,6 +203,50 @@ if iFlag_create_case ==1:
                              sFilename_surface_data_out,
                              sFilename_elm_domain_file_out)
 
+    #add elevation profile into surface data
+    sFilename_old=sFilename_surface_data_out
+    sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_elevation_profile.nc'
+    aVariable_all=['ele0', 'ele1','ele2', 'ele3','ele4','ele5','ele6', 'ele7','ele8', 'ele9','ele10']
+    aUnit_all= ['m', 'm','m', 'm','m','m','m', 'm','m', 'm','m']
+    aDimension= [nrow, ncolumn]
+    nElev=11
+    aDimension_all= list()
+    for i in range(nElev):
+        aDimension_all.append( aDimension)
+    add_multiple_variable_to_netcdf(sFilename_old, sFilename_new,aElevation_profile, aVariable_all, aUnit_all,  aDimension_all)        
+    sFilename_surface_data_out =  sFilename_new
+    sFilename_old=sFilename_surface_data_out
+    sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_mosart.nc'
+    aVariable_all = ['gxr','rdep','hslp', 'rlen']
+    aUnit_all =['m', 'm-1','unitless','m']
+    aDimension_all=[aDimension,aDimension,aDimension, aDimension ]
+    add_multiple_variable_to_netcdf(sFilename_old, sFilename_new, aVariable_mosart, aVariable_all, aUnit_all,  aDimension_all)        
+    sFilename_surface_data_out =  sFilename_new
+
+    if iFlag_optimal_parameter ==1: #add new parameter into the surface data
+        #add k
+        sFilename_old = sFilename_surface_data_out
+        sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_new.nc'
+        
+        sFilename= '/compyfs/liao313/04model/e3sm/amazon/analysis/gp/kansi.tif'
+        a = gdal_read_geotiff_file(sFilename)
+        data_ansi0 = np.flip(a[0],0)
+        data_ansi = np.power(10, data_ansi0)
+       
+        #add fover
+        sFilename= '/compyfs/liao313/04model/e3sm/amazon/analysis/gp/fover.tif'
+        a = gdal_read_geotiff_file(sFilename)
+        data_fover = np.flip(a[0],0)
+   
+        aData_all = [data_ansi,data_fover]
+        aDimension_all= [aDimension,aDimension]
+        aVailable_all = ['anisotropy','fover']
+        aUnit_all=['ms','unitless']
+        
+        add_multiple_variable_to_netcdf(sFilename_old, sFilename_new,aData_all, aVailable_all, aUnit_all,  aDimension_all)
+        sFilename_surface_data_out= sFilename_new
+
+
     
 
     if (iFlag_initial !=1):
@@ -204,7 +256,15 @@ if iFlag_create_case ==1:
             + sFilename_surface_data_out  + "'" + '\n'
         ofs.write(sCommand_out)
         if (iFlag_default ==1 ):
-            pass
+            sLine = "dHkdepth = " + sHkdepth + '\n'
+            ofs.write(sLine)
+            sLine = "fover = " + sFover + '\n'
+            ofs.write(sLine)
+            sLine = 'hist_empty_htapes = .true.' + '\n'
+            ofs.write(sLine)
+            sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT' "  + '\n'
+            ofs.write(sLine)
+            
         else:
             sLine = "use_h2sc = .true." + '\n'
             ofs.write(sLine)

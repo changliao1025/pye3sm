@@ -5,9 +5,9 @@ from netCDF4 import Dataset
 
 from pye3sm.mosart.grid.structured.twod.convert_index_between_array import convert_index_between_array
 
-def extract_mosart_by_cellid_2d_to_2d(sFilenamae_mosart_in, sFilename_netcdf_out, aCellID_in):
+def extract_mosart_by_cellid_2d_to_2d(sFilename_mosart_in, sFilename_netcdf_out, aCellID_in):
 
-    aDatasets = Dataset(sFilenamae_mosart_in)
+    aDatasets = Dataset(sFilename_mosart_in)
 
     netcdf_format = aDatasets.file_format
     #output file

@@ -47,7 +47,7 @@ else:
         compset = 'IELM'
 
 #global setting
-iFlag_default = 0
+iFlag_default = 1
 iFlag_debug = 0 #is this a debug run
 iFlag_branch = 0
 iFlag_initial = 0 #use restart file as initial
@@ -89,16 +89,30 @@ sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_2021
 
 lCellID_outlet_in=128418
 dResolution = 0.5
-ncase = 30
+ncase = 40
 
 sampler = qmc.LatinHypercube(d=2)
 sample = sampler.random(n=ncase)
-l_bounds = [-3, 0.1]
-u_bounds = [1, 5]
-aParameter = qmc.scale(sample, l_bounds, u_bounds)
-aHydraulic_anisotropy_exp = aParameter[:,0]
-aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
-aFover = aParameter[:,1]
+
+aHydraulic_anisotropy = np.full(ncase,0.0, dtype=float)
+aFover=np.full(ncase,0.0, dtype=float)
+aHkdepth=np.full(ncase,0.0, dtype=float)
+if iFlag_default ==1:
+    l_bounds = [0.1, 0.1]
+    u_bounds = [5, 5]
+    aParameter = qmc.scale(sample, l_bounds, u_bounds)
+    aHkdepth=  aParameter[:,0]
+    aFover = aParameter[:,1]
+else:
+    l_bounds = [-3, 0.1]
+    u_bounds = [1, 5]
+
+
+    aParameter = qmc.scale(sample, l_bounds, u_bounds)
+    aHydraulic_anisotropy_exp = aParameter[:,0]
+    aHydraulic_anisotropy = np.power(10, aHydraulic_anisotropy_exp)
+    aFover = aParameter[:,1]
+
 
 
 
@@ -107,8 +121,12 @@ for iCase_index in range(ncase):
 
     dHydraulic_anisotropy = aHydraulic_anisotropy[iCase_index]
     sHydraulic_anisotropy = "{:0f}".format( dHydraulic_anisotropy)
+    
     dFover = aFover[iCase_index]
     sFover = "{:0f}".format( dFover)    
+
+    dHkdepth = aHkdepth[iCase_index]
+    sHkdepth = "{:0f}".format( dHkdepth)
 
     sCase_date = sDate + "{:03d}".format(iCase)
     sCase = sModel + sDate + "{:03d}".format(iCase)
@@ -193,6 +211,14 @@ for iCase_index in range(ncase):
                 + sFilename_surface_data_out  + "'" + '\n'
             ofs.write(sCommand_out)
             if (iFlag_default ==1 ):
+                sLine = "dHkdepth = " + sHkdepth + '\n'
+                ofs.write(sLine)
+                sLine = "fover = " + sFover + '\n'
+                ofs.write(sLine)
+                sLine = 'hist_empty_htapes = .true.' + '\n'
+                ofs.write(sLine)
+                sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT' "  + '\n'
+                ofs.write(sLine)
                 pass
             else:
                 sLine = "use_h2sc = .true." + '\n'
