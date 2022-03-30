@@ -7,7 +7,7 @@ sSystem_paths = os.environ['PATH'].split(os.pathsep)
 
 from pyearth.system.define_global_variables import *
 from pyearth.gis.envi.envi_write_header import envi_write_header
-from pyearth.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
  
 from pye3sm.shared import oE3SM
@@ -123,5 +123,3 @@ def elm_calculate_spatial_correlation_halfdegree(sFilename_configuration_x_in,\
     print("finished")
 
 
-if __name__ == '__main__':
-    import argparse

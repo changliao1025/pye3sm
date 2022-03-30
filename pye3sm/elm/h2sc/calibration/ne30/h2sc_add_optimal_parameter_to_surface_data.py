@@ -6,10 +6,6 @@ import numpy as np
 from netCDF4 import Dataset #it maybe be replaced by gdal 
 #maybe not needed
 
-
-
-#import library
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
  
 #import global variable
 from pyearth.system import define_global_variables

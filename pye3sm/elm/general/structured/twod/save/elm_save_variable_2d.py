@@ -5,17 +5,10 @@ from numpy.lib.function_base import _average_dispatcher
 from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
-
-
-
-from pyearth.system.define_global_variables import *     
-
+from pyearth.system.define_global_variables import *    
 from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
-
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
-
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
- 
+from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
@@ -49,36 +42,16 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
     
     if not os.path.exists(sWorkspace_analysis_case):
-        os.makedirs(sWorkspace_analysis_case)
-
-
-    #the following part was removed to use the e3sm case based approach to retrieve the info
-    #read in global 0.5 * 0.5 mask
-    #sFilename_mosart_input = oCase_in.sFilename_mosart_input
-    #aDatasets = Dataset(sFilename_mosart_input)
-    #netcdf_format = aDatasets.file_format
-    #print(netcdf_format)
-    #print("Print dimensions:")
-    #print(aDatasets.dimensions.keys())
-    #print("Print variables:")
-    #print(aDatasets.variables.keys())
-    #for sKey, aValue in aDatasets.variables.items():
-    #    if "ele0" == sKey:
-    #        aEle0 = (aValue[:]).data            
-    #        break
-    #nrow = 360
-    #ncolumn = 720
-    #aEle0 = aEle0.reshape(nrow, ncolumn)
-    ##remember that mask latitude start from -90, so need to flip it    
-    #aEle0 = np.flip(aEle0, 0) 
-    #aMask = np.where(aEle0 == missing_value)
+        os.makedirs(sWorkspace_analysis_case)    
 
     #new approach
-    aMask, aLon, aLat=elm_retrieve_case_dimension_info(oCase_in)
+    aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
-    nrow = np.array(aMask).shape[0]
-    ncolumn = np.array(aMask).shape[1]
-    aMask = np.where(aMask==0)
+    aMask_ul = np.flip(aMask_ll, 0)
+    nrow = np.array(aMask_ll).shape[0]
+    ncolumn = np.array(aMask_ll).shape[1]
+    aMask_ll_index = np.where(aMask_ll==0)
+    aMask_ul_index = np.where(aMask_ul==0)
 
     #resolution
     dLon_min = np.min(aLon)
@@ -98,7 +71,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     pHeaderParameters['ncolumn'] = "{:0d}".format(ncolumn)
     pHeaderParameters['nrow'] = "{:0d}".format(nrow)
     pHeaderParameters['ULlon'] = "{:0f}".format(dLon_min-0.5 * dResolution_x)
-    pHeaderParameters['ULlat'] = "{:0f}".format(dLat_min-0.5 * dResolution_y)
+    pHeaderParameters['ULlat'] = "{:0f}".format(dLat_max+0.5 * dResolution_y)
     pHeaderParameters['pixelSize'] = "{:0f}".format(dResolution_x)
     pHeaderParameters['nband'] = '1'
     pHeaderParameters['offset'] = '0'
@@ -110,12 +83,12 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     iFlag_optional = 1 
 
     #save netcdf
-    sWorkspace_variable_netcdf = sWorkspace_analysis_case + slash \
-        + sVariable + slash + 'netcdf'
+    sWorkspace_variable = sWorkspace_analysis_case + slash \
+        + sVariable 
+    sWorkspace_variable_netcdf = sWorkspace_variable + slash + 'netcdf'
     if not os.path.exists(sWorkspace_variable_netcdf):
         os.makedirs(sWorkspace_variable_netcdf)
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash \
-                            + sVariable + slash + 'dat'
+    sWorkspace_variable_dat = sWorkspace_variable + slash + 'dat'
     if not os.path.exists(sWorkspace_variable_dat):
         os.makedirs(sWorkspace_variable_dat)
     sWorkspace_variable_tiff = sWorkspace_analysis_case + slash \
@@ -144,11 +117,12 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
             #read before modification
     
             if os.path.exists(sFilename):
-                print("Yep, I can read that file: " + sFilename)
+                #print("Yep, I can read that file: " + sFilename)                
+                pass
             else:
-                print(sFilename)
+                print(sFilename + ' is missing')
                 print("Nope, the path doesn't reach your file. Go research filepath in python")
-                quit()
+                return
     
             aDatasets = Dataset(sFilename)
     
@@ -168,31 +142,28 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
             #read the actual data
             for sKey, aValue in aDatasets.variables.items():
                 if sVariable == sKey.lower():
-                    #for attrname in aValue.ncattrs():
-                    #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
-                    aData = (aValue[:]).data                     
-                    #print(aData)
-                    missing_value1 = np.max(aData)           
+                                   
+                    aData_ll = (aValue[:]).data                                    
+                    missing_value1 = np.max(aData_ll)  
+                    aData_ll = aData_ll.reshape(nrow, ncolumn)                          
+                    dummy_index = np.where( aData_ll == missing_value1 ) 
+                    aData_ll[dummy_index] = missing_value
                     
-                    aData = aData.reshape(nrow, ncolumn)      
-                    aData = np.flip(aData, 0)    #why
-                    dummy_index = np.where( aData == missing_value1 ) 
-                    aData[dummy_index] = missing_value
-                    aGrid_data = aData
-                       
+                    aData_ll[aMask_ll_index] = missing_value
+                    aData_ul = np.flip(aData_ll, 0)   
                     #save output
-                    aGrid_data[aMask] = missing_value
+                    
 
                     sDummy = sVariable + sYear + sMonth
                     pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
-                    pVar[:] = aGrid_data
+                    pVar[:] = aData_ll
                     pVar.description = sDummy
                     pVar.unit = 'm' 
                     iFlag_netcdf_first = 0
                     
                     if(iFlag_optional == 1):
                         #stack data
-                        aGrid_stack[i, :,: ] =  aGrid_data
+                        aGrid_stack[i, :,: ] =  aData_ul
                         i=i+1
                     break
                 else:

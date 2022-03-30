@@ -49,8 +49,8 @@ def create_customized_elm_domain( aLon, aLat, aMask_in, dLon, dLat, \
                         cfg['set_natural_veg_frac_to_one'])
 
         print('5) Creating CLM domain')
-        fdomain    = create_customized_elm_domain_file_1d( aLat, aLon, \
-                        aLatV, aLonV,\
+        fdomain    = create_customized_elm_domain_file_1d( aLon, aLat, \
+                        aLonV, aLatV,\
                              sFilename_domain_file_in, \
                        sFilename_domain_file_out)
 
@@ -68,5 +68,7 @@ def create_customized_elm_domain( aLon, aLat, aMask_in, dLon, dLat, \
                       aLonV,  aLatV, \
                              sFilename_domain_file_in, \
                        sFilename_domain_file_out)
+
+    return sFilename_surface_data_out
 
 

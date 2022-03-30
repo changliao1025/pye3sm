@@ -68,15 +68,15 @@ def e3sm_create_case(oE3SM_in, \
 
     if (iFlag_short == 1 ):
         sQueue = 'short'
-        sWalltime = '1:00:00'
-        sNtask = '1'
+        sWalltime = '2:00:00'
+        sNtask = '-2'
         #sYear = '30'
         pass
 
     else:
         sQueue = 'slurm'
-        sWalltime = '6:00:00'#sWalltime = '10:00:00'
-        sNtask = '-2'
+        sWalltime = '6:00:00'
+        sNtask = '-3'
         #sYear = '30'
         pass
 
@@ -359,7 +359,14 @@ def e3sm_create_case(oE3SM_in, \
              + slash + sCase +'.sh'
         ofs = open(sFilename_bash, 'w')
         sLine = '#!/bin/bash' + '\n'
-        ofs.write(sLine)        
+        ofs.write(sLine)       
+        sLine = 'rm -rf '  + sCasename + '\n'
+        ofs.write(sLine)   
+        sLine = 'rm -rf '  + sBldname + '\n'
+        ofs.write(sLine)   
+        sLine = 'rm -rf '  + sRunname + '\n'
+        ofs.write(sLine)   
+
         if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit            
             #remove case directory
             if (os.path.exists(sCasename)):
@@ -384,7 +391,6 @@ def e3sm_create_case(oE3SM_in, \
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
                 pass
-
             
             sLine = 'sCIME_directory='+ sCIME_directory +  '\n'
             ofs.write(sLine)
@@ -514,7 +520,7 @@ def e3sm_create_case(oE3SM_in, \
         sLine = sLine.lstrip()
         ofs.write(sLine)
         
-        sLine =  ' ./xmlchange ELM_USRDAT_NAME=single_test' + '\n'
+        sLine =  ' ./xmlchange ELM_USRDAT_NAME=amazon' + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
 
