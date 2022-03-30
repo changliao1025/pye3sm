@@ -8,8 +8,8 @@ from pye3sm.mosart.evaluation.halfdegree.mosart_evaluate_stream_discharge_gsim i
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 37
-    iIndex_end = 37
+    iIndex_start = 9
+    iIndex_end = 9
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -20,10 +20,10 @@ else:
     pass
 
 sWorkspace_scratch_in = '/compyfs/liao313/'
-sModel = 'h2sc'
-sRegion = 'global'
+sModel = 'e3sm'
+sRegion = 'amazon'
 sDate = '20210209'
-#sDate = '20201214'
+sDate = '20220314'
 
 sVariable = 'RIVER_DISCHARGE_OVER_LAND_LIQ'
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
@@ -39,9 +39,9 @@ aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration )
 oE3SM = pye3sm(aParameter_e3sm)
 iYear_start = 1979
-iYear_end = 2008
+iYear_end = 2010
 iYear_subset_start = 2000
-iYear_subset_end = 2008
+iYear_subset_end = 2010
 sLabel_y = r'River discharge ($m^{3} s^{-1}$)'
 
 sFilename_mosart_gsim_info = '/qfs/people/liao313/data/h2sc/global/auxiliary/basin_ind.txt'
@@ -55,10 +55,11 @@ for iCase_index in (aCase_index):
                                                            sDate_in= sDate,\
                                                            sLabel_y_in =  sLabel_y, \
                                                            sVariable_in = sVariable,\
+                                                                 sModel_in = sModel, \
+                                                           sRegion_in=sRegion,\
                                                            sWorkspace_scratch_in = sWorkspace_scratch_in )
     oCase = pycase(aParameter_case)
-    dMin_y = -6
-    dMax_y = -3
+
     dSpace_y = 1
     dConversion = 1.0
     mosart_evaluate_stream_discharge_gsim(oE3SM, \

@@ -4,6 +4,7 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
 from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
+from pyearth.visual.map.map_raster_data import map_raster_data
 def prepare_water_table():
 
     
@@ -29,6 +30,10 @@ def prepare_water_table():
     aLon = np.flip(aLon, 0) 
     aLat = np.flip(aLat, 0) 
     aMask = np.flip(aMask, 0) 
+    dLon_min = np.min(aLon)
+    dLon_max = np.max(aLon)
+    dLat_min = np.min(aLat)
+    dLat_max = np.max(aLat)
 
 
     sFilename_tiff = '/qfs/people/liao313/data/h2sc/global/raster/wtd/' + 'wtd' + sExtension_tiff
@@ -57,6 +62,28 @@ def prepare_water_table():
             np.min(aLon)-0.25,\
             np.max(aLat)+0.25,\
                   -9999.0, pSpatial)    
+    
+
+    aData_all = np.array(aData_out_extract)    
+    dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
+    dResolution_y = (dLat_max - dLat_min) / (nrow-1)
+    aImage_extent =  [dLon_min- dResolution_x ,dLon_max + dResolution_x, dLat_min -dResolution_x,  dLat_max+dResolution_x]
+
+    sFilename_out ='/qfs/people/liao313/data/e3sm/amazon/elm/' + 'wtd_extract' + sExtension_png
+    sTitle_in = 'Water table depth'
+    sUnit_in = 'Unit: m'
+    iFlag_scientific_notation_colorbar_in= 0 
+    dData_max_in =12 
+    dData_min_in = 0
+    map_raster_data(aData_all,  aImage_extent,\
+                              sFilename_out,\
+                                  sTitle_in = sTitle_in,\
+                                      sUnit_in=sUnit_in,\
+                                  iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
+                                       dData_max_in = dData_max_in,\
+                                          dData_min_in = dData_min_in,
+                                  dMissing_value_in = -9999)
+    
     return
 
 if __name__ == '__main__':

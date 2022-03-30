@@ -17,25 +17,31 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 
 sDate = '20220314'
-iCase_index = 2
+iCase_index = 9
 
 
 iYear_start = 2000
 iYear_end = 2010
 sModel = 'e3sm'
 sRegion='amazon'
+
 sVariable = 'zwt'
-#sVariable = 'zwt_perch'
 #sVariable='qrunoff'
 #sVariable='qover'
 #sVariable='qdrai'
-sLabel_y = r'Water table depth (m)'
-#sLabel_y = r'Perched water table depth (m)'
-#sLabel_y=r'Overland runoff (mm/s)'
-#sLabel_y=r'Subsurface runoff (mm/s)'
-iReverse_y=1
-dMin_y=0
-dMax_y=10
+sTitle = r'Water table depth'
+#sTitle = r'Perched water table depth (m)'
+#sTitle=r'Overland runoff'
+#sTitle=r'Subsurface runoff'
+
+sUnit = r'Units: mm/s'
+sUnit = r'Unit: m'
+dData_min_in=0
+dData_max_in =12
+dData_max_in=None
+
+iFlag_scientific_notation_colorbar_in = 0
+
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
@@ -53,6 +59,7 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_map_variable_2d(oE3SM, oCase , dData_max_in=12, dData_min_in=0, iFlag_scientific_notation_colorbar_in = 1, sUnit_in = 'Unit: m',\
- sTitle_in=  'Water table depth' )
+elm_map_variable_2d(oE3SM, oCase ,  dData_min_in=dData_min_in, dData_max_in=dData_max_in,\
+  iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar_in, sUnit_in = sUnit,\
+ sTitle_in=  sTitle )
 print('finished')

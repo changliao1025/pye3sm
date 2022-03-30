@@ -145,11 +145,8 @@ def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
                                   iReverse_y_in = iReverse_y_in, \
                                   #iFlag_log_in = 1,\
                                   ncolumn_in = 1,\
-                                 
-                        
                                   sTitle_in = sTitle_in, \
                                   sLabel_y_in= sLabel_y,\
-                                  
                                   aLabel_legend_in = aLabel_legend_in, \
                                   aColor_in = aColor,\
                                   aMarker_in = ['+'],\

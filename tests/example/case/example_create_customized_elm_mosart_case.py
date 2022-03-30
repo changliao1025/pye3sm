@@ -23,7 +23,7 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iCase = 2
+iCase = 9
 iFlag_mosart = 1
 iFlag_elm=1
 iFlag_elmmosart =1

@@ -15,11 +15,11 @@ from pye3sm.elm.general.structured.twod.plot.elm_tsplot_variable_2d import elm_t
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-sDate = '20211101'
+sDate = '20220314'
 
 dLon_in = -60.0
 dLat_in = -2.9
-iCase_index = 2
+iCase_index = 9
 iYear_start = 2000
 iYear_end = 2010
 sModel = 'e3sm'
