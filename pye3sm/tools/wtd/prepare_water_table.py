@@ -73,7 +73,7 @@ def prepare_water_table():
     sTitle_in = 'Water table depth'
     sUnit_in = 'Unit: m'
     iFlag_scientific_notation_colorbar_in= 0 
-    dData_max_in =12 
+    dData_max_in =14 
     dData_min_in = 0
     map_raster_data(aData_all,  aImage_extent,\
                               sFilename_out,\

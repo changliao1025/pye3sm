@@ -69,13 +69,14 @@ def e3sm_create_case(oE3SM_in, \
     if (iFlag_short == 1 ):
         sQueue = 'short'
         sWalltime = '2:00:00'
-        sNtask = '-2'
+        sNtask = '1'
         #sYear = '30'
         pass
 
     else:
         sQueue = 'slurm'
         sWalltime = '6:00:00'
+        #sNtask = '1'
         sNtask = '-3'
         #sYear = '30'
         pass
@@ -476,6 +477,11 @@ def e3sm_create_case(oE3SM_in, \
             sLine = sLine.lstrip()
             ofs.write(sLine)
 
+            if iFlag_resubmit ==1:
+                sLine = sPython + ' ./xmlchange RESUBMIT=1' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)
+
             #sLine = sPython + ' ./xmlchange REST_OPTION=nyears,REST_N=10' + '\n'
             #sLine = sLine.lstrip()
             #p = subprocess.Popen(sLine, shell= True)
@@ -489,7 +495,7 @@ def e3sm_create_case(oE3SM_in, \
             sLine = sLine.lstrip()
             ofs.write(sLine)
 
-            sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + '1' + '\n'
+            sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_start + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
 

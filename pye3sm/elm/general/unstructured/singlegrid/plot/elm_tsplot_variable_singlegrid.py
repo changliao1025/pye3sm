@@ -94,10 +94,10 @@ def elm_tsplot_variable_singlegrid(oE3SM_in, \
             for sKey, aValue in aDatasets.variables.items():
                 if sVariable == sKey.lower():
                     #for attrname in aValue.ncattrs():
-                    #print("{} -- {}".format(attrname, getattr(aValue, attrname)))                    
-                    aData = (aValue[:]).data                     
+                    #print("{} -- {}".format(attrname, getattr(aValue, attrname)))   
+                    aData = (aValue[:]).data    
                     #print(aData)
-                    missing_value1 = np.max(aData)       
+                    missing_value1 = np.max(aData)  
                     aData_out[iStress-1]= aData
                     iStress= iStress + 1
                     pass

@@ -2,13 +2,14 @@ import os
 import numpy as np
 import getpass
 from netCDF4 import Dataset
+from datetime import datetime
+from scipy.io import netcdf
+import getpass
 def create_customized_elm_domain_file_1d(aLon_region, aLat_region, \
    aLonV_region, aLatV_region,  sFilename_domain_file_in, \
     sFilename_domain_file_out):
 
-    from datetime import datetime
-    from scipy.io import netcdf
-    import getpass
+    
 
     #sFilename_domain_file_out = '%s/domain_%s_%s.nc' % \
     #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))

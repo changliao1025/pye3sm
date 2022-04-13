@@ -16,8 +16,8 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
-sDate = '20220314'
-iCase_index = 9
+sDate = '20220410'
+iCase_index = 4
 
 
 iYear_start = 2000
@@ -28,19 +28,19 @@ sRegion='amazon'
 sVariable = 'zwt'
 #sVariable='qrunoff'
 #sVariable='qover'
-#sVariable='qdrai'
+sVariable='qdrai'
 sTitle = r'Water table depth'
 #sTitle = r'Perched water table depth (m)'
 #sTitle=r'Overland runoff'
-#sTitle=r'Subsurface runoff'
+sTitle=r'Subsurface runoff'
 
 sUnit = r'Units: mm/s'
-sUnit = r'Unit: m'
+#sUnit = r'Unit: m'
 dData_min_in=0
-dData_max_in =12
+dData_max_in =20
 dData_max_in=None
 
-iFlag_scientific_notation_colorbar_in = 0
+iFlag_scientific_notation_colorbar_in = 1
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'

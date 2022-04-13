@@ -11,30 +11,32 @@ from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.elm.general.singlegrid.plot.elm_tsplot_variable_singlegrid import elm_tsplot_variable_singlegrid
+from pye3sm.elm.general.unstructured.singlegrid.plot.elm_tsplot_variable_singlegrid import elm_tsplot_variable_singlegrid
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-sDate = '20210504'
+sDate = '20220404'
 
-for i in range(16, 20,1):
+for i in range(7, 8,1):
     iCase_index = i
     iYear_start = 2000
+    iYear_start = 1950
     iYear_end = 2010
+    iYear_end = 2009
     sModel = 'e3sm'
     sRegion='site'
     sVariable = 'zwt'
-    sVariable = 'zwt_perch'
+    #sVariable = 'zwt_perch'
     #sVariable='qrunoff'
     #sVariable='qover'
     #sVariable='qdrai'
     sLabel_y = r'Water table depth (m)'
-    sLabel_y = r'Perched water table depth (m)'
+    #sLabel_y = r'Perched water table depth (m)'
     #sLabel_y=r'Overland runoff (mm/s)'
     #sLabel_y=r'Subsurface runoff (mm/s)'
     iReverse_y=1
     dMin_y=0
-    dMax_y=10
+    dMax_y=20
 
     sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
     sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'

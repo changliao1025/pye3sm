@@ -16,8 +16,8 @@ from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_sav
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 9
-    iIndex_end = 9
+    iIndex_start = 4
+    iIndex_end = 4
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -28,9 +28,9 @@ else:
 
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20220314'
+sDate = '20220410'
 
-aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI']
+aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI','QCHARGE']
 #aVariable = []
 #aVariable = ['wt_slp']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
 

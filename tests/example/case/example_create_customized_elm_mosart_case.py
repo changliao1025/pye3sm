@@ -21,9 +21,12 @@ from pye3sm.mosart.grid.structured.twod.extract_mosart_elevation_profile_for_elm
 
 from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 sModel = 'e3sm'
-#sRegion ='site'
+sRegion = 'site'
+#the lat/lon only used when in single grid case
+dLongitude =  -77.8
+dLatitude =  -6.35
 sRegion ='amazon'
-iCase = 9
+iCase = 7
 iFlag_mosart = 1
 iFlag_elm=1
 iFlag_elmmosart =1
@@ -40,9 +43,9 @@ iFlag_initial = 0 #use restart file as initial
 iFlag_spinup = 0 #is this a spinup run
 iFlag_short = 0 #do you run it on short queue
 iFlag_continue = 0 #is this a continue run
-iFlag_resubmit = 0 #is this a resubmit
+iFlag_resubmit = 1 #is this a resubmit
 iFlag_optimal_parameter = 0
-sDate = '20220314'
+sDate = '20220410'
 sDate_spinup = '20210209'
 
 if iFlag_elmmosart == 1:
@@ -111,6 +114,9 @@ if not os.path.exists(sWorkspace_region2):
 lCellID_outlet_in=128418
 dResolution = 0.5
 
+aMask=None
+sFilename_mosart_input =None
+
 
 if iFlag_create_mosart_grid ==1: 
 
@@ -123,67 +129,92 @@ if iFlag_create_mosart_grid ==1:
     aVariable_mosart = extract_mosart_variable_for_elm(sFilename_mosart_netcdf_out, aVariable_in)
 
 
-sFilename_mosart_input = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
+    sFilename_mosart_input = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
 
-if not os.path.exists(sFilename_mosart_input):    
-    copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_input)
+    if not os.path.exists(sFilename_mosart_input):    
+        copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_input)
 
 
 if iFlag_create_elm_grid ==1:
-    aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
+    #have both mosart and elm
+    if iFlag_mosart ==1:
+        aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
 
-    if iFlag_2d_to_1d == 0:
-        
-        lon_min = np.min(aLon)
-        lon_max = np.max(aLon)
-        lat_min = np.min(aLat)
-        lat_max = np.max(aLat)
-        nrow = int((lat_max-lat_min) / dResolution + 1)
-        ncolumn = int( (lon_max-lon_min) / dResolution + 1 )
-        ngrid = ncolumn * nrow
-        sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
-        ofs = open(sFilename_lon_lat_in, 'w')
-        sGrid =  "{:0d}".format( ngrid )
-        sLine = sGrid + '\n'
-        ofs.write(sLine)
+        if iFlag_2d_to_1d == 0:
 
-        aLon = np.full( (nrow, ncolumn), missing_value, dtype=float )
-        aLat = np.full( (nrow, ncolumn), missing_value, dtype=float )
+            lon_min = np.min(aLon)
+            lon_max = np.max(aLon)
+            lat_min = np.min(aLat)
+            lat_max = np.max(aLat)
+            nrow = int((lat_max-lat_min) / dResolution + 1)
+            ncolumn = int( (lon_max-lon_min) / dResolution + 1 )
+            ngrid = ncolumn * nrow
+            sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+            ofs = open(sFilename_lon_lat_in, 'w')
+            sGrid =  "{:0d}".format( ngrid )
+            sLine = sGrid + '\n'
+            ofs.write(sLine)
 
-        for i in range(nrow):
-            for j in range(ncolumn):
-                aLon[i,j] = lon_min + j * dResolution
-                aLat[i,j] = lat_min + i * dResolution
-                sLine = "{:0f}".format( aLat[i,j]) + ' ' + "{:0f}".format( aLon[i,j] ) + '\n'
+            aLon = np.full( (nrow, ncolumn), missing_value, dtype=float )
+            aLat = np.full( (nrow, ncolumn), missing_value, dtype=float )
+
+            for i in range(nrow):
+                for j in range(ncolumn):
+                    aLon[i,j] = lon_min + j * dResolution
+                    aLat[i,j] = lat_min + i * dResolution
+                    sLine = "{:0f}".format( aLon[i,j] ) + ' ' +  "{:0f}".format( aLat[i,j]) + '\n'
+                    ofs.write(sLine)
+
+            ofs.close()
+
+        else:
+            aLon0=np.ravel(aLon)
+            aLat0=np.ravel(aLat)
+            dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
+            aLon = aLon0[dummy_index]
+            aLat = aLat0[dummy_index]
+            ngrid = len(aLon)
+
+            sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+            ofs = open(sFilename_lon_lat_in, 'w')
+            sGrid =  "{:0d}".format( ngrid )
+            sLine = sGrid + '\n'
+            ofs.write(sLine)
+
+
+
+            for i in range(ngrid):
+                dLatitude = aLat[i]
+                dLongitude = aLon[i]
+                #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
+               
+                sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
                 ofs.write(sLine)
-        
-        ofs.close()
-    
-    else:
-        aLon0=np.ravel(aLon)
-        aLat0=np.ravel(aLat)
-        dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
-        aLon = aLon0[dummy_index]
-        aLat = aLat0[dummy_index]
-        ngrid = len(aLon)
 
+            ofs.close()
+    else:
+        #maybe single grid
+        
+        #aLon aLat should be used for a list of location
+        aLon =np.array([dLongitude])
+        aLat =np.array([dLatitude])
         sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
         ofs = open(sFilename_lon_lat_in, 'w')
-        sGrid =  "{:0d}".format( ngrid )
+        ngrid = 1
+        sGrid =  "{:0d}".format( ngrid)
         sLine = sGrid + '\n'
-        ofs.write(sLine)
-
-
-
+        ofs.write(sLine) 
         for i in range(ngrid):
-            dLatitude = aLat[i]
             dLongitude = aLon[i]
-            #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
-            sLine = "{:0f}".format( dLatitude) + ' ' + "{:0f}".format( dLongitude) + '\n'
+            dLatitude = aLat[i]
+            
+            sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
             ofs.write(sLine)
 
         ofs.close()
 
+
+        pass
 
 if iFlag_create_case ==1:
 
@@ -203,25 +234,41 @@ if iFlag_create_case ==1:
                              sFilename_surface_data_out,
                              sFilename_elm_domain_file_out)
 
-    #add elevation profile into surface data
-    sFilename_old=sFilename_surface_data_out
-    sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_elevation_profile.nc'
-    aVariable_all=['ele0', 'ele1','ele2', 'ele3','ele4','ele5','ele6', 'ele7','ele8', 'ele9','ele10']
-    aUnit_all= ['m', 'm','m', 'm','m','m','m', 'm','m', 'm','m']
-    aDimension= [nrow, ncolumn]
-    nElev=11
-    aDimension_all= list()
-    for i in range(nElev):
-        aDimension_all.append( aDimension)
-    add_multiple_variable_to_netcdf(sFilename_old, sFilename_new,aElevation_profile, aVariable_all, aUnit_all,  aDimension_all)        
-    sFilename_surface_data_out =  sFilename_new
-    sFilename_old=sFilename_surface_data_out
-    sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_mosart.nc'
-    aVariable_all = ['gxr','rdep','hslp', 'rlen']
-    aUnit_all =['m', 'm-1','unitless','m']
-    aDimension_all=[aDimension,aDimension,aDimension, aDimension ]
-    add_multiple_variable_to_netcdf(sFilename_old, sFilename_new, aVariable_mosart, aVariable_all, aUnit_all,  aDimension_all)        
-    sFilename_surface_data_out =  sFilename_new
+    if iFlag_default ==0:
+        #add elevation profile into surface data
+        sFilename_old=sFilename_surface_data_out
+        sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_elevation_profile.nc'
+        aVariable_all=['ele0', 'ele1','ele2', 'ele3','ele4','ele5','ele6', 'ele7','ele8', 'ele9','ele10']
+        aUnit_all= ['m', 'm','m', 'm','m','m','m', 'm','m', 'm','m']
+        aDimension= [nrow, ncolumn]
+        nElev=11
+        aDimension_all= list()
+        for i in range(nElev):
+            aDimension_all.append( aDimension)
+        add_multiple_variable_to_netcdf(sFilename_old, sFilename_new,aElevation_profile, aVariable_all, aUnit_all,  aDimension_all)        
+        sFilename_surface_data_out =  sFilename_new
+
+        sFilename_old=sFilename_surface_data_out
+        sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_mosart.nc'
+        aVariable_all = ['gxr','rdep','hslp', 'rlen']
+        aUnit_all =['m', 'm-1','unitless','m']
+        aDimension_all=[aDimension,aDimension,aDimension, aDimension ]
+        add_multiple_variable_to_netcdf(sFilename_old, sFilename_new, aVariable_mosart, aVariable_all, aUnit_all,  aDimension_all)        
+        sFilename_surface_data_out =  sFilename_new
+
+        #add ksat from the paper
+        sFilename_tiff = '/qfs/people/liao313/data/e3sm/amazon/elm/ksat_new.tif'
+        a = gdal_read_geotiff_file(sFilename_tiff)  
+        aKsat = data_fover = np.flip(a[0],0)
+        sFilename_old = sFilename_surface_data_out
+        sFilename_new = sFilename_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '_ksat.nc'
+        aVariable_ksat = [aKsat]
+        aVariable_all = ['ksat']
+        aUnit_all = ['mms-1']
+        aDimension_all= [aDimension]
+        add_multiple_variable_to_netcdf(sFilename_old, sFilename_new, aVariable_ksat, aVariable_all, aUnit_all,  aDimension_all)        
+        sFilename_surface_data_out =  sFilename_new
+
 
     if iFlag_optimal_parameter ==1: #add new parameter into the surface data
         #add k
@@ -246,9 +293,6 @@ if iFlag_create_case ==1:
         add_multiple_variable_to_netcdf(sFilename_old, sFilename_new,aData_all, aVailable_all, aUnit_all,  aDimension_all)
         sFilename_surface_data_out= sFilename_new
 
-
-    
-
     if (iFlag_initial !=1):
         #normal case,
         ofs = open(sFilename_elm_namelist, 'w')
@@ -262,7 +306,7 @@ if iFlag_create_case ==1:
             ofs.write(sLine)
             sLine = 'hist_empty_htapes = .true.' + '\n'
             ofs.write(sLine)
-            sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT' "  + '\n'
+            sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT', 'QCHARGE' "  + '\n'
             ofs.write(sLine)
             
         else:
@@ -274,7 +318,7 @@ if iFlag_create_case ==1:
             ofs.write(sLine)
             sLine = 'hist_empty_htapes = .true.' + '\n'
             ofs.write(sLine)
-            sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT' "  + '\n'
+            sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT', 'QCHARGE' "  + '\n'
             ofs.write(sLine)
             pass
 
@@ -339,10 +383,10 @@ if iFlag_create_case ==1:
     if (iFlag_spinup ==1):
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                               iFlag_spinup_in = iFlag_spinup,\
-                                                              iYear_start_in = 1969, \
-                                                              iYear_end_in = 1978,\
+                                                              iYear_start_in = 1950, \
+                                                              iYear_end_in = 1979,\
                                                               iYear_data_end_in = 2010, \
-                                                              iYear_data_start_in = 1979   ,\
+                                                              iYear_data_start_in = 1980   ,\
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
                                                               sModel_in = sModel,\
@@ -359,10 +403,10 @@ if iFlag_create_case ==1:
                                                               iFlag_spinup_in = iFlag_spinup,\
                                                               iFlag_elm_in= iFlag_elm,\
                                                               iFlag_mosart_in= iFlag_mosart,\
-                                                              iYear_start_in = 1980, \
-                                                              iYear_end_in = 2010,\
+                                                              iYear_start_in = 1950, \
+                                                              iYear_end_in = 1980,\
                                                               iYear_data_end_in = 2010, \
-                                                              iYear_data_start_in = 1979   , \
+                                                              iYear_data_start_in = 1950   , \
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
                                                               sModel_in = sModel,\
