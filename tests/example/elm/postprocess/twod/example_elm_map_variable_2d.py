@@ -17,7 +17,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 
 sDate = '20220410'
-iCase_index = 8
+iCase_index = 9
 
 
 iYear_start = 2000
