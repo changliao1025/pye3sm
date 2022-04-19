@@ -23,9 +23,9 @@ def h2sc_convert_observation_wtd_data_to_halfdegree(oE3SM_in, oCase_in):
     sWorkspace_data=  '/qfs/people/liao313/data'
     dConversion = 1.0
     sVariable = 'wtd'
-    sFilename_mosart_input = oCase_in.sFilename_mosart_input
+    sFilename_mosart_input = '/qfs/people/liao313/data/h2sc/global/raster/dem/MOSART_Global_half_20180606c.chang_9999.nc'
 
-    sFilename_wtd =  + slash + sModel + slash + sRegion + slash + 'raster' + slash \
+    sFilename_wtd = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'raster' + slash \
         + 'wtd' + slash + 'Global_wtd_lowres.nc'
 
     if os.path.isfile(sFilename_mosart_input):
@@ -105,7 +105,7 @@ def h2sc_convert_observation_wtd_data_to_halfdegree(oE3SM_in, oCase_in):
     points = np.vstack((aLongitude_subset, aLatitude_subset))
     points = np.transpose(points)
     values = aData_subset 
-    aGrid_data = griddata(  points, values, (grid_x, grid_y), method='nearest')
+    aGrid_data = griddata(  points, values, (grid_x, grid_y), method='linear')
     aGrid_data[aMask] = missing_value
 
     #save output
@@ -129,7 +129,7 @@ def h2sc_convert_observation_wtd_data_to_halfdegree(oE3SM_in, oCase_in):
         #save as envi
         pHeaderParameters = {}
         pHeaderParameters['ncolumn'] = '720'
-        pHeaderParameters['nrow_obs'] = '360'
+        pHeaderParameters['nrow'] = '360'
         pHeaderParameters['ULlon'] = '-180'
         pHeaderParameters['ULlat'] = '90'
         pHeaderParameters['pixelSize'] = '0.5'

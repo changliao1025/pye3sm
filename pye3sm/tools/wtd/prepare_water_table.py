@@ -36,7 +36,7 @@ def prepare_water_table():
     dLat_max = np.max(aLat)
 
 
-    sFilename_tiff = '/qfs/people/liao313/data/h2sc/global/raster/wtd/' + 'wtd' + sExtension_tiff
+    sFilename_tiff = '/qfs/people/liao313/data/h2sc/global/raster/wtd/' + 'wtd_halfdegree' + sExtension_tiff
     a = gdal_read_geotiff_file(sFilename_tiff)              
     aData_out = a[0]
     

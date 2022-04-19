@@ -178,7 +178,7 @@ def e3sm_create_case(oE3SM_in, \
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
     
-                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + '1' + '\n'
+                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_start + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()

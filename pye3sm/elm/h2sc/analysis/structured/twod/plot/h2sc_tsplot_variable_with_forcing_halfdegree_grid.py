@@ -2,16 +2,15 @@ import os, sys
 import argparse
 import numpy as np
 import datetime
-from jdcal import gcal2jd, jd2gcal
 from netCDF4 import Dataset #it maybe be replaced by gdal
 sSystem_paths = os.environ['PATH'].split(os.pathsep)
  
 
 from pyearth.system.define_global_variables import *
 from pyearth.toolbox.date.day_in_month import day_in_month
-from pyearth.gis.gdal.read.gdal_read_envi_file_multiple_band import gdal_read_envi_file_multiple_band
+from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
-from pyearth.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_two_y_axis import plot_time_series_data_multiple_temporal_resolution_two_y_axis
+#from pyearth.visual.timeseries.plot_time_series_data_multiple_temporal_resolution_two_y_axis import plot_time_series_data_multiple_temporal_resolution_two_y_axis
 
 #import package
 sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
