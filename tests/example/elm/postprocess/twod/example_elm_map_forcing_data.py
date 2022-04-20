@@ -35,7 +35,7 @@ sTitle = r'Precipitation'
 
 
 #sUnit = r'Units: mm/s'
-sUnit = r'Unit: mm'
+sUnit = r'Unit: mm/s'
 dData_min_in=0
 dData_max_in =20
 dData_max_in=None

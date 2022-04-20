@@ -62,4 +62,4 @@ def elm_retrieve_case_dimension_info(oCase_in):
 
 
     
-    return aMask, aLon, aLat
+    return aLon, aLat, aMask

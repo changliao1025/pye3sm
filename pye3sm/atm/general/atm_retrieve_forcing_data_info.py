@@ -23,6 +23,6 @@ def atm_retrieve_forcing_data_info(oCase_in, sVariable_in):
             sFilename = sWorkspace_simulation_case_run + slash + dummy
             
             #parse xml
-            sFolder , aFilename = parse_xml_file_atm(sFilename,'fileNames')
+            sFolder ,sField, aFilename = parse_xml_file_atm(sFilename,'fileNames')
         
-    return sFolder, aFilename
+    return sFolder, sField, aFilename
