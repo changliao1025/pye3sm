@@ -2,7 +2,6 @@ import os, sys
 import numpy as np
 import datetime
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
  
 
 from pyearth.system.define_global_variables import *
@@ -12,7 +11,7 @@ from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_dat
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 
 from pye3sm.elm.general.elm_retrieve_surface_data_info import elm_retrieve_surface_data_info
-def elm_calculate_slope_effect_2d(oE3SM_in, oCase_in    , sVariable_in           ):
+def elm_calculate_slope_effect_2d(oE3SM_in, oCase_in   , sVariable_in   ):
 
     
 
@@ -90,13 +89,16 @@ def elm_calculate_slope_effect_2d(oE3SM_in, oCase_in    , sVariable_in          
 
     aIndex = np.where( aSlope0 >= upper_quartile )
     bIndex = np.where( (aSlope0 >= lower_quartile) & (aSlope0 < upper_quartile) )
-    cIndex = np.where( (aSlope0 < upper_quartile) & (aSlope0 != -9999))
+    cIndex = np.where( (aSlope0 < lower_quartile) & (aSlope0 != -9999))
 
     for iStress in range(nstress_subset):
         dummy_data = np.flip(aVariable[iStress],0)
-        a= np.mean(dummy_data[aIndex])
-        b= np.mean(dummy_data[bIndex])
-        c=np.mean( dummy_data[cIndex])
+        dummy1 = dummy_data[aIndex]
+        a= np.mean(dummy1[np.where(dummy1!=-9999)])
+        dummy2 = dummy_data[bIndex]
+        b= np.mean(dummy2[np.where(dummy2!=-9999)])
+        dummy3 = dummy_data[cIndex]
+        c=np.mean( dummy3[np.where(dummy3!=-9999)])
         aData[iStress] =a
         bData[iStress] =b
         cData[iStress] =c
@@ -112,13 +114,16 @@ def elm_calculate_slope_effect_2d(oE3SM_in, oCase_in    , sVariable_in          
     sLabel_Y='Drainage'
     aLabel_legend=['High','Moderate','Low']
     aColor=['b','r','green']
+    dMax_y_in = np.max(aData_all) * 1.3
+    iFlag_scientific_notation_in=1
     plot_time_series_data(aDate_all,
                           aData_all,\
                           sFilename_out,\
                           iReverse_y_in = 0, \
-                          iFlag_log_in = 1,\
+                          iFlag_log_in = 0,\
+                          iFlag_scientific_notation_in=iFlag_scientific_notation_in,\
                           ncolumn_in = 4,\
-                          dMax_y_in = None,\
+                          dMax_y_in = dMax_y_in,\
                           dMin_y_in = 0,\
                           dSpace_y_in = None, \
                           sTitle_in = sTitle_in, \
@@ -127,7 +132,7 @@ def elm_calculate_slope_effect_2d(oE3SM_in, oCase_in    , sVariable_in          
                           aLabel_legend_in = aLabel_legend, \
                           aColor_in = aColor,\
                           aMarker_in = ['o','.','*'],\
-                          sLocation_legend_in = 'lower right' ,\
+                          sLocation_legend_in = 'upper right' ,\
                           aLocation_legend_in = (1.0, 0.0),\
                           aLinestyle_in = ['-','--','-.' ],\
                           iSize_x_in = 12,\

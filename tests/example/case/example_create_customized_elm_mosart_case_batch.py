@@ -87,6 +87,8 @@ sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
 #generate mosart first then use the mosart lat/lon information for elm
 sFilename_mosart_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
 
+sFilename_user_prec = '/compyfs/liao313/04model/e3sm/amazon/datm.streams.txt.CLMGSWP3v1.Precip'
+
 lCellID_outlet_in=128418
 dResolution = 0.5
 ncase = 40

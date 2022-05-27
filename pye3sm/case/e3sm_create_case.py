@@ -48,7 +48,7 @@ def e3sm_create_case(oE3SM_in, \
     sFilename_elm_domain = oCase_in.sFilename_elm_domain
     sFilename_elm_surfacedata = oCase_in.sFilename_elm_surfacedata
 
-    
+    sFilename_user_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip'
 
     #GIT_HASH=`git log -n 1 --format=%h`
 
@@ -290,7 +290,9 @@ def e3sm_create_case(oE3SM_in, \
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
     
-    
+            
+
+
     
             #Build and submit
             if (iFlag_debug == 1):
@@ -540,7 +542,13 @@ def e3sm_create_case(oE3SM_in, \
             #we will generate clm name list in real time
             sLine = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
             sLine = sLine.lstrip()
-            ofs.write(sLine)        
+            ofs.write(sLine)      
+
+            sLine = 'cp ' + sFilename_user_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
+            sLine = sLine.lstrip()
+            ofs.write(sLine) 
+
+                   
 
         if(iFlag_spinup==1):
             sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
@@ -550,6 +558,10 @@ def e3sm_create_case(oE3SM_in, \
         sLine = ' ./case.setup' + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
+
+        sLine = './preview_namelists' + '\n'
+        sLine = sLine.lstrip()
+        ofs.write(sLine)   
 
         #Build and submit
         if (iFlag_debug == 1):

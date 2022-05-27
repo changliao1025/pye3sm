@@ -16,7 +16,7 @@ from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pye3sm.atm.general.atm_retrieve_forcing_data_info import atm_retrieve_forcing_data_info
 
-def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
+def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
                                           dData_max_in = None,\
                                           dData_min_in = None,
                                          sUnit_in=None,\
@@ -28,7 +28,7 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'map'
+    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'netcdf'
     if not os.path.exists(sWorkspace_analysis_case_region):
         os.makedirs(sWorkspace_analysis_case_region)
         pass
@@ -74,8 +74,17 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
             dummy = '*'+sDate+'*'
             sRegex = os.path.join( sFolder, dummy )
 
+            sFilename_output = sWorkspace_analysis_case_region + slash + sVariable_forcing_in +  sExtension_netcdf
+            #should we use the same netcdf format? 
+            pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
+            pDimension_longitude = pFile.createDimension('lon', ncolumn_extract) 
+            pDimension_latitude = pFile.createDimension('lat', nrow_extract) 
+
             dom = day_in_month(iYear, iMonth, iFlag_leap_year_in = 0)
+
             nts = dom * 8 #3 hour temporal resolution
+            aGrid_stack= np.full((nts, nrow_extract, ncolumn_extract), -9999.0, dtype= float)
+            i=0
             for sFilename in glob.glob(sRegex):
                 aDatasets = Dataset(sFilename)
                 for sKey, aValue in aDatasets.variables.items():
@@ -112,20 +121,16 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
                     sStep ="{:03d}".format(i)
                     aData_out= aData_out_extract[i,:,:]
                     aData_out= np.reshape( aData_out, (nrow_extract,ncolumn_extract) )
-
                     aData_all = np.array(aData_out)     
-
                     sFilename_out=sWorkspace_analysis_case_region + slash \
                          + sVariable_forcing_in + '_map_' + sDate + sStep+'.png'            
-        
-                    map_raster_data(aData_all,  aImage_extent,\
-                              sFilename_out,\
-                                  sTitle_in = sTitle_in,\
-                                      sUnit_in=sUnit_in,\
-                                  iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
-                                       dData_max_in = dData_max_in,\
-                                          dData_min_in = dData_min_in,
-                                  dMissing_value_in = -9999)
+
+                    sDummy = sVariable_forcing_in + sYear +  sStep
+                    pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
+                    pVar[:] = aData_all
+                    pVar.description = sDummy
+                    pVar.unit = 'mm/s' 
+                    
                     pass    
 
             pass

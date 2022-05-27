@@ -16,7 +16,7 @@ from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pye3sm.atm.general.atm_retrieve_forcing_data_info import atm_retrieve_forcing_data_info
 
-def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
+def stat_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
                                           dData_max_in = None,\
                                           dData_min_in = None,
                                          sUnit_in=None,\
@@ -28,7 +28,7 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'map'
+    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'stat'
     if not os.path.exists(sWorkspace_analysis_case_region):
         os.makedirs(sWorkspace_analysis_case_region)
         pass
@@ -57,14 +57,22 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
     #dimension
     aMask_ul = np.flip(aMask_ll, 0)
 
-    sFolder, sField, aFilename = atm_retrieve_forcing_data_info (oCase_in, sVariable_forcing_in)
+    #this forcing is not directly used by elm, so we will only the elm dimension info to extract
 
-    dResoultion_forcing =0.5
+    #sFolder, sField, aFilename = atm_retrieve_forcing_data_info (oCase_in, sVariable_forcing_in)
+    
+    sFolder='/compyfs/liao313/00raw/hybam/HOP_noleap'
+    sField='PRECTmms'
+    aFilename=''
+
+    dResoultion_forcing =1.0
 
     #get date 
     iYear_start = oCase_in.iYear_start
-    iYear_end = oCase_in.iYear_end
-
+    iYear_end = 2008
+    nstress = (iYear_end -  iYear_start + 1) * 12
+    aData_out_extract = np.full((nstress, nrow_extract, ncolumn_extract), -9999, dtype=float)
+    index_date = 0 
     for iYear in range(iYear_start, iYear_end + 1, 1):
         sYear =  "{:04d}".format(iYear)
         #get the file by year
@@ -79,23 +87,26 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
             for sFilename in glob.glob(sRegex):
                 aDatasets = Dataset(sFilename)
                 for sKey, aValue in aDatasets.variables.items():
-                    if (sKey == 'LONGXY'):                   
-                        aLongitude = (aValue[:]).data
-                        continue
-                    if (sKey == 'LATIXY'):                    
-                        aLatitude = (aValue[:]).data
-                        continue
+                    #if (sKey == 'LONGXY'):                   
+                    #    aLongitude = (aValue[:]).data
+                    #    continue
+                    #if (sKey == 'LATIXY'):                    
+                    #    aLatitude = (aValue[:]).data
+                    #    continue
                     if (sKey == sField):                    
                         aData0 = (aValue[:]).data
-                        continue
+                        break
 
-                if np.max(aLongitude) > 180:
-                    aData = np.roll(aData0, int(180/dResoultion_forcing), axis=2)
+                #if np.max(aLongitude) > 180:
+                aData = np.roll(aData0, int(180/dResoultion_forcing), axis=2)
 
                 #aData  = np.reshape( aData, (nts, 360*720) )
-                aData  = np.flip( aData, 1 )  
+                aData[np.where(aData==-9999)]  =np.nan
+                aData  = np.flip( aData, 1 )
+                                
+                aData = np.sum(aData,axis=0)
                 #now extract
-                aData_out_extract = np.full((nts, nrow_extract, ncolumn_extract), -9999, dtype=float)
+                
                 for i in range(nrow_extract):
                     for j in range(ncolumn_extract):
                         dLon = aLon[i,j] - 0.5 * dResoultion_elm
@@ -106,19 +117,23 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
                             iIndex = int( (90-(dLat)) / dResoultion_forcing )
                             jIndex = int( (dLon-(-180)) / dResoultion_forcing )
                             
-                            aData_out_extract[:,i,j] = aData[:,iIndex, jIndex]
+                            aData_out_extract[index_date,i,j] = aData[iIndex, jIndex]
                 
-                for i in range(nts):
-                    sStep ="{:03d}".format(i)
-                    aData_out= aData_out_extract[i,:,:]
-                    aData_out= np.reshape( aData_out, (nrow_extract,ncolumn_extract) )
+                index_date = index_date + 1   
 
-                    aData_all = np.array(aData_out)     
 
-                    sFilename_out=sWorkspace_analysis_case_region + slash \
-                         + sVariable_forcing_in + '_map_' + sDate + sStep+'.png'            
-        
-                    map_raster_data(aData_all,  aImage_extent,\
+            pass
+        pass
+
+    aData_out_extract[np.where(aData_out_extract==-9999)]  =np.nan
+    total_prec = np.sum(aData_out_extract, axis=0)
+
+    print(np.nansum(total_prec))
+
+    total_prec[np.isnan(total_prec)]  =-9999
+    sFilename_out=sWorkspace_analysis_case_region + slash \
+                         + sVariable_forcing_in + '_map_total_HOP' + '.png'            
+    map_raster_data(total_prec,  aImage_extent,\
                               sFilename_out,\
                                   sTitle_in = sTitle_in,\
                                       sUnit_in=sUnit_in,\
@@ -126,12 +141,6 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
                                        dData_max_in = dData_max_in,\
                                           dData_min_in = dData_min_in,
                                   dMissing_value_in = -9999)
-                    pass    
-
-            pass
-        pass
-
-    
 
 
 

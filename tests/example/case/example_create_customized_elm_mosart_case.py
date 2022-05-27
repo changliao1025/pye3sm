@@ -26,7 +26,7 @@ sRegion = 'site'
 dLongitude =  -77.8
 dLatitude =  -6.35
 sRegion ='amazon'
-iCase = 9
+iCase = 19
 iFlag_mosart = 1
 iFlag_elm=1
 iFlag_elmmosart = 1
@@ -80,6 +80,8 @@ if not os.path.exists(sWorkspace_region1):
     Path(sWorkspace_region1).mkdir(parents=True, exist_ok=True)
 
 sFilename_surface_data_default='/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc'
+
+#sFilename_surface_data_default ='/compyfs/inputdata/lnd/clm2/surfdata_map/topounit_based_half_degree_merge_surfdata_0.5x0.5_simyr1850_c211019.20211108_ed20220204.nc'
 sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
 sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
         + sCase_spinup + '/run/' \
@@ -310,6 +312,8 @@ if iFlag_create_case ==1:
             ofs.write(sLine)
             
         else:
+            #sLine = "use_var_soil_thick = .true." + '\n'
+            #ofs.write(sLine)
             sLine = "use_h2sc = .true." + '\n'
             ofs.write(sLine)
             sLine = "hydraulic_anisotropy = " + sHydraulic_anisotropy + '\n'
@@ -404,7 +408,7 @@ if iFlag_create_case ==1:
                                                               iFlag_elm_in= iFlag_elm,\
                                                               iFlag_mosart_in= iFlag_mosart,\
                                                               iYear_start_in = 1950, \
-                                                              iYear_end_in = 1980,\
+                                                              iYear_end_in = 1979,\
                                                               iYear_data_end_in = 2010, \
                                                               iYear_data_start_in = 1950   , \
                                                               iCase_index_in = iCase, \

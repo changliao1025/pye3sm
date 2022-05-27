@@ -4,41 +4,41 @@ import os, sys
 import argparse
 import subprocess
 import numpy as np
-import multiprocessing
+
 
 
 from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.elm.general.structured.twod.map.elm_map_variable_2d import elm_map_variable_2d
+from pye3sm.elm.general.structured.twod.plot.elm_tsplot_forcing_data_2d_singlegrid import elm_tsplot_forcing_data_2d_singlegrid
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
 sDate = '20220410'
-iCase_index = 13
+iCase_index = 9
 
 
 iYear_start = 2000
-iYear_end = 2008
+iYear_end = 2010
 sModel = 'e3sm'
 sRegion='amazon'
 
-sVariable = 'zwt'
+sVariable = 'prec'
 #sVariable='qrunoff'
 #sVariable='qover'
-#sVariable='qdrai'
-sTitle = r'Water table depth'
+
+sTitle = r'Precipitation'
 #sTitle = r'Perched water table depth (m)'
 #sTitle=r'Overland runoff'
-#sTitle=r'Subsurface runoff'
 
-sUnit = r'Units: mm/s'
-sUnit = r'Unit: m'
+
+#sUnit = r'Units: mm/s'
+sUnit = r'Unit: mm/s'
 dData_min_in=0
 dData_max_in =20
-#dData_max_in=None
+dData_max_in=None
 
 iFlag_scientific_notation_colorbar_in = 0
 
@@ -59,7 +59,9 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_map_variable_2d(oE3SM, oCase ,  dData_min_in=dData_min_in, dData_max_in=dData_max_in,\
+elm_tsplot_forcing_data_2d_singlegrid(oE3SM, oCase ,sVariable,  dData_min_in=dData_min_in, dData_max_in=dData_max_in,\
   iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar_in, sUnit_in = sUnit,\
  sTitle_in=  sTitle )
+
+ 
 print('finished')

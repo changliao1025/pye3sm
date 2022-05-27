@@ -16,7 +16,7 @@ from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pye3sm.atm.general.atm_retrieve_forcing_data_info import atm_retrieve_forcing_data_info
 
-def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
+def map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
                                           dData_max_in = None,\
                                           dData_min_in = None,
                                          sUnit_in=None,\
@@ -57,9 +57,15 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
     #dimension
     aMask_ul = np.flip(aMask_ll, 0)
 
-    sFolder, sField, aFilename = atm_retrieve_forcing_data_info (oCase_in, sVariable_forcing_in)
+    #this forcing is not directly used by elm, so we will only the elm dimension info to extract
 
-    dResoultion_forcing =0.5
+    #sFolder, sField, aFilename = atm_retrieve_forcing_data_info (oCase_in, sVariable_forcing_in)
+    
+    sFolder='/compyfs/liao313/00raw/hybam/HOP_noleap'
+    sField='PRECTmms'
+    aFilename=''
+
+    dResoultion_forcing =1.0
 
     #get date 
     iYear_start = oCase_in.iYear_start
@@ -93,7 +99,8 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
                     aData = np.roll(aData0, int(180/dResoultion_forcing), axis=2)
 
                 #aData  = np.reshape( aData, (nts, 360*720) )
-                aData  = np.flip( aData, 1 )  
+                aData  = np.flip( aData, 1 )
+                
                 #now extract
                 aData_out_extract = np.full((nts, nrow_extract, ncolumn_extract), -9999, dtype=float)
                 for i in range(nrow_extract):

@@ -16,7 +16,7 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def h2sc_convert_observation_wtd_data_to_halfdegree(oE3SM_in, oCase_in):
+def convert_observation_wtd_data_to_halfdegree(oE3SM_in, oCase_in):
     
     sModel  = oCase_in.sModel    
     sRegion = oCase_in.sRegion
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration)
     oE3SM = pye3sm(aParameter_e3sm)
     oCase = pycase(aParameter_case)
-    h2sc_convert_observation_wtd_data_to_halfdegree(oE3SM, oCase)
+    convert_observation_wtd_data_to_halfdegree(oE3SM, oCase)
 
     
     print('finished')
