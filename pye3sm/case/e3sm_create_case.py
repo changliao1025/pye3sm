@@ -4,7 +4,8 @@ from pyearth.system.define_global_variables import *
 
 def e3sm_create_case(oE3SM_in, \
                      oCase_in,\
-                     iFlag_replace_forcing=None,\
+                     iFlag_replace_datm_forcing=None,\
+                     iFlag_replace_dlnd_forcing=None,\
                      iYear_data_end_in = None, \
                      iYear_data_start_in = None):
     #e3sm attributes
@@ -49,8 +50,8 @@ def e3sm_create_case(oE3SM_in, \
     sFilename_elm_domain = oCase_in.sFilename_elm_domain
     sFilename_elm_surfacedata = oCase_in.sFilename_elm_surfacedata
 
-    sFilename_user_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip'
-
+    sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip'
+    sFilename_user_dlnd = '/compyfs/liao313/04model/e3sm/sag/user_dlnd.streams.txt.lnd.gpcc'
     #GIT_HASH=`git log -n 1 --format=%h`
 
     sCasename = sDirectory_case + slash + sCase
@@ -544,6 +545,15 @@ def e3sm_create_case(oE3SM_in, \
             sLine = 'cp ' +  sFilename_mosart_namelist + ' ./user_nl_mosart' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
+        else:
+            if iFlag_elm == 1:
+                pass
+            else:
+                if iFlag_replace_dlnd_forcing==1:
+                sLine = 'cp ' + sFilename_user_dlnd + ' ./user_dlnd.streams.txt.lnd.gpcc' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine) 
+            pass
         if iFlag_elm ==1:
             #we will generate clm name list in real time
             sLine = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
@@ -551,12 +561,14 @@ def e3sm_create_case(oE3SM_in, \
             ofs.write(sLine)      
 
             #change forcing data
-            if iFlag_replace_forcing==1:
-                sLine = 'cp ' + sFilename_user_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
+            if iFlag_replace_datm_forcing==1:
+                sLine = 'cp ' + sFilename_user_datm_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine) 
+        else:
 
-                   
+            pass
+                  
 
         if(iFlag_elm_spinup==1):
             sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'

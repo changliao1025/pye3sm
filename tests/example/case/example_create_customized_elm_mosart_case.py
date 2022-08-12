@@ -32,7 +32,8 @@ dLatitude =  -6.35
 #dLatitude =  -11
 #sRegion ='amazon'
 iCase = 44
-iFlag_replace_forcing=0
+iFlag_replace_datm_forcing=0
+iFlag_replace_dlnd_forcing=1
 iFlag_mosart = 1
 iFlag_elm=0
 
@@ -533,4 +534,6 @@ if iFlag_create_case ==1:
         #print(aParameter_case)
 
     oCase = pycase(aParameter_case)
-    e3sm_create_case(oE3SM, oCase, iFlag_replace_forcing=iFlag_replace_forcing )
+    e3sm_create_case(oE3SM, oCase, \
+    iFlag_replace_datm_forcing=iFlag_replace_datm_forcing,\
+    iFlag_replace_dlnd_forcing= iFlag_replace_dlnd_forcing)
