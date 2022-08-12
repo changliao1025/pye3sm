@@ -24,7 +24,7 @@ def map_observation_wtd():
     sTitle_in = 'Water table depth'
     sUnit_in = 'Unit: m'
     iFlag_scientific_notation_colorbar_in= 0 
-    dData_max_in = 20
+    dData_max_in =20
     dData_min_in = 0
     map_raster_data(aData_out1,  aImage_extent,\
                               sFilename_out,\

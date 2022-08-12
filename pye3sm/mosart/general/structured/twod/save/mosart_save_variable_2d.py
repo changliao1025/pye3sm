@@ -149,7 +149,7 @@ def mosart_save_variable_2d(oE3SM_in, oCase_in):
                     
 
                     sDummy = sVariable + sYear + sMonth
-                    pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
+                    pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon'),fill_value=-9999) 
                     pVar[:] = aData_ll
                     pVar.description = sDummy
                     pVar.unit = 'm' 

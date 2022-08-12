@@ -50,6 +50,8 @@ def read_gsim_data(sFilename_gsim, iYear_start, iYear_end):
         dummy_data = dummy_data.strip('\t')
         if(index>=0  and index < nstress and  dummy_data != 'NA' ):
             aData_host[index] = float(dummy_data)
+        else:
+            pass
 
 
 

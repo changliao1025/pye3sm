@@ -17,11 +17,11 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 
 sDate = '20220410'
-iCase_index = 13
+iCase_index = 24
 
 
 iYear_start = 2000
-iYear_end = 2008
+iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
 

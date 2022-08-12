@@ -12,17 +12,18 @@ from pyearth.system.define_global_variables import *
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.elm.general.structured.twod.map.elm_map_forcing_data_2d import elm_map_forcing_data_2d
+from pye3sm.elm.general.structured.twod.map.elm_map_variable_2d import elm_map_variable_2d
 from pye3sm.tools.forcing.map_forcing_data_2d import map_forcing_data_2d
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
 sDate = '20220410'
-iCase_index = 13
+iCase_index = 20
 
 
 iYear_start = 2000
-iYear_end = 2010
+iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
 
@@ -60,11 +61,9 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-#elm_map_forcing_data_2d(oE3SM, oCase ,sVariable,  dData_min_in=dData_min_in, dData_max_in=dData_max_in,\
-#  iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar_in, sUnit_in = sUnit,\
-# sTitle_in=  sTitle )
-
-map_forcing_data_2d(oE3SM, oCase ,sVariable,  dData_min_in=dData_min_in, dData_max_in=dData_max_in,\
+elm_map_forcing_data_2d(oE3SM, oCase,sVariable,  dData_min_in=dData_min_in, dData_max_in=dData_max_in,\
   iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar_in, sUnit_in = sUnit,\
  sTitle_in=  sTitle )
+
+
 print('finished')

@@ -78,16 +78,11 @@ def elm_map_variable_2d(oE3SM_in, \
     subset_index_end = (iYear_subset_end + 1 - iYear_start) * 12 + iMonth-1
     subset_index = np.arange( subset_index_start,subset_index_end, 1 )
 
-
     dates=np.array(dates)
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
-
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
-
-
     #read the stack data
-
     sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
 
     aData_all = gdal_read_envi_file_multiple_band(sFilename)

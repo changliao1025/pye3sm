@@ -5,13 +5,15 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 from pye3sm.elm.general.structured.twod.save.elm_save_forcing_data_2d import elm_save_forcing_data_2d
+
+from pye3sm.tools.forcing.save_forcing_data_2d import save_forcing_data_2d 
 sModel = 'e3sm'
 sRegion ='amazon'
 sDate = '20220410'
 
-iCase_index = 9
+iCase_index = 33
 iYear_start = 2000
-iYear_end = 2008
+iYear_end = 2009
 #from now, to maintain consistancy, we will the same variable name for all processes.
 #use the new naming method
 sVariable = 'prec'
@@ -32,4 +34,5 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
 elm_save_forcing_data_2d(oE3SM, oCase,sVariable )
+#save_forcing_data_2d(oE3SM, oCase,sVariable )
 print('finished')

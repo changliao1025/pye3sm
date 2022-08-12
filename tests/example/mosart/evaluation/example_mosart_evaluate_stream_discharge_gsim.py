@@ -8,8 +8,8 @@ from pye3sm.mosart.evaluation.halfdegree.mosart_evaluate_stream_discharge_gsim i
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 14
-    iIndex_end = 14
+    iIndex_start = 24
+    iIndex_end = 24
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -39,9 +39,9 @@ aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration )
 oE3SM = pye3sm(aParameter_e3sm)
 iYear_start = 2000
-iYear_end = 2008
-iYear_subset_start = 2000
-iYear_subset_end = 2008
+iYear_end = 2009
+iYear_subset_start = 1990
+iYear_subset_end =1998
 sLabel_y = r'River discharge ($m^{3} s^{-1}$)'
 
 sFilename_mosart_gsim_info = '/qfs/people/liao313/data/h2sc/global/auxiliary/basin_ind.txt'

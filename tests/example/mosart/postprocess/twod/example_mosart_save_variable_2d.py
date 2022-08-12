@@ -9,9 +9,9 @@ sModel = 'e3sm'
 sRegion ='amazon'
 sDate = '20220410'
 
-iCase_index = 13
+iCase_index = 24
 iYear_start = 2000
-iYear_end = 2008
+iYear_end = 2009
 #from now, to maintain consistancy, we will the same variable name for all processes.
 #use the new naming method
 sVariable = 'discharge'

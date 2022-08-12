@@ -6,16 +6,18 @@ import glob
 from netCDF4 import Dataset #read netcdf
 from osgeo import gdal, osr #the default operator
 from pyearth.system.define_global_variables import *
-
+from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
+from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
+from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 from pyearth.toolbox.date.day_in_month import day_in_month
+from pyearth.visual.map.map_raster_data import map_raster_data
 
-
+from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pye3sm.atm.general.atm_retrieve_forcing_data_info import atm_retrieve_forcing_data_info
-from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
-from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file, gdal_write_geotiff_file_multiple_band
+from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
 
-def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
+def save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
                                           dData_max_in = None,\
                                           dData_min_in = None,
                                          sUnit_in=None,\
@@ -27,26 +29,20 @@ def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_sci
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'netcdf'
+    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'netcdf2'
     if not os.path.exists(sWorkspace_analysis_case_region):
         os.makedirs(sWorkspace_analysis_case_region)
         pass
 
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash \
-        + sVariable_forcing_in + slash + 'dat'
-    if not os.path.exists(sWorkspace_variable_dat):
-        os.makedirs(sWorkspace_variable_dat)
-
     sWorkspace_variable_tiff = sWorkspace_analysis_case + slash \
-        + sVariable_forcing_in + slash + 'tiff'
+        + sVariable_forcing_in + slash + 'tiff2'
     if not os.path.exists(sWorkspace_variable_tiff):
         os.makedirs(sWorkspace_variable_tiff)
 
     aLon, aLat , aMask_ll= elm_retrieve_case_dimension_info(oCase_in)
     aLon = np.flip(aLon, 0) 
     aLat = np.flip(aLat, 0) 
-
-    aMask_ul = np.flip(aMask_ll, 0)
+    aMask = np.flip(aMask_ll, 0) 
    
     nrow_extract, ncolumn_extract = aLon.shape
     #resolution
@@ -77,11 +73,14 @@ def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_sci
     #subset depends on resolution
 
     #dimension
-    
+    aMask_ul = np.flip(aMask_ll, 0)
 
-    sFolder, sField, aFilename = atm_retrieve_forcing_data_info (oCase_in, sVariable_forcing_in)
+    #sFolder, sField, aFilename = atm_retrieve_forcing_data_info (oCase_in, sVariable_forcing_in)
+    sFolder='/compyfs/liao313/00raw/hybam/HOP_noleap'
+    sField='PRECTmms'
+    aFilename=''
 
-    dResoultion_forcing =0.5
+    dResoultion_forcing =1.0
 
     #get date 
     iYear_start = oCase_in.iYear_start
@@ -90,10 +89,6 @@ def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_sci
     for iYear in range(iYear_start, iYear_end + 1, 1):
         sYear =  "{:04d}".format(iYear)
         #get the file by year
-
-        aData_year= np.full((nrow_extract, ncolumn_extract), -9999.0, dtype= float)
-
-        aData_year_dummy= np.full((12, nrow_extract, ncolumn_extract), -9999.0, dtype= float)
         for iMonth in range(1, 12 + 1, 1):
             sMonth =  "{:02d}".format(iMonth)
             sDate = sYear + '-' + sMonth
@@ -136,11 +131,10 @@ def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_sci
                         dLon = aLon[i,j] - 0.5 * dResoultion_elm
                         dLat = aLat[i,j] + 0.5 * dResoultion_elm
                         #locate it
-                        iMask = aMask_ul[i,j]
+                        iMask = aMask[i,j]
                         if iMask >=1:
                             iIndex = int( (90-(dLat)) / dResoultion_forcing )
                             jIndex = int( (dLon-(-180)) / dResoultion_forcing )
-                            
                             aData_out_extract[:,i,j] = aData[:,iIndex, jIndex]
                 
                 for i in range(nts):
@@ -150,25 +144,19 @@ def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_sci
                     aData_ul = np.array(aData_out)     
                     aData_ll  = np.flip( aData_ul, 0 )  
                     sFilename_out=sWorkspace_analysis_case_region + slash \
-                         + sVariable_forcing_in + '_map_' + sDate + sStep+'.png'            
+                         + sVariable_forcing_in + '_map_' + sDate + sStep+'.png'  
 
                     sDummy = sVariable_forcing_in + sYear + sMonth +  sStep
                     pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon'), fill_value=-9999) 
                     pVar[:] = aData_ll
                     pVar.description = sDummy
-                    pVar.unit = 'mm/s'                 
+                    pVar.unit = 'mm/s' 
+                    
 
-                    aGrid_stack[i, :,: ] =  aData_ul                    
+                    aGrid_stack[i, :,: ] =  aData_ul
                     
                     pass    
-
-                sFilename_envi = sWorkspace_variable_dat + slash + sVariable_forcing_in + sDate + sExtension_envi
-                gdal_write_envi_file_multiple_band(sFilename_envi, aGrid_stack,\
-                    float(pHeaderParameters['pixelSize']),\
-                    float(pHeaderParameters['ULlon']),\
-                    float(pHeaderParameters['ULlat']),\
-                  -9999.0, pSpatial)
-
+                
                 sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable_forcing_in + sDate + sExtension_tiff
 
                 gdal_write_geotiff_file_multiple_band(sFilename_tiff, aGrid_stack,\
@@ -177,23 +165,8 @@ def elm_save_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_sci
                           float(pHeaderParameters['ULlat']),\
                               -9999.0, pSpatial)
 
-            aData_month = np.sum(aGrid_stack, axis=0)
-            aData_month[np.where(aMask_ul ==0 )] = -9999
-            aData_year_dummy[iMonth-1,:,:] = aData_month
-
+            pass
             pFile.close()
-        
-        aData_year = np.sum(aData_year_dummy, axis=0)
-        aData_year[np.where(aMask_ul ==0 )] = -9999
-
-        sFilename_tiff = sWorkspace_variable_tiff + slash + sVariable_forcing_in + sYear   + sExtension_tiff
-
-        gdal_write_geotiff_file(sFilename_tiff, aData_year,\
-                    float(pHeaderParameters['pixelSize']),\
-                     float(pHeaderParameters['ULlon']),\
-                          float(pHeaderParameters['ULlat']),\
-                              -9999.0, pSpatial)
-
         pass
 
     

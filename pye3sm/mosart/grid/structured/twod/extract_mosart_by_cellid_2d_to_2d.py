@@ -68,17 +68,17 @@ def extract_mosart_by_cellid_2d_to_2d(sFilename_mosart_in, sFilename_netcdf_out,
         for sKey, aValue in aDatasets.variables.items():            
             aDimenion_value = aValue.shape 
             if len(aDimenion_value) ==1:
-                outVar = datasets_out.createVariable(sKey, aValue.datatype, aValue.dimensions)
+                outVar = datasets_out.createVariable(sKey, aValue.datatype, aValue.dimensions,fill_value=missing_value )
                 aData = (aValue[:]).data
-                iFlag_missing_vale=0
+                iFlag_missing_value=0
                 for sAttribute in aValue.ncattrs():                
                     if( sAttribute.lower() =='_fillvalue' ):
                         missing_value0 = aValue.getncattr(sAttribute)                    
                         outVar.setncatts( { '_FillValue': missing_value } )                        
-                        iFlag_missing_vale = 1
+                        iFlag_missing_value = 1
                     else:                                        
                         outVar.setncatts( { sAttribute: aValue.getncattr(sAttribute) } )        
-                if iFlag_missing_vale ==1:
+                if iFlag_missing_value ==1:
                     dummy_index = np.where(  aData == missing_value0 ) 
                     aData[dummy_index] = missing_value          
                 if sKey.lower() == 'lat':
@@ -96,18 +96,18 @@ def extract_mosart_by_cellid_2d_to_2d(sFilename_mosart_in, sFilename_netcdf_out,
             else:
                 if len(aDimenion_value) == 2:
                     #id or 2d      
-                    outVar = datasets_out.createVariable(sKey, aValue.datatype, ('lat','lon'))
+                    outVar = datasets_out.createVariable(sKey, aValue.datatype, ('lat','lon'),fill_value=missing_value)
                     aData = (aValue[:]).data
-                    iFlag_missing_vale=0
+                    iFlag_missing_value=0
                     for sAttribute in aValue.ncattrs():                
                         if( sAttribute.lower() =='_fillvalue' ):
                             missing_value0 = aValue.getncattr(sAttribute)                    
                             outVar.setncatts( { '_FillValue': missing_value } )                        
-                            iFlag_missing_vale = 1
+                            iFlag_missing_value = 1
                         else:                                        
                             outVar.setncatts( { sAttribute: aValue.getncattr(sAttribute) } )        
                     outVar.setncatts( { '_FillValue': missing_value } )         
-                    if iFlag_missing_vale ==1:
+                    if iFlag_missing_value ==1:
                         dummy_index = np.where(  aData == missing_value0 ) 
                         aData[dummy_index] = missing_value              
                     aData0 = np.full( (nrow_original, ncolumn_original), missing_value, dtype= aValue.datatype)     

@@ -4,6 +4,7 @@ from pyearth.system.define_global_variables import *
 
 def e3sm_create_case(oE3SM_in, \
                      oCase_in,\
+                     iFlag_replace_forcing=None,\
                      iYear_data_end_in = None, \
                      iYear_data_start_in = None):
     #e3sm attributes
@@ -27,7 +28,7 @@ def e3sm_create_case(oE3SM_in, \
     sDirectory_case = oCase_in.sDirectory_case
     sDirectory_case_aux = oCase_in.sDirectory_case_aux
     sDirectory_run = oCase_in.sDirectory_run
-    iFlag_spinup=oCase_in.iFlag_spinup
+    iFlag_elm_spinup=oCase_in.iFlag_elm_spinup
     iFlag_mosart = oCase_in.iFlag_mosart
     iFlag_elm = oCase_in.iFlag_elm
     #start
@@ -76,8 +77,8 @@ def e3sm_create_case(oE3SM_in, \
     else:
         sQueue = 'slurm'
         sWalltime = '6:00:00'
-        #sNtask = '1'
-        sNtask = '-3'
+        sNtask = '1'
+        #sNtask = '-3'
         #sYear = '30'
         pass
 
@@ -178,7 +179,7 @@ def e3sm_create_case(oE3SM_in, \
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
     
-                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_start + '\n'
+                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_start + '\n'  #sYear_start
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
@@ -238,10 +239,10 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            #sCommand = sPython + ' ./xmlchange -file env_run.xml -id INFO_DBUG          -val 2' + '\n'
-            #sCommand = sCommand.lstrip()
-            #p = subprocess.Popen(sCommand, shell= True)
-            #p.wait()
+            sCommand = sPython + ' ./xmlchange -file env_run.xml -id INFO_DBUG          -val 2' + '\n'
+            sCommand = sCommand.lstrip()
+            p = subprocess.Popen(sCommand, shell= True)
+            p.wait()
     
             sCommand = sPython + ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
             sCommand = sCommand.lstrip()
@@ -284,7 +285,7 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()        
     
-            if(iFlag_spinup==1):
+            if(iFlag_elm_spinup==1):
                 sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
@@ -480,7 +481,7 @@ def e3sm_create_case(oE3SM_in, \
             ofs.write(sLine)
 
             if iFlag_resubmit ==1:
-                sLine = sPython + ' ./xmlchange RESUBMIT=1' + '\n'
+                sLine = sPython + ' ./xmlchange RESUBMIT=5' + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
 
@@ -497,7 +498,7 @@ def e3sm_create_case(oE3SM_in, \
             sLine = sLine.lstrip()
             ofs.write(sLine)
 
-            sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_start + '\n'
+            sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_start + '\n' #sYear_start
             sLine = sLine.lstrip()
             ofs.write(sLine)
 
@@ -508,6 +509,11 @@ def e3sm_create_case(oE3SM_in, \
         sLine =  ' ./xmlchange -file env_run.xml -id DOUT_S -val FALSE' + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
+
+        sLine =  ' ./xmlchange -file env_run.xml -id INFO_DBUG -val 2' + '\n'
+        sLine = sLine.lstrip()
+        ofs.write(sLine)
+        
     
         sLine =  ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
         sLine = sLine.lstrip()
@@ -544,13 +550,15 @@ def e3sm_create_case(oE3SM_in, \
             sLine = sLine.lstrip()
             ofs.write(sLine)      
 
-            sLine = 'cp ' + sFilename_user_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine) 
+            #change forcing data
+            if iFlag_replace_forcing==1:
+                sLine = 'cp ' + sFilename_user_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine) 
 
                    
 
-        if(iFlag_spinup==1):
+        if(iFlag_elm_spinup==1):
             sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)

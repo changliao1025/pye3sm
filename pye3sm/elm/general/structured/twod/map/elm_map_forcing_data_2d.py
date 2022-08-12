@@ -58,7 +58,7 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
     aMask_ul = np.flip(aMask_ll, 0)
 
     sFolder, sField, aFilename = atm_retrieve_forcing_data_info (oCase_in, sVariable_forcing_in)
-
+    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable_forcing_in +  slash + 'dat'
     dResoultion_forcing =0.5
 
     #get date 
@@ -71,62 +71,31 @@ def elm_map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scie
         for iMonth in range(1, 12 + 1, 1):
             sMonth =  "{:02d}".format(iMonth)
             sDate = sYear + '-' + sMonth
-            dummy = '*'+sDate+'*'
-            sRegex = os.path.join( sFolder, dummy )
-
+            
+            sFilename = sWorkspace_variable_dat + slash + sVariable_forcing_in + sDate + sExtension_envi
+            aData_all = gdal_read_envi_file_multiple_band(sFilename)
+            aVariable_total = aData_all[0]
             dom = day_in_month(iYear, iMonth, iFlag_leap_year_in = 0)
             nts = dom * 8 #3 hour temporal resolution
-            for sFilename in glob.glob(sRegex):
-                aDatasets = Dataset(sFilename)
-                for sKey, aValue in aDatasets.variables.items():
-                    if (sKey == 'LONGXY'):                   
-                        aLongitude = (aValue[:]).data
-                        continue
-                    if (sKey == 'LATIXY'):                    
-                        aLatitude = (aValue[:]).data
-                        continue
-                    if (sKey == sField):                    
-                        aData0 = (aValue[:]).data
-                        continue
-
-                if np.max(aLongitude) > 180:
-                    aData = np.roll(aData0, int(180/dResoultion_forcing), axis=2)
-
-                #aData  = np.reshape( aData, (nts, 360*720) )
-                aData  = np.flip( aData, 1 )  
-                #now extract
-                aData_out_extract = np.full((nts, nrow_extract, ncolumn_extract), -9999, dtype=float)
-                for i in range(nrow_extract):
-                    for j in range(ncolumn_extract):
-                        dLon = aLon[i,j] - 0.5 * dResoultion_elm
-                        dLat = aLat[i,j] + 0.5 * dResoultion_elm
-                        #locate it
-                        iMask = aMask[i,j]
-                        if iMask >=1:
-                            iIndex = int( (90-(dLat)) / dResoultion_forcing )
-                            jIndex = int( (dLon-(-180)) / dResoultion_forcing )
-                            
-                            aData_out_extract[:,i,j] = aData[:,iIndex, jIndex]
-                
-                for i in range(nts):
-                    sStep ="{:03d}".format(i)
-                    aData_out= aData_out_extract[i,:,:]
-                    aData_out= np.reshape( aData_out, (nrow_extract,ncolumn_extract) )
-
-                    aData_all = np.array(aData_out)     
-
-                    sFilename_out=sWorkspace_analysis_case_region + slash \
-                         + sVariable_forcing_in + '_map_' + sDate + sStep+'.png'            
-        
-                    map_raster_data(aData_all,  aImage_extent,\
-                              sFilename_out,\
-                                  sTitle_in = sTitle_in,\
-                                      sUnit_in=sUnit_in,\
-                                  iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
-                                       dData_max_in = dData_max_in,\
-                                          dData_min_in = dData_min_in,
-                                  dMissing_value_in = -9999)
-                    pass    
+            
+            for i in range(nts):                
+                aData  = aVariable_total[i]
+                #now extract                
+                sStep ="{:03d}".format(i)           
+                aData= np.reshape( aData, (nrow_extract,ncolumn_extract) )
+                aData_all = np.array(aData)     
+                sFilename_out=sWorkspace_analysis_case_region + slash \
+                     + sVariable_forcing_in + '_map_' + sDate + sStep+'.png'            
+    
+                map_raster_data(aData_all,  aImage_extent,\
+                          sFilename_out,\
+                              sTitle_in = sTitle_in,\
+                                  sUnit_in=sUnit_in,\
+                              iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
+                                   dData_max_in = dData_max_in,\
+                                      dData_min_in = dData_min_in,
+                              dMissing_value_in = -9999)
+                pass    
 
             pass
         pass

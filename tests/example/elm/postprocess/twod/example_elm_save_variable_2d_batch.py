@@ -16,8 +16,8 @@ from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_sav
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 14
-    iIndex_end = 14
+    iIndex_start = 33
+    iIndex_end = 33
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -31,7 +31,7 @@ sRegion ='amazon'
 sDate = '20220410'
 
 aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI','QCHARGE']
-#aVariable = []
+#aVariable = ['hk_sat','anisotropy']
 #aVariable = ['wt_slp']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
 
 #aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI', \
@@ -41,7 +41,7 @@ nvariable = len(aVariable)
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
 iYear_start = 2000
-iYear_end = 2010
+iYear_end = 2009
 aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 #aCase_index = np.array([2,4,8,16])
 

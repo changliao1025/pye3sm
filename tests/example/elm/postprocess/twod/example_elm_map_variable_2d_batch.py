@@ -21,8 +21,8 @@ iCase_index = 4
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 4
-    iIndex_end = 4
+    iIndex_start = 33
+    iIndex_end = 33
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -35,24 +35,25 @@ else:
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
 
-aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI']
+iFlag_scientific_notation_colorbar_in = 0
 
+aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI']
+aFlag_scientific_notation_colorbar=[0,1,1,1]
 iYear_start = 2000
-iYear_end = 2010
+iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
-sVariable = 'zwt'
-#sVariable = 'zwt_perch'
-#sVariable='qrunoff'
-#sVariable='qover'
-sVariable='qdrai'
-sLabel_y = r'Water table depth'
-#sLabel_y = r'Perched water table depth (m)'
-#sLabel_y=r'Overland runoff (mm/s)'
-sLabel_y=r'Subsurface runoff'
-iReverse_y=1
-dMin_y=0
-dMax_y=10
+
+
+aTitle= [ 'Water table depth','Overland runoff','Total runoff','Subsurface runoff' ]
+
+aUnit = [r'Unit: m',r'Units: mm/s',r'Units: mm/s',r'Units: mm/s']
+
+aData_min = [0,0,0,0]
+aData_max = [20, None ,None,None]
+
+
+
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
@@ -62,6 +63,13 @@ aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 nvariable = len(aVariable)
 for iCase_index in (aCase_index):
     for iVariable in np.arange(nvariable):
+        sVariable = aVariable[iVariable]
+        sUnit = aUnit[iVariable]
+        sTitle = aTitle[iVariable]
+        dData_min = aData_min[iVariable]
+        dData_max = aData_max[iVariable]
+        iFlag_scientific_notation_colorbar = aFlag_scientific_notation_colorbar[iVariable]
+
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                        iCase_index_in =  iCase_index ,\
                                                        iYear_start_in = iYear_start, \
@@ -73,8 +81,11 @@ for iCase_index in (aCase_index):
                                                            sRegion_in=sRegion,\
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
-oCase = pycase(aParameter_case)
-elm_map_variable_2d(oE3SM, oCase ,  dData_min_in=0, \
-  iFlag_scientific_notation_colorbar_in = 1, sUnit_in = 'Units: mm/s',\
- sTitle_in=  'Water table depth' )
+        oCase = pycase(aParameter_case)
+        elm_map_variable_2d(oE3SM, oCase ,  dData_min_in=dData_min, dData_max_in=dData_max,\
+            iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar, \
+            sUnit_in = sUnit,\
+            sTitle_in=  sTitle )
+        pass
+
 print('finished')
