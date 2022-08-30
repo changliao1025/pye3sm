@@ -85,6 +85,14 @@ def elm_map_variable_2d(oE3SM_in, \
     #read the stack data
     sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
 
+    if os.path.exists(sFilename):
+        #print("Yep, I can read that file: " + sFilename)                
+        pass
+    else:
+        print(sFilename + ' is missing')
+        print("Nope, the path doesn't reach your file. Go research filepath in python")
+        return
+
     aData_all = gdal_read_envi_file_multiple_band(sFilename)
     aVariable_total = aData_all[0]
     aVariable_total_subset = aVariable_total[subset_index,:,:]

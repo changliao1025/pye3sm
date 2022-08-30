@@ -1,6 +1,6 @@
 import os, sys, stat
 from pathlib import Path
-from matplotlib.style import available
+
 
 import numpy as np
 import datetime
@@ -30,18 +30,17 @@ dLatitude =  -6.35
 #2
 #dLongitude =  -60
 #dLatitude =  -11
-#sRegion ='amazon'
-iCase = 44
+sRegion ='amazon'
+iCase = 56
 iFlag_replace_datm_forcing=0
-iFlag_replace_dlnd_forcing=1
-iFlag_mosart = 1
-iFlag_elm=0
+iFlag_replace_dlnd_forcing=0
 
-iFlag_mosart_grid = 1
+
 iFlag_atm = 0
+iFlag_create_atm_grid=0
 iFlag_mosart = 1
-iFlag_create_mosart_grid = 0
-iFlag_elm = 0
+iFlag_create_mosart_grid = 1
+iFlag_elm = 1
 iFlag_create_elm_grid = 1
 
 if iFlag_mosart ==1 :
@@ -51,21 +50,21 @@ if iFlag_mosart ==1 :
         iFlag_elmmosart = 0        
 else:
     iFlag_elmmosart = 0
-    iFlag_create_mosart_grid=0
+    
 
 
 iFlag_2d_to_1d = 0 
 iFlag_create_case = 1 
 iFlag_submit_case = 0
 
-iFlag_default = 1
+iFlag_default = 0
 iFlag_debug = 0 #is this a debug run
 iFlag_branch = 0
-iFlag_initial = 0 #use restart file as initial
+iFlag_initial = 1 #use restart file as initial
 iFlag_elm_spinup = 0 #is this a spinup run
 iFlag_short = 0 #do you run it on short queue
 iFlag_continue = 0 #is this a continue run
-iFlag_resubmit = 1 #is this a resubmit
+iFlag_resubmit = 0 #is this a resubmit
 iFlag_optimal_parameter = 0
 sDate = '20220701'
 sDate_spinup = '20210209'
@@ -111,26 +110,31 @@ if not os.path.exists(sWorkspace_region1):
 #some pre-defined files     
 sFilename_elm_surface_data_default='/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025.nc'
 #sFilename_elm_surface_data_default ='/compyfs/inputdata/lnd/clm2/surfdata_map/topounit_based_half_degree_merge_surfdata_0.5x0.5_simyr1850_c211019.20211108_ed20220204.nc'
-sFilename_elm_domain_file_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
-sFilename_initial = '/compyfs/liao313/e3sm_scratch/' \
-        + sCase_spinup + '/run/' \
-        + sCase_spinup +  '.elm2.rh0.1979-01-01-00000.nc'
+sFilename_elm_domain_default='/compyfs/inputdata/share/domains/domain.lnd.r05_oEC60to30v3.190418.nc'
+
+
+sFilename_dlnd_stream = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
 #generate mosart first then use the mosart lat/lon information for elm
 
 if iFlag_create_mosart_grid ==1:
-
-    sFilename_mosart_parameter = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
+    sFilename_mosart_parameter_default = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
 else:
-    sFilename_mosart_parameter = ''
-    sFilename_mosart_domain =''
+    sFilename_mosart_parameter_default = '/qfs/people/liao313/data/e3sm/sag/mosart/MOSART_Sag_MPAS_c220804.nc'
+    sFilename_mosart_domain_default ='/qfs/people/liao313/data/e3sm/sag/mosart/domain_Sag_MPAS_c220804.nc'
+    
+sFilename_atm_domain=None
 
+sFilename_etm_domain=None
 
+sFilename_mosart_domain=None
+sFilename_mosart_namelist=None
 
-sFilename_initial = '/compyfs/liao313/e3sm_scratch/e3sm20220410034/run/e3sm20220410034.elm.r.1980-01-01-00000.nc'
+sFilename_initial = '/compyfs/liao313/e3sm_scratch/e3sm20220701050/run/e3sm20220701050.elm.r.1980-01-01-00000.nc'
 
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
+sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
 sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
 sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/elm_sparse_grid.cfg'
 
@@ -156,49 +160,52 @@ lCellID_outlet_in=128418
 dResolution = 0.5
 
 aMask=None
-sFilename_mosart_input =None
+sFilename_mosart_parameter =None
 
 #extract the mosart from a large domain, usually in structured mesh
+
+
 if iFlag_create_mosart_grid ==1: 
 
     sFilename_mosart_netcdf_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '.nc'
-    create_customized_mosart_domain(iFlag_2d_to_1d, sFilename_mosart_parameter,sFilename_mosart_netcdf_out, lCellID_outlet_in)
-    #exact elevation profile from mosart to elm
-    aElevation_profile = extract_mosart_elevation_profile_for_elm(sFilename_mosart_netcdf_out)
-    #other variable
-    aVariable_in=['gxr','rdep','hslp', 'rlen']
-    aVariable_mosart = extract_mosart_variable_for_elm(sFilename_mosart_netcdf_out, aVariable_in)
+    create_customized_mosart_domain(iFlag_2d_to_1d, sFilename_mosart_parameter_default,sFilename_mosart_netcdf_out, lCellID_outlet_in)
+    
+    if iFlag_mosart==1:
+        #exact elevation profile from mosart to elm
+        aElevation_profile = extract_mosart_elevation_profile_for_elm(sFilename_mosart_netcdf_out)
+        #other variable
+        aVariable_in=['gxr','rdep','hslp', 'rlen']
+        aVariable_mosart = extract_mosart_variable_for_elm(sFilename_mosart_netcdf_out, aVariable_in)
 
-
-    sFilename_mosart_input = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
-
-    if not os.path.exists(sFilename_mosart_input):    
-        copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_input)
+    sFilename_mosart_parameter = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
+    if not os.path.exists(sFilename_mosart_parameter):    
+        copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_parameter)
     else:
         pass
 
 else:
     #pre-defined mosart, usually mpas mesh-based
-    sFilename_mosart_parameter_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_parameter.nc'
-    sFilename_mosart_domain_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_domain.nc'
+    sFilename_mosart_parameter = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_parameter.nc'
+    sFilename_mosart_domain = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_domain.nc'
 
     #overwrite?
     
-    if not os.path.exists(sFilename_mosart_input):    
-        copyfile(sFilename_mosart_parameter, sFilename_mosart_parameter_out)
+    if not os.path.exists(sFilename_mosart_parameter):    
+        copyfile(sFilename_mosart_parameter_default, sFilename_mosart_parameter)
         
-    if not os.path.exists(sFilename_mosart_input):    
-        copyfile(sFilename_mosart_domain, sFilename_mosart_domain_out)
-    
-
+    if not os.path.exists(sFilename_mosart_domain):    
+        copyfile(sFilename_mosart_domain_default, sFilename_mosart_domain)
     
     pass
         
-
+if iFlag_create_atm_grid==1:
+    pass
+else:
+    pass
 
 if iFlag_create_elm_grid ==1:
     #have both mosart and elm
-    if iFlag_mosart ==1:
+    if iFlag_create_mosart_grid ==1:
         aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
 
         if iFlag_2d_to_1d == 0:
@@ -242,8 +249,6 @@ if iFlag_create_elm_grid ==1:
             sLine = sGrid + '\n'
             ofs.write(sLine)
 
-
-
             for i in range(ngrid):
                 dLatitude = aLat[i]
                 dLongitude = aLon[i]
@@ -277,22 +282,34 @@ if iFlag_create_elm_grid ==1:
 
         pass
 else:
+    sFilename_elm_domain = sFilename_mosart_domain
     pass
+
+
+    #
 
 if iFlag_create_case ==1:
 
     if iFlag_elm ==1:
         sFilename_elm_namelist = sWorkspace_region2 + slash + 'user_nl_elm_' + sCase_date
         sFilename_elm_surface_data_out = sWorkspace_region2 + slash + 'elm_surfdata_' + sCase_date + '.nc'
-        sFilename_elm_domain_file_out = sWorkspace_region2 + slash +  'elm_domain_' + sCase_date + '.nc'
+        sFilename_elm_domain_out = sWorkspace_region2 + slash +  'elm_domain_' + sCase_date + '.nc'
         create_customized_elm_domain( aLon, aLat, aMask, dResolution, dResolution, \
                 sFilename_configuration, \
                              sFilename_elm_surface_data_default,\
-                             sFilename_elm_domain_file_default,\
+                             sFilename_elm_domain_default,\
                              sFilename_elm_surface_data_out,
-                             sFilename_elm_domain_file_out)
+                             sFilename_elm_domain_out)
+        sFilename_elm_domain = sFilename_elm_domain_out
+        if iFlag_create_atm_grid==1:
+            pass
+        else:
+            sFilename_atm_domain = sFilename_elm_domain
+            pass
     else:
         #should we use user_nl_dlnd?
+
+        sFilename_elm_domain=sFilename_mosart_domain
         sFilename_elm_namelist = sWorkspace_region2 + slash + 'user_nl_dlnd_' + sCase_date 
         pass
 
@@ -381,10 +398,10 @@ if iFlag_create_case ==1:
                 + sFilename_elm_surface_data_out  + "'" + '\n'
             ofs.write(sCommand_out)
             if (iFlag_default ==1 ):
-                sLine = "dHkdepth = " + sHkdepth + '\n'
-                ofs.write(sLine)
-                sLine = "fover = " + sFover + '\n'
-                ofs.write(sLine)
+                #sLine = "dHkdepth = " + sHkdepth + '\n'
+                #ofs.write(sLine)
+                #sLine = "fover = " + sFover + '\n'
+                #ofs.write(sLine)
                 sLine = 'hist_empty_htapes = .true.' + '\n'
                 ofs.write(sLine)
                 sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT', 'QCHARGE' "  + '\n'
@@ -448,20 +465,20 @@ if iFlag_create_case ==1:
         ofs = open(sFilename_mosart_namelist, 'w')
         #sLine = 'rtmhist_nhtfrq=0' + '\n'
         #ofs.write(sLine)
-        sLine = 'frivinp_rtm = ' + "'" + sFilename_mosart_input + "'" + '\n'
+        sLine = 'frivinp_rtm = ' + "'" + sFilename_mosart_parameter + "'" + '\n'
         ofs.write(sLine)
         #sLine = 'rtmhist_fincl1= "area"' + '\n'
         #ofs.write(sLine)
-
-
-        sLine = 'routingmethod = 1'
+        sLine = 'routingmethod = 1'+ '\n'
         ofs.write(sLine)
-        sLine = 'inundflag = .false.'
+        sLine = 'inundflag = .false.'+ '\n'
         ofs.write(sLine)
         #opt_elevprof = 1
         ofs.close()
 
     if iFlag_atm == 1:
+        pass
+    else:       
         if iFlag_elm_spinup ==1:
             #this is a case for spin up
             ofs = open(sFilename_datm_namelist, 'w')
@@ -471,12 +488,7 @@ if iFlag_create_case ==1:
             pass
         else:
             pass
-    else:        
         pass
-
-
-    
-
 
     aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration ,\
                                                           iFlag_debug_in = iFlag_debug, \
@@ -490,45 +502,49 @@ if iFlag_create_case ==1:
     oE3SM = pye3sm(aParameter_e3sm)
     if (iFlag_elm_spinup ==1):
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-                                                              iFlag_spinup_in = iFlag_elm_spinup,\
-                                                              iYear_start_in = 1950, \
-                                                              iYear_end_in = 1979,\
-                                                              iYear_data_end_in = 2010, \
+                                                             iFlag_atm_in = iFlag_atm,\
+                                                              iFlag_elm_spinup_in = iFlag_elm_spinup,\
+                                                              iFlag_elm_in= iFlag_elm,\
+                                                              iFlag_mosart_in= iFlag_mosart,\
+                                                              iYear_start_in = 1890, \
+                                                              iYear_end_in = 1919,\
+                                                              iYear_data_end_in = 2009, \
                                                               iYear_data_start_in = 1980   ,\
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
                                                               sModel_in = sModel,\
                                                               sRegion_in = sRegion,\
-                                                              sFilename_atm_domain_in=  sFilename_elm_domain_file_out,\
+                                                              sFilename_atm_domain_in=  sFilename_atm_domain,\
                                                               sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
                                                               sFilename_elm_namelist_in =   sFilename_elm_namelist, \
-                                                              sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
-                                                              sFilename_mosart_input_in = sFilename_mosart_input, \
+                                                              sFilename_elm_domain_in=sFilename_elm_domain_out, \
+                                                              sFilename_mosart_namelist_in = sFilename_mosart_namelist, \
+                                                              sFilename_mosart_parameter_in = sFilename_mosart_parameter, \
                                                               sWorkspace_scratch_in =   sWorkspace_scratch)
         pass
     else:
-        #iYear_start_in = 1830, 
-        #iYear_end_in = 1859,\
-        #iYear_start_in = 1980, 
-        #iYear_end_in = 2009,\
+        iYear_start = 1980
+        iYear_end = 2009       
+         
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
-                                                              iFlag_spinup_in = iFlag_elm_spinup,\
+                                                              iFlag_elm_spinup_in = iFlag_elm_spinup,\
+                                                              iFlag_atm_in = iFlag_atm,\
                                                               iFlag_elm_in= iFlag_elm,\
                                                               iFlag_mosart_in= iFlag_mosart,\
-                                                              iYear_start_in = 1830, \
-                                                              iYear_end_in = 1859,\
+                                                              iYear_start_in = iYear_start, 
+                                                              iYear_end_in = iYear_end,\
                                                               iYear_data_end_in = 2009, \
-                                                              iYear_data_start_in = 1980   , \
+                                                              iYear_data_start_in = 1980  , \
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
                                                               sModel_in = sModel,\
                                                               sRegion_in = sRegion,\
-                                                              sFilename_atm_domain_in=  sFilename_elm_domain_file_out,\
-                                                              sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
-                                                              sFilename_elm_namelist_in =   sFilename_elm_namelist, \
-                                                              sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
+                                                              sFilename_atm_domain_in = sFilename_atm_domain,\
+                                                              sFilename_datm_namelist_in = sFilename_datm_namelist ,\
+                                                              sFilename_elm_namelist_in = sFilename_elm_namelist, \
+                                                              sFilename_elm_domain_in = sFilename_elm_domain, \
                                                               sFilename_mosart_namelist_in = sFilename_mosart_namelist, \
-                                                              sFilename_mosart_input_in = sFilename_mosart_input, \
+                                                              sFilename_mosart_parameter_in = sFilename_mosart_parameter, \
                                                               sWorkspace_scratch_in =   sWorkspace_scratch )
         pass
         #print(aParameter_case)

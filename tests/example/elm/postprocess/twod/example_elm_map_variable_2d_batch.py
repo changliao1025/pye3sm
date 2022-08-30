@@ -16,13 +16,13 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
-sDate = '20220410'
+sDate = '20220701'
 iCase_index = 4
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 33
-    iIndex_end = 33
+    iIndex_start = 51
+    iIndex_end = 56
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
