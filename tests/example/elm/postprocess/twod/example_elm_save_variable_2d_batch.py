@@ -16,8 +16,8 @@ from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_sav
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 9
-    iIndex_end = 9
+    iIndex_start = 51
+    iIndex_end = 56
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -28,20 +28,20 @@ else:
 
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20220314'
+sDate = '20220701'
 
-aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI']
-#aVariable = []
+aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI','QCHARGE']
+#aVariable = ['hk_sat','anisotropy']
 #aVariable = ['wt_slp']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
 
-#aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI', \
-   # 'wt_slp','sur_slp','ZWT']
+#aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 'QOVER','QDRAI','QCHARGE', \
+  #  'wt_slp','sur_slp','ZWT']
 nvariable = len(aVariable)
 #start loop
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
 iYear_start = 2000
-iYear_end = 2010
+iYear_end = 2009
 aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 #aCase_index = np.array([2,4,8,16])
 

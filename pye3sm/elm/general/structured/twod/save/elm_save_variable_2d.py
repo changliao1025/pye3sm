@@ -45,7 +45,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
         os.makedirs(sWorkspace_analysis_case)    
 
     #new approach
-    aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ll= elm_retrieve_case_dimension_info(oCase_in)
     #dimension
     aMask_ul = np.flip(aMask_ll, 0)
     nrow = np.array(aMask_ll).shape[0]
@@ -155,7 +155,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
                     
 
                     sDummy = sVariable + sYear + sMonth
-                    pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon')) 
+                    pVar = pFile.createVariable( sDummy , 'f4', ('lat' , 'lon'), fill_value=-9999) 
                     pVar[:] = aData_ll
                     pVar.description = sDummy
                     pVar.unit = 'm' 

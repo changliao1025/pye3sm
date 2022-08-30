@@ -28,10 +28,12 @@ dSlope_mosart = 0.01
 
 dRatio0 = 0.5  #for bedrock slope
 dRatio1 = 0.25  #for transition slope
-dRatio2 = 1.1 #above seepage
+
+
+dRatio2 = 1.0 #above seepage
 dRatio3 =1.0 #below transition
 
-X, Y = np.meshgrid(aElevation1, aElevation2
+X, Y = np.meshgrid(aElevation1, aElevation2)
 
 #for i in range(1,20):
     #print(math.atan(i /ninterval))
@@ -39,7 +41,7 @@ X, Y = np.meshgrid(aElevation1, aElevation2
 
 for i in range(ninterval):
     aHeight2 =   (np.arange(ndrop)+1) * (aElevation2[i]-aElevation1[i]) /(ndrop+1)
-    print(aElevation1[i] ,aElevation2[i] )
+    #print(aElevation1[i] ,aElevation2[i] )
     #elevation difference reference
     dummy0 = (aElevation2[i] - (aElevation1[i] ) ) 
     dElevation_difference = dummy0
@@ -47,6 +49,9 @@ for i in range(ninterval):
     dDummy1 =  dElevation_difference  / dDistance_in
     A1 = dDummy1
     dSlope_surface = A1
+
+    dRatio1 = 1.0 - np.power(A1, 0.8)
+    print(A1, dRatio1)
     dSlope_surface_radian = math.atan(A1)
 
     #print(dSlope_surface / math.pi * 180)
@@ -190,7 +195,7 @@ for i in range(ninterval):
         G25 = (B2-B5) / (A5-A2)
         H25 = A5 * G25 + B5
         #print(G45, G24, G25)
-        print(A4, A1, A2, A3, A5)
+        #print(A4, A1, A2, A3, A5)
         
         
         ci = 'C' + str(j)
@@ -253,9 +258,9 @@ for i in range(ninterval):
     ax.legend()
     print("=============")    
         #plt.savefig( 'slope_' +  "{:.0f}".format(dHeight1) +'_' +"{:.0f}".format(dHeight2) +  '_' +   str(i).zfill(2) +'.png')
-    print('__file__:    ', __file__)
-    print('basename:    ', os.path.basename(__file__))
-    print('dirname:     ', os.path.dirname(__file__))
+    #print('__file__:    ', __file__)
+    #print('basename:    ', os.path.basename(__file__))
+    #print('dirname:     ', os.path.dirname(__file__))
 
     sFilename = os.path.dirname(__file__) + '/slope_' + str(i).zfill(2) + str(j).zfill(2)+ '.png'
     plt.savefig(sFilename )

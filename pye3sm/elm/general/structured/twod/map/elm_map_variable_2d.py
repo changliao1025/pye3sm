@@ -42,7 +42,7 @@ def elm_map_variable_2d(oE3SM_in, \
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
     #new approach
-    aMask, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat,aMask = elm_retrieve_case_dimension_info(oCase_in)
     #dimension
     nrow = np.array(aMask).shape[0]
     ncolumn = np.array(aMask).shape[1]
@@ -78,17 +78,20 @@ def elm_map_variable_2d(oE3SM_in, \
     subset_index_end = (iYear_subset_end + 1 - iYear_start) * 12 + iMonth-1
     subset_index = np.arange( subset_index_start,subset_index_end, 1 )
 
-
     dates=np.array(dates)
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
-
     sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
-
-
     #read the stack data
-
     sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
+
+    if os.path.exists(sFilename):
+        #print("Yep, I can read that file: " + sFilename)                
+        pass
+    else:
+        print(sFilename + ' is missing')
+        print("Nope, the path doesn't reach your file. Go research filepath in python")
+        return
 
     aData_all = gdal_read_envi_file_multiple_band(sFilename)
     aVariable_total = aData_all[0]

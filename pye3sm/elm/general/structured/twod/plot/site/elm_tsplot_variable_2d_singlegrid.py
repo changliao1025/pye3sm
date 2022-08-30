@@ -44,7 +44,7 @@ def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
 
-    aMask, aLon, aLat=elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat,aMask =elm_retrieve_case_dimension_info(oCase_in)
 
 
     #dimension

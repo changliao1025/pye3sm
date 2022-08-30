@@ -6,24 +6,25 @@ from netCDF4 import Dataset #it maybe be replaced by gdal
 from osgeo import gdal #the default operator
 from scipy.interpolate import griddata #generate grid
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
- 
-
 from pyearth.system.define_global_variables import *
 from pyearth.gis.envi.envi_write_header import envi_write_header
 
-sPath_pye3sm = sWorkspace_code +  slash + 'python' + slash + 'e3sm' + slash + 'e3sm_python'
+from pye3sm.shared.e3sm import pye3sm
+from pye3sm.shared.case import pycase
  
-from e3sm.shared import oE3SM
-from e3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
 
-def h2sc_convert_observation_wtd_data_to_halfdegree(sFilename_configuration_in):
-    config = e3sm_read_configuration_file(sFilename_configuration_in)
-    sModel  = oE3SM.sModel    
-    sRegion = oE3SM.sRegion
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+
+def convert_observation_wtd_data_to_halfdegree(oE3SM_in, oCase_in):
+    
+    sModel  = oCase_in.sModel    
+    sRegion = oCase_in.sRegion
+    sWorkspace_data=  '/qfs/people/liao313/data'
     dConversion = 1.0
     sVariable = 'wtd'
-    sFilename_mosart_input = oE3SM.sFilename_mosart_input
+    sFilename_mosart_input = '/qfs/people/liao313/data/h2sc/global/raster/dem/MOSART_Global_half_20180606c.chang_9999.nc'
+
     sFilename_wtd = sWorkspace_data + slash + sModel + slash + sRegion + slash + 'raster' + slash \
         + 'wtd' + slash + 'Global_wtd_lowres.nc'
 
@@ -104,7 +105,7 @@ def h2sc_convert_observation_wtd_data_to_halfdegree(sFilename_configuration_in):
     points = np.vstack((aLongitude_subset, aLatitude_subset))
     points = np.transpose(points)
     values = aData_subset 
-    aGrid_data = griddata(  points, values, (grid_x, grid_y), method='nearest')
+    aGrid_data = griddata(  points, values, (grid_x, grid_y), method='linear')
     aGrid_data[aMask] = missing_value
 
     #save output
@@ -128,7 +129,7 @@ def h2sc_convert_observation_wtd_data_to_halfdegree(sFilename_configuration_in):
         #save as envi
         pHeaderParameters = {}
         pHeaderParameters['ncolumn'] = '720'
-        pHeaderParameters['nrow_obs'] = '360'
+        pHeaderParameters['nrow'] = '360'
         pHeaderParameters['ULlon'] = '-180'
         pHeaderParameters['ULlat'] = '90'
         pHeaderParameters['pixelSize'] = '0.5'
@@ -166,10 +167,15 @@ if __name__ == '__main__':
     
     sModel = 'h2sc'
     sRegion ='global'
+    sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
+    sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
+    aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration )
 
 
-    sFilename_configuration = sWorkspace_configuration + slash + sModel + slash \
-               + sRegion + slash + 'h2sc_configuration.txt' 
-    print(sFilename_configuration)
-    h2sc_convert_observation_wtd_data_to_halfdegree(sFilename_configuration)
+    aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration)
+    oE3SM = pye3sm(aParameter_e3sm)
+    oCase = pycase(aParameter_case)
+    convert_observation_wtd_data_to_halfdegree(oE3SM, oCase)
+
+    
     print('finished')

@@ -16,12 +16,12 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_config
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
 
-sDate = '20220314'
-iCase_index = 9
+sDate = '20220410'
+iCase_index = 24
 
 
 iYear_start = 2000
-iYear_end = 2010
+iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
 
@@ -37,8 +37,8 @@ sTitle = r'Water table depth'
 sUnit = r'Units: mm/s'
 sUnit = r'Unit: m'
 dData_min_in=0
-dData_max_in =12
-dData_max_in=None
+dData_max_in =20
+#dData_max_in=None
 
 iFlag_scientific_notation_colorbar_in = 0
 

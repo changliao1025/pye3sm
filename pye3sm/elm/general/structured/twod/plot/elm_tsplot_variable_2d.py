@@ -43,7 +43,7 @@ def elm_tsplot_variable_2d(oE3SM_in, \
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
     #new approach
-    aMask, aLon, aLat=elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat,aMask =elm_retrieve_case_dimension_info(oCase_in)
     #dimension
     nrow = np.array(aMask).shape[0]
     ncolumn = np.array(aMask).shape[1]

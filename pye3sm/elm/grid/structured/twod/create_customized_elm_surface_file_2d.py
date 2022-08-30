@@ -88,8 +88,7 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, aMask_in,\
         iFlag_missing_value=0
         for attname in ncid_inq.variables[varname].ncattrs():
             attvalue = ncid_inq.variables[varname].getncattr(attname)
-            var[varname].setncattr(attname, attvalue)
-
+            #print(attname, attvalue)
             if attname.lower() == '_fillvalue':
                 iFlag_missing_value = 1
                 if dtype == np.int:
@@ -97,6 +96,8 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, aMask_in,\
                 else:
                     var[varname].setncatts( { '_FillValue': float(missing_value) } ) 
                 pass
+            else:
+                var[varname].setncattr(attname, attvalue)
         if iFlag_missing_value ==0 :
             if dtype == np.int32:
                 var[varname].setncatts( { '_FillValue': missing_value } )                     
@@ -255,7 +256,8 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, aMask_in,\
                 else:
                     var[varname][:] = data
             else:
-                print('error')
+                #print('error')
+                pass
 
     ncid_inq.close()
     ncid_out.close()

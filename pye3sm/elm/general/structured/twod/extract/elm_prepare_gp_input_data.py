@@ -24,7 +24,7 @@ def elm_prepare_gp_input_data(oE3SM_in, oCase_in):
     iYear_start = oCase_in.iYear_start        
     iYear_end = oCase_in.iYear_end    
     #new approach
-    aMask_ll, aLon, aLat = elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ll= elm_retrieve_case_dimension_info(oCase_in)
     #dimension
     aMask_ul = np.flip(aMask_ll, 0)
     nrow = np.array(aMask_ll).shape[0]

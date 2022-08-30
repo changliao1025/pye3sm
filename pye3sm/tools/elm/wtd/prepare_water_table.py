@@ -36,7 +36,7 @@ def prepare_water_table():
     dLat_max = np.max(aLat)
 
 
-    sFilename_tiff = '/qfs/people/liao313/data/h2sc/global/raster/wtd/' + 'wtd' + sExtension_tiff
+    sFilename_tiff = '/qfs/people/liao313/data/h2sc/global/raster/wtd/' + 'wtd_halfdegree' + sExtension_tiff
     a = gdal_read_geotiff_file(sFilename_tiff)              
     aData_out = a[0]
     
@@ -73,7 +73,7 @@ def prepare_water_table():
     sTitle_in = 'Water table depth'
     sUnit_in = 'Unit: m'
     iFlag_scientific_notation_colorbar_in= 0 
-    dData_max_in =12 
+    dData_max_in =20
     dData_min_in = 0
     map_raster_data(aData_all,  aImage_extent,\
                               sFilename_out,\

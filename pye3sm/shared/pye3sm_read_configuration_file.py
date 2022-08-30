@@ -87,7 +87,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     return config
 
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
-                                        iFlag_spinup_in = None, \
+                                        iFlag_elm_spinup_in = None, \
                                         iFlag_same_grid_in= None,\
                                             iFlag_elm_in =None,\
                                                 iFlag_mosart_in = None,\
@@ -111,7 +111,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                      sFilename_mosart_namelist_in = None,\
                                             sFilename_atm_domain_in = None,
                                             sFilename_elm_domain_in=None,\
-                                                sFilename_mosart_input_in=None,
+                                                sFilename_mosart_domain_in=None,\
+                                                sFilename_mosart_parameter_in=None,
                                         sWorkspace_data_in = None,\
                                         sWorkspace_scratch_in=None):
     #read the default configuration
@@ -124,10 +125,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sModel = config['sModel']
     sRegion = config['sRegion']
 
-    if iFlag_spinup_in is not None:
-        iFlag_spinup = iFlag_spinup_in
+    if iFlag_elm_spinup_in is not None:
+        iFlag_elm_spinup = iFlag_elm_spinup_in
     else:
-        iFlag_spinup = 0
+        iFlag_elm_spinup = 0
     
     if iFlag_elm_in is not None:
         iFlag_elm = iFlag_elm_in
@@ -229,6 +230,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         sLabel_y = ''
 
+    config['iFlag_atm'] =  "{:01d}".format(iFlag_atm)
     config['iFlag_elm'] =  "{:01d}".format(iFlag_elm)
     config['iFlag_mosart'] =  "{:01d}".format(iFlag_mosart)
 
@@ -240,7 +242,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
 
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
-    config['iFlag_spinup'] = "{:01d}".format(iFlag_spinup)
+    config['iFlag_elm_spinup'] = "{:01d}".format(iFlag_elm_spinup)
 
     nYear = iYear_end - iYear_start + 1
     config['nYear'] =  "{:03d}".format(nYear)
@@ -314,8 +316,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
             print('A default datm namelist was not found, it may be created.' )
 
     #update mask if region changes
-    if sFilename_mosart_input_in is not None:
-        sFilename_mosart_input = sFilename_mosart_input_in
+    if sFilename_mosart_parameter_in is not None:
+        sFilename_mosart_input = sFilename_mosart_parameter_in
     else:
         sFilename_mosart_input = sWorkspace_data + slash \
             + sModel + slash + sRegion + slash \

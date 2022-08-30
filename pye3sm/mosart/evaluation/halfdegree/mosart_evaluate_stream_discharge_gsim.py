@@ -6,6 +6,7 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
+from pye3sm.mosart.grid.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
 
 from pye3sm.tools.gsim.read_gsim_data import read_gsim_data
 
@@ -63,6 +64,22 @@ def mosart_evaluate_stream_discharge_gsim(oE3SM_in, \
 
     nrow = 360
     ncolumn = 720
+     #new approach
+    aLon, aLat , aMask_ll= mosart_retrieve_case_dimension_info(oCase_in)
+    #dimension
+    aMask_ul = np.flip(aMask_ll, 0)
+    nrow = np.array(aMask_ll).shape[0]
+    ncolumn = np.array(aMask_ll).shape[1]
+    aMask_ll_index = np.where(aMask_ll==0)
+    aMask_ul_index = np.where(aMask_ul==0)
+
+    #resolution
+    dLon_min = np.min(aLon)
+    dLon_max = np.max(aLon)
+    dLat_min = np.min(aLat)
+    dLat_max = np.max(aLat)
+    dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
+    dResolution_y = (dLat_max - dLat_min) / (nrow-1)
     #the gsim file to be read
     #read basin mask
     
@@ -78,12 +95,13 @@ def mosart_evaluate_stream_discharge_gsim(oE3SM_in, \
     iMonth = 1
     subset_index_start = (iYear_subset_start - iYear_start) * 12 + iMonth-1
     subset_index_end = (iYear_subset_end + 1 - iYear_start) * 12 + iMonth-1
-    subset_index = np.arange( subset_index_start,subset_index_end, 1 )
-
+    subset_index1 = np.arange( subset_index_start,subset_index_end, 1 )
+    subset_index2 = np.arange( subset_index_start+1,subset_index_end+1, 1 )
 
     dates=np.array(dates)
-    dates_subset = dates[subset_index]
-    nstress_subset= len(dates_subset)
+    dates_subset1 = dates[subset_index1]
+    dates_subset2 = dates[subset_index2]
+    nstress_subset= len(dates_subset1)
 
     #read the stack data
 
@@ -91,7 +109,7 @@ def mosart_evaluate_stream_discharge_gsim(oE3SM_in, \
 
     aData_all = gdal_read_geotiff_file_multiple_band(sFilename)
     aVariable_total = aData_all[0]
-    aVariable_total_subset = aVariable_total[subset_index,:,:]
+    aVariable_total_subset = aVariable_total[subset_index1,:,:]
 
     
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
@@ -112,17 +130,27 @@ def mosart_evaluate_stream_discharge_gsim(oE3SM_in, \
     for iSite in np.arange(1, nsite+1, 1):
         dLatitude = aLat[iSite-1]
         dLongitude = aLon[iSite-1]
+
+        if dLatitude >=dLat_min and dLatitude<=dLat_max and dLongitude >=dLon_min and dLongitude<=dLon_max:
+            pass
+        else:
+            continue
         sFilename_gsim = aFilename_gsim[iSite-1] + '.mon'
 
+        sFilename_gsim = 'BR_0000244.mon'
+
         sFilename_gsim =  os.path.join(sWorkspace_gsim, sFilename_gsim) 
+
+        print(sFilename_gsim)
+        #continue
         aData = read_gsim_data(sFilename_gsim,iYear_start, iYear_end )
 
 
         #the location of the grid
 
 
-        row_index = int( (90.0-dLatitude)/0.5 )
-        column_index =int ((dLongitude + 180.0)/0.5)
+        row_index = int( (dLat_max-dLatitude)/0.5 )
+        column_index =int ((dLongitude -dLon_min)/0.5)
 
         aData_all=[]
         aLabel_legend=[]
@@ -145,8 +173,8 @@ def mosart_evaluate_stream_discharge_gsim(oE3SM_in, \
         sLabel_Y=''
 
         #generate the time series plot using the pyes library
-        aDate_all = np.array([dates_subset, dates_subset])
-        aData_all = np.array([aVariable2,aData[subset_index] ])
+        aDate_all = np.array([dates_subset1, dates_subset1])
+        aData_all = np.array([aVariable2,aData[subset_index2] ])
         aLabel_legend=['Modeled river discharge','Observed river discharge']
         plot_time_series_data(aDate_all,
                               aData_all ,\
