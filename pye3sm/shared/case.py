@@ -35,6 +35,7 @@ class pycase(object):
     sWorkspace_cases=''
     sLabel_y='' #the y label for plotting purpose    
     sWorkspace_case=''
+    sWorkspace_case_aux=''
     sWorkspace_analysis_case=''
     sWorkspace_simulation_case=''
     sWorkspace_simulation_case_build=''
@@ -206,6 +207,8 @@ class pycase(object):
 
         sCase_index = "{:03d}".format( self.iCase_index )
         sCase = self.sModel + self.sDate + sCase_index
+
+        self.sWorkspace_case_aux = self.sDirectory_case_aux + '/' + sCase
         self.sCase = sCase
         self.nyear = self.iYear_end - self.iYear_start + 1
         pass

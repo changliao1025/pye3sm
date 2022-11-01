@@ -8,7 +8,7 @@ from pyearth.toolbox.reader.text_reader_string import text_reader_string
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
 from pye3sm.mosart.grid.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
 
-from pye3sm.tools.gsim.read_gsim_data import read_gsim_data
+from pye3sm.tools.mosart.gsim.read_gsim_data import read_gsim_data
 
 #evaluate mosart stream discharge
 def mosart_prepare_outlet_coordinates_with_gsim_filenames(sFilename_mosart_gsim_info, iSkipline_in=1):

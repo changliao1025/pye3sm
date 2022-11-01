@@ -1,35 +1,44 @@
+
+
+import os, sys
+import argparse
+import subprocess
+import numpy as np
+import multiprocessing
+
+
+from pyearth.system.define_global_variables import *
+ 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-
+from pye3sm.mosart.general.structured.twod.map.mosart_map_variable_2d import mosart_map_variable_2d
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-from pye3sm.elm.general.structured.twod.stats.elm_calculate_slope_band_effect_2d import elm_calculate_slope_effect_2d
-sModel = 'e3sm'
-sRegion ='amazon'
-sDate = '20220410'
 
-iCase_index = 13
+sDate = '20220410'
+iIndex_start = 52
+iIndex_end = 57
+
+
 iYear_start = 2000
-iYear_end = 2010
-#from now, to maintain consistancy, we will the same variable name for all processes.
-#use the new naming method
-sVariable = 'QRUNOFF'
-#sVariable = 'wt_slp'
-#aVariable = ['TWS_MONTH_END','TWS_MONTH_BEGIN']
-#sVariable = 'TWS_MONTH_END'
-#sVariable = 'sur_slp'
-#P
-#sVariable = 'RAIN'
-#sVariable = 'SNOW'
-#ET
-#sVariable = 'QSOIL'
-#sVariable = 'QVEGE'
-#sVariable = 'QVEGT'
-#runoff
-sVariable = 'QDRAI'
-#sVariable = 'DRARI_h2sc'
-#sVariable = 'QOVER'
+iYear_end = 2008
+sModel = 'e3sm'
+sRegion='amazon'
+
+
+sVariable = 'discharge'
+
+sTitle = r'River discharge'
+
+
+sUnit = r'Units: m3/s'
+
+dData_min_in=0
+dData_max_in =20
+dData_max_in=None
+
+iFlag_scientific_notation_colorbar_in = 0
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
@@ -40,13 +49,15 @@ aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configurat
                                                        iCase_index_in =  iCase_index ,\
                                                        iYear_start_in = iYear_start, \
                                                        iYear_end_in = iYear_end,\
-                                                              iYear_subset_start_in = iYear_start, \
-                                        iYear_subset_end_in = iYear_end, \
+                                                        iYear_subset_start_in = iYear_start, \
+                                                         iYear_subset_end_in = iYear_end, \
                                                        sDate_in= sDate,\
-                                                           sModel_in = sModel,\
-                                                              sRegion_in = sRegion,\
+                                                       sModel_in = sModel, \
+                                                           sRegion_in=sRegion,\
                                                        sVariable_in = sVariable )
 #print(aParameter_case)
 oCase = pycase(aParameter_case)
-elm_calculate_slope_effect_2d(oE3SM, oCase, sVariable )
+mosart_map_variable_2d(oE3SM, oCase ,  dData_min_in=dData_min_in, dData_max_in=dData_max_in,\
+  iFlag_scientific_notation_colorbar_in = iFlag_scientific_notation_colorbar_in, sUnit_in = sUnit,\
+ sTitle_in=  sTitle )
 print('finished')

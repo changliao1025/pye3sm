@@ -4,25 +4,39 @@ import numpy.ma as ma
 import datetime
 
 from pyearth.system.define_global_variables import *
-from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
-from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
 from pyearth.visual.map.map_raster_data import map_raster_data
-
-from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
  
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
-from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
+from pye3sm.elm.general.structured.twod.retrieve.elm_retrieve_variable_2d import elm_retrieve_variable_2d
 
 def elm_map_variable_2d(oE3SM_in, \
                                           oCase_in,\
                                         iFlag_scientific_notation_colorbar_in =None,   \
+                                            iFlag_monthly_in = None,\
+                                            iFlag_annual_mean_in = None,\
+                                                iFlag_annual_total_in = None,\
                                           dData_max_in = None,\
                                           dData_min_in = None,
+                                          sColormap_in=None,\
                                          sUnit_in=None,\
-                                          sTitle_in =None):
+                                          sTitle_in =None, \
+                                            aLegend_in = None):
+    if iFlag_monthly_in is None:
+        iFlag_monthly  =1
+    else:
+        iFlag_monthly = iFlag_monthly_in
+
+    if iFlag_annual_mean_in is None:
+        iFlag_annual_mean = 0
+    else:
+        iFlag_annual_mean = iFlag_annual_mean_in
+    
+    if iFlag_annual_total_in is None:
+        iFlag_annual_total = 0
+    else:
+        iFlag_annual_total = iFlag_annual_total_in
 
     sModel = oCase_in.sModel
     sRegion = oCase_in.sRegion
@@ -81,21 +95,7 @@ def elm_map_variable_2d(oE3SM_in, \
     dates=np.array(dates)
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
-    sWorkspace_variable_dat = sWorkspace_analysis_case + slash + sVariable +  slash + 'dat'
-    #read the stack data
-    sFilename = sWorkspace_variable_dat + slash + sVariable  + sExtension_envi
-
-    if os.path.exists(sFilename):
-        #print("Yep, I can read that file: " + sFilename)                
-        pass
-    else:
-        print(sFilename + ' is missing')
-        print("Nope, the path doesn't reach your file. Go research filepath in python")
-        return
-
-    aData_all = gdal_read_envi_file_multiple_band(sFilename)
-    aVariable_total = aData_all[0]
-    aVariable_total_subset = aVariable_total[subset_index,:,:]
+    
 
 
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
@@ -107,32 +107,84 @@ def elm_map_variable_2d(oE3SM_in, \
         os.makedirs(sWorkspace_analysis_case_region)
         pass
 
-   
-    for i in np.arange(nstress_subset):
-        aImage = aVariable_total_subset[i, :,:]
-        #get date
-        pDate = dates_subset[i]
-        sDate = pDate.strftime('%Y%m%d')
-        sLabel_legend = sRegion.title() + sDate
-        sFilename_out = sWorkspace_analysis_case_region + slash \
-        + sVariable + '_map_' + sDate +'.png'         
+    if iFlag_monthly ==1 :
+        aData_all = elm_retrieve_variable_2d( oCase_in, iFlag_monthly_in = 1)
+        for i in np.arange(nstress_subset):
+            aImage = aData_all[i]
+            #get date
+            pDate = dates_subset[i]
+            sDate = pDate.strftime('%Y%m%d')
+            
+            sFilename_out = sWorkspace_analysis_case_region + slash \
+            + sVariable + '_map_' + sDate +'.png'                   
 
-        #aData_all = np.log10(aData_all)
-        ##set inf to min
-        #bad_index = np.where( np.isinf(  aData_all) == True  )
-        #aData_all[bad_index] = dMin_y_in
-        aData_all = np.array(aImage)                  
+            
+            map_raster_data(aImage,  aImage_extent,\
+                                  sFilename_out,\
+                                    sColormap_in=sColormap_in,\
+                                      sTitle_in = sTitle_in,\
+                                          sUnit_in=sUnit_in,\
+                                      iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
+                                        iFlag_contour_in = 1,\
+                                           dData_max_in = dData_max_in,\
+                                              dData_min_in = dData_min_in,
+                                      dMissing_value_in = -9999,\
+                                        aLegend_in = aLegend_in)
+
+            
+
+    #mean or total
+
+    if iFlag_annual_mean ==1:
+        aData_all = elm_retrieve_variable_2d( oCase_in, iFlag_annual_mean_in = 1)
+        #annual mean
+        for iYear in range(iYear_start, iYear_end + 1):
+            sYear = "{:04d}".format(iYear)
+            aImage = aData_all[iYear-iYear_start]
+            sFilename_out = sWorkspace_analysis_case_region + slash \
+            + sVariable + '_map_mean_'+ sYear +'.png'
+            
+            map_raster_data(aImage,  aImage_extent,\
+                                  sFilename_out,\
+                                      sTitle_in = sTitle_in,\
+                                        sColormap_in=sColormap_in,\
+                                          sUnit_in=sUnit_in,\
+                                      iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
+                                        iFlag_contour_in = 1,\
+                                           dData_max_in = dData_max_in,\
+                                              dData_min_in = dData_min_in,
+                                      dMissing_value_in = -9999,\
+                                        aLegend_in = aLegend_in)
+
+        pass
+    
+    if iFlag_annual_total ==1: #annual total
+        aData_all = elm_retrieve_variable_2d( oCase_in, iFlag_annual_total_in = 1)
+        for iYear in range(iYear_start, iYear_end + 1):
+            aImage = aData_all[iYear-iYear_start]
+            sYear = "{:04d}".format(iYear)            
+            
+            sFilename_out = sWorkspace_analysis_case_region + slash \
+            + sVariable + '_map_annual_total_'+ sYear +'.png'
+            
+            if dData_max_in is not None:
+                dData_max_in2 = dData_max_in * 10
+            else: 
+                dData_max_in2 = dData_max_in
+
+            map_raster_data(aImage,  aImage_extent,\
+                                  sFilename_out,\
+                                      sTitle_in = sTitle_in,\
+                                        sColormap_in=sColormap_in,\
+                                          sUnit_in=sUnit_in,\
+                                      iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
+                                        iFlag_contour_in = 1,\
+                                           dData_max_in = dData_max_in2,\
+                                              dData_min_in = dData_min_in,
+                                      dMissing_value_in = -9999,\
+                                        aLegend_in = aLegend_in)
+        pass
         
-        map_raster_data(aData_all,  aImage_extent,\
-                              sFilename_out,\
-                                  sTitle_in = sTitle_in,\
-                                      sUnit_in=sUnit_in,\
-                                  iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
-                                       dData_max_in = dData_max_in,\
-                                          dData_min_in = dData_min_in,
-                                  dMissing_value_in = -9999)
-                                
-        print(sDate)
 
 
 

@@ -8,8 +8,8 @@ from pye3sm.mosart.evaluation.halfdegree.mosart_evaluate_stream_discharge_gsim i
 
 iFlag_debug = 1
 if iFlag_debug == 1:
-    iIndex_start = 24
-    iIndex_end = 24
+    iIndex_start = 52
+    iIndex_end = 57
 else:
     parser = argparse.ArgumentParser()
     parser.add_argument("--iIndex_start", help = "the path",   type = int)
@@ -23,7 +23,7 @@ sWorkspace_scratch_in = '/compyfs/liao313/'
 sModel = 'e3sm'
 sRegion = 'amazon'
 
-sDate = '20220410'
+sDate = '20220701'
 
 sVariable = 'discharge'
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'

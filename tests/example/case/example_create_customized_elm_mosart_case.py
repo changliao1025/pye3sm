@@ -31,7 +31,7 @@ dLatitude =  -6.35
 #dLongitude =  -60
 #dLatitude =  -11
 sRegion ='amazon'
-iCase = 56
+iCase = 59
 iFlag_replace_datm_forcing=0
 iFlag_replace_dlnd_forcing=0
 
@@ -50,7 +50,6 @@ if iFlag_mosart ==1 :
         iFlag_elmmosart = 0        
 else:
     iFlag_elmmosart = 0
-    
 
 
 iFlag_2d_to_1d = 0 

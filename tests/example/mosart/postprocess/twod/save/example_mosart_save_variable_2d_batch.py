@@ -1,52 +1,48 @@
+import numpy as np
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-from pye3sm.elm.general.structured.twod.stats.elm_calculate_slope_band_effect_2d import elm_calculate_slope_effect_2d
+from pye3sm.mosart.general.structured.twod.save.mosart_save_variable_2d import mosart_save_variable_2d
 sModel = 'e3sm'
 sRegion ='amazon'
-sDate = '20220410'
+sDate = '20220701'
 
-iCase_index = 13
+
+iIndex_start = 52
+iIndex_end = 57
+
 iYear_start = 2000
-iYear_end = 2010
+iYear_end = 2009
 #from now, to maintain consistancy, we will the same variable name for all processes.
 #use the new naming method
-sVariable = 'QRUNOFF'
-#sVariable = 'wt_slp'
-#aVariable = ['TWS_MONTH_END','TWS_MONTH_BEGIN']
-#sVariable = 'TWS_MONTH_END'
-#sVariable = 'sur_slp'
-#P
-#sVariable = 'RAIN'
-#sVariable = 'SNOW'
-#ET
-#sVariable = 'QSOIL'
-#sVariable = 'QVEGE'
-#sVariable = 'QVEGT'
-#runoff
-sVariable = 'QDRAI'
-#sVariable = 'DRARI_h2sc'
-#sVariable = 'QOVER'
+aVariable = ['discharge']
 
+
+nvariable = len(aVariable)
+
+iCase_index_start = iIndex_start
+iCase_index_end = iIndex_end
+aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
 print(aParameter_e3sm)
 oE3SM = pye3sm(aParameter_e3sm)
-aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+for iCase_index in (aCase_index):
+    for iVariable in np.arange(nvariable):
+        sVariable = aVariable[iVariable]
+        aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                        iCase_index_in =  iCase_index ,\
                                                        iYear_start_in = iYear_start, \
                                                        iYear_end_in = iYear_end,\
-                                                              iYear_subset_start_in = iYear_start, \
-                                        iYear_subset_end_in = iYear_end, \
                                                        sDate_in= sDate,\
                                                            sModel_in = sModel,\
                                                               sRegion_in = sRegion,\
                                                        sVariable_in = sVariable )
-#print(aParameter_case)
-oCase = pycase(aParameter_case)
-elm_calculate_slope_effect_2d(oE3SM, oCase, sVariable )
+
+        oCase = pycase(aParameter_case)
+        mosart_save_variable_2d(oE3SM, oCase )
 print('finished')

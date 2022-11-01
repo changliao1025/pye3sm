@@ -26,6 +26,8 @@ def map_observation_wtd():
     iFlag_scientific_notation_colorbar_in= 0 
     dData_max_in =20
     dData_min_in = 0
+    aLegend = list()
+    aLegend.append('Observed water table depth')
     map_raster_data(aData_out1,  aImage_extent,\
                               sFilename_out,\
                                   sTitle_in = sTitle_in,\
@@ -33,7 +35,8 @@ def map_observation_wtd():
                                   iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                        dData_max_in = dData_max_in,\
                                           dData_min_in = dData_min_in,
-                                  dMissing_value_in = -9999)
+                                  dMissing_value_in = -9999,\
+                                    aLegend_in=aLegend)
     #new wtd
     sFilename_in = '/qfs/people/liao313/data/e3sm/amazon/elm/' + 'wtd_extract_new' + sExtension_tiff
     
@@ -53,6 +56,7 @@ def map_observation_wtd():
     iFlag_scientific_notation_colorbar_in= 0 
     dData_max_in = 20
     dData_min_in = 0
+    
     map_raster_data(aData_out2,  aImage_extent,\
                               sFilename_out,\
                                   sTitle_in = sTitle_in,\
@@ -60,7 +64,8 @@ def map_observation_wtd():
                                   iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                        dData_max_in = dData_max_in,\
                                           dData_min_in = dData_min_in,
-                                  dMissing_value_in = -9999)
+                                  dMissing_value_in = -9999,\
+                                    aLegend_in=aLegend)
 
     index = np.where(aData_out1 == -9999)
     aData_out = aData_out1- aData_out2
