@@ -7,7 +7,7 @@ from osgeo import ogr
 from osgeo import gdal, osr
 
 
-def mosart_create_flow_accumulation_map(sFilename_netcdf, sFilename_shapefile_output):
+def mosart_map_flow_accumulation(sFilename_netcdf, sFilename_shapefile_output):
     
     if os.path.exists(sFilename_netcdf):
         print("Yep, I can read that file!")

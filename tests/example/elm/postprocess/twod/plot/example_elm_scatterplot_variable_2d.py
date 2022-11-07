@@ -111,8 +111,7 @@ for iCase_index in (aCase_index):
                                                        sVariable_in = sVariable )
         oCase_y_in = pycase(aParameter_case)
 
-        sLabel_legend = 'Case ' + sCase_index
-        
+        sLabel_legend = 'Case ' + sCase_index        
 
         elm_scatterplot_variables_2d(oE3SM,\
                                          oCase_x_in,\

@@ -1,11 +1,8 @@
 
 
 import os, sys
-import argparse
-import subprocess
-import numpy as np
-import multiprocessing
 
+import numpy as np
 
 from pyearth.system.define_global_variables import *
  

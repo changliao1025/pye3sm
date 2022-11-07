@@ -91,7 +91,7 @@ def elm_scatterplot_variables_2d(oE3SM_in,\
     x.flatten()
     y.flatten()
 
-    sFilename_out = sWorkspace_analysis_case_grid + slash + sVariable_x + '-' + sVariable_y + '_scatterplot.png'
+    
 
     if iFlag_log_y_in == 1:
         aData_y = np.log10(y)
@@ -103,7 +103,28 @@ def elm_scatterplot_variables_2d(oE3SM_in,\
         y= aData_y
 
     #we could have two options to produce simple scatter plot or density map
+    sFilename_out = sWorkspace_analysis_case_grid + slash + sVariable_x + '_' + sVariable_y + '_scatterplot.png'
+    scatter_plot_data(x, y,\
+                              sFilename_out,\
+                              iSize_x_in = 8,\
+                              iSize_y_in = 8, \
+                              iFlag_scientific_notation_x_in=iFlag_scientific_notation_x_in,\
+                              iFlag_scientific_notation_y_in=iFlag_scientific_notation_y_in,\
+                              iFlag_log_x_in=iFlag_log_x_in,\
+                              iFlag_log_y_in=iFlag_log_y_in,\
+                                iFlag_lowess_in=1,\
+                              dMin_x_in = dMin_x_in, \
+                              dMax_x_in = dMax_x_in, \
+                              dMin_y_in = dMin_y_in, \
+                              dMax_y_in = dMax_y_in, \
+                              dSpace_x_in = dSpace_x_in, \
+                              dSpace_y_in = dSpace_y_in, \
+                              sTitle_in = '', \
+                              sLabel_x_in= sLabel_x_in,\
+                              sLabel_y_in= sLabel_y_in,\
+                              sLabel_legend_in = sLabel_legend_in)
 
+    sFilename_out = sWorkspace_analysis_case_grid + slash + sVariable_x + '_' + sVariable_y + '_densityplot.png'
     scatter_plot_data_density(x, y,\
                               sFilename_out,\
                               iSize_x_in = 8,\
