@@ -6,7 +6,7 @@ import datetime
 from pyearth.system.define_global_variables import *
 from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
-from pyearth.visual.map.map_raster_data import map_raster_data
+from pyearth.visual.map.raster.map_raster_data import map_raster_data
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
  
 from pye3sm.elm.general.structured.twod.retrieve.elm_retrieve_variable_2d import elm_retrieve_variable_2d
@@ -69,13 +69,8 @@ def elm_map_variable_2d(oE3SM_in, \
     dLat_max = np.max(aLat)
     dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
     dResolution_y = (dLat_max - dLat_min) / (nrow-1)
-    aImage_extent =  [dLon_min- dResolution_x ,dLon_max + dResolution_x, dLat_min -dResolution_x,  dLat_max+dResolution_x]
-
-    print('Prepare the map grid')
-   
-    longitude = np.arange(dLon_min, dLon_max , dResolution_x)
-    latitude = np.arange( dLat_max, dLat_min, -1*dResolution_y)
-    
+    aImage_extent =  [dLon_min- dResolution_x ,dLon_max + dResolution_x, \
+        dLat_min -dResolution_y,  dLat_max+dResolution_y]
 
     dates = list()
     nyear = iYear_end - iYear_start + 1
@@ -95,8 +90,6 @@ def elm_map_variable_2d(oE3SM_in, \
     dates=np.array(dates)
     dates_subset = dates[subset_index]
     nstress_subset= len(dates_subset)
-    
-
 
     sWorkspace_analysis_case_variable = sWorkspace_analysis_case + slash + sVariable
     if not os.path.exists(sWorkspace_analysis_case_variable):
@@ -107,10 +100,10 @@ def elm_map_variable_2d(oE3SM_in, \
         os.makedirs(sWorkspace_analysis_case_region)
         pass
 
-    if iFlag_monthly ==1 :
-        aData_all = elm_retrieve_variable_2d( oCase_in, iFlag_monthly_in = 1)
+    if iFlag_monthly ==1:
+        aData_ret = elm_retrieve_variable_2d( oCase_in, iFlag_monthly_in = 1)
         for i in np.arange(nstress_subset):
-            aImage = aData_all[i]
+            aImage = aData_ret[i]
             #get date
             pDate = dates_subset[i]
             sDate = pDate.strftime('%Y%m%d')
@@ -119,28 +112,28 @@ def elm_map_variable_2d(oE3SM_in, \
             + sVariable + '_map_' + sDate +'.png'                   
 
             
-            map_raster_data(aImage,  aImage_extent,\
-                                  sFilename_out,\
+            map_raster_data(aImage, aImage_extent,\
+                                    sFilename_out,\
                                     sColormap_in=sColormap_in,\
-                                      sTitle_in = sTitle_in,\
-                                          sUnit_in=sUnit_in,\
-                                      iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
-                                        iFlag_contour_in = 1,\
-                                           dData_max_in = dData_max_in,\
-                                              dData_min_in = dData_min_in,
-                                      dMissing_value_in = -9999,\
-                                        aLegend_in = aLegend_in)
+                                    sTitle_in = sTitle_in,\
+                                    sUnit_in=sUnit_in,\
+                                    iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
+                                    iFlag_contour_in = 1,\
+                                    dData_max_in = dData_max_in,\
+                                    dData_min_in = dData_min_in,
+                                    dMissing_value_in = -9999,\
+                                    aLegend_in = aLegend_in)
 
             
 
     #mean or total
 
     if iFlag_annual_mean ==1:
-        aData_all = elm_retrieve_variable_2d( oCase_in, iFlag_annual_mean_in = 1)
+        aData_ret = elm_retrieve_variable_2d( oCase_in, iFlag_annual_mean_in = 1)
         #annual mean
         for iYear in range(iYear_start, iYear_end + 1):
             sYear = "{:04d}".format(iYear)
-            aImage = aData_all[iYear-iYear_start]
+            aImage = aData_ret[iYear-iYear_start]
             sFilename_out = sWorkspace_analysis_case_region + slash \
             + sVariable + '_map_mean_'+ sYear +'.png'
             
@@ -159,9 +152,9 @@ def elm_map_variable_2d(oE3SM_in, \
         pass
     
     if iFlag_annual_total ==1: #annual total
-        aData_all = elm_retrieve_variable_2d( oCase_in, iFlag_annual_total_in = 1)
+        aData_ret = elm_retrieve_variable_2d( oCase_in, iFlag_annual_total_in = 1)
         for iYear in range(iYear_start, iYear_end + 1):
-            aImage = aData_all[iYear-iYear_start]
+            aImage = aData_ret[iYear-iYear_start]
             sYear = "{:04d}".format(iYear)            
             
             sFilename_out = sWorkspace_analysis_case_region + slash \

@@ -8,7 +8,7 @@ from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
-from pyearth.visual.map.map_raster_data import map_raster_data
+from pyearth.visual.map.raster.map_raster_data import map_raster_data
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
@@ -25,6 +25,7 @@ def elm_map_variable_difference_2d(oE3SM_in, \
                                           dData_max_in = None,\
                                           dData_min_in = None,
                                           sExtend_in= None,\
+                                            sColormap_in=None,\
                                          sUnit_in=None,\
                                           sTitle_in =None, \
                                             aLegend_in = None):
@@ -113,6 +114,8 @@ def elm_map_variable_difference_2d(oE3SM_in, \
         os.makedirs(sWorkspace_analysis_case_region_y)
         pass
 
+
+
     if iFlag_monthly ==1 :
 
         aData_all_x = elm_retrieve_variable_2d(  oCase_x_in,\
@@ -146,6 +149,7 @@ def elm_map_variable_difference_2d(oE3SM_in, \
                                   sFilename_out,\
                                     sExtend_in = sExtend_in,\
                                       sTitle_in = sTitle_in,\
+                                          sColormap_in=sColormap_in,\
                                           sUnit_in=sUnit_in,\
                                       iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                            iFlag_contour_in= 1,\
@@ -188,6 +192,7 @@ def elm_map_variable_difference_2d(oE3SM_in, \
                                   sFilename_out,\
                                     sExtend_in = sExtend_in,\
                                       sTitle_in = sTitle_in,\
+                                        sColormap_in=sColormap_in,\
                                           sUnit_in=sUnit_in,\
                                       iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                            iFlag_contour_in= 1,\
@@ -231,7 +236,7 @@ def elm_map_variable_difference_2d(oE3SM_in, \
 
             map_raster_data(aData_all,  aImage_extent,\
                                   sFilename_out,\
-                                    sColormap_in='gist_rainbow',\
+                                    sColormap_in=sColormap_in,\
                                     sExtend_in = sExtend_in,\
                                       sTitle_in = sTitle_in,\
                                           sUnit_in=sUnit_in,\

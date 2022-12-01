@@ -46,8 +46,11 @@ aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configurati
 sWorkspace_scratch = '/compyfs/liao313/'
 
 oE3SM = pye3sm(aParameter_e3sm)
+ncase = len(aCase_index)
 
-for iCase_index in (aCase_index):
+for i in range(ncase):
+    iCase_index = aCase_index[i]
+
     for iVariable in np.arange(nvariable):
         sVariable = aVariable[iVariable]
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\

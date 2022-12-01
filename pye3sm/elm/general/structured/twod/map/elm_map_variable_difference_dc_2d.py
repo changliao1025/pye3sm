@@ -7,7 +7,7 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
-from pyearth.visual.map.map_raster_data_dc import map_raster_data_dc
+from pyearth.visual.map.raster.map_raster_data_dc import map_raster_data_dc
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
@@ -230,7 +230,6 @@ def elm_map_variable_difference_dc_2d(oE3SM_in, \
 
             map_raster_data_dc(aData_all,  aImage_extent,\
                                   sFilename_out,\
-                                    sColormap_in='gist_rainbow',\
                                     sExtend_in = sExtend_in,\
                                       sTitle_in = sTitle_in,\
                                           sUnit_in=sUnit_in,\

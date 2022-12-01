@@ -18,7 +18,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 def elm_tsplot_variable_2d_singlegrid(oE3SM_in, \
                                           oCase_in, \
-                                           
+                                                aLon_in=  None  ,   aLat_in= None,
                                                    iReverse_y_in= None,\
                                           dMax_y_in = None,\
                                           dMin_y_in = None,

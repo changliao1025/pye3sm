@@ -6,7 +6,7 @@ from netCDF4 import Dataset
 from osgeo import ogr
 from osgeo import gdal, osr
 import cartopy.crs as ccrs
-from pyearth.visual.map.vector.map_vector_polyline import map_vector_polygon
+from pyearth.visual.map.vector.map_vector_polyline_data import map_vector_polyline_data
 
 def mosart_map_flow_direction(sFilename_netcdf_in, sFilename_shapefile_output, sFilename_png):
     
@@ -103,16 +103,17 @@ def mosart_map_flow_direction(sFilename_netcdf_in, sFilename_shapefile_output, s
     pDataset = pLayer = pFeature  = None      
     pProjection = ccrs.PlateCarree()
     aLegend=list()
-    aLegend.append(r'Domain: Amazon')
+    aLegend.append(r'Region: Amazon')
     aLegend.append(r'Resolution: $0.5^{\circ}$')
-    map_vector_polygon(2,\
+    sColormap = 'Spectral_r'
+    map_vector_polyline_data(2,\
     sFilename_shapefile_output, \
     sFilename_png,\
         iFlag_thickness_in =1,\
             sField_thickness_in='dAccu',\
          aExtent_in = None, \
        iFlag_scientific_notation_colorbar_in=None,\
-    sColormap_in = None,\
+    sColormap_in = sColormap,\
         sTitle_in = 'River network', \
     iDPI_in = None,\
     dMissing_value_in=None,\

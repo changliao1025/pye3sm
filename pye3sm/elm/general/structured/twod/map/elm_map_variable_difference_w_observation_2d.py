@@ -8,7 +8,7 @@ from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 
-from pyearth.visual.map.map_raster_data import map_raster_data
+from pyearth.visual.map.raster.map_raster_data import map_raster_data
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
@@ -23,6 +23,7 @@ def elm_map_variable_difference_w_observation_2d(oE3SM_in, \
                                           dData_max_in = None,\
                                           dData_min_in = None,
                                           sExtend_in= None,\
+                                            sFormat_contour_in=None,\
                                          sUnit_in=None,\
                                           sTitle_in =None, \
                                             aLegend_in = None):
@@ -121,7 +122,7 @@ def elm_map_variable_difference_w_observation_2d(oE3SM_in, \
     aImage_x = np.array(aImage_x)  
     aImage_y = np.array(aData_y_in)  
     nan_index = np.where(aData_y_in == -9999)
-    aImage = aImage_y - aImage_x
+    aImage = (aImage_x - aImage_y)#/aImage_y
     
     aData_all = np.array(aImage)                  
     
@@ -130,9 +131,11 @@ def elm_map_variable_difference_w_observation_2d(oE3SM_in, \
     
     map_raster_data(aData_all,  aImage_extent,\
                           sFilename_out,\
+                              iFlag_contour_in= 1,\
                             sExtend_in = sExtend_in,\
                               sTitle_in = sTitle_in,\
                                   sUnit_in=sUnit_in,\
+                                    sFormat_contour_in = sFormat_contour_in,\
                               iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                    dData_max_in = dData_max_in,\
                                       dData_min_in = dData_min_in,
