@@ -116,7 +116,7 @@ def elm_histogram_variable_2d(oE3SM_in, \
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'histogram_region'
+    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'histogram'
     if not os.path.exists(sWorkspace_analysis_case_region):
         os.makedirs(sWorkspace_analysis_case_region)
         pass
@@ -154,7 +154,7 @@ def elm_histogram_variable_2d(oE3SM_in, \
                                            sLabel_x_in= sLabel_x_in,\
                                   sLabel_y_in= sLabel_y_in,\
                                   sFormat_x_in= sFormat_x_in ,\
-                                  aLegend_in = aLegend_in, \
+                                  aLabel_legend_in = aLegend_in, \
                                   #aColor_in = ['black'],\
                                   sLocation_legend_in = 'upper left' ,\
                                   aLocation_legend_in = (0.0, 1.0),\
@@ -195,7 +195,7 @@ def elm_histogram_variable_2d(oE3SM_in, \
                                            sLabel_x_in= sLabel_x_in,\
                                   sLabel_y_in= sLabel_y_in,\
                                   sFormat_x_in= sFormat_x_in ,\
-                                  aLegend_in = aLegend_in, \
+                                  aLabel_legend_in = aLegend_in, \
                                   #aColor_in = ['black'],\
                                   sLocation_legend_in = 'upper left' ,\
                                   aLocation_legend_in = (0.0, 1.0),\
@@ -236,8 +236,7 @@ def elm_histogram_variable_2d(oE3SM_in, \
                                     sLabel_x_in= sLabel_x_in,\
                                   sLabel_y_in= sLabel_y_in,\
                                   sFormat_x_in= sFormat_x_in ,\
-                                  aLegend_in = aLegend_in, \
-                                  #aColor_in = ['black'],\
+                                  aLabel_legend_in = aLegend_in, \
                                   sLocation_legend_in = 'upper left' ,\
                                   aLocation_legend_in = (0.0, 1.0),\
                                   iSize_x_in = 12,\

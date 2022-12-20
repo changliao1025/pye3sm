@@ -150,7 +150,7 @@ def mosart_map_variable_history_2d(oE3SM_in, \
                                           dData_min_in = dData_min_in,
                                   dMissing_value_in = -9999,\
                                     sColormap_in=sColormap_in,\
-                                        aLegend_in = aLegend_in)
+                                        aLabel_legend_in = aLegend_in)
         pass
 
     if iFlag_monthly ==1 :
@@ -178,7 +178,7 @@ def mosart_map_variable_history_2d(oE3SM_in, \
                                               dData_min_in = dData_min_in,
                                       dMissing_value_in = -9999,\
                                           sColormap_in=sColormap_in,\
-                                        aLegend_in = aLegend_in)
+                                        aLabel_legend_in = aLegend_in)
 
             print(sDate)
     
@@ -210,7 +210,7 @@ def mosart_map_variable_history_2d(oE3SM_in, \
                                               dData_min_in = dData_min_in,
                                       dMissing_value_in = -9999,\
                                           sColormap_in=sColormap_in,\
-                                        aLegend_in = aLegend_in)
+                                        aLabel_legend_in = aLegend_in)
 
         pass
     
@@ -246,7 +246,7 @@ def mosart_map_variable_history_2d(oE3SM_in, \
                                               dData_min_in = dData_min_in,
                                       dMissing_value_in = -9999,\
                                           sColormap_in=sColormap_in,\
-                                        aLegend_in = aLegend_in)
+                                        aLabel_legend_in = aLegend_in)
 
 
 

@@ -139,7 +139,7 @@ def elm_map_variable_difference_w_observation_2d(oE3SM_in, \
                               iFlag_scientific_notation_colorbar_in =  iFlag_scientific_notation_colorbar_in,\
                                    dData_max_in = dData_max_in,\
                                       dData_min_in = dData_min_in,
-                              dMissing_value_in = -9999, aLegend_in=aLegend_in)
+                              dMissing_value_in = -9999, aLabel_legend_in=aLegend_in)
                             
     
 

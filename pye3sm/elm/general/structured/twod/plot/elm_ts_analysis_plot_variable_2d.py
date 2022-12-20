@@ -1,6 +1,5 @@
-import os, sys
+import os
 import numpy as np
-import numpy.ma as ma
 import datetime
 
 from pyearth.system.define_global_variables import *
@@ -21,6 +20,7 @@ def elm_ts_analysis_plot_variable_2d(oE3SM_in,\
                                                            iFlag_monthly_in = None,\
                                           iFlag_annual_mean_in = None,\
                                           iFlag_annual_total_in = None,\
+                                              iFlag_median_in=None,\
                                                     iReverse_y_in =None,\
                                                     dMin_x_in = None, \
                                                     dMax_x_in = None, \
@@ -57,7 +57,10 @@ def elm_ts_analysis_plot_variable_2d(oE3SM_in,\
     else:
         iFlag_annual_total = iFlag_annual_total_in
     
-    
+    if iFlag_median_in is None:
+        iFlag_median = 0
+    else:
+        iFlag_median = iFlag_median_in    
 
 
     iYear_start = oCase_in.iYear_start
@@ -105,7 +108,7 @@ def elm_ts_analysis_plot_variable_2d(oE3SM_in,\
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'tsaplot_region'
+    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'tsaplot'
     if not os.path.exists(sWorkspace_analysis_case_region):
         os.makedirs(sWorkspace_analysis_case_region)
         pass
@@ -121,14 +124,12 @@ def elm_ts_analysis_plot_variable_2d(oE3SM_in,\
             good_index = np.where(dummy1 != -9999)
             dummy1=dummy1[good_index]          
           
-            #
-            iFlag_mean = 0
-            iFlag_median = 1
-            if iFlag_mean ==1:                
-                aDataTs[i] = np.mean(dummy1)               
+        
+            if iFlag_median ==1:                
+                aDataTs[i] = np.median(dummy1)             
             
-            if iFlag_median ==1:
-                aDataTs[i] = np.median(dummy1)                
+            else:
+                aDataTs[i] = np.mean(dummy1)                                  
 
     
         if iFlag_log  == 1:

@@ -160,7 +160,7 @@ def elm_map_variable_difference_w_observation_dc_2d(oE3SM_in, \
                 aColor_in = aColor_in,\
                                        dData_max_in = dData_max_in,\
                                           dData_min_in = dData_min_in,
-                                  dMissing_value_in = -9999, aLegend_in=aLegend_in)
+                                  dMissing_value_in = -9999, aLabel_legend_in=aLegend_in)
                             
     
 

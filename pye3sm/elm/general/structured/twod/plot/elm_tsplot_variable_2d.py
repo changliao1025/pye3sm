@@ -99,7 +99,7 @@ def elm_tsplot_variable_2d(oE3SM_in, \
     if not os.path.exists(sWorkspace_analysis_case_variable):
         os.makedirs(sWorkspace_analysis_case_variable)
 
-    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'tsplott_region'
+    sWorkspace_analysis_case_region = sWorkspace_analysis_case_variable + slash + 'tsplot'
     if not os.path.exists(sWorkspace_analysis_case_region):
         os.makedirs(sWorkspace_analysis_case_region)
         pass

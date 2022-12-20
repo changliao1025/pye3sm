@@ -29,6 +29,7 @@ def elm_scatterplot_variables_2d(oE3SM_in,\
                                          dSpace_y_in = None, \
                                          sLabel_x_in = None, \
                                          sLabel_y_in = None,\
+                                          sFormat_y_in=None,\
                                          sLabel_legend_in =None   ):
 
 
@@ -89,9 +90,7 @@ def elm_scatterplot_variables_2d(oE3SM_in,\
     y = y * oCase_y_in.dConversion
 
     x.flatten()
-    y.flatten()
-
-    
+    y.flatten()    
 
     if iFlag_log_y_in == 1:
         aData_y = np.log10(y)
@@ -119,6 +118,7 @@ def elm_scatterplot_variables_2d(oE3SM_in,\
                               dMax_y_in = dMax_y_in, \
                               dSpace_x_in = dSpace_x_in, \
                               dSpace_y_in = dSpace_y_in, \
+                                sFormat_y_in=sFormat_y_in,\
                               sTitle_in = '', \
                               sLabel_x_in= sLabel_x_in,\
                               sLabel_y_in= sLabel_y_in,\
@@ -139,6 +139,7 @@ def elm_scatterplot_variables_2d(oE3SM_in,\
                               dMax_y_in = dMax_y_in, \
                               dSpace_x_in = dSpace_x_in, \
                               dSpace_y_in = dSpace_y_in, \
+                                sFormat_y_in=sFormat_y_in,\
                               sTitle_in = '', \
                               sLabel_x_in= sLabel_x_in,\
                               sLabel_y_in= sLabel_y_in,\

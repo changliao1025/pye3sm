@@ -1,4 +1,4 @@
-import os, sys
+import os
 import numpy as np
 import datetime
 from pyearth.system.define_global_variables import *
@@ -6,7 +6,6 @@ from pyearth.visual.timeseries.plot_time_series_data_w_variation import plot_tim
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pyearth.toolbox.data.cgpercentiles import cgpercentiles
- 
 from pye3sm.elm.general.structured.twod.retrieve.elm_retrieve_variable_2d import elm_retrieve_variable_2d
 
 def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
@@ -17,6 +16,7 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
                                           iFlag_monthly_in = None,\
                                           iFlag_annual_mean_in = None,\
                                           iFlag_annual_total_in = None,\
+                                            iFlag_median_in=None,\
                                           dMax_y_in = None,\
                                           dMin_y_in = None,
                                           dSpace_y_in = None,\
@@ -46,9 +46,12 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
         iFlag_annual_total = 0
     else:
         iFlag_annual_total = iFlag_annual_total_in
-    
-    
 
+    if iFlag_median_in is None:
+        iFlag_median = 0
+    else:
+        iFlag_median = iFlag_median_in    
+    
     sModel = oCase_in.sModel
     sRegion = oCase_in.sRegion
     iFlag_same_grid = oCase_in.iFlag_same_grid
@@ -121,25 +124,23 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
             aPercentiles_in = np.arange(50-dRange*0.5, 50+dRange*0.5 + 1, 25)
             aInterval = cgpercentiles(dummy1, aPercentiles_in, missing_value_in = -9999)             
           
-            #
-            iFlag_mean = 0
-            iFlag_median = 1
-            if iFlag_mean ==1:
+           
+            if iFlag_median ==1:
+                aDataTs[i] = np.median(dummy1) 
+                aUpper[i ] =aInterval[1]
+                aLower[i ] =aInterval[0]
+            
+            else:
                 dummy0 = np.std(dummy1)    
                 aDataTs[i] = np.mean(dummy1) 
                 aUpper[i ] =aDataTs[i] + 0.5*dummy0
                 aLower[i ] =aDataTs[i] - 0.5*dummy0
-            
-            if iFlag_median ==1:
-
-                aDataTs[i] = np.median(dummy1) 
-                aUpper[i ] =aInterval[1]
-                aLower[i ] =aInterval[0]
 
     
         if iFlag_log  == 1:
             aDataTs = np.log10(aDataTs)
             aUpper = np.log10(aUpper)
+            #aLower0=aLower
             aLower = np.log10(aLower)
 
             #set inf to min
@@ -170,7 +171,7 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
                           sTitle_in = sTitle_in, \
                           sLabel_y_in= sLabel_y_in,\
                           sFormat_y_in= sFormat_y_in ,\
-                          aLegend_in = aLegend_in, \
+                          aLabel_legend_in = aLegend_in, \
                           aColor_in = aColor_in,\
                           aMarker_in = ['o'],\
                           sLocation_legend_in = 'upper left' ,\
@@ -204,6 +205,8 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
 
         plot_time_series_data_w_variation(aDate_all,
                           aData_all,\
+                              aData_upper_all,\
+                                aData_lower_all,\
                           sFilename_out,\
                           iReverse_y_in = iReverse_y_in, \
                           iFlag_log_in = iFlag_log_in,\
@@ -215,7 +218,7 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
                           sTitle_in = sTitle_in, \
                           sLabel_y_in= sLabel_y_in,\
                           sFormat_y_in= sFormat_y_in ,\
-                          aLegend_in = aLegend_in, \
+                          aLabel_legend_in = aLegend_in, \
                           aColor_in = aColor_in,\
                           aMarker_in = ['o'],\
                           sLocation_legend_in = 'lower right' ,\
@@ -227,13 +230,25 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
     if iFlag_annual_total ==1:
         aData_ret = elm_retrieve_variable_2d( oCase_in, iFlag_annual_total_in = 1)        
         aDataTs = np.full(nyear, -9999, dtype=float)
+        aUpper=np.full(nstress_subset, -9999, dtype=float)
+        aLower=np.full(nstress_subset, -9999, dtype=float)
         for iYear in range(iYear_start, iYear_end + 1):
             aImage = aData_ret[iYear-iYear_start]
             dummy1 = np.reshape(aImage, (nrow, ncolumn))
             good_index = np.where(dummy1 != -9999)
             dummy1=dummy1[good_index]
             #dummy1 = remove_outliers(dummy1, 0.05)
-            aDataTs[iYear-iYear_start] = np.nanmean(dummy1) 
+            
+            if iFlag_median ==1:
+                aDataTs[iYear-iYear_start] = np.median(dummy1) 
+                             
+            
+            else:
+                
+                dummy0 = np.std(dummy1)    
+                aDataTs[iYear-iYear_start] = np.nanmean(dummy1) 
+                
+                
     
         if iFlag_log  == 1:
             aDataTs = np.log10(aDataTs)
@@ -249,6 +264,8 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
 
         plot_time_series_data_w_variation(aDate_all,
                           aData_all,\
+                              aData_upper_all,\
+                                aData_lower_all,\
                           sFilename_out,\
                           iReverse_y_in = iReverse_y_in, \
                           iFlag_log_in = iFlag_log_in,\
@@ -260,7 +277,7 @@ def elm_tsplot_variable_2d_w_variation(oE3SM_in, \
                           sTitle_in = sTitle_in, \
                           sLabel_y_in= sLabel_y_in,\
                           sFormat_y_in= sFormat_y_in ,\
-                          aLegend_in = aLegend_in, \
+                          aLabel_legend_in = aLegend_in, \
                           aColor_in =aColor_in,\
                           aMarker_in = ['o'],\
                           sLocation_legend_in = 'lower right' ,\

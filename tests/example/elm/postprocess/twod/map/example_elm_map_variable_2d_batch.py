@@ -1,13 +1,5 @@
 
-
-import os, sys
-from re import I
-import argparse
-import subprocess
 import numpy as np
-import multiprocessing
-
-
 from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
@@ -22,8 +14,8 @@ sDate = '20220701'
 
 iFlag_debug = 1
 
-iIndex_start = 51
-iIndex_end = 58
+iIndex_start = 59
+iIndex_end = 59
 
 
 #start loop
@@ -51,13 +43,6 @@ aFlag_annual_total = [0, 1,1,1]
 aColormap= [ 'rainbow','gist_rainbow','gist_rainbow','gist_rainbow' ]
 aColormap= [ 'Spectral_r','Spectral','Spectral','Spectral' ]
 
-#aVariable = ['sur_slp']
-#aTitle = ['Surface slope']
-#aUnit = [r'Unit: percent']
-#aData_min = [0]
-#aData_max = [50]
-#aConversion = [100]
-
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
@@ -67,14 +52,14 @@ aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 nvariable = len(aVariable)
 
 ncase = len(aCase_index)
-aText1=['Default ELM', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG']
-aText2=['None', 'dynamic', 'dynamic (surface slope x 10)', 'constant (surface slope)', 'dynamic', 'dynamic', 'dynamic', 'constant (surface slope)']
-aText3=['None', 'dynamic', 'dynamic','constant (1.0)',  'dynamic', 'dynamic',  'dynamic','dynamic']
-aText4=['None', 'dynamic', 'dynamic','dynamic', 'dynamic', 'constant (1.0 m)','constant (10.0 m)','constant (10.0 m)']
+aText1=['Default ELM', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG']
+aText2=['None', 'dynamic', 'dynamic (surface slope x 10)', 'constant (surface slope)', 'dynamic', 'dynamic', 'dynamic', 'constant (surface slope)', 'dynamic']
+aText3=['None', 'dynamic', 'dynamic','constant (1.0)',  'dynamic', 'dynamic',  'dynamic','dynamic', 'dynamic']
+aText4=['None', 'dynamic', 'dynamic','dynamic', 'dynamic', 'constant (1.0 m)','constant (10.0 m)','constant (10.0 m)', 'dynamic']
 
 for i in range(ncase):
     iCase_index = aCase_index[i]
-    for iVariable in np.arange(1, 2):
+    for iVariable in np.arange(0, 2):
         sVariable = aVariable[iVariable]
         sUnit = aUnit[iVariable]
         sTitle = aTitle[iVariable]
@@ -86,9 +71,7 @@ for i in range(ncase):
         iFlag_annual_mean = aFlag_annual_mean[iVariable]
         iFlag_annual_total = aFlag_annual_total[iVariable]
         sColormap = aColormap[iVariable]
-
         iFlag_scientific_notation_colorbar = aFlag_scientific_notation_colorbar[iVariable]
-
         aParameter_case  = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                        iCase_index_in =  iCase_index ,\
                                                        iYear_start_in = iYear_start, \
@@ -105,10 +88,9 @@ for i in range(ncase):
 
         aLegend = list()
         sCase = "{:0d}".format(iCase_index -50 )
-        sText = 'Case index: ' + sCase 
+        sText = 'Case ' + sCase 
         aLegend.append(sText)
 
-        #aLegend.append( 'Model: ' + aText1[iCase_index -51])
         aLegend.append( 'Water table slope: ' + aText2[iCase_index -51])
         aLegend.append( 'Anisotropy ratio: ' + aText3[iCase_index -51])
         aLegend.append( 'River gage height: ' + aText4[iCase_index -51])

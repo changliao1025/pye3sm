@@ -31,7 +31,7 @@ dLatitude =  -6.35
 #dLongitude =  -60
 #dLatitude =  -11
 sRegion ='amazon'
-iCase = 60
+iCase = 59
 iFlag_replace_datm_forcing=0
 iFlag_replace_dlnd_forcing=0
 

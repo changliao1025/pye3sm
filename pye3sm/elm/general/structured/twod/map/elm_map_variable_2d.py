@@ -122,7 +122,7 @@ def elm_map_variable_2d(oE3SM_in, \
                                     dData_max_in = dData_max_in,\
                                     dData_min_in = dData_min_in,
                                     dMissing_value_in = -9999,\
-                                    aLegend_in = aLegend_in)
+                                    aLabel_legend_in = aLegend_in)
 
             
 
@@ -147,7 +147,7 @@ def elm_map_variable_2d(oE3SM_in, \
                                            dData_max_in = dData_max_in,\
                                               dData_min_in = dData_min_in,
                                       dMissing_value_in = -9999,\
-                                        aLegend_in = aLegend_in)
+                                        aLabel_legend_in = aLegend_in)
 
         pass
     
@@ -156,6 +156,7 @@ def elm_map_variable_2d(oE3SM_in, \
         for iYear in range(iYear_start, iYear_end + 1):
             aImage = aData_ret[iYear-iYear_start]
             sYear = "{:04d}".format(iYear)            
+            
             
             sFilename_out = sWorkspace_analysis_case_region + slash \
             + sVariable + '_map_annual_total_'+ sYear +'.png'
@@ -175,7 +176,7 @@ def elm_map_variable_2d(oE3SM_in, \
                                            dData_max_in = dData_max_in2,\
                                               dData_min_in = dData_min_in,
                                       dMissing_value_in = -9999,\
-                                        aLegend_in = aLegend_in)
+                                        aLabel_legend_in = aLegend_in)
         pass
         
 

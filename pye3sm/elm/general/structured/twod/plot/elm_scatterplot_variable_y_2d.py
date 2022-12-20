@@ -14,9 +14,9 @@ from pyearth.visual.scatter.scatter_plot_data import scatter_plot_data
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 
-def elm_scatterplot_variable_2d(oE3SM_in,\
+def elm_scatterplot_variable_y_2d(oE3SM_in,\
                                          aData_x_in,\
-                                         oCase_x_in, \
+                                         oCase_y_in, \
                                          iFlag_scientific_notation_x_in=None,\
                                          iFlag_scientific_notation_y_in=None,\
                                          iFlag_log_x_in=None,\
@@ -33,19 +33,19 @@ def elm_scatterplot_variable_2d(oE3SM_in,\
 
 
 
-    sModel = oCase_x_in.sModel
-    sRegion = oCase_x_in.sRegion
+    sModel = oCase_y_in.sModel
+    sRegion = oCase_y_in.sRegion
 
-    iYear_start = oCase_x_in.iYear_start
-    iYear_end = oCase_x_in.iYear_end
-    iFlag_same_grid = oCase_x_in.iFlag_same_grid
+    iYear_start = oCase_y_in.iYear_start
+    iYear_end = oCase_y_in.iYear_end
+    iFlag_same_grid = oCase_y_in.iFlag_same_grid
 
-    dConversion = oCase_x_in.dConversion
-    sVariable_x = oCase_x_in.sVariable
+    dConversion = oCase_y_in.dConversion
+    sVariable_x = oCase_y_in.sVariable
     sVariable_y = oCase_y_in.sVariable
-    sCase = oCase_x_in.sCase
+    sCase = oCase_y_in.sCase
 
-    sWorkspace_analysis_case_x = oCase_x_in.sWorkspace_analysis_case
+    sWorkspace_analysis_case_x = oCase_y_in.sWorkspace_analysis_case
     sWorkspace_analysis_case_y = oCase_y_in.sWorkspace_analysis_case
 
    
@@ -85,7 +85,7 @@ def elm_scatterplot_variable_2d(oE3SM_in,\
     aCorrelation = scipy.stats.kendalltau(x, y)
     print(aCorrelation)
 
-    x = x * oCase_x_in.dConversion
+    x = x * oCase_y_in.dConversion
     y = y * oCase_y_in.dConversion
 
     x.flatten()

@@ -10,7 +10,7 @@ from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.elm.general.structured.twod.plot.elm_scatterplot_variable_x_2d import elm_scatterplot_variable_x_2d
+from pye3sm.elm.general.structured.twod.plot.elm_scatterplot_variables_2d import elm_scatterplot_variables_2d
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
@@ -24,8 +24,6 @@ iIndex_end = 58
 #start loop
 iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
-
-
 
 aVariable = ['QDRAI','ZWT','QOVER','QRUNOFF']
 
@@ -86,12 +84,11 @@ for iCase_index in (aCase_index):
         #the y variable
         sVariable = aVariable[iVariable]
         sUnit = aUnit[iVariable]
-        #sTitle = aTitle[iVariable]
+        
         dMin_y = aData_min[iVariable]
         dMax_y = aData_max[iVariable]
         iFlag_scientific_notation_y = aFlag_scientific_notation_y[iVariable]
-        #sVariable = 'qdrai'
-        #sVariable = 'zwt'            
+               
         sLabel_y = aTitle[iVariable] + ' (' +  sUnit + ')'
 
         dSpace_y = aSpace_y[iVariable]
@@ -113,7 +110,7 @@ for iCase_index in (aCase_index):
 
         sLabel_legend = 'Case ' + sCase_index        
 
-        elm_scatterplot_variable_x_2d(oE3SM,\
+        elm_scatterplot_variables_2d(oE3SM,\
                                          oCase_x_in,\
                                          oCase_y_in, \
                                          iFlag_scientific_notation_x_in=iFlag_scientific_notation_x,\

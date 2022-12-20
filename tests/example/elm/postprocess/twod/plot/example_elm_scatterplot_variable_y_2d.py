@@ -17,8 +17,8 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 
 sDate = '20220701'
 
-iIndex_start = 51
-iIndex_end = 58
+iIndex_start = 59
+iIndex_end = 59
 
 
 #start loop
@@ -37,7 +37,9 @@ sRegion='amazon'
 
 aTitle= ['Subsurface runoff' , 'Water table depth','Overland runoff','Total runoff' ]
 
-aUnit = [r'Units: mm/s', r'Unit: m',r'Units: mm/s',r'Units: mm/s']
+aUnit = [r'mm/s', r'm',r'mm/s',r'mm/s']
+
+aFormat_y = ['{:.0f}','{:.1f}','{:.0f}','{:.0f}']
 
 aData_min = [-8,0,-8,-8]
 aData_max = [None ,10, None,None]
@@ -59,7 +61,7 @@ dSpace_x = 2
                
 for iCase_index in (aCase_index):
     sCase_index =  "{:0d}".format( iCase_index - 50)
-    for iVariable in np.arange(0, nvariable):
+    for iVariable in np.arange(0, 2):
         if iCase_index == 51:
             iCase_index_x = 52
         else:
@@ -86,13 +88,13 @@ for iCase_index in (aCase_index):
         #the y variable
         sVariable = aVariable[iVariable]
         sUnit = aUnit[iVariable]
-        #sTitle = aTitle[iVariable]
+      
         dMin_y = aData_min[iVariable]
         dMax_y = aData_max[iVariable]
         iFlag_scientific_notation_y = aFlag_scientific_notation_y[iVariable]
-        #sVariable = 'qdrai'
-        #sVariable = 'zwt'            
+               
         sLabel_y = aTitle[iVariable] + ' (' +  sUnit + ')'
+        sFormat_y = aFormat_y[iVariable]
 
         dSpace_y = aSpace_y[iVariable]
         iFlag_log_y = aFlag_log_y[iVariable]
@@ -128,6 +130,7 @@ for iCase_index in (aCase_index):
                                          dSpace_y_in = dSpace_y, \
                                          sLabel_x_in = sLabel_x, \
                                          sLabel_y_in = sLabel_y,\
+                                            sFormat_y_in=sFormat_y,\
                                          sLabel_legend_in = sLabel_legend )
         pass
 

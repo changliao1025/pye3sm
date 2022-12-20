@@ -150,7 +150,7 @@ def elm_map_variable_difference_dc_2d(oE3SM_in, \
                 aColor_in = aColor_in,\
                                            dData_max_in = dData_max_in,\
                                               dData_min_in = dData_min_in,
-                                      dMissing_value_in = -9999, aLegend_in=aLegend_in)
+                                      dMissing_value_in = -9999, aLabel_legend_in=aLegend_in)
 
             print(sDate)
     
@@ -192,7 +192,7 @@ def elm_map_variable_difference_dc_2d(oE3SM_in, \
                 aColor_in = aColor_in,\
                                            dData_max_in = dData_max_in,\
                                               dData_min_in = dData_min_in,
-                                      dMissing_value_in = -9999, aLegend_in=aLegend_in)
+                                      dMissing_value_in = -9999, aLabel_legend_in=aLegend_in)
 
           
 
@@ -240,7 +240,7 @@ def elm_map_variable_difference_dc_2d(oE3SM_in, \
                                            dData_max_in = dData_max_in2,\
                                               dData_min_in = -1*dData_max_in2,
                                       dMissing_value_in = -9999, \
-                                        aLegend_in=aLegend_in)
+                                        aLabel_legend_in=aLegend_in)
 
             
 

@@ -1,6 +1,5 @@
 
 
-import os, sys
 
 import numpy as np
 
@@ -78,7 +77,7 @@ for i in range(ncase):
 
         aLegend = list()
         sCase = "{:0d}".format(iCase_index -50 )
-        sText = 'Case index: ' + sCase 
+        sText = 'Case ' + sCase 
         aLegend.append(sText)
 
         #aLegend.append( 'Model: ' + aText1[iCase_index -51])
