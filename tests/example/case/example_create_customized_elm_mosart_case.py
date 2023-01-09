@@ -9,7 +9,7 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.location.convert_lat_lon_range import convert_180_to_360
 from pyearth.toolbox.data.beta.add_variable_to_netcdf import add_multiple_variable_to_netcdf
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pye3sm.elm.grid.create_customized_elm_domain import create_customized_elm_domain
+from pye3sm.elm.mesh.create_customized_elm_domain import create_customized_elm_domain
 
 from pye3sm.case.e3sm_create_case import e3sm_create_case
 from pye3sm.shared.e3sm import pye3sm
@@ -19,7 +19,7 @@ from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_config
 from pye3sm.mosart.grid.create_customized_mosart_domain import create_customized_mosart_domain
 from pye3sm.mosart.grid.structured.twod.extract_mosart_elevation_profile_for_elm import extract_mosart_elevation_profile_for_elm, extract_mosart_variable_for_elm
 
-from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
+from pye3sm.elm.mesh.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 sModel = 'e3sm'
 sRegion = 'site'
 sRegion = 'sag'
@@ -31,8 +31,8 @@ dLatitude =  -6.35
 #dLongitude =  -60
 #dLatitude =  -11
 sRegion ='amazon'
-iCase = 59
-iFlag_replace_datm_forcing=0
+iCase = 60
+iFlag_replace_datm_forcing=1
 iFlag_replace_dlnd_forcing=0
 
 
@@ -135,7 +135,7 @@ sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
 sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
-sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/elm_sparse_grid.cfg'
+sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/mesh/elm_sparse_grid.cfg'
 
 
 

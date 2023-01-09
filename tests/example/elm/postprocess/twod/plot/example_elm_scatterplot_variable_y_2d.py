@@ -4,7 +4,7 @@ import os, sys
 import argparse
 import subprocess
 import numpy as np
-import multiprocessing
+
 
 from pyearth.system.define_global_variables import *
  

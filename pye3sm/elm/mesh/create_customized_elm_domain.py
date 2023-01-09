@@ -6,14 +6,14 @@ from scipy.io import netcdf
 import getpass
 from netCDF4 import Dataset
 
-from pye3sm.elm.grid.unstructured.ReadConfigurationFile import ReadConfigurationFile
+from pye3sm.elm.mesh.unstructured.ReadConfigurationFile import ReadConfigurationFile
 
-from pye3sm.elm.grid.structured.ComputeLatLonAtVertex import ComputeLatLonAtVertex
+from pye3sm.elm.mesh.structured.ComputeLatLonAtVertex import ComputeLatLonAtVertex
 
-from pye3sm.elm.grid.structured.twod.create_customized_elm_surface_file_2d import create_customized_elm_surface_file_2d
-from pye3sm.elm.grid.structured.twod.create_customized_elm_domain_file_2d import create_customized_elm_domain_file_2d
-from pye3sm.elm.grid.unstructured.create_customized_elm_surface_file_1d import create_customized_elm_surface_file_1d
-from pye3sm.elm.grid.unstructured.create_customized_elm_domain_file_1d import create_customized_elm_domain_file_1d
+from pye3sm.elm.mesh.structured.twod.create_customized_elm_surface_file_2d import create_customized_elm_surface_file_2d
+from pye3sm.elm.mesh.structured.twod.create_customized_elm_domain_file_2d import create_customized_elm_domain_file_2d
+from pye3sm.elm.mesh.unstructured.create_customized_elm_surface_file_1d import create_customized_elm_surface_file_1d
+from pye3sm.elm.mesh.unstructured.create_customized_elm_domain_file_1d import create_customized_elm_domain_file_1d
 
 def create_customized_elm_domain( aLon, aLat, aMask_in, dLon, dLat, \
         sFilename_configuration, \

@@ -52,7 +52,10 @@ def e3sm_create_case(oE3SM_in, \
     sFilename_elm_domain = oCase_in.sFilename_elm_domain
     sFilename_elm_surfacedata = oCase_in.sFilename_elm_surfacedata
 
-    sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip'
+    sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
+    sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
+    sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'
+
     sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
     #GIT_HASH=`git log -n 1 --format=%h`
 
@@ -589,6 +592,12 @@ def e3sm_create_case(oE3SM_in, \
             #change forcing data
             if iFlag_replace_datm_forcing==1:
                 sLine = 'cp ' + sFilename_user_datm_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine) 
+                sLine = 'cp ' + sFilename_user_datm_solar + ' ./user_datm.streams.txt.CLMGSWP3v1.Solar' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine) 
+                sLine = 'cp ' + sFilename_user_datm_temp + ' ./user_datm.streams.txt.CLMGSWP3v1.TPQW' + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine) 
         else:

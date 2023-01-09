@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 import getpass
 from netCDF4 import Dataset
-from pye3sm.elm.grid.unstructured.PerformFractionCoverCheck import PerformFractionCoverCheck
+from pye3sm.elm.mesh.unstructured.PerformFractionCoverCheck import PerformFractionCoverCheck
 def create_customized_elm_surface_file_1d( aLon_region, aLat_region, \
     sFilename_surface_data_in, \
     sFilename_surface_data_out, \
