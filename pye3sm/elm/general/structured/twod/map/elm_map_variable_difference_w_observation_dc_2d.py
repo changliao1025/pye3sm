@@ -11,7 +11,7 @@ from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb
 from pyearth.visual.map.raster.map_raster_data_dc import map_raster_data_dc
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
+from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
  
 
 from pye3sm.elm.general.structured.twod.retrieve.elm_retrieve_variable_2d import elm_retrieve_variable_2d

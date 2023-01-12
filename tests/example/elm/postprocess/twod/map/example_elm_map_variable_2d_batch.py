@@ -35,7 +35,7 @@ sRegion='amazon'
 aTitle= [ 'Water table depth','Subsurface runoff','Overland runoff','Total runoff' ]
 aUnit = [r'Unit: m',r'Units: mm/s',r'Units: mm/s',r'Units: mm/s']
 aData_min = [0,0,0,0]
-aData_max = [20, 1E-5 ,1E-5,2E-5]
+aData_max = [25, 1E-5 ,1E-5,2E-5]
 aConversion = [1,1,1,1]
 aFlag_monthly = [0,0,0,0]
 aFlag_annual_mean = [1, 0,0,0]
@@ -52,10 +52,10 @@ aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
 nvariable = len(aVariable)
 
 ncase = len(aCase_index)
-aText1=['Default ELM', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG']
-aText2=['None', 'dynamic', 'dynamic (surface slope x 10)', 'constant (surface slope)', 'dynamic', 'dynamic', 'dynamic', 'constant (surface slope)', 'dynamic']
-aText3=['None', 'dynamic', 'dynamic','constant (1.0)',  'dynamic', 'dynamic',  'dynamic','dynamic', 'dynamic']
-aText4=['None', 'dynamic', 'dynamic','dynamic', 'dynamic', 'constant (1.0 m)','constant (10.0 m)','constant (10.0 m)', 'dynamic']
+aText1=['Default ELM', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG', 'HLG']
+aText2=['None', 'dynamic', 'dynamic (surface slope x 10)', 'constant (surface slope)', 'dynamic', 'dynamic', 'dynamic', 'constant (surface slope)', 'dynamic', 'dynamic']
+aText3=['None', 'dynamic', 'dynamic','constant (1.0)',  'dynamic', 'dynamic',  'dynamic','dynamic', 'dynamic', 'dynamic']
+aText4=['None', 'dynamic', 'dynamic','dynamic', 'dynamic', 'constant (1.0 m)','constant (10.0 m)','constant (10.0 m)', 'dynamic', 'dynamic']
 
 for i in range(ncase):
     iCase_index = aCase_index[i]
@@ -92,7 +92,7 @@ for i in range(ncase):
         aLegend.append(sText)
 
         aLegend.append( 'Water table slope: ' + aText2[iCase_index -51])
-        aLegend.append( 'Anisotropy ratio: ' + aText3[iCase_index -51])
+        aLegend.append( 'Anisotropy ratio: ' + aText3[iCase_index  -51])
         aLegend.append( 'River gage height: ' + aText4[iCase_index -51])
         
 

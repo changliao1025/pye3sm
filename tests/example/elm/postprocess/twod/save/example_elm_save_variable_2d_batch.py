@@ -16,8 +16,8 @@ from pye3sm.elm.general.structured.twod.save.elm_save_variable_2d import elm_sav
 
 iFlag_debug = 1
 
-iIndex_start = 59
-iIndex_end = 59
+iIndex_start = 61
+iIndex_end = 61
 
 
 sModel = 'e3sm'
@@ -29,7 +29,7 @@ aVariable = ['ZWT','QOVER','QRUNOFF','QDRAI','QCHARGE']
 #aVariable = ['hk_sat','anisotropy']
 #aVariable = ['wt_slp']#,'TWS_MONTH_BEGIN','TWS_MONTH_END']
 
-#aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT', 
+aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT']
 #aVariable = [ 'sur_slp','wt_slp']
 nvariable = len(aVariable)
 #start loop

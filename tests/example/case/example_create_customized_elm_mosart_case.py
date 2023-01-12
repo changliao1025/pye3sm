@@ -31,8 +31,8 @@ dLatitude =  -6.35
 #dLongitude =  -60
 #dLatitude =  -11
 sRegion ='amazon'
-iCase = 60
-iFlag_replace_datm_forcing=1
+iCase = 59
+iFlag_replace_datm_forcing=0
 iFlag_replace_dlnd_forcing=0
 
 
@@ -133,8 +133,10 @@ sFilename_initial = '/compyfs/liao313/e3sm_scratch/e3sm20220701050/run/e3sm20220
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
-sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
-sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
+if iFlag_default ==1:
+    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
+else:
+    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
 sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/mesh/elm_sparse_grid.cfg'
 
 
@@ -444,7 +446,7 @@ if iFlag_create_case ==1:
                 ofs.write(sLine)
                 sLine = 'hist_empty_htapes = .true.' + '\n'
                 ofs.write(sLine)
-                sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT', 'QCHARGE','hk_sat','anisotropy','sur_elev','sur_slp','wt_slp','gage_height' "  + '\n'
+                sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT', 'QCHARGE','hk_sat','anisotropy','sur_elev','sur_slp','wt_slp','gage_height', 'RAIN','SNOW','QSOIL', 'QVEGE','QVEGT' "  + '\n'
                 ofs.write(sLine)
 
             #this is a case that use existing restart file
