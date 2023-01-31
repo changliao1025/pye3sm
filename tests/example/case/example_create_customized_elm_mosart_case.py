@@ -16,8 +16,8 @@ from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-from pye3sm.mosart.grid.create_customized_mosart_domain import create_customized_mosart_domain
-from pye3sm.mosart.grid.structured.twod.extract_mosart_elevation_profile_for_elm import extract_mosart_elevation_profile_for_elm, extract_mosart_variable_for_elm
+from pye3sm.mosart.mesh.create_customized_mosart_domain import create_customized_mosart_domain
+from pye3sm.mosart.mesh.structured.twod.extract_mosart_elevation_profile_for_elm import extract_mosart_elevation_profile_for_elm, extract_mosart_variable_for_elm
 
 from pye3sm.elm.mesh.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 sModel = 'e3sm'
@@ -31,7 +31,7 @@ dLatitude =  -6.35
 #dLongitude =  -60
 #dLatitude =  -11
 sRegion ='amazon'
-iCase = 59
+iCase = 63
 iFlag_replace_datm_forcing=0
 iFlag_replace_dlnd_forcing=0
 
@@ -56,7 +56,7 @@ iFlag_2d_to_1d = 0
 iFlag_create_case = 1 
 iFlag_submit_case = 0
 
-iFlag_default = 0
+iFlag_default = 1
 iFlag_debug = 0 #is this a debug run
 iFlag_branch = 0
 iFlag_initial = 1 #use restart file as initial
@@ -474,6 +474,9 @@ if iFlag_create_case ==1:
         ofs.write(sLine)
         sLine = 'inundflag = .false.'+ '\n'
         ofs.write(sLine)
+        sLine = 'rtmhist_nhtfrq = -24,-24'+ '\n'
+        ofs.write(sLine)
+        
         #opt_elevprof = 1
         ofs.close()
 

@@ -53,9 +53,9 @@ for iCase in range(1,ncase + 1):
     
     
     sCase =  sModel + sDate+ "{:03d}".format(iCase)
-    sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
+    sFilename_elm_namelist = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash \
-        + 'cases' + slash + 'user_nl_clm_' + sCase
+        + 'cases' + slash + 'user_nl_elm_' + sCase
 
     sFilename_datm_namelist = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash \
@@ -64,7 +64,7 @@ for iCase in range(1,ncase + 1):
 
     if (iFlag_initial !=1):
         #normal case,      
-        ofs = open(sFilename_clm_namelist, 'w')
+        ofs = open(sFilename_elm_namelist, 'w')
         sCommand_out = "fsurdat = " + "'" \
             + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
         ofs.write(sCommand_out)
@@ -74,7 +74,7 @@ for iCase in range(1,ncase + 1):
         ofs.write(sLine)
         ofs.close()
     else:
-        ofs = open(sFilename_clm_namelist, 'w')
+        ofs = open(sFilename_elm_namelist, 'w')
         sCommand_out = "fsurdat = " + "'" \
             + '/compyfs/inputdata/lnd/clm2/surfdata_map/surfdata_0.5x0.5_simyr2010_c191025_log10.nc' + "'" + '\n'
         ofs.write(sCommand_out)
@@ -113,7 +113,7 @@ for iCase in range(1,ncase + 1):
                                                               iYear_data_start_in = 1979   ,\
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
-                                                              sFilename_clm_namelist_in = sFilename_clm_namelist, \
+                                                              sFilename_elm_namelist_in = sFilename_elm_namelist, \
                                                               sFilename_datm_namelist_in = sFilename_datm_namelist )
         
     else:
@@ -125,7 +125,7 @@ for iCase in range(1,ncase + 1):
                                                               iYear_data_start_in = 1979   , \
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
-                                                              sFilename_clm_namelist_in = sFilename_clm_namelist )
+                                                              sFilename_elm_namelist_in = sFilename_elm_namelist )
     
     oCase = pycase(aParameter_case)
     e3sm_create_case(oE3SM, oCase )

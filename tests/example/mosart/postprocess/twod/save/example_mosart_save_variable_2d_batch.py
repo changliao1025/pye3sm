@@ -11,14 +11,14 @@ sRegion ='amazon'
 sDate = '20220701'
 
 
-iIndex_start = 52
-iIndex_end = 57
+iIndex_start = 59
+iIndex_end = 59
 
 iYear_start = 2000
 iYear_end = 2009
 #from now, to maintain consistancy, we will the same variable name for all processes.
 #use the new naming method
-aVariable = ['discharge','']
+aVariable = ['discharge']
 
 
 nvariable = len(aVariable)

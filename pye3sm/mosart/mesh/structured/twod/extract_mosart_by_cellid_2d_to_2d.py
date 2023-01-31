@@ -3,7 +3,7 @@ import os
 
 from netCDF4 import Dataset
 
-from pye3sm.mosart.grid.structured.twod.convert_index_between_array import convert_index_between_array
+from pye3sm.mosart.mesh.structured.twod.convert_index_between_array import convert_index_between_array
 
 def extract_mosart_by_cellid_2d_to_2d(sFilename_mosart_in, sFilename_netcdf_out, aCellID_in):
 

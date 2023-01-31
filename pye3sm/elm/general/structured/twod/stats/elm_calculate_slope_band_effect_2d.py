@@ -48,8 +48,8 @@ def elm_calculate_slope_band_effect_2d(oE3SM_in, oCase_in , sVariable_in   ):
     aMask_ul = np.flip(aMask_ll, 0)
     nrow = np.array(aMask_ll).shape[0]
     ncolumn = np.array(aMask_ll).shape[1]
-    aMask_ll_index = np.where(aMask_ll==0)
-    aMask_ul_index = np.where(aMask_ul==0)
+    aMask_index_ll = np.where(aMask_ll==0)
+    aMask_index_ul = np.where(aMask_ul==0)
 
 
     #read slope info 

@@ -50,8 +50,8 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
     aMask_ul = np.flip(aMask_ll, 0)
     nrow = np.array(aMask_ll).shape[0]
     ncolumn = np.array(aMask_ll).shape[1]
-    aMask_ll_index = np.where(aMask_ll==0)
-    aMask_ul_index = np.where(aMask_ul==0)
+    aMask_index_ll = np.where(aMask_ll==0)
+    aMask_index_ul = np.where(aMask_ul==0)
 
     #resolution
     dLon_min = np.min(aLon)
@@ -149,7 +149,7 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
                     dummy_index = np.where( aData_ll == missing_value1 ) 
                     aData_ll[dummy_index] = missing_value
                     
-                    aData_ll[aMask_ll_index] = missing_value
+                    aData_ll[aMask_index_ll] = missing_value
                     aData_ul = np.flip(aData_ll, 0)   
                     #save output
                     

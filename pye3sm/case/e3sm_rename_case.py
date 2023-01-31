@@ -90,7 +90,7 @@ def e3sm_rename_case(sFilename_configuration_in, sDate, sDate_new, \
     return
 
 
-    #sFilename_nl_new = oCase.sDirectory_case + 'user_nl_clm_' + sCase_new
+    #sFilename_nl_new = oCase.sDirectory_case + 'user_nl_elm_' + sCase_new
     
     #shutil.move(sWorkspace_case, sWorkspace_case_new)
 

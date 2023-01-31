@@ -63,7 +63,7 @@
         The workspace of pest calibration RES='ne30_oEC'
       </desc>
     </entry>
-    <entry id="COMPSET" value="ICLM45">
+    <entry id="COMPSET" value="IELM45">
       <type>char</type>
       <desc>
         The workspace of pest calibration

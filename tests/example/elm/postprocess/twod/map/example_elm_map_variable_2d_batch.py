@@ -23,13 +23,14 @@ iCase_index_start = iIndex_start
 iCase_index_end = iIndex_end
 
 iFlag_scientific_notation_colorbar_in = 0
-
-aVariable = ['ZWT','QDRAI','QOVER','QRUNOFF']
-aFlag_scientific_notation_colorbar=[0,1,1,1]
 iYear_start = 2000
 iYear_end = 2009
 sModel = 'e3sm'
 sRegion='amazon'
+
+aVariable = ['ZWT','QDRAI','QOVER','QRUNOFF']
+aFlag_scientific_notation_colorbar=[0,1,1,1]
+
 
 
 aTitle= [ 'Water table depth','Subsurface runoff','Overland runoff','Total runoff' ]
@@ -43,12 +44,28 @@ aFlag_annual_total = [0, 1,1,1]
 aColormap= [ 'rainbow','gist_rainbow','gist_rainbow','gist_rainbow' ]
 aColormap= [ 'Spectral_r','Spectral','Spectral','Spectral' ]
 
+#for tws analysis
+aVariable = ['RAIN','SNOW','QSOIL', 'QVEGE','QVEGT']
+aFlag_scientific_notation_colorbar=[1,1,1,1, 1]
+aTitle= [ 'Rain','Snow','Soil evaporation','Vegetation evaporation','Vegetation Transpiration' ]
+aUnit = [r'Units: mm/s',r'Units: mm/s',r'Units: mm/s',r'Units: mm/s', r'Units: mm/s']
+aData_min = [0,0,0,0, 0]
+aData_max = [None, None ,None,None, None]
+aConversion = [1,1,1,1,1]
+aFlag_monthly = [1,1,1,1,1]
+aFlag_annual_mean = [0,0, 0,0,0]
+aFlag_annual_total = [0, 0,0,0,0]
+aColormap= [ 'rainbow','gist_rainbow','gist_rainbow','gist_rainbow' ]
+aColormap= [ 'Spectral_r','Spectral','Spectral','Spectral', 'Spectral' ]
+
+
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
 aParameter_e3sm = pye3sm_read_e3sm_configuration_file(sFilename_e3sm_configuration)
 print(aParameter_e3sm)
 oE3SM = pye3sm(aParameter_e3sm)
 aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
+aCase_index = np.array([59, 61])
 nvariable = len(aVariable)
 
 ncase = len(aCase_index)
@@ -59,7 +76,7 @@ aText4=['None', 'dynamic', 'dynamic','dynamic', 'dynamic', 'constant (1.0 m)','c
 
 for i in range(ncase):
     iCase_index = aCase_index[i]
-    for iVariable in np.arange(0, 2):
+    for iVariable in np.arange(2, 5):
         sVariable = aVariable[iVariable]
         sUnit = aUnit[iVariable]
         sTitle = aTitle[iVariable]

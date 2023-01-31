@@ -1,8 +1,8 @@
 import os
 import numpy as np
-from pye3sm.mosart.grid.unstructured.find_mosart_cell import find_mosart_cell
+from pye3sm.mosart.mesh.unstructured.find_mosart_cell import find_mosart_cell
 
-from pye3sm.mosart.grid.structured.twod.extract_mosart_by_cellid_2d_to_2d import extract_mosart_by_cellid_2d_to_2d
+from pye3sm.mosart.mesh.structured.twod.extract_mosart_by_cellid_2d_to_2d import extract_mosart_by_cellid_2d_to_2d
 
 
 

@@ -42,8 +42,8 @@ def elm_tsplot_total_water_storage_2d(oE3SM_in, \
     aMask_ul = np.flip(aMask_ll, 0)
     nrow = np.array(aMask_ll).shape[0]
     ncolumn = np.array(aMask_ll).shape[1]
-    aMask_ll_index = np.where(aMask_ll==0)
-    aMask_ul_index = np.where(aMask_ul==0)
+    aMask_index_ll = np.where(aMask_ll==1)
+    aMask_index_ul = np.where(aMask_ul==1)
     nrow_extract, ncolumn_extract = aLon.shape
     #resolution
     dLon_min = np.min(aLon)
@@ -147,7 +147,7 @@ def elm_tsplot_total_water_storage_2d(oE3SM_in, \
         aVariable2 = np.full(nstress_subset, -9999, dtype=float)
         for iStress in  np.arange(1,nstress_subset+1):
             dummy = aVariable0[iStress-1, :,:]
-            dummy1 = dummy[aMask_ul_index]
+            dummy1 = dummy[aMask_index_ul]
             
             aVariable2[iStress-1] = np.nanmean(dummy1)
         #shoule we shift one time step
@@ -161,7 +161,7 @@ def elm_tsplot_total_water_storage_2d(oE3SM_in, \
     for iStress in np.arange(1,nstress_subset+1):
         dummy = aData_grace[iStress-1, :,:]
       
-        dummy1 = dummy[aMask_ul_index]
+        dummy1 = dummy[aMask_index_ul]
         dummy1[dummy1==-9999] = np.nan
         aVariable6[iStress-1] = np.nanmean(dummy1)
         #use regional mean instead of grid
@@ -172,17 +172,18 @@ def elm_tsplot_total_water_storage_2d(oE3SM_in, \
         sFilename_out = sWorkspace_analysis_case_domain + slash \
             + 'flux_tsplot_' + sRegion +'.png'
         aDate_ts = np.tile(aDate_subset,(nvariable,1))
-        aData_ts = aVariable_all
-        sLabel_Y = r'Water flux ($mm  s^{-1}$)'
-        sTitle= sRegion
+        aData_ts = aVariable_all 
+        sLabel_Y = r'Water flux ($mm \, s^{-1}$)'
+        sTitle= sRegion.title()
         aColor = create_qualitative_rgb_color_hex(7)
         plot_time_series_data(aDate_ts, \
                               aData_ts,\
                               sFilename_out,\
                               iFlag_scientific_notation_in=1, \
+                                #iFlag_log_in=1,\
                               ncolumn_in= 7,\
-                              dMax_y_in = dMax_y_in,\
-                              dMin_y_in = dMin_y_in,\
+                              #dMax_y_in = dMax_y_in,\
+                              #dMin_y_in = dMin_y_in,\
                               sTitle_in = sTitle, \
                               sLabel_y_in= sLabel_Y,\
                               sFormat_y_in = '%.1e',\
@@ -212,7 +213,7 @@ def elm_tsplot_total_water_storage_2d(oE3SM_in, \
                               dMin_y_in = -0.3,\
                               sTitle_in = sTitle, \
                               sLabel_y_in= sLabel_Y,\
-                              aLabel_legend_in = ['ELM-HLP', 'GRACE'], \
+                              aLabel_legend_in = ['ELM-HLGF', 'GRACE'], \
                               aMarker_in=['+','*'],\
                               iSize_x_in = 12,\
                               iSize_y_in = 5)

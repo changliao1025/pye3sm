@@ -70,7 +70,7 @@ def extract_mosart_by_cellid_2d_to_1d(sFilenamae_mosart_in, sFilename_netcdf_out
     datasets_out.createDimension('gridcell', ncell_extract )
     for sKey, aValue in aDatasets.variables.items():            
         aDimenion_value = aValue.shape 
-        if len(aDimenion_value) ==1:
+        if len(aDimenion_value) == 1:
             #save later     
             pass
         else:

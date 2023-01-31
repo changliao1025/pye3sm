@@ -3,7 +3,7 @@
 #maybe I was wrong? 20200305 Chang Liao (chang.liao@pnnl.gov)
 
 import os, sys
-import argparse
+
 import numpy as np
 
 from pyearth.system.define_global_variables import * 
@@ -27,7 +27,7 @@ sDate = '20220701'
 
 iYear_start = 2000
 iYear_end = 2009
-dConversion=1.0
+dConversion = 1.0
 #iCase_index_start = iIndex_start
 ##iCase_index_end = iIndex_end
 #aCase_index = np.arange(iCase_index_start, iCase_index_end + 1, 1)
@@ -55,5 +55,5 @@ for iCase_index in (aCase_index):
                                                        sModel_in = sModel, \
                                                            sRegion_in=sRegion)
     oCase = pycase(aParameter_case)
-    elm_tsplot_total_water_storage_2d(oE3SM,   oCase    )
+    elm_tsplot_total_water_storage_2d(oE3SM, oCase )
 print('finished')

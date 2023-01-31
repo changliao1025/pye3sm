@@ -39,8 +39,8 @@ def mosart_save_variable_history_2d(oE3SM_in, oCase_in):
     aMask_ul = np.flip(aMask_ll, 0)
     nrow = np.array(aMask_ll).shape[0]
     ncolumn = np.array(aMask_ll).shape[1]
-    aMask_ll_index = np.where(aMask_ll==-9999)
-    aMask_ul_index = np.where(aMask_ul==-9999)
+    aMask_index_ll = np.where(aMask_ll==-9999)
+    aMask_index_ul = np.where(aMask_ul==-9999)
 
     #resolution
     dLon_min = np.min(aLon)
@@ -130,7 +130,7 @@ def mosart_save_variable_history_2d(oE3SM_in, oCase_in):
             aData_ll = aData_ll.reshape(nrow, ncolumn)                          
             dummy_index = np.where( aData_ll == -9999 ) 
             aData_ll[dummy_index] = missing_value
-            aData_ll[aMask_ll_index] = missing_value
+            aData_ll[aMask_index_ll] = missing_value
             aData_ul = np.flip(aData_ll, 0)   
             #save output
             sDummy = sVariable + sYear + '_01_01' 

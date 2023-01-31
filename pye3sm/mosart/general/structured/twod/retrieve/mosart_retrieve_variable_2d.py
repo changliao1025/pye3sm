@@ -6,11 +6,11 @@ import datetime
 from pyearth.system.define_global_variables import *
 from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
 
-from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
+from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info
  
 
 
-def elm_retrieve_variable_2d(  oCase_in,\
+def mosart_retrieve_variable_2d(  oCase_in,\
                                             iFlag_monthly_in = None,\
                                             iFlag_annual_mean_in = None,\
                                                 iFlag_annual_total_in = None          ):
@@ -47,14 +47,16 @@ def elm_retrieve_variable_2d(  oCase_in,\
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
     #new approach
-    aLon, aLat,aMask_ll = elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat,aMask_ll = mosart_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask_ul = np.flip(aMask_ll, 0)
-    nrow = np.array(aMask_ul).shape[0]
-    ncolumn = np.array(aMask_ul).shape[1]
+    nrow = np.array(aMask_ll).shape[0]
+    ncolumn = np.array(aMask_ll).shape[1]
     aMask_index_ll = np.where(aMask_ll==0)
+
+    aMask_ul = np.flip(aMask_ll, 0)
     aMask_index_ul = np.where(aMask_ul==0)
 
+    
 
     dates = list()
     nyear = iYear_end - iYear_start + 1
