@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Liao
+    given-names: Chang
+    orcid: https://orcid.org/0000-0002-7348-8858  
+
+title: "PyE3SM: a python package for the E3SM land and river components"
+version: 0.1.22
+doi: 10.5281/zenodo.6407299
+date-released: 2022-03-31
