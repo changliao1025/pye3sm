@@ -4,7 +4,7 @@ from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-from pye3sm.elm.general.structured.twod.stats.elm_calculate_slope_effect_2d import elm_calculate_slope_effect_2d
+from pye3sm.elm.general.structured.twod.stats.elm_calculate_slope_band_effect_2d import elm_calculate_slope_effect_2d
 sModel = 'e3sm'
 sRegion ='amazon'
 sDate = '20220410'

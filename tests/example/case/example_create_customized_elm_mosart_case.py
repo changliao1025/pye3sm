@@ -9,17 +9,17 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.location.convert_lat_lon_range import convert_180_to_360
 from pyearth.toolbox.data.beta.add_variable_to_netcdf import add_multiple_variable_to_netcdf
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pye3sm.elm.grid.create_customized_elm_domain import create_customized_elm_domain
+from pye3sm.elm.mesh.create_customized_elm_domain import create_customized_elm_domain
 
 from pye3sm.case.e3sm_create_case import e3sm_create_case
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-from pye3sm.mosart.grid.create_customized_mosart_domain import create_customized_mosart_domain
-from pye3sm.mosart.grid.structured.twod.extract_mosart_elevation_profile_for_elm import extract_mosart_elevation_profile_for_elm, extract_mosart_variable_for_elm
+from pye3sm.mosart.mesh.create_customized_mosart_domain import create_customized_mosart_domain
+from pye3sm.mosart.mesh.structured.twod.extract_mosart_elevation_profile_for_elm import extract_mosart_elevation_profile_for_elm, extract_mosart_variable_for_elm
 
-from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
+from pye3sm.elm.mesh.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 sModel = 'e3sm'
 sRegion = 'site'
 sRegion = 'sag'
@@ -31,7 +31,7 @@ dLatitude =  -6.35
 #dLongitude =  -60
 #dLatitude =  -11
 sRegion ='amazon'
-iCase = 56
+iCase = 63
 iFlag_replace_datm_forcing=0
 iFlag_replace_dlnd_forcing=0
 
@@ -50,14 +50,13 @@ if iFlag_mosart ==1 :
         iFlag_elmmosart = 0        
 else:
     iFlag_elmmosart = 0
-    
 
 
 iFlag_2d_to_1d = 0 
 iFlag_create_case = 1 
 iFlag_submit_case = 0
 
-iFlag_default = 0
+iFlag_default = 1
 iFlag_debug = 0 #is this a debug run
 iFlag_branch = 0
 iFlag_initial = 1 #use restart file as initial
@@ -134,9 +133,11 @@ sFilename_initial = '/compyfs/liao313/e3sm_scratch/e3sm20220701050/run/e3sm20220
 
 sFilename_e3sm_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/e3sm.xml'
 sFilename_case_configuration = '/qfs/people/liao313/workspace/python/pye3sm/pye3sm/case.xml'
-sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
-sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
-sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/grid/elm_sparse_grid.cfg'
+if iFlag_default ==1:
+    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
+else:
+    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
+sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/mesh/elm_sparse_grid.cfg'
 
 
 
@@ -445,7 +446,7 @@ if iFlag_create_case ==1:
                 ofs.write(sLine)
                 sLine = 'hist_empty_htapes = .true.' + '\n'
                 ofs.write(sLine)
-                sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT', 'QCHARGE','hk_sat','anisotropy','sur_elev','sur_slp','wt_slp','gage_height' "  + '\n'
+                sLine = "hist_fincl1 = 'QOVER', 'QDRAI', 'QRUNOFF', 'ZWT', 'QCHARGE','hk_sat','anisotropy','sur_elev','sur_slp','wt_slp','gage_height', 'RAIN','SNOW','QSOIL', 'QVEGE','QVEGT' "  + '\n'
                 ofs.write(sLine)
 
             #this is a case that use existing restart file
@@ -473,6 +474,9 @@ if iFlag_create_case ==1:
         ofs.write(sLine)
         sLine = 'inundflag = .false.'+ '\n'
         ofs.write(sLine)
+        sLine = 'rtmhist_nhtfrq = -24,-24'+ '\n'
+        ofs.write(sLine)
+        
         #opt_elevprof = 1
         ofs.close()
 

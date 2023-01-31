@@ -1,14 +1,12 @@
-import os , sys
-
+import os
 import numpy as np
-from numpy.lib.function_base import _average_dispatcher
 from scipy.interpolate import griddata #generate grid
 from netCDF4 import Dataset #read netcdf
-from osgeo import gdal, osr #the default operator
+from osgeo import  osr #the default operator
 from pyearth.system.define_global_variables import *    
 from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
-from pye3sm.mosart.grid.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
+from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
 
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
@@ -43,8 +41,8 @@ def mosart_save_variable_2d(oE3SM_in, oCase_in):
     aMask_ul = np.flip(aMask_ll, 0)
     nrow = np.array(aMask_ll).shape[0]
     ncolumn = np.array(aMask_ll).shape[1]
-    aMask_ll_index = np.where(aMask_ll==0)
-    aMask_ul_index = np.where(aMask_ul==0)
+    aMask_index_ll = np.where(aMask_ll==0)
+    aMask_index_ul = np.where(aMask_ul==0)
 
     #resolution
     dLon_min = np.min(aLon)
@@ -143,7 +141,7 @@ def mosart_save_variable_2d(oE3SM_in, oCase_in):
                     dummy_index = np.where( aData_ll == missing_value1 ) 
                     aData_ll[dummy_index] = missing_value
                     
-                    aData_ll[aMask_ll_index] = missing_value
+                    aData_ll[aMask_index_ll] = missing_value
                     aData_ul = np.flip(aData_ll, 0)   
                     #save output
                     

@@ -137,13 +137,7 @@ def generate_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in,   \
                 aLatitude_origin = np.flip(aLatitude_origin, 0)
          
                 aData_out_extract = np.full((nts, nrow_new, ncolumn_new), missing_value, dtype=float)
-                #for i in range(nrow_new):
-                #    for j in range(ncolumn_new):                             
-                #        dLon = aLongitude_origin[i,j]   
-                #        dLat = aLatitude_origin[i,j]             
-                #        iIndex = int( (90.0-(dLat)) / dResoultion_forcing )
-                #        jIndex = int( (dLon-(0.0)) / dResoultion_forcing )
-                #        aData_out_extract[:,i,j] = aData0[:,iIndex, jIndex]
+                
 
                 for iStep in range(nts):
                     dummy0 = aData0[iStep, :,:]

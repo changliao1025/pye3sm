@@ -18,6 +18,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
                                         iFlag_resubmit_in = None,\
                                             RES_in = None,\
                                             COMPSET_in= None,\
+                                                Project_in = None,\
                                         sCIME_directory_in = None ):
 
     #read the default configuration
@@ -60,6 +61,11 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         COMPSET = COMPSET_in
     else:
         COMPSET = 'IELM'
+    
+    if Project_in is not None:
+        Project = Project_in
+    else:
+        Project = 'e3sm'
 
 
     if sCIME_directory_in is not None:
@@ -82,6 +88,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
     config['RES'] = RES
     config['COMPSET'] = COMPSET
+    config['PROJECT'] = Project
     config['sCIME_directory'] = sCIME_directory
 
     return config
@@ -292,13 +299,13 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     #several namelist maybe used if we need to change parameters
     if sFilename_elm_namelist_in is not None:
-        sFilename_clm_namelist = sFilename_elm_namelist_in
+        sFilename_elm_namelist = sFilename_elm_namelist_in
     else:
-        sFilename_clm_namelist = sWorkspace_scratch + slash + '04model' + slash \
+        sFilename_elm_namelist = sWorkspace_scratch + slash + '04model' + slash \
             + sModel + slash + sRegion + slash \
-            + 'cases' + slash + 'user_nl_clm'
-        if os.path.exists(sFilename_clm_namelist):
-            sLine = 'A default ELM namelist was found at: ' + sFilename_clm_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            + 'cases' + slash + 'user_nl_elm'
+        if os.path.exists(sFilename_elm_namelist):
+            sLine = 'A default ELM namelist was found at: ' + sFilename_elm_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
             print(sLine)
         else:
             print('A default ELM namelist was not found, you will not be able to use it without specifying it first.' )
@@ -368,7 +375,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
    
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
 
-    config['sFilename_elm_namelist'] = sFilename_clm_namelist
+    config['sFilename_elm_namelist'] = sFilename_elm_namelist
     config['sFilename_elm_domain'] = sFilename_elm_domain
 
     config['sFilename_mosart_namelist'] = sFilename_mosart_namelist 

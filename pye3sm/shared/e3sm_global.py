@@ -5,7 +5,7 @@ global iFlag_resubmit
 global iFlag_short
 global iCase_index
 global sCase
-global sFilename_clm_namelist
+global sFilename_elm_namelist
 global sModel
 global sDirectory_case
 global sDirectory_run

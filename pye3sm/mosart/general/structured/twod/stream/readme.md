@@ -1,0 +1,1 @@
+This function is used to generate the DROF stream file for different compsets.

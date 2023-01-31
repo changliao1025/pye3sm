@@ -52,7 +52,10 @@ def e3sm_create_case(oE3SM_in, \
     sFilename_elm_domain = oCase_in.sFilename_elm_domain
     sFilename_elm_surfacedata = oCase_in.sFilename_elm_surfacedata
 
-    sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip'
+    sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
+    sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
+    sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'
+
     sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
     #GIT_HASH=`git log -n 1 --format=%h`
 
@@ -186,6 +189,8 @@ def e3sm_create_case(oE3SM_in, \
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
+
+                
                 
                 pass
             else: ##branch run
@@ -229,20 +234,19 @@ def e3sm_create_case(oE3SM_in, \
                 p.wait()
                 pass
             
+                        
             
-            
-            
-            sCommand = sPython + ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
+            #sCommand = sPython + ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
+            #sCommand = sCommand.lstrip()
+            #p = subprocess.Popen(sCommand, shell= True)
+            #p.wait()
+    
+            sCommand = sPython + ' ./xmlchange --file env_run.xml --id DOUT_S        --val FALSE' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            sCommand = sPython + ' ./xmlchange -file env_run.xml -id DOUT_S             -val FALSE' + '\n'
-            sCommand = sCommand.lstrip()
-            p = subprocess.Popen(sCommand, shell= True)
-            p.wait()
-    
-            sCommand = sPython + ' ./xmlchange -file env_run.xml -id INFO_DBUG          -val 2' + '\n'
+            sCommand = sPython + ' ./xmlchange --file env_run.xml --id INFO_DBUG       --val 2' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
@@ -283,10 +287,11 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
             #we will generate clm name list in real time
-            sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
-            sCommand = sCommand.lstrip()
-            p = subprocess.Popen(sCommand, shell= True)
-            p.wait()        
+            if iFlag_elm ==1:
+                sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand, shell= True)
+                p.wait()        
     
             if(iFlag_elm_spinup==1):
                 sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
@@ -301,7 +306,7 @@ def e3sm_create_case(oE3SM_in, \
             #Build and submit
             if (iFlag_debug == 1):
             
-                sCommand = sPython + ' ./xmlchange -file env_build.xml DEBUG=TRUE' + '\n'
+                sCommand = sPython + ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
@@ -340,7 +345,7 @@ def e3sm_create_case(oE3SM_in, \
             
             else:
                 #debug,
-                sCommand = sPython + ' ./xmlchange -file env_build.xml DEBUG=TRUE' + '\n'
+                sCommand = sPython + ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand)
                 p.wait()
@@ -530,11 +535,15 @@ def e3sm_create_case(oE3SM_in, \
             ofs.write(sLine)
             pass
 
-        sLine =  ' ./xmlchange -file env_run.xml -id DOUT_S -val FALSE' + '\n'
+        sLine =  ' ./xmlchange CALENDAR=NO_LEAP' + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
 
-        sLine =  ' ./xmlchange -file env_run.xml -id INFO_DBUG -val 2' + '\n'
+        sLine =  ' ./xmlchange --file env_run.xml --id DOUT_S --val FALSE' + '\n'
+        sLine = sLine.lstrip()
+        ofs.write(sLine)
+
+        sLine =  ' ./xmlchange --file env_run.xml --id INFO_DBUG --val 2' + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
         
@@ -591,6 +600,12 @@ def e3sm_create_case(oE3SM_in, \
                 sLine = 'cp ' + sFilename_user_datm_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine) 
+                sLine = 'cp ' + sFilename_user_datm_solar + ' ./user_datm.streams.txt.CLMGSWP3v1.Solar' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine) 
+                sLine = 'cp ' + sFilename_user_datm_temp + ' ./user_datm.streams.txt.CLMGSWP3v1.TPQW' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine) 
         else:
             sLine = 'cp ' + sFilename_elm_namelist + ' ./user_nl_dlnd' + '\n'
             sLine = sLine.lstrip()
@@ -618,7 +633,7 @@ def e3sm_create_case(oE3SM_in, \
         #Build and submit
         if (iFlag_debug == 1):
         
-            sLine = ' ./xmlchange -file env_build.xml DEBUG=TRUE' + '\n'
+            sLine = ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
             pass
