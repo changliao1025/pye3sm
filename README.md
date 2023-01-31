@@ -30,7 +30,7 @@ Copyright © 2022, Battelle Memorial Institute
 
 ### References
 
-Liao, Chang. (2022). PyE3SM: a python package for the E3SM land and river components (0.1.22). Zenodo. https://doi.org/10.5281/zenodo.7591982
+Liao, Chang. (2022). PyE3SM: a Python library to assist E3SM model simulation (0.1.22). Zenodo. https://doi.org/10.5281/zenodo.7591982
 
 # Contact
 Please contact Chang Liao (chang.liao@pnnl.gov) if you have any questions.
