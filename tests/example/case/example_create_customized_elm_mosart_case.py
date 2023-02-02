@@ -474,6 +474,8 @@ if iFlag_create_case ==1:
         ofs.write(sLine)
         sLine = 'inundflag = .false.'+ '\n'
         ofs.write(sLine)
+        sLine = 'rtmhist_mfilt = 1,1'+ '\n'
+        ofs.write(sLine)
         sLine = 'rtmhist_nhtfrq = -24,-24'+ '\n'
         ofs.write(sLine)
         
