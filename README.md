@@ -30,9 +30,10 @@ Copyright © 2022, Battelle Memorial Institute
 
 ### References
 
+Several publications describe the algorithms used in `PyE3SM` in detail. If you make use of `PyE3SM` in your work, please consider including a reference to the following:
+
 Liao, Chang. (2022). PyE3SM: a Python library to assist E3SM model simulation (0.1.22). Zenodo. https://doi.org/10.5281/zenodo.7591982
 
-# Contact
-Please contact Chang Liao (chang.liao@pnnl.gov) if you have any questions.
+
 
 

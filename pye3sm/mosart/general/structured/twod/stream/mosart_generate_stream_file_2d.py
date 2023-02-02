@@ -64,29 +64,28 @@ def mosart_generate_stream_file_2d(oE3SM_in, oCase_in):
     
     iFlag_optional = 1 
 
-    #save netcdf
-    sWorkspace_variable = sWorkspace_analysis_case + slash \
-        + sVariable 
+ 
     
     #where should we save the stream file?
-    sWorkspace_variable_netcdf = sWorkspace_variable + slash + 'netcdf'
-    if not os.path.exists(sWorkspace_variable_netcdf):
-        os.makedirs(sWorkspace_variable_netcdf)
+    sWorkspace_stream = '/compy/liap313/00raw/drof'
+    if not os.path.exists(sWorkspace_stream):
+        os.makedirs(sWorkspace_stream)
    
     #how often should be output file is stored, per year is preferred similar to other stream file?
         
-    sFilename_output = sWorkspace_variable_netcdf + slash + sVariable +  sExtension_netcdf
-    #should we use the same netcdf format? 
-    pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
-    pDimension_longitude = pFile.createDimension('lon', ncolumn) 
-    pDimension_latitude = pFile.createDimension('lat', nrow) 
-
     nmonth = (iYear_end - iYear_start +1) * 12
-    aGrid_stack= np.full((nmonth, nrow, ncolumn), -9999.0, dtype= float)
+    nday = 365 #no leap year
+    
     i=0
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
-    
+        sFilename_output = sWorkspace_stream + slash + 'drof_'+ sYear +  sExtension_netcdf
+        aGrid_stack= np.full((nday, nrow, ncolumn), -9999.0, dtype= float)
+        #should we use the same netcdf format? 
+        pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
+        pDimension_longitude = pFile.createDimension('lon', ncolumn) 
+        pDimension_latitude = pFile.createDimension('lat', nrow) 
+        pDimension_time = pFile.createDimension('time', nday) 
         for iMonth in range(iMonth_start, iMonth_end + 1):
             sMonth = str(iMonth).zfill(2)
     
@@ -120,6 +119,7 @@ def mosart_generate_stream_file_2d(oE3SM_in, oCase_in):
     
             #read the actual data
             sVariable_discharge  = 'RIVER_DISCHARGE_OVER_LAND_LIQ'
+            sVariable_discharge  = 'Main_Channel_Water_Depth_LIQ'
             for sKey, aValue in aDatasets.variables.items():
                 if sKey.lower() == sVariable_discharge.lower() :
                                    
