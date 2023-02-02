@@ -1,4 +1,4 @@
-# PyE3SM
+### PyE3SM
 
 [![DOI](https://zenodo.org/badge/338111150.svg)](https://zenodo.org/badge/latestdoi/338111150)
 
@@ -6,7 +6,7 @@ PyE3SM: a Python library to assist E3SM model simulation.
 
 Currently, it only supports the `land` and `river` components.
 
-# Installation
+### Installation
 
 1. pip install pye3sm
 
