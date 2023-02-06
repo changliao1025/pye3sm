@@ -49,8 +49,7 @@ def elm_retrieve_case_dimension_info(oCase_in):
         #structure
         iFlag_2d = 1
         nrow = np.array(aMask).shape[0]
-        ncolumn = np.array(aMask).shape[1]
-        aMask0 = np.where(aMask==0)
+        ncolumn = np.array(aMask).shape[1]        
 
         #resolution
         dLon_min = np.min(aLon)
@@ -59,7 +58,11 @@ def elm_retrieve_case_dimension_info(oCase_in):
         dLat_max = np.max(aLat)
         dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
         dResolution_y = (dLat_max - dLat_min) / (nrow-1)
-
-
+        
+        #change mask to 0 and 1
+        aMask0 = np.where(aMask>0)
+        aMaks_out  = np.full( (nrow, ncolumn), 0, dtype=int )
+        aMaks_out[aMask0] = 1
+        print('ELM mask check')
     
-    return aLon, aLat, aMask
+    return aLon, aLat, aMaks_out
