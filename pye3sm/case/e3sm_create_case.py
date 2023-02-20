@@ -2,12 +2,24 @@ import os, sys, stat
 import subprocess
 from pyearth.system.define_global_variables import *
 
-def e3sm_create_case(oE3SM_in, \
-                     oCase_in,\
-                     iFlag_replace_datm_forcing=None,\
-                     iFlag_replace_dlnd_forcing=None,\
-                     iYear_data_end_in = None, \
+def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
+                     iFlag_replace_dlnd_forcing=None,
+                     iFlag_replace_drof_forcing = None,
+                     iYear_data_end_in = None, 
                      iYear_data_start_in = None):
+    """
+    create an E3SM case
+
+    Args:
+        oE3SM_in (_type_): _description_
+        oCase_in (_type_): _description_
+        iFlag_replace_datm_forcing (_type_, optional): _description_. Defaults to None.
+        iFlag_replace_dlnd_forcing (_type_, optional): _description_. Defaults to None.
+        iFlag_replace_drof_forcing (_type_, optional): _description_. Defaults to None.
+        iYear_data_end_in (_type_, optional): _description_. Defaults to None.
+        iYear_data_start_in (_type_, optional): _description_. Defaults to None.
+    """
+    
     #e3sm attributes
     iFlag_branch = oE3SM_in.iFlag_branch
     iFlag_debug = oE3SM_in.iFlag_debug
@@ -21,19 +33,21 @@ def e3sm_create_case(oE3SM_in, \
     PROJECT = oE3SM_in.PROJECT
     MACH = oE3SM_in.MACH
     sCIME_directory = oE3SM_in.sCIME_directory
-
     sEmail = oE3SM_in.sEmail
     iFlag_debug_case = oCase_in.iFlag_debug
     sRegion = oCase_in.sRegion
     #case attributes
-
     sDirectory_case = oCase_in.sDirectory_case
     sDirectory_case_aux = oCase_in.sDirectory_case_aux
     sDirectory_run = oCase_in.sDirectory_run
-    iFlag_elm_spinup=oCase_in.iFlag_elm_spinup
+    iFlag_lnd_spinup=oCase_in.iFlag_lnd_spinup
     iFlag_atm = oCase_in.iFlag_atm
-    iFlag_mosart = oCase_in.iFlag_mosart
-    iFlag_elm = oCase_in.iFlag_elm
+    iFlag_datm = oCase_in.iFlag_datm
+    iFlag_lnd = oCase_in.iFlag_lnd
+
+    iFlag_rof = oCase_in.iFlag_rof
+    iFlag_drof = oCase_in.iFlag_drof
+    
     #start
     #currently we only need to calibrate H2SC so I will not use advanced I/O
     #we will use the same variables used by corresponding CIME python script
@@ -42,21 +56,20 @@ def e3sm_create_case(oE3SM_in, \
     sModel = oCase_in.sModel #'h2sc'
     sCase = oCase_in.sCase
 
-
     sFilename_atm_domain = oCase_in.sFilename_atm_domain
     sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
 
-    sFilename_elm_namelist = oCase_in.sFilename_elm_namelist
-    sFilename_mosart_namelist = oCase_in.sFilename_mosart_namelist
+    sFilename_lnd_namelist = oCase_in.sFilename_lnd_namelist
+    sFilename_rof_namelist = oCase_in.sFilename_rof_namelist
 
-    sFilename_elm_domain = oCase_in.sFilename_elm_domain
-    sFilename_elm_surfacedata = oCase_in.sFilename_elm_surfacedata
+    sFilename_lnd_domain = oCase_in.sFilename_lnd_domain
+    sFilename_lnd_surfacedata = oCase_in.sFilename_lnd_surfacedata
 
     sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
     sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
-    sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'
-
+    sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'    
     sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
+    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART_gageheight'
     #GIT_HASH=`git log -n 1 --format=%h`
 
     sCasename = sDirectory_case + slash + sCase
@@ -256,7 +269,7 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_elm_domain) +    '\n'
+            sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()        
@@ -268,7 +281,7 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            sPath_elm_domain = os.path.dirname(sFilename_elm_domain)
+            sPath_elm_domain = os.path.dirname(sFilename_lnd_domain)
             sCommand = sPython + ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
@@ -282,13 +295,13 @@ def e3sm_create_case(oE3SM_in, \
     
             #copy namelist
             #the mosart will be constant
-            sCommand = 'cp ' +  sFilename_mosart_namelist + ' ./user_nl_mosart' + '\n'
+            sCommand = 'cp ' +  sFilename_rof_namelist + ' ./user_nl_mosart' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
             #we will generate clm name list in real time
-            if iFlag_elm ==1:
-                sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
+            if iFlag_lnd ==1:
+                sCommand = 'cp ' + sFilename_lnd_namelist + ' ./user_nl_elm' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()        
@@ -340,8 +353,6 @@ def e3sm_create_case(oE3SM_in, \
                 #p = subprocess.Popen(sCommand, shell= True)
                 #p.wait()
                 pass
-            
-            
             
             else:
                 #debug,
@@ -477,7 +488,7 @@ def e3sm_create_case(oE3SM_in, \
         sLine = ' ./xmlchange NTASKS=' + sNtask + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
-        if(iFlag_branch != 1):
+        if(iFlag_branch == 0):
             sLine = ' ./xmlchange RUN_TYPE=startup' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
@@ -512,7 +523,7 @@ def e3sm_create_case(oE3SM_in, \
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
 
-            if iFlag_elm == 1:
+            if iFlag_lnd == 1:
                 pass
             else:
                 sLine =  ' ./xmlchange DLND_CPLHIST_YR_START=' +  sYear_data_start + '\n'
@@ -525,14 +536,11 @@ def e3sm_create_case(oE3SM_in, \
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
 
-        if iFlag_atm ==1:
+        if iFlag_datm ==1:
             sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
         else:
-            sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
             pass
 
         sLine =  ' ./xmlchange CALENDAR=NO_LEAP' + '\n'
@@ -552,7 +560,7 @@ def e3sm_create_case(oE3SM_in, \
         sLine = sLine.lstrip()
         ofs.write(sLine)
 
-        sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_elm_domain) +    '\n'
+        sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)       
 
@@ -562,23 +570,23 @@ def e3sm_create_case(oE3SM_in, \
         sLine = sLine.lstrip()
         ofs.write(sLine)
 
-        sPath_elm_domain = os.path.dirname(sFilename_elm_domain)
+        sPath_elm_domain = os.path.dirname(sFilename_lnd_domain)
         sLine =  ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
         
-        if iFlag_elm == 1:
+        if iFlag_lnd == 1:
             sLine =  ' ./xmlchange ELM_USRDAT_NAME=' +  sRegion  + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
 
         #copy namelist
         #the mosart will be constant
-        if iFlag_mosart ==1:
-            sLine = 'cp ' +  sFilename_mosart_namelist + ' ./user_nl_mosart' + '\n'
+        if iFlag_rof ==1:
+            sLine = 'cp ' +  sFilename_rof_namelist + ' ./user_nl_mosart' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
-            if iFlag_elm == 1:
+            if iFlag_lnd == 1:
                 pass
             else:
                 if iFlag_replace_dlnd_forcing==1:
@@ -589,9 +597,9 @@ def e3sm_create_case(oE3SM_in, \
                     pass
         else:            
             pass
-        if iFlag_elm ==1:
+        if iFlag_lnd ==1:
             #we will generate clm name list in real time
-            sLine = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
+            sLine = 'cp ' + sFilename_lnd_namelist + ' ./user_nl_elm' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)      
 
@@ -606,8 +614,12 @@ def e3sm_create_case(oE3SM_in, \
                 sLine = 'cp ' + sFilename_user_datm_temp + ' ./user_datm.streams.txt.CLMGSWP3v1.TPQW' + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine) 
+            if iFlag_replace_drof_forcing ==1:
+                sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.MOSART.Gageheight' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine) 
         else:
-            sLine = 'cp ' + sFilename_elm_namelist + ' ./user_nl_dlnd' + '\n'
+            sLine = 'cp ' + sFilename_lnd_namelist + ' ./user_nl_dlnd' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
 
@@ -617,7 +629,7 @@ def e3sm_create_case(oE3SM_in, \
             pass
                   
 
-        if(iFlag_elm_spinup==1):
+        if(iFlag_lnd_spinup==1):
             sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)

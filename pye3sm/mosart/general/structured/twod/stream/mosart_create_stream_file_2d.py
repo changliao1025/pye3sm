@@ -1,14 +1,14 @@
 import os 
 import numpy as np
 from netCDF4 import Dataset #read netcdf
-from osgeo import  osr #the default operator
 from pyearth.system.define_global_variables import *    
 from pyearth.toolbox.date.day_in_month import day_in_month
 from pyearth.toolbox.date.leap_year import  leap_year
 from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
+import getpass
+from datetime import datetime
 
-
-def mosart_create_stream_file_2d(oE3SM_in, oCase_in):
+def mosart_create_stream_file_2d( oCase_in):
     """
     Generate the stream file for the drof compset
 
@@ -64,7 +64,7 @@ def mosart_create_stream_file_2d(oE3SM_in, oCase_in):
     grid_x, grid_y = np.meshgrid(longitude, latitude)
    
     #where should we save the stream file?
-    sWorkspace_stream = '/compyfs/liap313/00raw/drof'
+    sWorkspace_stream = '/compyfs/liao313/00raw/drof'
     if not os.path.exists(sWorkspace_stream):
         os.makedirs(sWorkspace_stream)
    
@@ -74,23 +74,23 @@ def mosart_create_stream_file_2d(oE3SM_in, oCase_in):
         sFilename_output = sWorkspace_stream + slash + 'drof_'+ sYear +  sExtension_netcdf
 
         if leap_year(iYear):
-            nday = 366 #no leap year
+            nday_in_year = 366 #no leap year
         else:
-            nday = 365 #no leap year
-        aGrid_stack= np.full((nday, nrow, ncolumn), -9999.0, dtype= float)
+            nday_in_year = 365 #no leap year
+        aGrid_stack= np.full((nday_in_year, nrow, ncolumn), -9999.0, dtype= float)
         #should we use the same netcdf format? 
         pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
         pDimension_longitude = pFile.createDimension('lon', ncolumn) 
         pDimension_latitude = pFile.createDimension('lat', nrow) 
-        pDimension_time = pFile.createDimension('time', nday) 
+        pDimension_time = pFile.createDimension('time', nday_in_year) 
 
         iDay_index = 0
         for iMonth in range(iMonth_start, iMonth_end + 1):
             sMonth = str(iMonth).zfill(2)
 
-            nday = day_in_month(iYear, iMonth)
+            nday_in_month = day_in_month(iYear, iMonth)
 
-            for iDay in range(1, nday +1, 1):
+            for iDay in range(1, nday_in_month +1, 1):
                 sDay = str(iDay).zfill(2)
     
                 sDummy = '.mosart.h0.' + sYear + '-' + sMonth + '-' + sDay+ '-00000'+ sExtension_netcdf
@@ -161,18 +161,49 @@ def mosart_create_stream_file_2d(oE3SM_in, oCase_in):
                         iDay_index = iDay_index + 1
                         break
 
-        sDummy = sVariable + sYear 
+        sDummy = sVariable 
         pVar = pFile.createVariable( sDummy , 'f4', ('time', 'lat' , 'lon'),fill_value=-9999) 
         pVar[:] = aGrid_stack
-        pVar.description = sDummy
-        pVar.unit = 'm'        
+        pVar.standard_name = 'river gage height'
+        pVar.long_name = 'River gage height'
+        pVar.unit = 'm'      
+
+
+        #add other variable
+        sDummy = 'lon'
+        pVar = pFile.createVariable( sDummy , 'f4', ( 'lon'),fill_value=-9999) 
+        pVar[:] = aLongitude
+        pVar.standard_name = 'longitude'
+        pVar.long_name = 'longitude'
+        pVar.unit = 'degree'   
+        pVar.axis = "X" 
+
+        sDummy = 'lat'
+        pVar = pFile.createVariable( sDummy , 'f4', ('lat' ),fill_value=-9999) 
+        pVar[:] = aLatitude
+        pVar.standard_name = 'latitude'
+        pVar.long_name = 'latitude'
+        pVar.unit = 'degree' 
+        pVar.axis = "Y" 
+
+        sDummy = 'time'
+        pVar = pFile.createVariable( sDummy , 'f4', ('time'),fill_value=-9999) 
+        aTime = np.arange(nday_in_year) + 1
+        pVar[:] = aTime
+        pVar.standard_name = sDummy
+        pVar.long_name = sDummy
+        pVar.units = 'days since ' +  sYear + '-01-01 00:00:00'
+        pVar.calendar = 'leap' 
+        pVar.axis = "T" 
+
+        #set global attributes
+        pFile.setncattr("Created_by", getpass.getuser())
+        pFile.setncattr("Created_on", datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+          
         #close netcdf file   
         pFile.close()
         print(sYear, 'Finished')
  
-    
-    
-
 
     print("finished")
 

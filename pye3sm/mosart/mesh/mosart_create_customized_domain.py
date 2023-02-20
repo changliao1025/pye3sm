@@ -2,11 +2,11 @@ import os
 import numpy as np
 from pye3sm.mosart.mesh.unstructured.find_mosart_cell import find_mosart_cell
 
-from pye3sm.mosart.mesh.structured.twod.extract_mosart_by_cellid_2d_to_2d import extract_mosart_by_cellid_2d_to_2d
+from pye3sm.mosart.mesh.structured.twod.mosart_extract_by_cellid_2d_to_2d import mosart_extract_by_cellid_2d_to_2d
 
 
 
-def create_customized_mosart_domain(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilename_netcdf_out, lCellID_outlet_in):
+def mosart_create_customized_domain(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilename_netcdf_out, lCellID_outlet_in):
 
     iFlag_save = 0
     iFlag_reload = 1
@@ -28,7 +28,7 @@ def create_customized_mosart_domain(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilen
     if iFlag_reload ==1:
         aCell_basin = np.loadtxt(sFilename_cellid)
     #iFlag_2d_to_1d = 0
-    extract_mosart_by_cellid_2d_to_2d(sFilenamae_mosart_in, sFilename_netcdf_out, aCell_basin)
+    mosart_extract_by_cellid_2d_to_2d(sFilenamae_mosart_in, sFilename_netcdf_out, aCell_basin)
 
     #sFilename = os.path.splitext(sFilename_netcdf_out)[0]
     #filename_netcdf_ocean_out = sFilename + '_w_ocean_buffer.nc'

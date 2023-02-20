@@ -113,7 +113,7 @@ for iCase in range(1,ncase + 1):
                                                               iYear_data_start_in = 1979   ,\
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
-                                                              sFilename_elm_namelist_in = sFilename_elm_namelist, \
+                                                              sFilename_lnd_namelist_in = sFilename_elm_namelist, \
                                                               sFilename_datm_namelist_in = sFilename_datm_namelist )
         
     else:
@@ -125,7 +125,7 @@ for iCase in range(1,ncase + 1):
                                                               iYear_data_start_in = 1979   , \
                                                               iCase_index_in = iCase, \
                                                               sDate_in = sDate, \
-                                                              sFilename_elm_namelist_in = sFilename_elm_namelist )
+                                                              sFilename_lnd_namelist_in = sFilename_elm_namelist )
     
     oCase = pycase(aParameter_case)
     e3sm_create_case(oE3SM, oCase )

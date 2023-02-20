@@ -25,8 +25,8 @@ from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
-iFlag_mosart = 1
-iFlag_elm=1
+iFlag_rof = 1
+iFlag_lnd=1
 iFlag_elmmosart =1
 iFlag_create_mosart_grid = 1
 iFlag_create_elm_grid = 1
@@ -40,7 +40,7 @@ if iFlag_elmmosart == 1:
     res='ELMMOS_USRDAT'
     compset = 'IELM'
 else:
-    if iFlag_mosart ==1:
+    if iFlag_rof ==1:
         pass
     else:    
         res='ELM_USRDAT'      
@@ -259,7 +259,7 @@ for iCase_index in range(ncase):
 
         #mosart
 
-        if iFlag_mosart ==1:        
+        if iFlag_rof ==1:        
             ofs = open(sFilename_mosart_namelist, 'w')
             #sLine = 'rtmhist_nhtfrq=0' + '\n'
             #ofs.write(sLine)
@@ -302,16 +302,16 @@ for iCase_index in range(ncase):
                                                                   sRegion_in = sRegion,\
                                                                   sFilename_atm_domain_in=  sFilename_elm_domain_file_out,\
                                                                   sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
-                                                                  sFilename_elm_namelist_in =   sFilename_elm_namelist, \
-                                                                  sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
+                                                                  sFilename_lnd_namelist_in =   sFilename_elm_namelist, \
+                                                                  sFilename_lnd_domain_in=sFilename_elm_domain_file_out, \
                                                                   sFilename_mosart_input_in = sFilename_mosart_input, \
                                                                   sWorkspace_scratch_in =   sWorkspace_scratch)
             pass
         else:
             aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
                                                                   iFlag_spinup_in = iFlag_spinup,\
-                                                                  iFlag_elm_in= iFlag_elm,\
-                                                                  iFlag_mosart_in= iFlag_mosart,\
+                                                                  iFlag_elm_in= iFlag_lnd,\
+                                                                  iFlag_rof_in= iFlag_rof,\
                                                                   iYear_start_in = 1980, \
                                                                   iYear_end_in = 2010,\
                                                                   iYear_data_end_in = 2010, \
@@ -322,9 +322,9 @@ for iCase_index in range(ncase):
                                                                   sRegion_in = sRegion,\
                                                                   sFilename_atm_domain_in=  sFilename_elm_domain_file_out,\
                                                                   sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
-                                                                  sFilename_elm_namelist_in =   sFilename_elm_namelist, \
-                                                                  sFilename_elm_domain_in=sFilename_elm_domain_file_out, \
-                                                                  sFilename_mosart_namelist_in = sFilename_mosart_namelist, \
+                                                                  sFilename_lnd_namelist_in =   sFilename_elm_namelist, \
+                                                                  sFilename_lnd_domain_in=sFilename_elm_domain_file_out, \
+                                                                  sFilename_rof_namelist_in = sFilename_mosart_namelist, \
                                                                   sFilename_mosart_input_in = sFilename_mosart_input, \
                                                                   sWorkspace_scratch_in =   sWorkspace_scratch )
             pass

@@ -1,28 +1,24 @@
 import os
-import numpy as np
-
 from datetime import datetime
 import getpass
-from netCDF4 import Dataset
+import numpy as np
+import netCDF4 as nc
 
 from pye3sm.elm.mesh.unstructured.PerformFractionCoverCheck import PerformFractionCoverCheck
-def create_customized_elm_surface_file_2d( aLon_region, aLat_region, aMask_in,\
+
+def elm_create_structured_customized_surface_file( aLon_region, aLat_region, aMask_in,\
     sFilename_surface_data_in, \
     sFilename_surface_data_out, \
     set_natural_veg_frac_to_one):
 
-    
-
-    #sFilename_surface_data_out = '%s/surfdata_%s_%s.nc' % \
-    #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
 
     print('  surface_dataset: ' + sFilename_surface_data_out)
 
     if not os.path.exists(sFilename_surface_data_in):
         raise NameError('File not found: ' + sFilename_surface_data_in)
     
-    ncid_inq = Dataset(sFilename_surface_data_in, 'r')
-    ncid_out = Dataset(sFilename_surface_data_out, 'w',format="NETCDF3_CLASSIC")
+    ncid_inq = nc.Dataset(sFilename_surface_data_in, 'r')
+    ncid_out = nc.Dataset(sFilename_surface_data_out, 'w',format="NETCDF3_CLASSIC")
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #
@@ -246,10 +242,7 @@ def create_customized_elm_surface_file_2d( aLon_region, aLat_region, aMask_in,\
                             for kk in range(nz):
                                 for ll in range(na):
                                     data_4d[kk,ll,ii,jj] = data[kk,ll,ii_idx[ii,jj],jj_idx[ii,jj]]
-
-                    #data_4d_new = data_4d.reshape( (nz,na,nx*ny) )
-                    #data_4d     = data_4d_new
-                    #del data_4d_new
+                   
 
                     var[varname][:] = data_4d
                 

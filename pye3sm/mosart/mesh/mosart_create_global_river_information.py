@@ -3,7 +3,7 @@ import numpy
 import numpy as np
 from netCDF4 import Dataset
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
-def create_global_river_mosart_information(sFilename_csv, sFilename_out):
+def mosart_create_global_river_information(sFilename_csv, sFilename_out):
 
     aRiver = text_reader_string(sFilename_csv, iSkipline_in =1, cDelimiter_in=',')
     nriver = len(aRiver)
