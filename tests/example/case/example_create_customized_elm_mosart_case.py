@@ -194,14 +194,7 @@ if iFlag_rof_lnd_atm ==1: #rof first
                 copyfile(sFilename_rof_domain_default, sFilename_rof_domain)
 
             pass
-    else:
-        if iFlag_drof ==1:
-            #when drof is active
-            #do we need a namelist here?
-
-            pass
-        else:
-            pass
+    else:        
         pass
 
     if iFlag_lnd ==1:
@@ -210,7 +203,7 @@ if iFlag_rof_lnd_atm ==1: #rof first
             if iFlag_create_rof_grid ==1: 
                 aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
                 if iFlag_2d_to_1d == 0:
-                
+
                     lon_min = np.min(aLon)
                     lon_max = np.max(aLon)
                     lat_min = np.min(aLat)
@@ -223,19 +216,19 @@ if iFlag_rof_lnd_atm ==1: #rof first
                     sGrid =  "{:0d}".format( ngrid )
                     sLine = sGrid + '\n'
                     ofs.write(sLine)
-    
+
                     aLon = np.full( (nrow, ncolumn), missing_value, dtype=float )
                     aLat = np.full( (nrow, ncolumn), missing_value, dtype=float )
-    
+
                     for i in range(nrow):
                         for j in range(ncolumn):
                             aLon[i,j] = lon_min + j * dResolution
                             aLat[i,j] = lat_min + i * dResolution
                             sLine = "{:0f}".format( aLon[i,j] ) + ' ' +  "{:0f}".format( aLat[i,j]) + '\n'
                             ofs.write(sLine)
-    
+
                     ofs.close()
-    
+
                 else:
                     aLon0=np.ravel(aLon)
                     aLat0=np.ravel(aLat)
@@ -243,21 +236,21 @@ if iFlag_rof_lnd_atm ==1: #rof first
                     aLon = aLon0[dummy_index]
                     aLat = aLat0[dummy_index]
                     ngrid = len(aLon)
-    
+
                     sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
                     ofs = open(sFilename_lon_lat_in, 'w')
                     sGrid =  "{:0d}".format( ngrid )
                     sLine = sGrid + '\n'
                     ofs.write(sLine)
-    
+
                     for i in range(ngrid):
                         dLatitude = aLat[i]
                         dLongitude = aLon[i]
                         #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
-    
+
                         sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
                         ofs.write(sLine)
-    
+
                     ofs.close()
             else:
                 #maybe single grid
@@ -273,74 +266,148 @@ if iFlag_rof_lnd_atm ==1: #rof first
                 for i in range(ngrid):
                     dLongitude = aLon[i]
                     dLatitude = aLat[i]
-    
+
                     sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
                     ofs.write(sLine)
-    
+
                 ofs.close()
-    
-    
+
+
                 pass
         else:
-            sFilename_elm_domain = sFilename_rof_domain
+            sFilename_lnd_domain = sFilename_rof_domain
             pass
         pass
     else:
         if iFlag_dlnd ==1:
             pass
 
-if iFlag_lnd_atm_rof ==1:
+    if iFlag_atm ==1:
+        if iFlag_create_atm_grid==1:
+            pass
+        else:
+            pass
+    else:
+        if iFlag_datm ==1:
+            #datm is active
+            sFilename_atm_domain = sFilename_lnd_domain
+            pass
+        else:
+            pass
 
-    pass
+if iFlag_lnd_atm_rof ==1:    
+    #lnd 
+    if iFlag_lnd ==1:
+        if iFlag_create_lnd_grid ==1:
+            #have both mosart and elm
+            if iFlag_create_rof_grid ==1: 
+                aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
+                if iFlag_2d_to_1d == 0:
 
-#the first round
-#atm
-if iFlag_atm ==1:
-    if iFlag_create_atm_grid==1:
+                    lon_min = np.min(aLon)
+                    lon_max = np.max(aLon)
+                    lat_min = np.min(aLat)
+                    lat_max = np.max(aLat)
+                    nrow = int((lat_max-lat_min) / dResolution + 1)
+                    ncolumn = int( (lon_max-lon_min) / dResolution + 1 )
+                    ngrid = ncolumn * nrow
+                    sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+                    ofs = open(sFilename_lon_lat_in, 'w')
+                    sGrid =  "{:0d}".format( ngrid )
+                    sLine = sGrid + '\n'
+                    ofs.write(sLine)
+
+                    aLon = np.full( (nrow, ncolumn), missing_value, dtype=float )
+                    aLat = np.full( (nrow, ncolumn), missing_value, dtype=float )
+
+                    for i in range(nrow):
+                        for j in range(ncolumn):
+                            aLon[i,j] = lon_min + j * dResolution
+                            aLat[i,j] = lat_min + i * dResolution
+                            sLine = "{:0f}".format( aLon[i,j] ) + ' ' +  "{:0f}".format( aLat[i,j]) + '\n'
+                            ofs.write(sLine)
+
+                    ofs.close()
+
+                else:
+                    aLon0=np.ravel(aLon)
+                    aLat0=np.ravel(aLat)
+                    dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
+                    aLon = aLon0[dummy_index]
+                    aLat = aLat0[dummy_index]
+                    ngrid = len(aLon)
+
+                    sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+                    ofs = open(sFilename_lon_lat_in, 'w')
+                    sGrid =  "{:0d}".format( ngrid )
+                    sLine = sGrid + '\n'
+                    ofs.write(sLine)
+
+                    for i in range(ngrid):
+                        dLatitude = aLat[i]
+                        dLongitude = aLon[i]
+                        #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
+
+                        sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
+                        ofs.write(sLine)
+
+                    ofs.close()
+            else:
+                #maybe single grid
+                #aLon aLat should be used for a list of location
+                aLon =np.array([dLongitude])
+                aLat =np.array([dLatitude])
+                sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+                ofs = open(sFilename_lon_lat_in, 'w')
+                ngrid = 1
+                sGrid =  "{:0d}".format( ngrid)
+                sLine = sGrid + '\n'
+                ofs.write(sLine) 
+                for i in range(ngrid):
+                    dLongitude = aLon[i]
+                    dLatitude = aLat[i]
+
+                    sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
+                    ofs.write(sLine)
+
+                ofs.close()
+
+
+                pass
+        else:
+            sFilename_lnd_domain = sFilename_rof_domain
+            pass
         pass
     else:
-        pass
-else:
-    if iFlag_datm ==1:
-        #datm is active
-        
-
-        pass
+        if iFlag_dlnd ==1:
+            pass
+    #atm
+    if iFlag_atm ==1:
+        if iFlag_create_atm_grid==1:
+            pass
+        else:
+            pass
     else:
-        pass
-#lnd 
-
-if iFlag_lnd ==1:
-    if iFlag_rof == 1:
+        if iFlag_datm ==1:
+            #datm is active
+            sFilename_atm_domain = sFilename_lnd_domain
+            pass
+        else:
+            pass  
+    
+    if iFlag_rof ==1:
         pass
     else:
         if iFlag_drof ==1:
+            #datm is active
+            sFilename_rof_domain = sFilename_lnd_domain
             pass
-    pass
-else:
-    pass
+        else:
+            pass  
 
 
 
 
-#the second round
-#atm place last
-
-
-
-if iFlag_atm ==1:
-    if iFlag_create_atm_grid==1:
-        pass
-    else:
-        pass
-else:
-    if iFlag_datm ==1:
-        #datm is active
-        sFilename_atm_domain = sFilename_lnd_domain
-
-        pass
-    else:
-        pass
 
 
 
