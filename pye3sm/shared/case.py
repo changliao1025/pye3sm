@@ -58,8 +58,10 @@ class pycase(object):
     sFilename_lnd_namelist=''    
     sFilename_lnd_surfacedata=''
     sFilename_lnd_domain=''
+    sFilename_dlnd_namelist=''
     #rof
     sFilename_rof_namelist=''
+    sFilename_drof_namelist=''
     sFilename_rof_input=''
     
 
@@ -81,6 +83,9 @@ class pycase(object):
         
         if 'iFlag_lnd' in aParameter:
             self.iFlag_lnd             = int(aParameter[ 'iFlag_lnd'])
+        
+        if 'iFlag_dlnd' in aParameter:
+            self.iFlag_dlnd             = int(aParameter[ 'iFlag_dlnd'])
 
         if 'iFlag_rof' in aParameter:
             self.iFlag_rof            = int(aParameter[ 'iFlag_rof'])
@@ -194,13 +199,15 @@ class pycase(object):
         if 'sFilename_atm_domain' in aParameter:
             self.sFilename_atm_domain      = aParameter[ 'sFilename_atm_domain']
 
-        #elm
+        #lnd
         if 'sFilename_lnd_namelist' in aParameter:
             self.sFilename_lnd_namelist      = aParameter[ 'sFilename_lnd_namelist']
 
         if 'sFilename_lnd_domain' in aParameter:
             self.sFilename_lnd_domain      = aParameter[ 'sFilename_lnd_domain']
 
+        if 'sFilename_dlnd_namelist' in aParameter:
+            self.sFilename_dlnd_namelist      = aParameter[ 'sFilename_dlnd_namelist']
         
 
         if 'sFilename_lnd_surfacedata' in aParameter:
@@ -212,6 +219,8 @@ class pycase(object):
         if 'sFilename_rof_namelist' in aParameter:
             self.sFilename_rof_namelist               = aParameter[ 'sFilename_rof_namelist']
         
+        if 'sFilename_drof_namelist' in aParameter:
+            self.sFilename_drof_namelist               = aParameter[ 'sFilename_drof_namelist']
         if 'sFilename_rof_input' in aParameter:
             self.sFilename_rof_input               = aParameter[ 'sFilename_rof_input']
 

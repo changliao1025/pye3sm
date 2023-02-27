@@ -45,7 +45,7 @@ dResolution = 0.5
 aMask=None
 
 #case index and date
-iCase = 2
+iCase = 3
 
 sDate = '20230101'
 sDate_spinup = '20210209'
@@ -64,15 +64,22 @@ iFlag_replace_drof_forcing=1
 #elm
 iFlag_lnd = 1
 iFlag_dlnd =0 
-iFlag_create_elm_grid = 1
+iFlag_create_lnd_grid = 1
 
 #mosart
 iFlag_rof = 0
 iFlag_drof=1
-iFlag_create_mosart_grid = 0
+iFlag_create_rof_grid = 0
+
+#order of grid
+
+iFlag_rof_lnd_atm = 0 #rof is on
+iFlag_lnd_atm_rof = 1 #rof is off
 
 #set compset name
-res, compset = e3sm_choose_res_and_compset(iFlag_atm_in=0, iFlag_datm_in=1, iFlag_lnd_in = 1, iFlag_dlnd_in = 0, iFlag_rof_in= 0, iFlag_drof_in=1)
+res, compset = e3sm_choose_res_and_compset(iFlag_atm_in=iFlag_atm, iFlag_datm_in=iFlag_datm, 
+                                           iFlag_lnd_in = iFlag_lnd, iFlag_dlnd_in = iFlag_dlnd, 
+                                           iFlag_rof_in= iFlag_rof, iFlag_drof_in= iFlag_drof)
 
 
 iFlag_2d_to_1d = 0 
@@ -121,17 +128,17 @@ sFilename_dlnd_stream = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.t
 
 #generate mosart first then use the mosart lat/lon information for elm
 
-if iFlag_create_mosart_grid ==1:
+if iFlag_create_rof_grid ==1:
     sFilename_mosart_parameter_default = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'
 else:
     sFilename_mosart_parameter_default = '/qfs/people/liao313/data/e3sm/sag/mosart/MOSART_Sag_MPAS_c220804.nc'
-    sFilename_mosart_domain_default ='/qfs/people/liao313/data/e3sm/sag/mosart/domain_Sag_MPAS_c220804.nc'
+    sFilename_rof_domain_default ='/qfs/people/liao313/data/e3sm/sag/mosart/domain_Sag_MPAS_c220804.nc'
     
 sFilename_atm_domain=None
 sFilename_elm_domain=None
 sFilename_datm_namelist=None
-sFilename_mosart_domain=None
-sFilename_mosart_namelist=None
+sFilename_rof_domain=None
+sFilename_rof_namelist=None
 sFilename_mosart_parameter =None
 sFilename_initial = '/compyfs/liao313/e3sm_scratch/e3sm20220701050/run/e3sm20220701050.elm.r.1980-01-01-00000.nc'
 
@@ -153,42 +160,173 @@ if not os.path.exists(sWorkspace_region2):
 
 #prepare grid
 
-if iFlag_rof ==1:
-    if iFlag_create_mosart_grid ==1: 
 
-        sFilename_mosart_netcdf_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '.nc'
-        mosart_create_customized_domain(iFlag_2d_to_1d, sFilename_mosart_parameter_default,sFilename_mosart_netcdf_out, lCellID_outlet_in)
+if iFlag_rof_lnd_atm ==1: #rof first
+    #rof 
+    if iFlag_rof ==1:  #active rof
+        if iFlag_create_rof_grid ==1: 
+            sFilename_mosart_netcdf_out = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '.nc'
+            mosart_create_customized_domain(iFlag_2d_to_1d, sFilename_mosart_parameter_default,sFilename_mosart_netcdf_out, lCellID_outlet_in)
 
-        if iFlag_rof==1:
-            #exact elevation profile from mosart to elm
-            aElevation_profile = mosart_extract_elevation_profile_for_elm(sFilename_mosart_netcdf_out)
-            #other variable
-            aVariable_in=['gxr','rdep','hslp', 'rlen']
-            aVariable_mosart = mosart_extract_variable_for_elm(sFilename_mosart_netcdf_out, aVariable_in)
+            #this session may be moved to lnd
+            if iFlag_lnd==1: #active lnd
+                #exact elevation profile from mosart to elm
+                aElevation_profile = mosart_extract_elevation_profile_for_elm(sFilename_mosart_netcdf_out)
+                #other variable
+                aVariable_in=['gxr','rdep','hslp', 'rlen']
+                aVariable_mosart = mosart_extract_variable_for_elm(sFilename_mosart_netcdf_out, aVariable_in)
 
-        sFilename_mosart_parameter = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
-        if not os.path.exists(sFilename_mosart_parameter):    
-            copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_parameter)
+            sFilename_mosart_parameter = sWorkspace_region2 + slash + 'mosart_' + sCase_date + '.nc'
+            if not os.path.exists(sFilename_mosart_parameter):    
+                copyfile(sFilename_mosart_netcdf_out, sFilename_mosart_parameter)
+            else:
+                pass
+
+        else:
+            #pre-defined mosart, usually mpas mesh-based
+            sFilename_mosart_parameter = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_parameter.nc'
+            sFilename_rof_domain = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_domain.nc'
+            #overwrite?    
+            if not os.path.exists(sFilename_mosart_parameter):    
+                copyfile(sFilename_mosart_parameter_default, sFilename_mosart_parameter)
+
+            if not os.path.exists(sFilename_rof_domain):    
+                copyfile(sFilename_rof_domain_default, sFilename_rof_domain)
+
+            pass
+    else:
+        if iFlag_drof ==1:
+            #when drof is active
+            #do we need a namelist here?
+
+            pass
         else:
             pass
+        pass
 
+    if iFlag_lnd ==1:
+        if iFlag_create_lnd_grid ==1:
+            #have both mosart and elm
+            if iFlag_create_rof_grid ==1: 
+                aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
+                if iFlag_2d_to_1d == 0:
+                
+                    lon_min = np.min(aLon)
+                    lon_max = np.max(aLon)
+                    lat_min = np.min(aLat)
+                    lat_max = np.max(aLat)
+                    nrow = int((lat_max-lat_min) / dResolution + 1)
+                    ncolumn = int( (lon_max-lon_min) / dResolution + 1 )
+                    ngrid = ncolumn * nrow
+                    sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+                    ofs = open(sFilename_lon_lat_in, 'w')
+                    sGrid =  "{:0d}".format( ngrid )
+                    sLine = sGrid + '\n'
+                    ofs.write(sLine)
+    
+                    aLon = np.full( (nrow, ncolumn), missing_value, dtype=float )
+                    aLat = np.full( (nrow, ncolumn), missing_value, dtype=float )
+    
+                    for i in range(nrow):
+                        for j in range(ncolumn):
+                            aLon[i,j] = lon_min + j * dResolution
+                            aLat[i,j] = lat_min + i * dResolution
+                            sLine = "{:0f}".format( aLon[i,j] ) + ' ' +  "{:0f}".format( aLat[i,j]) + '\n'
+                            ofs.write(sLine)
+    
+                    ofs.close()
+    
+                else:
+                    aLon0=np.ravel(aLon)
+                    aLat0=np.ravel(aLat)
+                    dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
+                    aLon = aLon0[dummy_index]
+                    aLat = aLat0[dummy_index]
+                    ngrid = len(aLon)
+    
+                    sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+                    ofs = open(sFilename_lon_lat_in, 'w')
+                    sGrid =  "{:0d}".format( ngrid )
+                    sLine = sGrid + '\n'
+                    ofs.write(sLine)
+    
+                    for i in range(ngrid):
+                        dLatitude = aLat[i]
+                        dLongitude = aLon[i]
+                        #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
+    
+                        sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
+                        ofs.write(sLine)
+    
+                    ofs.close()
+            else:
+                #maybe single grid
+                #aLon aLat should be used for a list of location
+                aLon =np.array([dLongitude])
+                aLat =np.array([dLatitude])
+                sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
+                ofs = open(sFilename_lon_lat_in, 'w')
+                ngrid = 1
+                sGrid =  "{:0d}".format( ngrid)
+                sLine = sGrid + '\n'
+                ofs.write(sLine) 
+                for i in range(ngrid):
+                    dLongitude = aLon[i]
+                    dLatitude = aLat[i]
+    
+                    sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
+                    ofs.write(sLine)
+    
+                ofs.close()
+    
+    
+                pass
+        else:
+            sFilename_elm_domain = sFilename_rof_domain
+            pass
+        pass
     else:
-        #pre-defined mosart, usually mpas mesh-based
-        sFilename_mosart_parameter = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_parameter.nc'
-        sFilename_mosart_domain = sWorkspace_region2 + slash + 'mosart_'+ sCase_date + '_domain.nc'
-        #overwrite?    
-        if not os.path.exists(sFilename_mosart_parameter):    
-            copyfile(sFilename_mosart_parameter_default, sFilename_mosart_parameter)
+        if iFlag_dlnd ==1:
+            pass
 
-        if not os.path.exists(sFilename_mosart_domain):    
-            copyfile(sFilename_mosart_domain_default, sFilename_mosart_domain)
+if iFlag_lnd_atm_rof ==1:
 
+    pass
+
+#the first round
+#atm
+if iFlag_atm ==1:
+    if iFlag_create_atm_grid==1:
+        pass
+    else:
         pass
 else:
-    if iFlag_drof ==1:
+    if iFlag_datm ==1:
+        #datm is active
+        
+
         pass
     else:
         pass
+#lnd 
+
+if iFlag_lnd ==1:
+    if iFlag_rof == 1:
+        pass
+    else:
+        if iFlag_drof ==1:
+            pass
+    pass
+else:
+    pass
+
+
+
+
+#the second round
+#atm place last
+
+
 
 if iFlag_atm ==1:
     if iFlag_create_atm_grid==1:
@@ -197,93 +335,14 @@ if iFlag_atm ==1:
         pass
 else:
     if iFlag_datm ==1:
+        #datm is active
+        sFilename_atm_domain = sFilename_lnd_domain
+
         pass
     else:
         pass
 
-if iFlag_lnd ==1:
-    if iFlag_create_elm_grid ==1:
-        #have both mosart and elm
-        if iFlag_create_mosart_grid ==1:
-            aLon, aLat, aMask = elm_extract_grid_latlon_from_mosart(sFilename_mosart_netcdf_out)
 
-            if iFlag_2d_to_1d == 0:
-
-                lon_min = np.min(aLon)
-                lon_max = np.max(aLon)
-                lat_min = np.min(aLat)
-                lat_max = np.max(aLat)
-                nrow = int((lat_max-lat_min) / dResolution + 1)
-                ncolumn = int( (lon_max-lon_min) / dResolution + 1 )
-                ngrid = ncolumn * nrow
-                sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
-                ofs = open(sFilename_lon_lat_in, 'w')
-                sGrid =  "{:0d}".format( ngrid )
-                sLine = sGrid + '\n'
-                ofs.write(sLine)
-
-                aLon = np.full( (nrow, ncolumn), missing_value, dtype=float )
-                aLat = np.full( (nrow, ncolumn), missing_value, dtype=float )
-
-                for i in range(nrow):
-                    for j in range(ncolumn):
-                        aLon[i,j] = lon_min + j * dResolution
-                        aLat[i,j] = lat_min + i * dResolution
-                        sLine = "{:0f}".format( aLon[i,j] ) + ' ' +  "{:0f}".format( aLat[i,j]) + '\n'
-                        ofs.write(sLine)
-
-                ofs.close()
-
-            else:
-                aLon0=np.ravel(aLon)
-                aLat0=np.ravel(aLat)
-                dummy_index  = np.where( (aLon0 != -9999)&(aLat0 != -9999))
-                aLon = aLon0[dummy_index]
-                aLat = aLat0[dummy_index]
-                ngrid = len(aLon)
-
-                sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
-                ofs = open(sFilename_lon_lat_in, 'w')
-                sGrid =  "{:0d}".format( ngrid )
-                sLine = sGrid + '\n'
-                ofs.write(sLine)
-
-                for i in range(ngrid):
-                    dLatitude = aLat[i]
-                    dLongitude = aLon[i]
-                    #dLongitude = convert_180_to_360(aLon[i]) #the customized domain function require 0-360
-
-                    sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
-                    ofs.write(sLine)
-
-                ofs.close()
-        else:
-            #maybe single grid
-            #aLon aLat should be used for a list of location
-            aLon =np.array([dLongitude])
-            aLat =np.array([dLatitude])
-            sFilename_lon_lat_in = sWorkspace_region2 + slash + 'elm_' + sCase_date +'.txt'
-            ofs = open(sFilename_lon_lat_in, 'w')
-            ngrid = 1
-            sGrid =  "{:0d}".format( ngrid)
-            sLine = sGrid + '\n'
-            ofs.write(sLine) 
-            for i in range(ngrid):
-                dLongitude = aLon[i]
-                dLatitude = aLat[i]
-
-                sLine = "{:0f}".format( dLongitude ) + ' ' +  "{:0f}".format( dLatitude) + '\n'
-                ofs.write(sLine)
-
-            ofs.close()
-
-
-            pass
-    else:
-        sFilename_elm_domain = sFilename_mosart_domain
-        pass
-else:
-    pass
 
     #
 
@@ -376,20 +435,21 @@ if iFlag_create_case ==1:
             sFilename_atm_domain = sFilename_elm_domain
             pass
     else:
-        #should we use user_nl_dlnd?
-        sFilename_elm_domain=sFilename_mosart_domain
-        sFilename_elm_namelist = sWorkspace_region2 + slash + 'user_nl_dlnd_' + sCase_date 
-        ofs = open(sFilename_elm_namelist, 'w')
-        sLine = 'dtlimit=2.0e0' + '\n'
-        ofs.write(sLine)
-        ofs.close()
+        if iFlag_dlnd ==1:
+            #should we use user_nl_dlnd?
+            sFilename_elm_domain=sFilename_rof_domain
+            sFilename_elm_namelist = sWorkspace_region2 + slash + 'user_nl_dlnd_' + sCase_date 
+            ofs = open(sFilename_elm_namelist, 'w')
+            sLine = 'dtlimit=2.0e0' + '\n'
+            ofs.write(sLine)
+            ofs.close()
         
         pass
     
     #rof component
     if iFlag_rof ==1:
-        sFilename_mosart_namelist = sWorkspace_region2 + slash + 'user_nl_rtm_' + sCase_date
-        ofs = open(sFilename_mosart_namelist, 'w')
+        sFilename_rof_namelist = sWorkspace_region2 + slash + 'user_nl_rtm_' + sCase_date
+        ofs = open(sFilename_rof_namelist, 'w')
         #sLine = 'rtmhist_nhtfrq=0' + '\n'
         #ofs.write(sLine)
         sLine = 'frivinp_rtm = ' + "'" + sFilename_mosart_parameter + "'" + '\n'
@@ -409,6 +469,10 @@ if iFlag_create_case ==1:
         ofs.close()
     else:
         if iFlag_drof ==1:
+            sFilename_drof_namelist = sWorkspace_region2 + slash + 'user_nl_drof_' + sCase_date
+            ofs = open(sFilename_drof_namelist, 'w')      
+            #opt_elevprof = 1
+            ofs.close()
             pass
         pass
             
@@ -502,7 +566,7 @@ if iFlag_create_case ==1:
                                                               sFilename_datm_namelist_in =  sFilename_datm_namelist ,\
                                                               sFilename_lnd_namelist_in =   sFilename_elm_namelist, \
                                                               sFilename_lnd_domain_in=sFilename_elm_domain_out, \
-                                                              sFilename_rof_namelist_in = sFilename_mosart_namelist, \
+                                                              sFilename_rof_namelist_in = sFilename_rof_namelist, \
                                                               sFilename_rof_parameter_in = sFilename_mosart_parameter, \
                                                               sWorkspace_scratch_in =   sWorkspace_scratch)
         pass
@@ -511,10 +575,10 @@ if iFlag_create_case ==1:
         iYear_end = 2009       
          
         aParameter_case = pye3sm_read_case_configuration_file(sFilename_case_configuration,\
+             iFlag_atm_in = iFlag_atm, iFlag_datm_in = iFlag_datm,
+             iFlag_lnd_in= iFlag_lnd,iFlag_dlnd_in= iFlag_dlnd,\
                                                               iFlag_lnd_spinup_in = iFlag_lnd_spinup,\
-                                                              iFlag_atm_in = iFlag_atm,\
-                                                              iFlag_lnd_in= iFlag_lnd,\
-                                                              iFlag_rof_in= iFlag_rof,\
+                                                              iFlag_rof_in= iFlag_rof,iFlag_drof_in= iFlag_drof,\
                                                               iYear_start_in = iYear_start, 
                                                               iYear_end_in = iYear_end,\
                                                               iYear_data_end_in = 2009, \
@@ -527,8 +591,10 @@ if iFlag_create_case ==1:
                                                               sFilename_datm_namelist_in = sFilename_datm_namelist ,\
                                                               sFilename_lnd_namelist_in = sFilename_elm_namelist, \
                                                               sFilename_lnd_domain_in = sFilename_elm_domain, \
-                                                              sFilename_rof_namelist_in = sFilename_mosart_namelist, \
+                                                              sFilename_rof_namelist_in = sFilename_rof_namelist, \
                                                               sFilename_rof_parameter_in = sFilename_mosart_parameter, \
+                                                            sFilename_rof_domain_in = sFilename_rof_domain,\
+                                                              sFilename_drof_namelist_in = sFilename_drof_namelist,\
                                                               sWorkspace_scratch_in =   sWorkspace_scratch )
         pass
         #print(aParameter_case)
