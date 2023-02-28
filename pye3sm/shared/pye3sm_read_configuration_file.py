@@ -292,8 +292,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     sFilename_atm_domain= config['sFilename_atm_domain']
 
-
     sFilename_lnd_domain= config['sFilename_lnd_domain']
+
+    sFilename_rof_domain= config['sFilename_rof_domain']
 
     sFilename_rof_namelist= config['sFilename_rof_namelist']
     sFilename_rof_input= config['sFilename_rof_input']
@@ -323,18 +324,6 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sLine = 'The default workspace scratch will be used: ' + sWorkspace_scratch 
         print(sLine)
 
-    #several namelist maybe used if we need to change parameters
-    if sFilename_lnd_namelist_in is not None:
-        sFilename_lnd_namelist = sFilename_lnd_namelist_in
-    else:
-        sFilename_lnd_namelist = sWorkspace_scratch + slash + '04model' + slash \
-            + sModel + slash + sRegion + slash \
-            + 'cases' + slash + 'user_nl_elm'
-        if os.path.exists(sFilename_lnd_namelist):
-            sLine = 'A default LND namelist was found at: ' + sFilename_lnd_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
-            print(sLine)
-        else:
-            print('A default LND namelist was not found, you will not be able to use it without specifying it first.' )
 
     if sFilename_datm_namelist_in is not None:
         sFilename_datm_namelist = sFilename_datm_namelist_in
@@ -348,7 +337,33 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         else:
             print('A default datm namelist was not found, it may be created.' )
 
+ 
+    if sFilename_atm_domain_in is not None:
+        sFilename_atm_domain = sFilename_atm_domain_in
+        
+
+    if sFilename_lnd_domain_in is not None:
+        sFilename_lnd_domain = sFilename_lnd_domain_in
+
+    #several namelist maybe used if we need to change parameters
+    if sFilename_lnd_namelist_in is not None:
+        sFilename_lnd_namelist = sFilename_lnd_namelist_in
+    else:
+        sFilename_lnd_namelist = sWorkspace_scratch + slash + '04model' + slash \
+            + sModel + slash + sRegion + slash \
+            + 'cases' + slash + 'user_nl_elm'
+        if os.path.exists(sFilename_lnd_namelist):
+            sLine = 'A default LND namelist was found at: ' + sFilename_lnd_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            print(sLine)
+        else:
+            print('A default LND namelist was not found, you will not be able to use it without specifying it first.' )
+
+
     #update mask if region changes
+
+    if sFilename_rof_domain_in is not None:
+        sFilename_rof_domain = sFilename_rof_domain_in
+
     if sFilename_rof_parameter_in is not None:
         sFilename_rof_input = sFilename_rof_parameter_in
     else:
@@ -361,14 +376,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
             print(sLine)
         else:
             print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
-    
-    if sFilename_atm_domain_in is not None:
-        sFilename_atm_domain = sFilename_atm_domain_in
-        
-
-    if sFilename_lnd_domain_in is not None:
-        sFilename_lnd_domain = sFilename_lnd_domain_in
-
+   
     if sFilename_rof_namelist_in is not None:
         sFilename_rof_namelist = sFilename_rof_namelist_in    
     
@@ -396,14 +404,15 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sWorkspace_simulation_case_build'] = sDirectory_run + slash + sCase + slash +'build'
     config['sWorkspace_analysis_case'] = sWorkspace_analysis + slash + sCase
 
-    config['sFilename_atm_domain'] = sFilename_atm_domain
-
-   
+    #atm
+    config['sFilename_atm_domain'] = sFilename_atm_domain   
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
-
-    config['sFilename_lnd_namelist'] = sFilename_lnd_namelist
+    #lnd
     config['sFilename_lnd_domain'] = sFilename_lnd_domain
-
+    config['sFilename_lnd_namelist'] = sFilename_lnd_namelist
+    
+    #rof
+    config['sFilename_rof_domain'] = sFilename_rof_domain
     config['sFilename_rof_namelist'] = sFilename_rof_namelist 
     
     config['sFilename_rof_input'] = sFilename_rof_input

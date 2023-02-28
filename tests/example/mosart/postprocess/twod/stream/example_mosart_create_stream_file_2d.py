@@ -1,9 +1,4 @@
 
-
-import os, sys
-
-import numpy as np
-
 from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm

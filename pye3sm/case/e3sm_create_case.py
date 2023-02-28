@@ -64,18 +64,19 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
 
     sFilename_lnd_namelist = oCase_in.sFilename_lnd_namelist
-    sFilename_dlnd_namelist = oCase_in.sFilename_dlnd_namelist
-    sFilename_rof_namelist = oCase_in.sFilename_rof_namelist
-    sFilename_drof_namelist = oCase_in.sFilename_drof_namelist
-
+    sFilename_dlnd_namelist = oCase_in.sFilename_dlnd_namelist    
     sFilename_lnd_domain = oCase_in.sFilename_lnd_domain
     sFilename_lnd_surfacedata = oCase_in.sFilename_lnd_surfacedata
+
+    sFilename_rof_domain = oCase_in.sFilename_rof_domain
+    sFilename_rof_namelist = oCase_in.sFilename_rof_namelist
+    sFilename_drof_namelist = oCase_in.sFilename_drof_namelist
 
     sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
     sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
     sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'    
     sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
-    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART_gageheight'
+    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.mosart.gageheight'
     #GIT_HASH=`git log -n 1 --format=%h`
 
     sCasename = sDirectory_case + slash + sCase
@@ -536,7 +537,56 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
 
+                    sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    sLine =  ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)   
+
+                    #get path
+                    sPath_atm_domain = os.path.dirname(sFilename_atm_domain)
+                    sLine = ' ./xmlchange ATM_DOMAIN_PATH=' +  sPath_atm_domain + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    if(iFlag_lnd_spinup==1):
+                        sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine)
+
+                    #change forcing data
+                    if iFlag_replace_datm_forcing==1:
+                        sLine = 'cp ' + sFilename_user_datm_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                        sLine = 'cp ' + sFilename_user_datm_solar + ' ./user_datm.streams.txt.CLMGSWP3v1.Solar' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                        sLine = 'cp ' + sFilename_user_datm_temp + ' ./user_datm.streams.txt.CLMGSWP3v1.TPQW' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                    pass
+
             if iFlag_lnd == 1:
+                sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)   
+
+                sPath_elm_domain = os.path.dirname(sFilename_lnd_domain)
+                sLine =  ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)
+
+                sLine =  ' ./xmlchange ELM_USRDAT_NAME=' +  sRegion  + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)
+
+                #we will generate clm name list in real time
+                sLine = 'cp ' + sFilename_lnd_namelist + ' ./user_nl_elm' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)      
                 pass
             else:
                 if iFlag_dlnd ==1:
@@ -549,6 +599,52 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     sLine =  ' ./xmlchange DLND_CPLHIST_YR_ALIGN=' +  sYear_data_start + '\n'
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
+
+                    sLine = 'cp ' + sFilename_dlnd_namelist + ' ./user_nl_dlnd' + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+            
+            if iFlag_rof == 1:
+                sLine = 'cp ' +  sFilename_rof_namelist + ' ./user_nl_mosart' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)
+                if iFlag_lnd == 1:
+                    pass
+                else:
+                    if iFlag_replace_dlnd_forcing==1:
+                        sLine = 'cp ' + sFilename_user_dlnd + ' ./user_dlnd.streams.txt.lnd.gpcc' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                    else:
+                        pass
+                    pass
+            else:
+                if iFlag_drof ==1:
+                    sLine =  ' ./xmlchange DROF_MOSART_YR_START=' +  sYear_data_start + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    sLine =  ' ./xmlchange DROF_MOSART_YR_END=' +  sYear_data_end + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    sLine =  ' ./xmlchange DROF_MOSART_YR_ALIGN=' +  sYear_data_start + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    sLine =  ' ./xmlchange ROF_DOMAIN_FILE=' +  os.path.basename(sFilename_rof_domain) +    '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)   
+
+                    #get path
+                    sPath_rof_domain = os.path.dirname(sFilename_rof_domain)
+                    sLine = ' ./xmlchange ROF_DOMAIN_PATH=' +  sPath_rof_domain + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    if iFlag_replace_drof_forcing ==1:
+                        sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.MOSART.gageheight' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                pass 
 
 
         sLine =  ' ./xmlchange CALENDAR=NO_LEAP' + '\n'
@@ -563,92 +659,6 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
         sLine = sLine.lstrip()
         ofs.write(sLine)
         
-    
-        if iFlag_atm==1:
-            pass
-        else:
-            if iFlag_datm ==1:
-
-                sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine)
-
-                sLine =  ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine)   
-
-                #get path
-                sPath_atm_domain = os.path.dirname(sFilename_atm_domain)
-                sLine = ' ./xmlchange ATM_DOMAIN_PATH=' +  sPath_atm_domain + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine)
-
-                if(iFlag_lnd_spinup==1):
-                    sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine)
-
-                #change forcing data
-                if iFlag_replace_datm_forcing==1:
-                    sLine = 'cp ' + sFilename_user_datm_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine) 
-                    sLine = 'cp ' + sFilename_user_datm_solar + ' ./user_datm.streams.txt.CLMGSWP3v1.Solar' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine) 
-                    sLine = 'cp ' + sFilename_user_datm_temp + ' ./user_datm.streams.txt.CLMGSWP3v1.TPQW' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine) 
-
-        if iFlag_lnd == 1:
-            sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)   
-
-            sPath_elm_domain = os.path.dirname(sFilename_lnd_domain)
-            sLine =  ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-
-            sLine =  ' ./xmlchange ELM_USRDAT_NAME=' +  sRegion  + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-
-            #we will generate clm name list in real time
-            sLine = 'cp ' + sFilename_lnd_namelist + ' ./user_nl_elm' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)      
-        else:
-            if iFlag_dlnd == 1:
-                sLine = 'cp ' + sFilename_dlnd_namelist + ' ./user_nl_dlnd' + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine)
-
-        #copy namelist
-        #the mosart will be constant
-        if iFlag_rof == 1:
-            sLine = 'cp ' +  sFilename_rof_namelist + ' ./user_nl_mosart' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-            if iFlag_lnd == 1:
-                pass
-            else:
-                if iFlag_replace_dlnd_forcing==1:
-                    sLine = 'cp ' + sFilename_user_dlnd + ' ./user_dlnd.streams.txt.lnd.gpcc' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine) 
-                else:
-                    pass
-        else:           
-            if iFlag_drof==1:
-                if iFlag_replace_drof_forcing ==1:
-                    sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.MOSART.Gageheight' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine) 
-                pass 
-            else:
-                pass
-            pass
 
         sLine = ' ./case.setup' + '\n'
         sLine = sLine.lstrip()

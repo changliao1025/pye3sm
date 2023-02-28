@@ -3,7 +3,7 @@ import numpy as np
 
 from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info
 
-from pye3sm.mesh.structured.e3sm_create_structured_domain_file import pye3sm_create_structured_domain_file
+from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 
 def mosart_create_domain_for_stream_file_2d(oCase_in, sFilename_domain_file_out):
 
@@ -45,7 +45,7 @@ def mosart_create_domain_for_stream_file_2d(oCase_in, sFilename_domain_file_out)
             aLatV_region[i, j, 2] = aLat[i, j] + dResolution_y * 0.5
             aLatV_region[i, j, 3] = aLat[i, j] - dResolution_y * 0.5
 
-    pye3sm_create_structured_domain_file(aLon_region, aLat_region, \
+    e3sm_create_structured_domain_file(aLon_region, aLat_region, \
     aLonV_region, aLatV_region,     sFilename_domain_file_out)
 
 

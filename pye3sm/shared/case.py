@@ -60,6 +60,7 @@ class pycase(object):
     sFilename_lnd_domain=''
     sFilename_dlnd_namelist=''
     #rof
+    sFilename_rof_domain=''
     sFilename_rof_namelist=''
     sFilename_drof_namelist=''
     sFilename_rof_input=''
@@ -76,7 +77,7 @@ class pycase(object):
         if 'iFlag_atm' in aParameter:
             self.iFlag_atm             = int(aParameter[ 'iFlag_atm'])
         if 'iFlag_datm' in aParameter:
-            self.iFlag_atm             = int(aParameter[ 'iFlag_datm'])
+            self.iFlag_datm             = int(aParameter[ 'iFlag_datm'])
 
         if 'iFlag_lnd_spinup' in aParameter:
             self.iFlag_lnd_spinup             = int(aParameter[ 'iFlag_lnd_spinup'])

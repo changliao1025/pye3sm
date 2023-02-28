@@ -211,7 +211,12 @@
         The mask file of rof
       </desc>
     </entry>
-  
+    <entry id="sFilename_rof_domain" value="">
+      <type>char</type>
+      <desc>
+        The mask file of rof
+      </desc>
+    </entry>
     <entry id="sFilename_rof_namelist" value="">
       <type>char</type>
       <desc>
