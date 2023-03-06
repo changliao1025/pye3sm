@@ -6,8 +6,8 @@ import numpy as np
 import netCDF4 as nc
 
 from pyearth.gis.location.calculate_polygon_area import calculate_polygon_area
-
-def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_domain_file_out, aArea_in = None):
+def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, 
+                                       sFilename_domain_file_out, aArea_in = None):
     """
     Create a domain file
 
@@ -41,9 +41,8 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     #check simplification setting
    
 
-    if ndim_vertex==2: #typical 2D. (m*n or m* 1)
-        nrow, ncolumn = aLon_region.shape
-  
+    if ndim_center==2: #typical 2D. (m*n or m* 1)
+        #nrow, ncolumn = aLon_region.shape  
         nrow, ncolumn, nvertex  = aLonV_region.shape
         pass
     else:
@@ -70,7 +69,7 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     aDimension_list0=list()    
     aDimension_list0.append('nrow')
-    aDimension_list1.append('ncolumn') 
+    aDimension_list0.append('ncolumn') 
     aDimension_tuple0 = tuple(aDimension_list0)
 
     aDimension_list1=list()

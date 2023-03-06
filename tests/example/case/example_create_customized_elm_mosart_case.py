@@ -21,7 +21,7 @@ from pye3sm.elm.mesh.elm_create_customized_domain import elm_create_customized_d
 from pye3sm.elm.mesh.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 
 from pye3sm.mosart.mesh.mosart_create_customized_domain import mosart_create_customized_domain
-from pye3sm.mosart.mesh.structured.twod.mosart_extract_elevation_profile_for_elm import mosart_extract_elevation_profile_for_elm, mosart_extract_variable_for_elm
+from pye3sm.mosart.mesh.structured.mosart_extract_elevation_profile_for_elm import mosart_extract_elevation_profile_for_elm, mosart_extract_variable_for_elm
 
 
 sModel = 'e3sm'
@@ -45,7 +45,7 @@ dResolution = 0.5
 aMask=None
 
 #case index and date
-iCase = 4
+iCase = 1
 
 sDate = '20230101'
 sDate_spinup = '20210209'

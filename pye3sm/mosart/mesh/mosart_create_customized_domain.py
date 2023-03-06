@@ -2,7 +2,7 @@ import os
 import numpy as np
 from pye3sm.mosart.mesh.unstructured.find_mosart_cell import find_mosart_cell
 
-from pye3sm.mosart.mesh.structured.twod.mosart_extract_by_cellid_2d_to_2d import mosart_extract_by_cellid_2d_to_2d
+from pye3sm.mosart.mesh.structured.mosart_extract_by_cellid_2d_to_2d import mosart_extract_by_cellid_2d_to_2d
 
 
 

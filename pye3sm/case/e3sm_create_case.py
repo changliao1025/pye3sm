@@ -76,7 +76,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
     sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'    
     sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
-    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.mosart.gageheight'
+    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART.gageheight'
     #GIT_HASH=`git log -n 1 --format=%h`
 
     sCasename = sDirectory_case + slash + sCase
@@ -438,8 +438,9 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
             ofs.write(sLine)
             sLine = 'cd $sDirectory_case_aux' +  '\n'
             ofs.write(sLine)
-            sLine = 'sbatch ' + sCase +'.job' '\n'
-            ofs.write(sLine)
+
+            #sLine = 'sbatch ' + sCase +'.job' '\n'
+            #ofs.write(sLine)
 
         ofs.close()
             
@@ -537,9 +538,9 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
 
-                    sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine)
+                    #sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
+                    #sLine = sLine.lstrip()
+                    #ofs.write(sLine)
 
                     sLine =  ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
                     sLine = sLine.lstrip()
@@ -630,6 +631,15 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
 
+                    sLine =  ' ./xmlchange DROF_MODE=MOSART' + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    
+                    #define rof grid
+                    #sLine =  ' ./xmlchange ROF_GRID='+ oE3SM_in.RES + '\n'
+                    #sLine = sLine.lstrip()
+                    #ofs.write(sLine)
+
                     sLine =  ' ./xmlchange ROF_DOMAIN_FILE=' +  os.path.basename(sFilename_rof_domain) +    '\n'
                     sLine = sLine.lstrip()
                     ofs.write(sLine)   
@@ -641,11 +651,10 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     ofs.write(sLine)
 
                     if iFlag_replace_drof_forcing ==1:
-                        sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.MOSART.gageheight' + '\n'
+                        sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.mosart.gageheight' + '\n'
                         sLine = sLine.lstrip()
                         ofs.write(sLine) 
                 pass 
-
 
         sLine =  ' ./xmlchange CALENDAR=NO_LEAP' + '\n'
         sLine = sLine.lstrip()
@@ -680,8 +689,49 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
 
         #we break them into two parts
     
-        os.chmod(sFilename_bash, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
+        
+        
+        # --------------------------------
+        # now adding a new bash for debug 
+        # it will scan the job file, but only copy some lines
+        # --------------------------------
+        sFilename_debug = sDirectory_case_aux + slash + sCase \
+             + slash + 'debug.sh'
+        # writing to file
+        ofs = open(sFilename_debug, 'w')
+        
 
+        # Using readlines()
+        ifs = open(sFilename_job, 'r')
+        Lines = ifs.readlines()
+
+        count = 0
+        # Strips the newline character
+        iFlag_finished = 0
+        for sLine in Lines:
+            if iFlag_finished ==1:
+                break
+            else:
+                pass
+            count += 1
+            sLine = sLine.lstrip()
+            if "SBATCH" in sLine:
+                pass
+            else:
+                if "SLURM_SUBMIT_DIR" in sLine:
+                    pass
+                else:
+                    if "case.setup" in sLine:
+                        iFlag_finished = 1
+                        pass
+                    else:
+                        pass
+
+                    ofs.write(sLine)
+        ofs.close()
+
+        os.chmod(sFilename_bash, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
+        os.chmod(sFilename_debug, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
 
         #change directory
         os.chdir(sDirectory_case_aux + slash + sCase)

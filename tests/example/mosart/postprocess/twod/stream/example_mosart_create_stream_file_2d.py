@@ -3,9 +3,9 @@ from pyearth.system.define_global_variables import *
  
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
-from pye3sm.mosart.general.structured.twod.stream.mosart_create_stream_file_2d import mosart_create_stream_file_2d
+from pye3sm.mosart.general.structured.stream.mosart_create_stream_file_2d import mosart_create_stream_file_2d
 
-from pye3sm.mosart.mesh.structured.twod.mosart_create_domain_for_stream_file_2d import mosart_create_domain_for_stream_file_2d
+from pye3sm.mosart.mesh.structured.mosart_create_domain_for_stream_file_2d import mosart_create_domain_for_stream_file_2d
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
