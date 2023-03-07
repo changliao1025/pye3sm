@@ -1,14 +1,9 @@
 
 from pye3sm.elm.mesh.structured.ComputeLatLonAtVertex import ComputeLatLonAtVertex
 from pye3sm.elm.mesh.unstructured.ReadConfigurationFile import ReadConfigurationFile
-
 from pye3sm.elm.mesh.structured.elm_create_structured_customized_surface_file import elm_create_structured_customized_surface_file
-
-#from pye3sm.elm.mesh.structured.twod.retired.elm_create_customized_domain_file_2d import elm_create_customized_domain_file_2d
 from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 from pye3sm.elm.mesh.unstructured.elm_create_unstructured_customized_surface_file import elm_create_unstructured_customized_surface_file
-
-#from pye3sm.elm.mesh.unstructured.retired.elm_create_customized_domain_file_1d import elm_create_customized_domain_file_1d
 from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_simple import e3sm_create_unstructured_domain_file_simple
 
 def elm_create_customized_domain( aLon, aLat, aMask_in, dLon, dLat, \

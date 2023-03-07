@@ -9,12 +9,12 @@ def mosart_create_domain_for_stream_file_2d(oCase_in, sFilename_domain_file_out)
 
     
     
-    aLon, aLat , aMask_ll= mosart_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ul= mosart_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask_ul = np.flip(aMask_ll, 0)
-    nrow = np.array(aMask_ll).shape[0]
-    ncolumn = np.array(aMask_ll).shape[1]
-    aMask_index_ll = np.where(aMask_ll==0)
+    aMask_ul = np.flip(aMask_ul, 0)
+    nrow = np.array(aMask_ul).shape[0]
+    ncolumn = np.array(aMask_ul).shape[1]
+    aMask_index_ll = np.where(aMask_ul==0)
     aMask_index_ul = np.where(aMask_ul==0)
 
 
@@ -47,11 +47,5 @@ def mosart_create_domain_for_stream_file_2d(oCase_in, sFilename_domain_file_out)
 
     e3sm_create_structured_domain_file(aLon_region, aLat_region, \
     aLonV_region, aLatV_region,     sFilename_domain_file_out)
-
-
-
-    
-
-
 
     return 

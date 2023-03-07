@@ -16,13 +16,13 @@ def e3sm_convert_unstructured_domain_file_to_scripgrid_file(sFilename_domain_in,
     for sKey, aValue in aDatasets.variables.items():      
 
         if sKey == 'xc':
-            grid_center_lon =  (aValue[:]).data
+            grid_center_lon =  (aValue[:]).data 
         if sKey == 'yc':
-            grid_center_lat =  (aValue[:]).data
+            grid_center_lat =  (aValue[:]).data 
         if sKey == 'xv':
-            grid_corner_lon =  (aValue[:]).data
+            grid_corner_lon =  (aValue[:]).data 
         if sKey == 'yv':
-            grid_corner_lat =  (aValue[:]).data
+            grid_corner_lat =  (aValue[:]).data 
         if sKey == 'mask':
             grid_imask =  (aValue[:]).data
         if sKey == 'area':
@@ -55,9 +55,9 @@ def e3sm_convert_unstructured_domain_file_to_scripgrid_file(sFilename_domain_in,
 
     for i in range ( ncell):
         for j in range(1, nvertex):
-            if grid_corner_lat[i, j] == -9999:
-                grid_corner_lat[i,j] = grid_corner_lat[i, j-1]
+            if grid_corner_lat[i,j] == -9999:                
                 grid_corner_lon[i,j] = grid_corner_lon[i, j-1]
+                grid_corner_lat[i,j] = grid_corner_lat[i, j-1]
   
 
     pDatasets_out = nc.Dataset(sFilename_script_out, mode='w', format='NETCDF3_CLASSIC')
@@ -123,3 +123,12 @@ def e3sm_convert_unstructured_domain_file_to_scripgrid_file(sFilename_domain_in,
     setattr(pDatasets_out,'Created_on',datetime.now().strftime('%c'))
 
     pDatasets_out.close()
+
+if __name__ == '__main__':
+
+
+    sFilename_domain = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_mpas.nc'
+  
+    sFilename_out = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_scripgrid_mpas.nc'
+  
+    e3sm_convert_unstructured_domain_file_to_scripgrid_file(sFilename_domain,sFilename_out)

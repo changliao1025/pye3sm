@@ -3,6 +3,7 @@ from netCDF4 import Dataset #read netcdf
 
 from pyearth.system.define_global_variables import *     
 from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
+
 def elm_retrieve_case_dimension_info(oCase_in):
     """
     should this support 2d or other scenarios
@@ -13,7 +14,6 @@ def elm_retrieve_case_dimension_info(oCase_in):
     Returns:
         _type_: _description_
     """
-    
     
     sWorkspace_simulation_case_run = oCase_in.sWorkspace_simulation_case_run
     sFilename_lnd_in = sWorkspace_simulation_case_run + slash + 'lnd_in'
@@ -37,6 +37,9 @@ def elm_retrieve_case_dimension_info(oCase_in):
     #but we can assume the mask is 1d
 
     #in unstrucutred mesh case, the resolution is meaningless.
+    aMask=np.flip(aMask, 0)   
+    aLon=np.flip(aLon, 0) 
+    aLat=np.flip(aLat, 0) 
 
     pShape = np.array(aMask).shape
 

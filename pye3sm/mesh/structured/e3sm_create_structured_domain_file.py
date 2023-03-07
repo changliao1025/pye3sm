@@ -12,8 +12,8 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     Create a domain file
 
     Args:
-        aLon_region (numpy): _description_
-        aLat_region (numpy): _description_
+        aLon_region (numpy): 2d array longitude
+        aLat_region (numpy): 2d array latitude
         aLonV_region (numpy): _description_
         aLatV_region (numpy): _description_
         sFilename_domain_file_out (_type_): _description_
@@ -24,6 +24,8 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     """ 
 
     print('  domain: ' + sFilename_domain_file_out)
+
+    print('  check input upside down!')
 
     # Check if the file is available   
     
@@ -48,19 +50,12 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     else:
         return
        
-
-    
     dimname = 'nrow'
     pDatasets_out.createDimension(dimname, nrow)
     dimname = 'ncolumn'
     pDatasets_out.createDimension(dimname,ncolumn)    
     dimname = 'nvertex'
     pDatasets_out.createDimension(dimname,nvertex)
-
-          
-   
-
-    
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #
@@ -107,20 +102,16 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     setattr(pDatasets_out,'Created_on',datetime.now().strftime('%c'))
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #
-    #                           Copy variables
-    #
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     for sKey, aValue in pDatasets_out.variables.items():   
         varname = sKey
         if varname == 'xc':
-            data = aLon_region
+            data = np.flip(aLon_region, 0) #aLon_region
         elif varname == 'yc':
-            data = aLat_region
+            data = np.flip(aLat_region, 0)
         elif varname == 'xv':
-            data = aLonV_region
+            data = np.flip(aLonV_region, 0)
         elif varname == 'yv':
-            data = aLatV_region
+            data = np.flip(aLatV_region, 0)
         elif varname == 'mask':
             data = np.ones( aShape_center)
         elif varname == 'frac':
@@ -128,11 +119,11 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
         elif varname == 'area':
             data = np.full( aShape_center, -9999, dtype = float )          
             if aArea_in is None:               
-                for j in range(  nrow ):
-                    for i in range(ncolumn):
-                        aLongitude_in = aLonV_region[j, i,: ].flatten()
-                        aLatitude_in = aLatV_region[j, i,:].flatten()
-                        data[j, i] = calculate_polygon_area(aLongitude_in, aLatitude_in,  iFlag_radius =1)                
+                for i in range(  nrow ):
+                    for j in range(ncolumn):
+                        aLongitude_in = aLonV_region[i, j,: ].flatten()
+                        aLatitude_in = aLatV_region[i, j,:].flatten()
+                        data[i, j] = calculate_polygon_area(aLongitude_in, aLatitude_in,  iFlag_radius =1)                
             
             else:
                 radius= 6378137.0                      
@@ -141,7 +132,7 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
         
         
            
-        aValue[:] = data 
+        aValue[:] = np.flip(data ,0)
 
     pDatasets_out.close()
 

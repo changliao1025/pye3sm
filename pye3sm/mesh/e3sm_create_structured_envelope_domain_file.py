@@ -51,9 +51,6 @@ def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFile
     #maybe adding a checkpoint here to confirm it
 
 
-    nrow0 = 180 / dResolution_y_in
-    ncolumn0 = 360 / dResolution_x_in
-
     nleft  = np.floor(  (dLon_min - (-180)) /(dResolution_x_in)  )
     nright = np.ceil(  (dLon_max - (-180)) /(dResolution_x_in)  )
 
@@ -72,13 +69,14 @@ def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFile
 
     for i in range(nrow):
         for j in range(ncolumn):
-            aLon_region[i, j] = (-180 + (nleft + j) * dResolution_x_in) + 0.5 * dResolution_x_in
-            aLat_region[i, j] = (90 - (ntop + i ) * dResolution_y_in ) + 0.5 * dResolution_y_in
-
-            aLonV_region[i, j, 0] = aLon_region[i, j] - 0.5 * dResolution_x_in
-            aLonV_region[i, j, 1] = aLon_region[i, j] - 0.5 * dResolution_x_in
-            aLonV_region[i, j, 2] = aLon_region[i, j] + 0.5 * dResolution_x_in
-            aLonV_region[i, j, 3] = aLon_region[i, j] + 0.5 * dResolution_x_in
+            #center
+            aLon_region[i, j] = -180 + (nleft + j) * dResolution_x_in + 0.5 * dResolution_x_in
+            aLat_region[i, j] = 90 - ( ntop + i)  * dResolution_y_in  - 0.5 * dResolution_y_in
+            #vertex
+            aLonV_region[i, j, 0] = aLon_region[i, j] + 0.5 * dResolution_x_in
+            aLonV_region[i, j, 1] = aLon_region[i, j] + 0.5 * dResolution_x_in
+            aLonV_region[i, j, 2] = aLon_region[i, j] - 0.5 * dResolution_x_in
+            aLonV_region[i, j, 3] = aLon_region[i, j] - 0.5 * dResolution_x_in
 
             aLatV_region[i, j, 0] = aLat_region[i, j] - 0.5 * dResolution_y_in
             aLatV_region[i, j, 1] = aLat_region[i, j] + 0.5 * dResolution_y_in
@@ -86,12 +84,6 @@ def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFile
             aLatV_region[i, j, 3] = aLat_region[i, j] - 0.5 * dResolution_y_in
     
     e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out)
-
-
-
-
-
-
 
     return
 

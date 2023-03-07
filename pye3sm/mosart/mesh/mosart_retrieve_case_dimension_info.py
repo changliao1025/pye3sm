@@ -30,14 +30,16 @@ def mosart_retrieve_case_dimension_info(oCase_in):
             aLon = (aValue[:]).data            
 
         if "latixy" == sKey:
-            aLat = (aValue[:]).data            
+            aLat = (aValue[:]).data   
+
+    aMask = np.flip(aMask, 0)   
+    aLon  = np.flip(aLon, 0) 
+    aLat  = np.flip(aLat, 0)       
     
     #it is unclear how the 2d look like
     #but we can assume the mask is 1d
 
     #in unstrucutred mesh case, the resolution is meaningless.
-
-
 
     pShape = np.array(aLon).shape
 
