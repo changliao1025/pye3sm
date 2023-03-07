@@ -9,7 +9,7 @@ from pyearth.gis.location.calculate_polygon_area import calculate_polygon_area
 
 def e3sm_create_unstructured_domain_file_simple(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_domain_file_out, aArea_in = None):
     """
-    Create a domain file
+    Create an unstructured domain file
 
     Args:
         aLon_region (numpy): _description_

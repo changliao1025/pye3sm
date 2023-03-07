@@ -4,6 +4,14 @@ import netCDF4 as nc
 from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFilename_structured_domain_file_out, 
                                                 dResolution_x_in, dResolution_y_in):
+    """This function uses a MPAS mesh domain file to generate a larger domain file that convers the MPAS domain
+
+    Args:
+        sFilename_domain_file_in (_type_): _description_
+        sFilename_structured_domain_file_out (_type_): _description_
+        dResolution_x_in (_type_): _description_
+        dResolution_y_in (_type_): _description_
+    """
     #this function creates a 2D structured domain file based on an unstructured domain file
 
     #read unstructured domain file

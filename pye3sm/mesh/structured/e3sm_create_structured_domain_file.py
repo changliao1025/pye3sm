@@ -9,11 +9,12 @@ from pyearth.gis.location.calculate_polygon_area import calculate_polygon_area
 def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, 
                                        sFilename_domain_file_out, aArea_in = None):
     """
-    Create a domain file
+    Create a structured domain file
+    
 
     Args:
-        aLon_region (numpy): 2d array longitude
-        aLat_region (numpy): 2d array latitude
+        aLon_region (numpy): 2d array longitude, the index starts from the upper left, different from netcdf lower left
+        aLat_region (numpy): 2d array latitude, the index starts from the upper left
         aLonV_region (numpy): _description_
         aLatV_region (numpy): _description_
         sFilename_domain_file_out (_type_): _description_

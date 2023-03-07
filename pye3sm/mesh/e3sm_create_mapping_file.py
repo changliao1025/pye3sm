@@ -1,6 +1,13 @@
 import subprocess
 #import esmpy
 def e3sm_create_mapping_file(sFilename_scrip_source, sFilename_scrip_targe, sFilename_map_out):
+    """generate a mapping file using a source and targe scrip grid files
+
+    Args:
+        sFilename_scrip_source (_type_): _description_
+        sFilename_scrip_targe (_type_): _description_
+        sFilename_map_out (_type_): _description_
+    """
 
     
     iFlag_method  =1  #command line method 
