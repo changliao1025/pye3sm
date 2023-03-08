@@ -15,10 +15,10 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     Args:
         aLon_region (numpy): 2d array longitude, the index starts from the upper left, different from netcdf lower left
         aLat_region (numpy): 2d array latitude, the index starts from the upper left
-        aLonV_region (numpy): _description_
-        aLatV_region (numpy): _description_
+        aLonV_region (numpy): vertices coordinates
+        aLatV_region (numpy): vertices coordinates
         sFilename_domain_file_out (_type_): _description_
-        aArea_in (numpy): _description_
+        aArea_in (numpy): the cell area in radians, if not provided, it will be calculated
 
     Returns:
         _type_: _description_
@@ -130,10 +130,11 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
                 radius= 6378137.0                      
                 dummy_data = np.array(aArea_in ) #m^2
                 data  = dummy_data / ( 4*np.pi*(radius**2) )
+            data = np.flip(data, 0)
         
         
            
-        aValue[:] = np.flip(data ,0)
+        aValue[:] = data
 
     pDatasets_out.close()
 
