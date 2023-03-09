@@ -92,8 +92,8 @@ def e3sm_convert_structured_domain_file_to_scripgrid_file(sFilename_domain_in, s
     for sKey, aValue in pDatasets_out.variables.items():   
         varname = sKey
         if varname == 'grid_dims':            
-            data = [nrow, ncolumn]       #these two are not clear, only one will work
-            data = [ncolumn, nrow]             
+            data = [nrow, ncolumn]       #this does not work
+            data = [ncolumn, nrow]       #this will work      
         elif varname == 'grid_center_lon':
             data = grid_center_lon    
         elif varname == 'grid_center_lat':

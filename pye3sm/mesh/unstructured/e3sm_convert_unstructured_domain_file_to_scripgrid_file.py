@@ -130,5 +130,9 @@ if __name__ == '__main__':
     sFilename_domain = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_mpas.nc'
   
     sFilename_out = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_scripgrid_mpas.nc'
+
+    sFilename_domain = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_halfdegree.nc'
+  
+    sFilename_out = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_scripgrid_halfdegree.nc'
   
     e3sm_convert_unstructured_domain_file_to_scripgrid_file(sFilename_domain,sFilename_out)

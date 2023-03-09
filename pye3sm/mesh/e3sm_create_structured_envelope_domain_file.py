@@ -2,6 +2,8 @@ import os
 import numpy as np
 import netCDF4 as nc
 from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
+
+from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_simple  import e3sm_create_unstructured_domain_file_simple
 def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFilename_structured_domain_file_out, 
                                                 dResolution_x_in, dResolution_y_in):
     """This function uses a MPAS mesh domain file to generate a larger domain file that convers the MPAS domain
@@ -91,7 +93,20 @@ def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFile
             aLatV_region[i, j, 2] = aLat_region[i, j] + 0.5 * dResolution_y_in
             aLatV_region[i, j, 3] = aLat_region[i, j] - 0.5 * dResolution_y_in
     
-    e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out)
+    #the old unsafe method
+    #e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out)
+
+    #the new method using 1D 
+
+    aLon_region = np.reshape(aLon_region, (nrow*ncolumn))
+    aLat_region = np.reshape(aLat_region, (nrow*ncolumn))
+
+    aLonV_region = np.reshape(aLonV_region, (nrow*ncolumn, 4))
+    aLatV_region = np.reshape(aLatV_region, (nrow*ncolumn, 4))
+
+    
+    e3sm_create_unstructured_domain_file_simple(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out)
+
 
     return
 
