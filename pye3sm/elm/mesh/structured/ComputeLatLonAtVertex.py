@@ -1,7 +1,6 @@
 
 import numpy as np
 
-
 def ComputeLatLonAtVertex(iFlag_1d,  aLon, aLat, dLon, dLat):
 
 

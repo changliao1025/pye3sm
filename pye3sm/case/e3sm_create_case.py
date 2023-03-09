@@ -2,12 +2,24 @@ import os, sys, stat
 import subprocess
 from pyearth.system.define_global_variables import *
 
-def e3sm_create_case(oE3SM_in, \
-                     oCase_in,\
-                     iFlag_replace_datm_forcing=None,\
-                     iFlag_replace_dlnd_forcing=None,\
-                     iYear_data_end_in = None, \
+def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
+                     iFlag_replace_dlnd_forcing=None,
+                     iFlag_replace_drof_forcing = None,
+                     iYear_data_end_in = None, 
                      iYear_data_start_in = None):
+    """
+    create an E3SM case
+
+    Args:
+        oE3SM_in (_type_): _description_
+        oCase_in (_type_): _description_
+        iFlag_replace_datm_forcing (_type_, optional): _description_. Defaults to None.
+        iFlag_replace_dlnd_forcing (_type_, optional): _description_. Defaults to None.
+        iFlag_replace_drof_forcing (_type_, optional): _description_. Defaults to None.
+        iYear_data_end_in (_type_, optional): _description_. Defaults to None.
+        iYear_data_start_in (_type_, optional): _description_. Defaults to None.
+    """
+    
     #e3sm attributes
     iFlag_branch = oE3SM_in.iFlag_branch
     iFlag_debug = oE3SM_in.iFlag_debug
@@ -21,19 +33,25 @@ def e3sm_create_case(oE3SM_in, \
     PROJECT = oE3SM_in.PROJECT
     MACH = oE3SM_in.MACH
     sCIME_directory = oE3SM_in.sCIME_directory
-
     sEmail = oE3SM_in.sEmail
     iFlag_debug_case = oCase_in.iFlag_debug
     sRegion = oCase_in.sRegion
     #case attributes
-
     sDirectory_case = oCase_in.sDirectory_case
     sDirectory_case_aux = oCase_in.sDirectory_case_aux
     sDirectory_run = oCase_in.sDirectory_run
-    iFlag_elm_spinup=oCase_in.iFlag_elm_spinup
+
+    
     iFlag_atm = oCase_in.iFlag_atm
-    iFlag_mosart = oCase_in.iFlag_mosart
-    iFlag_elm = oCase_in.iFlag_elm
+    iFlag_datm = oCase_in.iFlag_datm
+
+    iFlag_lnd = oCase_in.iFlag_lnd
+    iFlag_dlnd = oCase_in.iFlag_dlnd
+    iFlag_lnd_spinup=oCase_in.iFlag_lnd_spinup
+
+    iFlag_rof = oCase_in.iFlag_rof
+    iFlag_drof = oCase_in.iFlag_drof
+    
     #start
     #currently we only need to calibrate H2SC so I will not use advanced I/O
     #we will use the same variables used by corresponding CIME python script
@@ -42,21 +60,23 @@ def e3sm_create_case(oE3SM_in, \
     sModel = oCase_in.sModel #'h2sc'
     sCase = oCase_in.sCase
 
-
     sFilename_atm_domain = oCase_in.sFilename_atm_domain
     sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
 
-    sFilename_elm_namelist = oCase_in.sFilename_elm_namelist
-    sFilename_mosart_namelist = oCase_in.sFilename_mosart_namelist
+    sFilename_lnd_namelist = oCase_in.sFilename_lnd_namelist
+    sFilename_dlnd_namelist = oCase_in.sFilename_dlnd_namelist    
+    sFilename_lnd_domain = oCase_in.sFilename_lnd_domain
+    sFilename_lnd_surfacedata = oCase_in.sFilename_lnd_surfacedata
 
-    sFilename_elm_domain = oCase_in.sFilename_elm_domain
-    sFilename_elm_surfacedata = oCase_in.sFilename_elm_surfacedata
+    sFilename_rof_domain = oCase_in.sFilename_rof_domain
+    sFilename_rof_namelist = oCase_in.sFilename_rof_namelist
+    sFilename_drof_namelist = oCase_in.sFilename_drof_namelist
 
     sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
     sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
-    sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'
-
+    sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'    
     sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
+    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART.gageheight'
     #GIT_HASH=`git log -n 1 --format=%h`
 
     sCasename = sDirectory_case + slash + sCase
@@ -90,7 +110,24 @@ def e3sm_create_case(oE3SM_in, \
 
 
     if iFlag_debug_case ==1:
-        if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit
+        if(iFlag_continue == 1): #special condition, this is a continue run, may debug, also with resubmit
+            if (iFlag_debug ==1):                
+                #debug
+                sCommand = sPython + ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand)
+                p.wait()    
+                #Build and submit
+                sCommand = sPython + ' ./case.build' + '\n'
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand, shell= True)
+                p.wait()
+                pass            
+            else:
+                pass
+                
+            pass
+        else: #normal condition, no continue, no debug, but with resubmit
             #remove case directory
             if (os.path.exists(sCasename)):
                 sCommand = 'rm -rf '  + sCasename
@@ -157,43 +194,7 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            if(iFlag_branch != 1):
-                sCommand = sPython + ' ./xmlchange RUN_TYPE=startup' + '\n'
-                sCommand = sCommand.lstrip()
-                p = subprocess.Popen(sCommand, shell= True)
-                p.wait()
-    
-                #env_run.xml: Sets runtime settings such as length of run, frequency of restarts, output of     coupler diagnostics,
-                #and short-term and long-term archiving. This file can be edited at any time before a job   starts.
-                sCommand = sPython + ' ./xmlchange RUN_STARTDATE=' + sYear_start +'-01-01,STOP_OPTION=nyears,   STOP_N='+ sYear + '\n'
-                sCommand = sCommand.lstrip()
-                p = subprocess.Popen(sCommand, shell= True)
-                p.wait()
-    
-                #sCommand = sPython + ' ./xmlchange REST_OPTION=nyears,REST_N=10' + '\n'
-                #sCommand = sCommand.lstrip()
-                #p = subprocess.Popen(sCommand, shell= True)
-                #p.wait()
-    
-                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=' + sYear_data_start + '\n'
-                sCommand = sCommand.lstrip()
-                p = subprocess.Popen(sCommand, shell= True)
-                p.wait()
-    
-                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_END=' + sYear_data_end + '\n'
-                sCommand = sCommand.lstrip()
-                p = subprocess.Popen(sCommand, shell= True)
-                p.wait()
-    
-                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_start + '\n'  #sYear_start
-                sCommand = sCommand.lstrip()
-                p = subprocess.Popen(sCommand, shell= True)
-                p.wait()
-
-                
-                
-                pass
-            else: ##branch run
+            if(iFlag_branch == 1): #branch run
                 sCommand = sPython + ' ./xmlchange RUN_TYPE=branch' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
@@ -232,9 +233,46 @@ def e3sm_create_case(oE3SM_in, \
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
+
+                
+                
                 pass
-            
-                        
+            else: 
+                sCommand = sPython + ' ./xmlchange RUN_TYPE=startup' + '\n'
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand, shell= True)
+                p.wait()
+    
+                #env_run.xml: Sets runtime settings such as length of run, frequency of restarts, output of     coupler diagnostics,
+                #and short-term and long-term archiving. This file can be edited at any time before a job   starts.
+                sCommand = sPython + ' ./xmlchange RUN_STARTDATE=' + sYear_start +'-01-01,STOP_OPTION=nyears,   STOP_N='+ sYear + '\n'
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand, shell= True)
+                p.wait()
+    
+                #sCommand = sPython + ' ./xmlchange REST_OPTION=nyears,REST_N=10' + '\n'
+                #sCommand = sCommand.lstrip()
+                #p = subprocess.Popen(sCommand, shell= True)
+                #p.wait()
+    
+                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=' + sYear_data_start + '\n'
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand, shell= True)
+                p.wait()
+    
+                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_END=' + sYear_data_end + '\n'
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand, shell= True)
+                p.wait()
+    
+                sCommand = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_start + '\n'  #sYear_start
+                sCommand = sCommand.lstrip()
+                p = subprocess.Popen(sCommand, shell= True)
+                p.wait()
+
+                
+                pass
+                  
             
             #sCommand = sPython + ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
             #sCommand = sCommand.lstrip()
@@ -256,7 +294,7 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_elm_domain) +    '\n'
+            sCommand = sPython + ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()        
@@ -268,7 +306,7 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            sPath_elm_domain = os.path.dirname(sFilename_elm_domain)
+            sPath_elm_domain = os.path.dirname(sFilename_lnd_domain)
             sCommand = sPython + ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
@@ -279,82 +317,64 @@ def e3sm_create_case(oE3SM_in, \
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-    
-            #copy namelist
-            #the mosart will be constant
-            sCommand = 'cp ' +  sFilename_mosart_namelist + ' ./user_nl_mosart' + '\n'
-            sCommand = sCommand.lstrip()
-            p = subprocess.Popen(sCommand, shell= True)
-            p.wait()
-            #we will generate clm name list in real time
-            if iFlag_elm ==1:
-                sCommand = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
+            if (iFlag_atm ==1):
+                pass
+            else:
+                if (iFlag_datm==1):
+                    if(iFlag_lnd_spinup==1):
+                        sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
+                        sCommand = sCommand.lstrip()
+                        p = subprocess.Popen(sCommand, shell= True)
+                        p.wait()
+                    else:
+                        pass
+
+            #we will generate elm name list in real time
+            if iFlag_lnd ==1:
+                sCommand = 'cp ' + sFilename_lnd_namelist + ' ./user_nl_elm' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
-                p.wait()        
-    
-            if(iFlag_elm_spinup==1):
-                sCommand = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
+                p.wait()    
+            else:
+                pass      
+
+            if iFlag_rof ==1:               
+                sCommand = 'cp ' +  sFilename_rof_namelist + ' ./user_nl_mosart' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
-                p.wait()
-    
-            
-
-
+                p.wait() 
+            else:
+                if iFlag_drof ==1:
+                    sCommand = 'cp ' +  sFilename_drof_namelist + ' ./user_nl_drof' + '\n'
+                    sCommand = sCommand.lstrip()
+                    p = subprocess.Popen(sCommand, shell= True)
+                    p.wait() 
+                    pass
+                else:
+                    pass
+        
     
             #Build and submit
-            if (iFlag_debug == 1):
-            
+            if (iFlag_debug == 1):            
                 sCommand = sPython + ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
                 sCommand = sCommand.lstrip()
                 p = subprocess.Popen(sCommand, shell= True)
                 p.wait()
-                pass
-                
-            
+                pass           
             
             sCommand = sPython + ' ./case.build' + '\n'
             sCommand = sCommand.lstrip()
             p = subprocess.Popen(sCommand, shell= True)
             p.wait()
     
-            if (iFlag_debug != 1):
-                pass
-            else:
-                #create the timing.checkpoints folder for debug
-    
-    
+            if (iFlag_debug == 1):#create the timing.checkpoints folder for debug
                 os.chdir(sRunname)
                 os.mkdir('timing')
                 os.chdir('timing')
                 os.mkdir('checkpoints')
-    
-        else: #special condition, this is a continue run, may debug, also with resubmit
-        
-        
-            if (iFlag_debug !=1):
-                #not debugging
-                #sCommand = sPython + ' ./xmlchange RESUBMIT=5' + '\n'
-                #sCommand = sCommand.lstrip()
-                #p = subprocess.Popen(sCommand, shell= True)
-                #p.wait()
                 pass
-            
-            
-            
-            else:
-                #debug,
-                sCommand = sPython + ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
-                sCommand = sCommand.lstrip()
-                p = subprocess.Popen(sCommand)
-                p.wait()
-    
-                #Build and submit
-                sCommand = sPython + ' ./case.build' + '\n'
-                sCommand = sCommand.lstrip()
-                p = subprocess.Popen(sCommand, shell= True)
-                p.wait()
+            else:                
+                pass            
     
         #run the script anyway
         os.chdir(sCasename)
@@ -379,7 +399,9 @@ def e3sm_create_case(oE3SM_in, \
         sLine = 'rm -rf '  + sRunname + '\n'
         ofs.write(sLine)   
 
-        if(iFlag_continue != 1): #normal condition, no continue, no debug, but with resubmit            
+        if(iFlag_continue == 1):
+            pass
+        else: #normal condition, no continue, no debug, but with resubmit            
             #remove case directory
             if (os.path.exists(sCasename)):
                 sCommand = 'rm -rf '  + sCasename
@@ -416,8 +438,9 @@ def e3sm_create_case(oE3SM_in, \
             ofs.write(sLine)
             sLine = 'cd $sDirectory_case_aux' +  '\n'
             ofs.write(sLine)
-            sLine = 'sbatch ' + sCase +'.job' '\n'
-            ofs.write(sLine)
+
+            #sLine = 'sbatch ' + sCase +'.job' '\n'
+            #ofs.write(sLine)
 
         ofs.close()
             
@@ -477,7 +500,9 @@ def e3sm_create_case(oE3SM_in, \
         sLine = ' ./xmlchange NTASKS=' + sNtask + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
-        if(iFlag_branch != 1):
+        if(iFlag_branch == 1):
+            pass
+        else:
             sLine = ' ./xmlchange RUN_TYPE=startup' + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
@@ -500,40 +525,136 @@ def e3sm_create_case(oE3SM_in, \
             if iFlag_atm == 1:
                 pass
             else:
-                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=' + sYear_data_start + '\n'
+                if iFlag_datm ==1:
+                    sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=' + sYear_data_start + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_END=' + sYear_data_end + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_start + '\n' #sYear_start
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    #sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
+                    #sLine = sLine.lstrip()
+                    #ofs.write(sLine)
+
+                    sLine =  ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)   
+
+                    #get path
+                    sPath_atm_domain = os.path.dirname(sFilename_atm_domain)
+                    sLine = ' ./xmlchange ATM_DOMAIN_PATH=' +  sPath_atm_domain + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    if(iFlag_lnd_spinup==1):
+                        sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine)
+
+                    #change forcing data
+                    if iFlag_replace_datm_forcing==1:
+                        sLine = 'cp ' + sFilename_user_datm_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                        sLine = 'cp ' + sFilename_user_datm_solar + ' ./user_datm.streams.txt.CLMGSWP3v1.Solar' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                        sLine = 'cp ' + sFilename_user_datm_temp + ' ./user_datm.streams.txt.CLMGSWP3v1.TPQW' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                    pass
+
+            if iFlag_lnd == 1:
+                sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)   
+
+                sPath_elm_domain = os.path.dirname(sFilename_lnd_domain)
+                sLine =  ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
 
-                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_END=' + sYear_data_end + '\n'
+                sLine =  ' ./xmlchange ELM_USRDAT_NAME=' +  sRegion  + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
 
-                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_start + '\n' #sYear_start
+                #we will generate clm name list in real time
+                sLine = 'cp ' + sFilename_lnd_namelist + ' ./user_nl_elm' + '\n'
                 sLine = sLine.lstrip()
-                ofs.write(sLine)
-
-            if iFlag_elm == 1:
+                ofs.write(sLine)      
                 pass
             else:
-                sLine =  ' ./xmlchange DLND_CPLHIST_YR_START=' +  sYear_data_start + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine)
-                sLine =  ' ./xmlchange DLND_CPLHIST_YR_END=' +  sYear_data_end + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine)
-                sLine =  ' ./xmlchange DLND_CPLHIST_YR_ALIGN=' +  sYear_data_start + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine)
+                if iFlag_dlnd ==1:
+                    sLine =  ' ./xmlchange DLND_CPLHIST_YR_START=' +  sYear_data_start + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    sLine =  ' ./xmlchange DLND_CPLHIST_YR_END=' +  sYear_data_end + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    sLine =  ' ./xmlchange DLND_CPLHIST_YR_ALIGN=' +  sYear_data_start + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
 
-        if iFlag_atm ==1:
-            sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-        else:
-            sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-            pass
+                    sLine = 'cp ' + sFilename_dlnd_namelist + ' ./user_nl_dlnd' + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+            
+            if iFlag_rof == 1:
+                sLine = 'cp ' +  sFilename_rof_namelist + ' ./user_nl_mosart' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)
+                if iFlag_lnd == 1:
+                    pass
+                else:
+                    if iFlag_replace_dlnd_forcing==1:
+                        sLine = 'cp ' + sFilename_user_dlnd + ' ./user_dlnd.streams.txt.lnd.gpcc' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                    else:
+                        pass
+                    pass
+            else:
+                if iFlag_drof ==1:
+                    sLine =  ' ./xmlchange DROF_MOSART_YR_START=' +  sYear_data_start + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    sLine =  ' ./xmlchange DROF_MOSART_YR_END=' +  sYear_data_end + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    sLine =  ' ./xmlchange DROF_MOSART_YR_ALIGN=' +  sYear_data_start + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    sLine =  ' ./xmlchange DROF_MODE=MOSART' + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+                    
+                    #define rof grid
+                    #sLine =  ' ./xmlchange ROF_GRID='+ oE3SM_in.RES + '\n'
+                    #sLine = sLine.lstrip()
+                    #ofs.write(sLine)
+
+                    sLine =  ' ./xmlchange ROF_DOMAIN_FILE=' +  os.path.basename(sFilename_rof_domain) +    '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)   
+
+                    #get path
+                    sPath_rof_domain = os.path.dirname(sFilename_rof_domain)
+                    sLine = ' ./xmlchange ROF_DOMAIN_PATH=' +  sPath_rof_domain + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
+
+                    if iFlag_replace_drof_forcing ==1:
+                        sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.mosart.gageheight' + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine) 
+                pass 
 
         sLine =  ' ./xmlchange CALENDAR=NO_LEAP' + '\n'
         sLine = sLine.lstrip()
@@ -547,80 +668,6 @@ def e3sm_create_case(oE3SM_in, \
         sLine = sLine.lstrip()
         ofs.write(sLine)
         
-    
-        sLine =  ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
-        sLine = sLine.lstrip()
-        ofs.write(sLine)
-
-        sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_elm_domain) +    '\n'
-        sLine = sLine.lstrip()
-        ofs.write(sLine)       
-
-        #get path
-        sPath_atm_domain = os.path.dirname(sFilename_atm_domain)
-        sLine = ' ./xmlchange ATM_DOMAIN_PATH=' +  sPath_atm_domain + '\n'
-        sLine = sLine.lstrip()
-        ofs.write(sLine)
-
-        sPath_elm_domain = os.path.dirname(sFilename_elm_domain)
-        sLine =  ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
-        sLine = sLine.lstrip()
-        ofs.write(sLine)
-        
-        if iFlag_elm == 1:
-            sLine =  ' ./xmlchange ELM_USRDAT_NAME=' +  sRegion  + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-
-        #copy namelist
-        #the mosart will be constant
-        if iFlag_mosart ==1:
-            sLine = 'cp ' +  sFilename_mosart_namelist + ' ./user_nl_mosart' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-            if iFlag_elm == 1:
-                pass
-            else:
-                if iFlag_replace_dlnd_forcing==1:
-                    sLine = 'cp ' + sFilename_user_dlnd + ' ./user_dlnd.streams.txt.lnd.gpcc' + '\n'
-                    sLine = sLine.lstrip()
-                    ofs.write(sLine) 
-                else:
-                    pass
-        else:            
-            pass
-        if iFlag_elm ==1:
-            #we will generate clm name list in real time
-            sLine = 'cp ' + sFilename_elm_namelist + ' ./user_nl_elm' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)      
-
-            #change forcing data
-            if iFlag_replace_datm_forcing==1:
-                sLine = 'cp ' + sFilename_user_datm_prec + ' ./user_datm.streams.txt.CLMGSWP3v1.Precip' + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine) 
-                sLine = 'cp ' + sFilename_user_datm_solar + ' ./user_datm.streams.txt.CLMGSWP3v1.Solar' + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine) 
-                sLine = 'cp ' + sFilename_user_datm_temp + ' ./user_datm.streams.txt.CLMGSWP3v1.TPQW' + '\n'
-                sLine = sLine.lstrip()
-                ofs.write(sLine) 
-        else:
-            sLine = 'cp ' + sFilename_elm_namelist + ' ./user_nl_dlnd' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-
-            
-          
-
-            pass
-                  
-
-        if(iFlag_elm_spinup==1):
-            sLine = 'cp ' + sFilename_datm_namelist + ' ./user_nl_datm' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
 
         sLine = ' ./case.setup' + '\n'
         sLine = sLine.lstrip()
@@ -628,17 +675,7 @@ def e3sm_create_case(oE3SM_in, \
 
         sLine = './preview_namelists' + '\n'
         sLine = sLine.lstrip()
-        ofs.write(sLine)   
-
-        #Build and submit
-        if (iFlag_debug == 1):
-        
-            sLine = ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
-            sLine = sLine.lstrip()
-            ofs.write(sLine)
-            pass
-            
-        
+        ofs.write(sLine)        
         
         sLine = ' ./case.build' + '\n'
         sLine = sLine.lstrip()
@@ -652,8 +689,49 @@ def e3sm_create_case(oE3SM_in, \
 
         #we break them into two parts
     
-        os.chmod(sFilename_bash, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
+        
+        
+        # --------------------------------
+        # now adding a new bash for debug 
+        # it will scan the job file, but only copy some lines
+        # --------------------------------
+        sFilename_debug = sDirectory_case_aux + slash + sCase \
+             + slash + 'debug.sh'
+        # writing to file
+        ofs = open(sFilename_debug, 'w')
+        
 
+        # Using readlines()
+        ifs = open(sFilename_job, 'r')
+        Lines = ifs.readlines()
+
+        count = 0
+        # Strips the newline character
+        iFlag_finished = 0
+        for sLine in Lines:
+            if iFlag_finished ==1:
+                break
+            else:
+                pass
+            count += 1
+            sLine = sLine.lstrip()
+            if "SBATCH" in sLine:
+                pass
+            else:
+                if "SLURM_SUBMIT_DIR" in sLine:
+                    pass
+                else:
+                    if "case.setup" in sLine:
+                        iFlag_finished = 1
+                        pass
+                    else:
+                        pass
+
+                    ofs.write(sLine)
+        ofs.close()
+
+        os.chmod(sFilename_bash, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
+        os.chmod(sFilename_debug, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
 
         #change directory
         os.chdir(sDirectory_case_aux + slash + sCase)

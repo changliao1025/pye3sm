@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 from netCDF4 import Dataset
-def extract_mosart_elevation_profile_for_elm(sFilename_mosart_in):
+def mosart_extract_elevation_profile_for_elm(sFilename_mosart_in):
     aDatasets = Dataset(sFilename_mosart_in)
     netcdf_format = aDatasets.file_format
     aElevation=list()
@@ -65,7 +65,7 @@ def extract_mosart_elevation_profile_for_elm(sFilename_mosart_in):
 
     return aElevation
 
-def extract_mosart_variable_for_elm(sFilename_mosart_in, aVariable_in):
+def mosart_extract_variable_for_elm(sFilename_mosart_in, aVariable_in):
     aDatasets = Dataset(sFilename_mosart_in)
     netcdf_format = aDatasets.file_format
     aVariable=list()

@@ -94,11 +94,15 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     return config
 
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
-                                        iFlag_elm_spinup_in = None, \
+                                       
                                         iFlag_same_grid_in= None,\
-                                            iFlag_elm_in =None,\
-                                                iFlag_mosart_in = None,\
                                             iFlag_atm_in= None,\
+                                                iFlag_datm_in = None,
+                                            iFlag_lnd_in =None,\
+                                                 iFlag_dlnd_in =None,\
+                                                 iFlag_lnd_spinup_in = None, \
+                                                iFlag_rof_in = None,\
+                                            iFlag_drof_in = None,\
                                         iCase_index_in = None, \
                                         iYear_start_in = None,\
                                         iYear_end_in = None, \
@@ -113,13 +117,15 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
                                                 sRegion_in = None,\
                                         sLabel_y_in = None, \
                                         sVariable_in = None, \
-                                        sFilename_elm_namelist_in = None,\
-                                        sFilename_datm_namelist_in = None, \
-                                     sFilename_mosart_namelist_in = None,\
-                                            sFilename_atm_domain_in = None,
-                                            sFilename_elm_domain_in=None,\
-                                                sFilename_mosart_domain_in=None,\
-                                                sFilename_mosart_parameter_in=None,
+                                           sFilename_atm_domain_in = None, 
+                                           sFilename_datm_namelist_in = None, \
+                                        sFilename_lnd_namelist_in = None,\
+                                         sFilename_lnd_domain_in=None,\
+                                            sFilename_dlnd_namelist_in = None, \
+                                     sFilename_rof_namelist_in = None,\
+                                                sFilename_rof_domain_in=None,\
+                                                sFilename_rof_parameter_in=None,
+                                                sFilename_drof_namelist_in = None, \
                                         sWorkspace_data_in = None,\
                                         sWorkspace_scratch_in=None):
     #read the default configuration
@@ -132,25 +138,40 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sModel = config['sModel']
     sRegion = config['sRegion']
 
-    if iFlag_elm_spinup_in is not None:
-        iFlag_elm_spinup = iFlag_elm_spinup_in
-    else:
-        iFlag_elm_spinup = 0
-    
-    if iFlag_elm_in is not None:
-        iFlag_elm = iFlag_elm_in
-    else:
-        iFlag_elm = 1
-
-    if iFlag_mosart_in is not None:
-        iFlag_mosart = iFlag_mosart_in
-    else:
-        iFlag_mosart = 0
-
     if iFlag_atm_in is not None:
         iFlag_atm = iFlag_atm_in
     else:
         iFlag_atm = 0
+    
+    if iFlag_datm_in is not None:
+        iFlag_datm = iFlag_datm_in
+    else:
+        iFlag_datm = 0
+    
+    if iFlag_lnd_in is not None:
+        iFlag_lnd = iFlag_lnd_in
+    else:
+        iFlag_lnd = 1
+
+    if iFlag_dlnd_in is not None:
+        iFlag_dlnd = iFlag_dlnd_in
+    else:
+        iFlag_dlnd = 1
+
+    if iFlag_lnd_spinup_in is not None:
+        iFlag_lnd_spinup = iFlag_lnd_spinup_in
+    else:
+        iFlag_lnd_spinup = 0
+
+    if iFlag_rof_in is not None:
+        iFlag_rof = iFlag_rof_in
+    else:
+        iFlag_rof = 0
+
+    if iFlag_drof_in is not None:
+        iFlag_drof = iFlag_drof_in
+    else:
+        iFlag_drof = 0
 
     
 
@@ -238,8 +259,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sLabel_y = ''
 
     config['iFlag_atm'] =  "{:01d}".format(iFlag_atm)
-    config['iFlag_elm'] =  "{:01d}".format(iFlag_elm)
-    config['iFlag_mosart'] =  "{:01d}".format(iFlag_mosart)
+    config['iFlag_datm'] =  "{:01d}".format(iFlag_datm)
+    config['iFlag_lnd'] =  "{:01d}".format(iFlag_lnd)
+    config['iFlag_dlnd'] =  "{:01d}".format(iFlag_dlnd)
+    config['iFlag_rof'] =  "{:01d}".format(iFlag_rof)
+    config['iFlag_drof'] =  "{:01d}".format(iFlag_drof)
 
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
@@ -249,7 +273,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
 
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
-    config['iFlag_elm_spinup'] = "{:01d}".format(iFlag_elm_spinup)
+    config['iFlag_lnd_spinup'] = "{:01d}".format(iFlag_lnd_spinup)
 
     nYear = iYear_end - iYear_start + 1
     config['nYear'] =  "{:03d}".format(nYear)
@@ -267,10 +291,13 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sWorkspace_scratch = config['sWorkspace_scratch']
 
     sFilename_atm_domain= config['sFilename_atm_domain']
-    sFilename_elm_domain= config['sFilename_elm_domain']
 
-    sFilename_mosart_namelist= config['sFilename_mosart_namelist']
-    sFilename_mosart_input= config['sFilename_mosart_input']
+    sFilename_lnd_domain= config['sFilename_lnd_domain']
+
+    sFilename_rof_domain= config['sFilename_rof_domain']
+
+    sFilename_rof_namelist= config['sFilename_rof_namelist']
+    sFilename_rof_input= config['sFilename_rof_input']
 
     
     if sWorkspace_data_in is not None:
@@ -297,18 +324,6 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sLine = 'The default workspace scratch will be used: ' + sWorkspace_scratch 
         print(sLine)
 
-    #several namelist maybe used if we need to change parameters
-    if sFilename_elm_namelist_in is not None:
-        sFilename_elm_namelist = sFilename_elm_namelist_in
-    else:
-        sFilename_elm_namelist = sWorkspace_scratch + slash + '04model' + slash \
-            + sModel + slash + sRegion + slash \
-            + 'cases' + slash + 'user_nl_elm'
-        if os.path.exists(sFilename_elm_namelist):
-            sLine = 'A default ELM namelist was found at: ' + sFilename_elm_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
-            print(sLine)
-        else:
-            print('A default ELM namelist was not found, you will not be able to use it without specifying it first.' )
 
     if sFilename_datm_namelist_in is not None:
         sFilename_datm_namelist = sFilename_datm_namelist_in
@@ -322,29 +337,48 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         else:
             print('A default datm namelist was not found, it may be created.' )
 
-    #update mask if region changes
-    if sFilename_mosart_parameter_in is not None:
-        sFilename_mosart_input = sFilename_mosart_parameter_in
-    else:
-        sFilename_mosart_input = sWorkspace_data + slash \
-            + sModel + slash + sRegion + slash \
-            + 'raster' + slash + 'dem' + slash \
-            + 'MOSART_Global_half_20180606c.chang_9999.nc'
-        if os.path.exists(sFilename_mosart_input):
-            sLine = 'A default MOSART mask was found at: ' + sFilename_mosart_input + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
-            print(sLine)
-        else:
-            print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
-    
+ 
     if sFilename_atm_domain_in is not None:
         sFilename_atm_domain = sFilename_atm_domain_in
         
 
-    if sFilename_elm_domain_in is not None:
-        sFilename_elm_domain = sFilename_elm_domain_in
+    if sFilename_lnd_domain_in is not None:
+        sFilename_lnd_domain = sFilename_lnd_domain_in
 
-    if sFilename_mosart_namelist_in is not None:
-        sFilename_mosart_namelist = sFilename_mosart_namelist_in    
+    #several namelist maybe used if we need to change parameters
+    if sFilename_lnd_namelist_in is not None:
+        sFilename_lnd_namelist = sFilename_lnd_namelist_in
+    else:
+        sFilename_lnd_namelist = sWorkspace_scratch + slash + '04model' + slash \
+            + sModel + slash + sRegion + slash \
+            + 'cases' + slash + 'user_nl_elm'
+        if os.path.exists(sFilename_lnd_namelist):
+            sLine = 'A default LND namelist was found at: ' + sFilename_lnd_namelist + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            print(sLine)
+        else:
+            print('A default LND namelist was not found, you will not be able to use it without specifying it first.' )
+
+
+    #update mask if region changes
+
+    if sFilename_rof_domain_in is not None:
+        sFilename_rof_domain = sFilename_rof_domain_in
+
+    if sFilename_rof_parameter_in is not None:
+        sFilename_rof_input = sFilename_rof_parameter_in
+    else:
+        sFilename_rof_input = sWorkspace_data + slash \
+            + sModel + slash + sRegion + slash \
+            + 'raster' + slash + 'dem' + slash \
+            + 'MOSART_Global_half_20180606c.chang_9999.nc'
+        if os.path.exists(sFilename_rof_input):
+            sLine = 'A default MOSART mask was found at: ' + sFilename_rof_input + ', and it will be used for simulation if needed. If other version is desired, please specify it.'
+            print(sLine)
+        else:
+            print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
+   
+    if sFilename_rof_namelist_in is not None:
+        sFilename_rof_namelist = sFilename_rof_namelist_in    
     
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
@@ -370,17 +404,18 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sWorkspace_simulation_case_build'] = sDirectory_run + slash + sCase + slash +'build'
     config['sWorkspace_analysis_case'] = sWorkspace_analysis + slash + sCase
 
-    config['sFilename_atm_domain'] = sFilename_atm_domain
-
-   
+    #atm
+    config['sFilename_atm_domain'] = sFilename_atm_domain   
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
-
-    config['sFilename_elm_namelist'] = sFilename_elm_namelist
-    config['sFilename_elm_domain'] = sFilename_elm_domain
-
-    config['sFilename_mosart_namelist'] = sFilename_mosart_namelist 
+    #lnd
+    config['sFilename_lnd_domain'] = sFilename_lnd_domain
+    config['sFilename_lnd_namelist'] = sFilename_lnd_namelist
     
-    config['sFilename_mosart_input'] = sFilename_mosart_input
+    #rof
+    config['sFilename_rof_domain'] = sFilename_rof_domain
+    config['sFilename_rof_namelist'] = sFilename_rof_namelist 
+    
+    config['sFilename_rof_input'] = sFilename_rof_input
     return config
 
 if __name__ == '__main__':

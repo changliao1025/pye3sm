@@ -24,8 +24,8 @@ sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'
 iCase = 1
-iFlag_mosart = 1
-iFlag_elm=1
+iFlag_rof = 1
+iFlag_lnd=1
 iFlag_elmmosart =1
 iFlag_create_mosart_grid = 1
 iFlag_create_elm_grid = 1
@@ -39,7 +39,7 @@ if iFlag_elmmosart == 1:
     res='ELMMOS_USRDAT'
     compset = 'IELM'
 else:
-    if iFlag_mosart ==1:
+    if iFlag_rof ==1:
         pass
     else:    
         res='ELM_USRDAT'      

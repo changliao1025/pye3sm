@@ -5,10 +5,19 @@ from abc import ABCMeta, abstractmethod
 class pycase(object):
     __metaclass__ = ABCMeta   
     iFlag_debug = 0
-    iFlag_elm_spinup=0
-    iFlag_elm = 1
-    iFlag_mosart = 0 
+    
+
     iFlag_atm = 0
+    iFlag_datm=0
+
+    iFlag_lnd_spinup=0
+    iFlag_lnd = 1
+    iFlag_dlnd=0
+
+    
+    iFlag_rof = 0 
+    iFlag_drof=0
+
     iFlag_ocn =0 
     iCase_index=0
     iYear_start=0
@@ -46,12 +55,15 @@ class pycase(object):
     sFilename_atm_domain=''
 
     #elm    
-    sFilename_elm_namelist=''    
-    sFilename_elm_surfacedata=''
-    sFilename_elm_domain=''
-    #mosart
-    sFilename_mosart_namelist=''
-    sFilename_mosart_input=''
+    sFilename_lnd_namelist=''    
+    sFilename_lnd_surfacedata=''
+    sFilename_lnd_domain=''
+    sFilename_dlnd_namelist=''
+    #rof
+    sFilename_rof_domain=''
+    sFilename_rof_namelist=''
+    sFilename_drof_namelist=''
+    sFilename_rof_input=''
     
 
     def __init__(self, aParameter):
@@ -61,19 +73,27 @@ class pycase(object):
         #required with default variables
         if 'iFlag_debug' in aParameter:
             self.iFlag_debug             = int(aParameter[ 'iFlag_debug'])
-        #optional
-        if 'iFlag_elm_spinup' in aParameter:
-            self.iFlag_elm_spinup             = int(aParameter[ 'iFlag_elm_spinup'])
+        #atm
         if 'iFlag_atm' in aParameter:
             self.iFlag_atm             = int(aParameter[ 'iFlag_atm'])
-        if 'iFlag_elm' in aParameter:
-            self.iFlag_elm             = int(aParameter[ 'iFlag_elm'])
+        if 'iFlag_datm' in aParameter:
+            self.iFlag_datm             = int(aParameter[ 'iFlag_datm'])
 
-        if 'iFlag_mosart' in aParameter:
-            self.iFlag_mosart            = int(aParameter[ 'iFlag_mosart'])
+        if 'iFlag_lnd_spinup' in aParameter:
+            self.iFlag_lnd_spinup             = int(aParameter[ 'iFlag_lnd_spinup'])
+        
+        if 'iFlag_lnd' in aParameter:
+            self.iFlag_lnd             = int(aParameter[ 'iFlag_lnd'])
+        
+        if 'iFlag_dlnd' in aParameter:
+            self.iFlag_dlnd             = int(aParameter[ 'iFlag_dlnd'])
 
-        if 'iFlag_atm' in aParameter:
-            self.iFlag_atm             = int(aParameter[ 'iFlag_atm'])
+        if 'iFlag_rof' in aParameter:
+            self.iFlag_rof            = int(aParameter[ 'iFlag_rof'])
+        if 'iFlag_drof' in aParameter:
+            self.iFlag_drof            = int(aParameter[ 'iFlag_drof'])
+
+        
 
         if 'iCase_index' in aParameter:
             self.iCase_index             = int(aParameter[ 'iCase_index'])
@@ -180,26 +200,30 @@ class pycase(object):
         if 'sFilename_atm_domain' in aParameter:
             self.sFilename_atm_domain      = aParameter[ 'sFilename_atm_domain']
 
-        #elm
-        if 'sFilename_elm_namelist' in aParameter:
-            self.sFilename_elm_namelist      = aParameter[ 'sFilename_elm_namelist']
+        #lnd
+        if 'sFilename_lnd_namelist' in aParameter:
+            self.sFilename_lnd_namelist      = aParameter[ 'sFilename_lnd_namelist']
 
-        if 'sFilename_elm_domain' in aParameter:
-            self.sFilename_elm_domain      = aParameter[ 'sFilename_elm_domain']
+        if 'sFilename_lnd_domain' in aParameter:
+            self.sFilename_lnd_domain      = aParameter[ 'sFilename_lnd_domain']
 
+        if 'sFilename_dlnd_namelist' in aParameter:
+            self.sFilename_dlnd_namelist      = aParameter[ 'sFilename_dlnd_namelist']
         
 
-        if 'sFilename_elm_surfacedata' in aParameter:
-            self.sFilename_elm_surfacedata      = aParameter[ 'sFilename_elm_surfacedata']
-        #mosart
+        if 'sFilename_lnd_surfacedata' in aParameter:
+            self.sFilename_lnd_surfacedata      = aParameter[ 'sFilename_lnd_surfacedata']
+        #rof
 
-        if 'sFilename_mosart_domain' in aParameter:
-            self.sFilename_mosart_domain      = aParameter[ 'sFilename_mosart_domain']
-        if 'sFilename_mosart_namelist' in aParameter:
-            self.sFilename_mosart_namelist               = aParameter[ 'sFilename_mosart_namelist']
+        if 'sFilename_rof_domain' in aParameter:
+            self.sFilename_rof_domain      = aParameter[ 'sFilename_rof_domain']
+        if 'sFilename_rof_namelist' in aParameter:
+            self.sFilename_rof_namelist               = aParameter[ 'sFilename_rof_namelist']
         
-        if 'sFilename_mosart_input' in aParameter:
-            self.sFilename_mosart_input               = aParameter[ 'sFilename_mosart_input']
+        if 'sFilename_drof_namelist' in aParameter:
+            self.sFilename_drof_namelist               = aParameter[ 'sFilename_drof_namelist']
+        if 'sFilename_rof_input' in aParameter:
+            self.sFilename_rof_input               = aParameter[ 'sFilename_rof_input']
 
         
 

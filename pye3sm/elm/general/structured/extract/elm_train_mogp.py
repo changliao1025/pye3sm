@@ -10,7 +10,7 @@ from sklearn.preprocessing import QuantileTransformer, StandardScaler, PowerTran
 from sklearn.model_selection import train_test_split
 from pyearth.visual.scatter.scatter_plot_multiple_data import scatter_plot_multiple_data
 from pyearth.system.define_global_variables import *
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
+from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
 from sklearn.gaussian_process import GaussianProcessRegressor

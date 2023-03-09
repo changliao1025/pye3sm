@@ -2,25 +2,21 @@ import os
 import numpy as np
 from datetime import datetime
 import getpass
-from netCDF4 import Dataset
+import netCDF4 as nc
 from pye3sm.elm.mesh.unstructured.PerformFractionCoverCheck import PerformFractionCoverCheck
-def create_customized_elm_surface_file_1d( aLon_region, aLat_region, \
+
+def elm_create_unstructured_customized_surface_file( aLon_region, aLat_region, \
     sFilename_surface_data_in, \
     sFilename_surface_data_out, \
     set_natural_veg_frac_to_one):
-
-    
-
-    #sFilename_surface_data_out = '%s/surfdata_%s_%s.nc' % \
-    #            (out_netcdf_dir, clm_usrdat_name, datetime.now().strftime('c%-y%m%d'))
 
     print('  surface_dataset: ' + sFilename_surface_data_out)
 
     if not os.path.exists(sFilename_surface_data_in):
         raise NameError('File not found: ' + sFilename_surface_data_in)
     
-    ncid_inq = Dataset(sFilename_surface_data_in, 'r')
-    ncid_out = Dataset(sFilename_surface_data_out, 'w',format="NETCDF3_CLASSIC")
+    ncid_inq = nc.Dataset(sFilename_surface_data_in, 'r')
+    ncid_out = nc.Dataset(sFilename_surface_data_out, 'w',format="NETCDF3_CLASSIC")
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #

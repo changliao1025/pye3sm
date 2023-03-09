@@ -10,13 +10,13 @@
         Is this a spinup case simulation
       </desc>
     </entry>
-     <entry id="iFlag_elm" value="1">
+     <entry id="iFlag_lnd" value="1">
       <type>int</type>
       <desc>
         Is this a spinup case simulation
       </desc>
     </entry>
-     <entry id="iFlag_mosart" value="0">
+     <entry id="iFlag_rof" value="0">
       <type>int</type>
       <desc>
         Is this a spinup case simulation
@@ -193,38 +193,48 @@
       </desc>
     </entry>
 
-    <entry id="sFilename_elm_namelist" value="">
+    <entry id="sFilename_lnd_namelist" value="">
       <type>char</type>
       <desc>
-        The filename of ELM namelist
+        The filename of lnd namelist
       </desc>
     </entry>
-    <entry id="sFilename_elm_domain" value="">
+    <entry id="sFilename_lnd_domain" value="">
       <type>char</type>
       <desc>
-        The mask file of mosart
+        The mask file of rof
       </desc>
     </entry>
-    <entry id="sFilename_elm_surfacedata" value="">
+    <entry id="sFilename_lnd_surfacedata" value="">
       <type>char</type>
       <desc>
-        The mask file of mosart
+        The mask file of rof
       </desc>
     </entry>
-  
-    <entry id="sFilename_mosart_namelist" value="">
+    <entry id="sFilename_rof_domain" value="">
       <type>char</type>
       <desc>
-        The mask file of mosart
+        The mask file of rof
       </desc>
     </entry>
-    <entry id="sFilename_mosart_input" value="">
+    <entry id="sFilename_rof_namelist" value="">
       <type>char</type>
       <desc>
-        The mask file of mosart
+        The mask file of rof
       </desc>
     </entry>
-      
+    <entry id="sFilename_rof_input" value="">
+      <type>char</type>
+      <desc>
+        The mask file of rof
+      </desc>
+    </entry>
+      <entry id="sFilename_drof_namelist" value="">
+      <type>char</type>
+      <desc>
+        The filename of atm namelist
+      </desc>
+    </entry>
 
   </group>
 

@@ -30,7 +30,11 @@ def mosart_retrieve_case_dimension_info(oCase_in):
             aLon = (aValue[:]).data            
 
         if "latixy" == sKey:
-            aLat = (aValue[:]).data            
+            aLat = (aValue[:]).data   
+
+    aMask = np.flip(aMask, 0)   
+    aLon  = np.flip(aLon, 0) 
+    aLat  = np.flip(aLat, 0)       
     
     #it is unclear how the 2d look like
     #but we can assume the mask is 1d
@@ -49,7 +53,7 @@ def mosart_retrieve_case_dimension_info(oCase_in):
         iFlag_2d = 1
         nrow = np.array(aLon).shape[0]
         ncolumn = np.array(aLon).shape[1]
-        aMask0 = np.where(aMask>0)
+        
 
         #resolution
         dLon_min = np.min(aLon)
@@ -59,6 +63,11 @@ def mosart_retrieve_case_dimension_info(oCase_in):
         dResolution_x = (dLon_max - dLon_min) / (ncolumn-1)
         dResolution_y = (dLat_max - dLat_min) / (nrow-1)
 
+        #change mask to 0 and 1
+        aMask0 = np.where(aMask>0)
+        aMaks_out  = np.full( (nrow, ncolumn), 0, dtype=int )
+        aMaks_out[aMask0] = 1
+
 
     
-    return aLon, aLat, aMask
+    return aLon, aLat, aMaks_out
