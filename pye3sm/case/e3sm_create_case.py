@@ -72,6 +72,8 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     sFilename_rof_namelist = oCase_in.sFilename_rof_namelist
     sFilename_drof_namelist = oCase_in.sFilename_drof_namelist
 
+    sFilename_l2r_mapping = oCase_in.sFilename_l2r_mapping
+
     sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
     sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
     sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'    
@@ -82,9 +84,12 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     sCasename = sDirectory_case + slash + sCase
     sJobname = sModel + sCase
     print(sCasename)
+   
+
     sSimname = sDirectory_run + slash  + sCase
     sBldname = sSimname + slash + 'bld'
     sRunname = sSimname + slash + 'run'
+    
 
     nYear = oCase_in.nyear
     sYear =  "{:0d}".format(nYear)
@@ -500,6 +505,11 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
         sLine = ' ./xmlchange NTASKS=' + sNtask + '\n'
         sLine = sLine.lstrip()
         ofs.write(sLine)
+
+        sLine = ' ./xmlchange CIME_OUTPUT_ROOT=' + sDirectory_run + '\n'
+        sLine = sLine.lstrip()
+        ofs.write(sLine)
+
         if(iFlag_branch == 1):
             pass
         else:
@@ -601,6 +611,16 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
 
+                    if sFilename_l2r_mapping is not None:
+                        sLine =  ' ./xmlchange LND2ROF_FMAPNAME=' +  sFilename_l2r_mapping + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine)
+                        sLine =  ' ./xmlchange LND2ROF_SMAPNAME=' +  sFilename_l2r_mapping + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine)
+
+                        
+
                     sLine = 'cp ' + sFilename_dlnd_namelist + ' ./user_nl_dlnd' + '\n'
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
@@ -666,8 +686,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
 
         sLine =  ' ./xmlchange --file env_run.xml --id INFO_DBUG --val 2' + '\n'
         sLine = sLine.lstrip()
-        ofs.write(sLine)
-        
+        ofs.write(sLine)        
 
         sLine = ' ./case.setup' + '\n'
         sLine = sLine.lstrip()
@@ -687,9 +706,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
         ofs.write(sLine)
         ofs.close()
 
-        #we break them into two parts
-    
-        
+        #we break them into two parts  
         
         # --------------------------------
         # now adding a new bash for debug 
@@ -721,7 +738,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                 if "SLURM_SUBMIT_DIR" in sLine:
                     pass
                 else:
-                    if "case.setup" in sLine:
+                    if "case.build" in sLine:
                         iFlag_finished = 1
                         pass
                     else:

@@ -59,6 +59,8 @@ class pycase(object):
     sFilename_lnd_surfacedata=''
     sFilename_lnd_domain=''
     sFilename_dlnd_namelist=''
+
+    sFilename_l2r_mapping = None
     #rof
     sFilename_rof_domain=''
     sFilename_rof_namelist=''
@@ -213,6 +215,10 @@ class pycase(object):
 
         if 'sFilename_lnd_surfacedata' in aParameter:
             self.sFilename_lnd_surfacedata      = aParameter[ 'sFilename_lnd_surfacedata']
+
+        if 'sFilename_l2r_mapping' in aParameter:
+            self.sFilename_l2r_mapping      = aParameter[ 'sFilename_l2r_mapping']
+            
         #rof
 
         if 'sFilename_rof_domain' in aParameter:

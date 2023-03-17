@@ -4,26 +4,27 @@ import netCDF4 as nc
 from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 
 from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_simple  import e3sm_create_unstructured_domain_file_simple
-def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFilename_structured_domain_file_out, 
+
+def e3sm_create_structured_envelope_domain_file_1d( sFilename_unstructured_domain_file_in, sFilename_structured_domain_file_out_1d, 
                                                 dResolution_x_in, dResolution_y_in):
     """This function uses a MPAS mesh domain file to generate a larger domain file that convers the MPAS domain
 
     Args:
-        sFilename_domain_file_in (_type_): _description_
-        sFilename_structured_domain_file_out (_type_): _description_
+        sFilename_unstructured_domain_file_in (_type_): _description_
+        sFilename_structured_domain_file_out_1d (_type_): _description_
         dResolution_x_in (_type_): _description_
         dResolution_y_in (_type_): _description_
     """
     #this function creates a 2D structured domain file based on an unstructured domain file
 
     #read unstructured domain file
-    if os.path.exists(sFilename_domain_file_in):
+    if os.path.exists(sFilename_unstructured_domain_file_in):
         pass
     else:
-        print(sFilename_domain_file_in)
+        print(sFilename_unstructured_domain_file_in)
         return
     
-    aDatasets = nc.Dataset(sFilename_domain_file_in)
+    aDatasets = nc.Dataset(sFilename_unstructured_domain_file_in)
     for sKey, aValue in aDatasets.variables.items():      
 
         if sKey == 'xc':
@@ -93,8 +94,8 @@ def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFile
             aLatV_region[i, j, 2] = aLat_region[i, j] + 0.5 * dResolution_y_in
             aLatV_region[i, j, 3] = aLat_region[i, j] - 0.5 * dResolution_y_in
     
-    #the old unsafe method
-    #e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out)
+    #the old unsafe method, this method is not recommended because scrip grid document is not complete
+    #e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out_1d)
 
     #the new method using 1D 
 
@@ -104,15 +105,15 @@ def e3sm_create_structured_envelope_domain_file( sFilename_domain_file_in, sFile
     aLonV_region = np.reshape(aLonV_region, (nrow*ncolumn, 4))
     aLatV_region = np.reshape(aLatV_region, (nrow*ncolumn, 4))
 
-    
-    e3sm_create_unstructured_domain_file_simple(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out)
+    #now create the 1d unstructured domain file
+    e3sm_create_unstructured_domain_file_simple(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out_1d)
 
 
-    return
+    return sFilename_structured_domain_file_out_1d
 
 if __name__ == '__main__':
 
     sFilename_domain_source = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_mpas.nc'  #elm
-    sFilename_structured_domain_file_out ='/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_halfdegree.nc'  #
+    sFilename_structured_domain_file_out_1d ='/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_halfdegree.nc'  #
 
-    e3sm_create_structured_envelope_domain_file(sFilename_domain_source, sFilename_structured_domain_file_out,0.5, 0.5)
+    e3sm_create_structured_envelope_domain_file(sFilename_domain_source, sFilename_structured_domain_file_out_1d,0.5, 0.5)
