@@ -148,7 +148,7 @@ if iFlag_default ==1:
     sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
 else:
     sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_H2SC/cime/scripts'
-    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM/cime/scripts'
+    sCIME_directory ='/qfs/people/liao313/workspace/fortran/e3sm/E3SM_DROF/cime/scripts'
 sFilename_configuration = '/people/liao313/workspace/python/pye3sm/pye3sm/elm/mesh/elm_sparse_grid.cfg'
 
 sCase_date = sDate + "{:03d}".format(iCase)

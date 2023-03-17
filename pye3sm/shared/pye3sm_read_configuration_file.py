@@ -341,7 +341,6 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     if sFilename_atm_domain_in is not None:
         sFilename_atm_domain = sFilename_atm_domain_in
 
-
     if sFilename_lnd_domain_in is not None:
         sFilename_lnd_domain = sFilename_lnd_domain_in
 
@@ -360,6 +359,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
 
     if sFilename_l2r_mapping_in is not None:
         sFilename_l2r_mapping= sFilename_l2r_mapping_in
+    else:
+        sFilename_l2r_mapping = None
 
     #update mask if region changes
 
