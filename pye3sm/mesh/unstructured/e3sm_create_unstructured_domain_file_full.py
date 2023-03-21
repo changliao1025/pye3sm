@@ -37,17 +37,26 @@ def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_re
     aShape_vertex= aLonV_region.shape
     ndim_center = len(aShape_center) #2
     ndim_vertex = len(aShape_vertex) #3
-    
+    if ndim_center == 1 and ndim_vertex == 2:
+        #this is when we need to extend the 1d to 2d
+        aLon_region = np.expand_dims(aLon_region, axis=1)
+        aLat_region = np.expand_dims(aLat_region, axis=1)
+        aLonV_region = np.expand_dims(aLonV_region, axis=1)
+        aLatV_region = np.expand_dims(aLatV_region, axis=1)
+        pass   
     nrow, ncolumn = aLon_region.shape
     #recheck simplified 
     
     nrow, ncolumn, nvertex  = aLonV_region.shape
        
-    dimname = 'nrow'
+    #dimname = 'ni'
+    dimname = 'ni'
     pDatasets_out.createDimension(dimname, nrow)
-    dimname = 'ncolumn'
+    #dimname = 'nj'
+    dimname = 'nj'
     pDatasets_out.createDimension(dimname,ncolumn)    
-    dimname = 'nvertex'
+    #dimname = 'nv'
+    dimname = 'nv'
     pDatasets_out.createDimension(dimname,nvertex)  
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #
@@ -55,13 +64,13 @@ def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_re
     #
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     aDimension_list0=list()    
-    aDimension_list0.append('nrow')
-    aDimension_list0.append('ncolumn')  
+    aDimension_list0.append('ni')
+    aDimension_list0.append('nj')  
     aDimension_tuple0 = tuple(aDimension_list0)        
     aDimension_list1=list()
-    aDimension_list1.append('nrow')
-    aDimension_list1.append('ncolumn')    
-    aDimension_list1.append('nvertex')
+    aDimension_list1.append('ni')
+    aDimension_list1.append('nj')    
+    aDimension_list1.append('nv')
     aDimension_tuple1 = tuple(aDimension_list1)              
         
     

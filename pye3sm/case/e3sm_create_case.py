@@ -78,7 +78,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
     sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'    
     sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
-    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART.gageheight'
+    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART.gage_height'
     #GIT_HASH=`git log -n 1 --format=%h`
 
     sCasename = sDirectory_case + slash + sCase
@@ -548,9 +548,9 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
 
-                    #sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
-                    #sLine = sLine.lstrip()
-                    #ofs.write(sLine)
+                    sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
 
                     sLine =  ' ./xmlchange ATM_DOMAIN_FILE=' +  os.path.basename(sFilename_atm_domain) +    '\n'
                     sLine = sLine.lstrip()
@@ -671,7 +671,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     ofs.write(sLine)
 
                     if iFlag_replace_drof_forcing ==1:
-                        sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.mosart.gageheight' + '\n'
+                        sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.mosart.gage_height' + '\n'
                         sLine = sLine.lstrip()
                         ofs.write(sLine) 
                 pass 

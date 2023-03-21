@@ -4,7 +4,8 @@ from pye3sm.elm.mesh.unstructured.ReadConfigurationFile import ReadConfiguration
 from pye3sm.elm.mesh.structured.elm_create_structured_customized_surface_file import elm_create_structured_customized_surface_file
 from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 from pye3sm.elm.mesh.unstructured.elm_create_unstructured_customized_surface_file import elm_create_unstructured_customized_surface_file
-from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_simple import e3sm_create_unstructured_domain_file_simple
+#from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_simple import e3sm_create_unstructured_domain_file_simple
+from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_full import e3sm_create_unstructured_domain_file_full
 
 def elm_create_customized_domain( aLon, aLat, aMask_in, dLon, dLat, \
         sFilename_configuration, \
@@ -45,7 +46,7 @@ def elm_create_customized_domain( aLon, aLat, aMask_in, dLon, dLat, \
         #                     sFilename_domain_file_in, \
         #               sFilename_domain_file_out)
 
-        e3sm_create_unstructured_domain_file_simple(aLon, aLat, aLonV, aLatV, sFilename_domain_file_out)               
+        e3sm_create_unstructured_domain_file_full(aLon, aLat, aLonV, aLatV, sFilename_domain_file_out)               
 
     
     else:

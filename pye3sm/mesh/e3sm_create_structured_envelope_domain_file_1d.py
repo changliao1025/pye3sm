@@ -1,9 +1,9 @@
 import os
 import numpy as np
 import netCDF4 as nc
-from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
+#from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 
-from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_simple  import e3sm_create_unstructured_domain_file_simple
+from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_full import e3sm_create_unstructured_domain_file_full
 
 def e3sm_create_structured_envelope_domain_file_1d( sFilename_unstructured_domain_file_in, sFilename_structured_domain_file_out_1d, 
                                                 dResolution_x_in, dResolution_y_in):
@@ -106,7 +106,7 @@ def e3sm_create_structured_envelope_domain_file_1d( sFilename_unstructured_domai
     aLatV_region = np.reshape(aLatV_region, (nrow*ncolumn, 4))
 
     #now create the 1d unstructured domain file
-    e3sm_create_unstructured_domain_file_simple(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out_1d)
+    e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_structured_domain_file_out_1d)
 
 
     return sFilename_structured_domain_file_out_1d
@@ -116,4 +116,4 @@ if __name__ == '__main__':
     sFilename_domain_source = '/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_mpas.nc'  #elm
     sFilename_structured_domain_file_out_1d ='/compyfs/liao313/04model/e3sm/susquehanna/cases_aux/e3sm20230120001/mosart_susquehanna_domain_halfdegree.nc'  #
 
-    e3sm_create_structured_envelope_domain_file(sFilename_domain_source, sFilename_structured_domain_file_out_1d,0.5, 0.5)
+    e3sm_create_structured_envelope_domain_file_1d(sFilename_domain_source, sFilename_structured_domain_file_out_1d,0.5, 0.5)
