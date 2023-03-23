@@ -118,6 +118,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
                                         sVariable_in = None,
                                         sFilename_atm_domain_in = None,
                                         sFilename_datm_namelist_in = None,
+                                        sFilename_a2r_mapping_in = None,
                                         sFilename_lnd_namelist_in = None,
                                         sFilename_lnd_domain_in=None,
                                         sFilename_dlnd_namelist_in = None,
@@ -126,6 +127,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
                                         sFilename_rof_domain_in=None,
                                         sFilename_rof_parameter_in=None,
                                         sFilename_drof_namelist_in = None,
+                                        sFilename_r2l_mapping_in = None,
                                         sWorkspace_data_in = None,
                                         sWorkspace_scratch_in=None):
     #read the default configuration
@@ -341,8 +343,15 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     if sFilename_atm_domain_in is not None:
         sFilename_atm_domain = sFilename_atm_domain_in
 
+    if sFilename_a2r_mapping_in is not None:
+        sFilename_a2r_mapping= sFilename_a2r_mapping_in
+    else:
+        sFilename_a2r_mapping = None
+
     if sFilename_lnd_domain_in is not None:
         sFilename_lnd_domain = sFilename_lnd_domain_in
+    
+    
 
     #several namelist maybe used if we need to change parameters
     if sFilename_lnd_namelist_in is not None:
@@ -356,6 +365,12 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
             print(sLine)
         else:
             print('A default LND namelist was not found, you will not be able to use it without specifying it first.' )
+
+    if sFilename_dlnd_namelist_in is not None:
+        sFilename_dlnd_namelist = sFilename_dlnd_namelist_in
+    else:
+        sFilename_dlnd_namelist=''
+        pass
 
     if sFilename_l2r_mapping_in is not None:
         sFilename_l2r_mapping= sFilename_l2r_mapping_in
@@ -382,6 +397,12 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
 
     if sFilename_rof_namelist_in is not None:
         sFilename_rof_namelist = sFilename_rof_namelist_in
+
+    if sFilename_r2l_mapping_in is not None:
+        sFilename_r2l_mapping= sFilename_r2l_mapping_in
+    else:
+        sFilename_r2l_mapping = None
+
 
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
@@ -411,14 +432,18 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     #atm
     config['sFilename_atm_domain'] = sFilename_atm_domain
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
+    config['sFilename_a2r_mapping'] = sFilename_a2r_mapping
+
     #lnd
     config['sFilename_lnd_domain'] = sFilename_lnd_domain
     config['sFilename_lnd_namelist'] = sFilename_lnd_namelist
+    config['sFilename_dlnd_namelist'] = sFilename_dlnd_namelist
     config['sFilename_l2r_mapping'] = sFilename_l2r_mapping
 
     #rof
     config['sFilename_rof_domain'] = sFilename_rof_domain
     config['sFilename_rof_namelist'] = sFilename_rof_namelist
+    config['sFilename_r2l_mapping'] = sFilename_r2l_mapping
 
     config['sFilename_rof_input'] = sFilename_rof_input
     return config

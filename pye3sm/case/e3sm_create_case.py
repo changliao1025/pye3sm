@@ -63,16 +63,18 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     sFilename_atm_domain = oCase_in.sFilename_atm_domain
     sFilename_datm_namelist = oCase_in.sFilename_datm_namelist
 
+    sFilename_a2r_mapping = oCase_in.sFilename_a2r_mapping
+
     sFilename_lnd_namelist = oCase_in.sFilename_lnd_namelist
     sFilename_dlnd_namelist = oCase_in.sFilename_dlnd_namelist    
     sFilename_lnd_domain = oCase_in.sFilename_lnd_domain
     sFilename_lnd_surfacedata = oCase_in.sFilename_lnd_surfacedata
+    sFilename_l2r_mapping = oCase_in.sFilename_l2r_mapping
 
     sFilename_rof_domain = oCase_in.sFilename_rof_domain
     sFilename_rof_namelist = oCase_in.sFilename_rof_namelist
-    sFilename_drof_namelist = oCase_in.sFilename_drof_namelist
-
-    sFilename_l2r_mapping = oCase_in.sFilename_l2r_mapping
+    sFilename_drof_namelist = oCase_in.sFilename_drof_namelist  
+    sFilename_r2l_mapping = oCase_in.sFilename_r2l_mapping
 
     sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
     sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
@@ -110,6 +112,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
         sWalltime = '6:00:00'
         sNtask = '1'
         sNtask = '-3'
+        sNtask = '3'
         sYear = '30'
         pass
 
@@ -580,6 +583,15 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                         ofs.write(sLine) 
                     pass
 
+                    if sFilename_a2r_mapping is not None:
+                        sLine =  ' ./xmlchange ATM2ROF_FMAPNAME=' +  sFilename_a2r_mapping + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine)
+
+                        sLine =  ' ./xmlchange ATM2ROF_SMAPNAME=' +  sFilename_a2r_mapping + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine)
+
             if iFlag_lnd == 1:
                 sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
                 sLine = sLine.lstrip()
@@ -601,6 +613,23 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                 pass
             else:
                 if iFlag_dlnd ==1:
+
+                    sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)   
+
+                    sPath_elm_domain = os.path.dirname(sFilename_lnd_domain)
+                    sLine =  ' ./xmlchange LND_DOMAIN_PATH=' +  sPath_elm_domain + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)      
+
+
+                    #./xmlchange CLM_USRDAT_NAME=test_r05_r05  
+                    #sLine =  ' ./xmlchange CLM_USRDAT_NAME=test_r05_r05 '   + '\n'
+                    #sLine = sLine.lstrip()
+                    #ofs.write(sLine)          
+
+
                     sLine =  ' ./xmlchange DLND_CPLHIST_YR_START=' +  sYear_data_start + '\n'
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
@@ -615,9 +644,9 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                         sLine =  ' ./xmlchange LND2ROF_FMAPNAME=' +  sFilename_l2r_mapping + '\n'
                         sLine = sLine.lstrip()
                         ofs.write(sLine)
-                        sLine =  ' ./xmlchange LND2ROF_SMAPNAME=' +  sFilename_l2r_mapping + '\n'
-                        sLine = sLine.lstrip()
-                        ofs.write(sLine)
+                        #sLine =  ' ./xmlchange LND2ROF_SMAPNAME=' +  sFilename_l2r_mapping + '\n'
+                        #sLine = sLine.lstrip()
+                        #ofs.write(sLine)
 
                         
 
@@ -639,6 +668,11 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                     else:
                         pass
                     pass
+
+                if sFilename_r2l_mapping is not None:
+                    sLine =  ' ./xmlchange ROF2LND_FMAPNAME=' +  sFilename_r2l_mapping + '\n'
+                    sLine = sLine.lstrip()
+                    ofs.write(sLine)
             else:
                 if iFlag_drof ==1:
                     sLine =  ' ./xmlchange DROF_MOSART_YR_START=' +  sYear_data_start + '\n'
@@ -674,6 +708,11 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                         sLine = 'cp ' + sFilename_user_drof_gage_height + ' ./user_drof.streams.txt.mosart.gage_height' + '\n'
                         sLine = sLine.lstrip()
                         ofs.write(sLine) 
+
+                    if sFilename_r2l_mapping is not None:
+                        sLine =  ' ./xmlchange ROF2LND_FMAPNAME=' +  sFilename_r2l_mapping + '\n'
+                        sLine = sLine.lstrip()
+                        ofs.write(sLine)
                 pass 
 
         sLine =  ' ./xmlchange CALENDAR=NO_LEAP' + '\n'

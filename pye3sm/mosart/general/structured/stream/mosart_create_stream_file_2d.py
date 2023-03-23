@@ -40,11 +40,11 @@ def mosart_create_stream_file_2d( oCase_in):
         os.makedirs(sWorkspace_analysis_case)    
 
     #new approach
-    aLon, aLat , aMask_ll= mosart_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ul= mosart_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask_ul = np.flip(aMask_ll, 0)
-    nrow = np.array(aMask_ll).shape[0]
-    ncolumn = np.array(aMask_ll).shape[1]
+    aMask_ll = np.flip(aMask_ul, 0)
+    nrow = np.array(aMask_ul).shape[0]
+    ncolumn = np.array(aMask_ul).shape[1]
     #be careful with the mask 0 or 1 
     aMask_index_ll = np.where(aMask_ll==0)
     aMask_index_ul = np.where(aMask_ul==0)
@@ -79,7 +79,7 @@ def mosart_create_stream_file_2d( oCase_in):
             nday_in_year = 365 #no leap year
         aGrid_stack= np.full((nday_in_year, nrow, ncolumn), -9999.0, dtype= float)
         #should we use the same netcdf format? 
-        pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
+        pFile = Dataset(sFilename_output, 'w', format = 'NETCDF3_CLASSIC')  #,format="NETCDF3_CLASSIC"
         pDimension_longitude = pFile.createDimension('lon', ncolumn) 
         pDimension_latitude = pFile.createDimension('lat', nrow) 
         pDimension_time = pFile.createDimension('time', nday_in_year) 
@@ -193,7 +193,7 @@ def mosart_create_stream_file_2d( oCase_in):
         pVar.standard_name = sDummy
         pVar.long_name = sDummy
         pVar.units = 'days since ' +  sYear + '-01-01 00:00:00'
-        pVar.calendar = 'leap' 
+        pVar.calendar = 'standard' 
         pVar.axis = "T" 
 
         #set global attributes

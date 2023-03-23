@@ -53,9 +53,11 @@ class pycase(object):
     #atm
     sFilename_datm_namelist=''
     sFilename_atm_domain=''
+    sFilename_a2r_mapping=''
 
     #elm    
     sFilename_lnd_namelist=''    
+    sFilename_dlnd_namelist=''    
     sFilename_lnd_surfacedata=''
     sFilename_lnd_domain=''
     sFilename_dlnd_namelist=''
@@ -66,6 +68,7 @@ class pycase(object):
     sFilename_rof_namelist=''
     sFilename_drof_namelist=''
     sFilename_rof_input=''
+    sFilename_r2l_mapping=''
     
 
     def __init__(self, aParameter):
@@ -202,6 +205,9 @@ class pycase(object):
         if 'sFilename_atm_domain' in aParameter:
             self.sFilename_atm_domain      = aParameter[ 'sFilename_atm_domain']
 
+        if 'sFilename_a2r_mapping' in aParameter:
+            self.sFilename_a2r_mapping      = aParameter[ 'sFilename_a2r_mapping']
+
         #lnd
         if 'sFilename_lnd_namelist' in aParameter:
             self.sFilename_lnd_namelist      = aParameter[ 'sFilename_lnd_namelist']
@@ -231,7 +237,8 @@ class pycase(object):
         if 'sFilename_rof_input' in aParameter:
             self.sFilename_rof_input               = aParameter[ 'sFilename_rof_input']
 
-        
+        if 'sFilename_r2l_mapping' in aParameter:
+            self.sFilename_r2l_mapping               = aParameter[ 'sFilename_r2l_mapping']        
 
         
 

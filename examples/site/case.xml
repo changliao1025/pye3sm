@@ -1,0 +1,237 @@
+<file id="case.xml" version="2.0">
+  <header>
+    This file is used to control the e3sm case.
+  </header>
+
+  <group id="pycase">
+    <entry id="iFlag_spinup" value="0">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+     <entry id="iFlag_lnd" value="1">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+     <entry id="iFlag_rof" value="0">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+     <entry id="iFlag_atm" value="0">
+      <type>int</type>
+      <desc>
+        Is this a spinup case simulation
+      </desc>
+    </entry>
+    <entry id="iCase_index" value="0">
+      <type>int</type>
+      <desc>
+        The index of the case
+      </desc>
+    </entry>
+    <entry id="iYear_start" value="1979">
+      <type>int</type>
+      <desc>
+        The case start year
+      </desc>
+    </entry>
+    <entry id="iYear_end" value="2008">
+      <type>int</type>
+      <desc>
+         The case end year
+      </desc>
+    </entry>
+    <entry id="iYear_data_start" value="1980">
+      <type>int</type>
+      <desc>
+         The forcing data start year
+      </desc>
+    </entry>
+    <entry id="iYear_data_end" value="2008">
+      <type>int</type>
+      <desc>
+        The forcing data start year
+      </desc>
+    </entry>
+    <entry id="iFlag_same_grid" value="1">
+      <type>int</type>
+      <desc>
+        Whether meshes are the same/overlap
+      </desc>
+    </entry>
+
+    <entry id="nMonth" value="0">
+      <type>int</type>
+      <desc>
+        The total months 
+      </desc>
+    </entry>
+    <entry id="nYear" value="0">
+      <type>int</type>
+      <desc>
+        The total years
+      </desc>
+    </entry>
+     <entry id="nsoillayer" value="15">
+      <type>int</type>
+      <desc>
+        The total soil layer
+      </desc>
+    </entry>
+    <entry id="dConversion" value="1.0">
+      <type>float</type>
+      <desc>
+        The conversion factor of the variable
+      </desc>
+    </entry>
+    <entry id="dOffset" value="0.0">
+      <type>float</type>
+      <desc>
+        The conversion factor of the variable
+      </desc>
+    </entry>
+    <entry id="sModel" value="h2sc">
+      <type>char</type>
+      <desc>
+        The model/component of interest
+      </desc>
+    </entry>
+    <entry id="sRegion" value="global">
+      <type>char</type>
+      <desc>
+        The region name
+      </desc>
+    </entry>
+    <entry id="sCase" value="">
+      <type>char</type>
+      <desc>
+        The case string name
+      </desc>
+    </entry>
+    <entry id="sDirectory_case" value="">
+      <type>char</type>
+      <desc>
+        The directory of the case
+      </desc>
+    </entry>
+    <entry id="sDirectory_run" value="">
+      <type>char</type>
+      <desc>
+        The directory of the case run
+      </desc>
+    </entry>
+    <entry id="sVariable" value="">
+      <type>char</type>
+      <desc>
+        The variable of interest
+      </desc>
+    </entry>
+    <entry id="sLabel_y" value="">
+      <type>char</type>
+      <desc>
+        The label of variable if needed
+      </desc>
+    </entry>
+    <entry id="sWorkspace_scratch" value="/compyfs/liao313/">
+      <type>char</type>
+      <desc>
+        The workspace of scartch
+      </desc>
+    </entry>
+    <entry id="sWorkspace_cases" value="">
+      <type>char</type>
+      <desc>
+        The workspace of cases
+      </desc>
+    </entry>
+
+    <entry id="sWorkspace_case" value="">
+      <type>char</type>
+      <desc>
+        The workspace of case create
+      </desc>
+    </entry>
+    <entry id="sWorkspace_analysis_case" value="">
+      <type>char</type>
+      <desc>
+        The workspace of case analysis
+      </desc>
+    </entry>
+    <entry id="sWorkspace_simulation_case_run" value="">
+      <type>char</type>
+      <desc>
+        The workspace of case simulation
+      </desc>
+    </entry>
+    <entry id="sWorkspace_simulation_case" value="">
+      <type>char</type>
+      <desc>
+        The workspace of case
+      </desc>
+    </entry>
+    <entry id="sWorkspace_simulation_case_build" value="">
+      <type>char</type>
+      <desc>
+        The workspace of case build
+      </desc>
+    </entry>
+    <entry id="sFilename_atm_domain" value="">
+      <type>char</type>
+      <desc>
+        The filename of atm namelist
+      </desc>
+    </entry>
+    <entry id="sFilename_datm_namelist" value="">
+      <type>char</type>
+      <desc>
+        The filename of atm namelist
+      </desc>
+    </entry>
+
+    <entry id="sFilename_lnd_namelist" value="">
+      <type>char</type>
+      <desc>
+        The filename of ELM namelist
+      </desc>
+    </entry>
+    <entry id="sFilename_lnd_domain" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
+    <entry id="sFilename_lnd_surfacedata" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
+  
+    <entry id="sFilename_rof_namelist" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
+    <entry id="sFilename_rof_input" value="">
+      <type>char</type>
+      <desc>
+        The mask file of mosart
+      </desc>
+    </entry>
+      <entry id="sFilename_drof_namelist" value="">
+      <type>char</type>
+      <desc>
+        The filename of drof namelist
+      </desc>
+    </entry>
+
+
+  </group>
+
+</file>
