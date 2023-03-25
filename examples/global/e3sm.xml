@@ -1,0 +1,120 @@
+<file id="e3sm.xml" version="2.0">
+  <header>
+    This file is used to control the e3sm case.
+  </header>
+  <group id="system">
+    <entry id="sWorkspace_home" value="/qfs/people/liao313/">
+      <type>char</type>
+      <desc>
+        The home workspace
+      </desc>
+    </entry>
+    <entry id="sWorkspace_scratch" value="/pic/scratch/liao313/">
+      <type>char</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="sWorkspace_data" value="/data/">
+      <type>char</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+  </group>
+
+
+  <group id="pye3sm">
+    <entry id="iFlag_debug" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="iFlag_branch" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="iFlag_continue" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="iFlag_resubmit" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+    <entry id="iFlag_short" value="0">
+      <type>int</type>
+      <desc>
+        The scratch workspace
+      </desc>
+    </entry>
+
+  
+    <entry id="RES" value="r05_r05"> 
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration RES='ne30_oEC'
+      </desc>
+    </entry>
+    <entry id="COMPSET" value="IELM45">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="PROJECT" value="e3sm">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="MACH" value="compy">
+      <type>char</type>
+      <desc>
+        The HPC machine
+      </desc>
+    </entry>
+    <entry id="Email" value="chang.liao@pnnl.gov">
+      <type>char</type>
+      <desc>
+        The email for job notification
+      </desc>
+    </entry>
+    <entry id="sCIME_directory" value="/qfs/people/liao313/workspace/fortran/e3sm/TRIGRID/cime/scripts">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+   
+    <entry id="sWorkspace_forcing" value="/compyfs/inputdata/atm/datm7/gpcc/GPCC_noleap">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+   
+    <entry id="sFilename_mosart_input" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+    <entry id="sWorkspace_analysis" value="">
+      <type>char</type>
+      <desc>
+        The workspace of pest calibration
+      </desc>
+    </entry>
+   
+    
+  </group>
+
+</file>

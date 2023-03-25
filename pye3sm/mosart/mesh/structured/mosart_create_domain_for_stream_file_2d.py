@@ -6,8 +6,13 @@ from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrie
 from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 
 def mosart_create_domain_for_stream_file_2d(oCase_in, sFilename_domain_file_out):
+    """
+    Create a domain file for the given case
 
-    
+    Args:
+        oCase_in (_type_): _description_
+        sFilename_domain_file_out (_type_): _description_
+    """
     
     aLon, aLat , aMask_ul= mosart_retrieve_case_dimension_info(oCase_in)
     #dimension

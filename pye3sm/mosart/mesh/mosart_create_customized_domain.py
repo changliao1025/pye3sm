@@ -1,8 +1,8 @@
 import os
 import numpy as np
-from pye3sm.mosart.mesh.unstructured.find_mosart_cell import find_mosart_cell
+from pye3sm.mosart.mesh.structured.mosart_extract_contributing_cells_by_outlet_id import mosart_extract_contributing_cells_by_outlet_id
 
-from pye3sm.mosart.mesh.structured.mosart_extract_by_cellid_2d_to_2d import mosart_extract_by_cellid_2d_to_2d
+from pye3sm.mosart.mesh.structured.retired.mosart_extract_by_cellid_2d_to_2d import mosart_extract_by_cellid_2d_to_2d
 
 
 
@@ -12,7 +12,7 @@ def mosart_create_customized_domain(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilen
     iFlag_reload = 1
 
     if iFlag_reload ==0:
-        aCell_basin, aCell_basin_w_ocean_buffer = find_mosart_cell(sFilenamae_mosart_in, lCellID_outlet_in)
+        aCell_basin = mosart_extract_contributing_cells_by_outlet_id(sFilenamae_mosart_in, lCellID_outlet_in, sFilename_mosart_out = sFilename_netcdf_out)
     
 
     
@@ -27,15 +27,6 @@ def mosart_create_customized_domain(iFlag_2d_to_1d, sFilenamae_mosart_in, sFilen
 
     if iFlag_reload ==1:
         aCell_basin = np.loadtxt(sFilename_cellid)
-    #iFlag_2d_to_1d = 0
-    mosart_extract_by_cellid_2d_to_2d(sFilenamae_mosart_in, sFilename_netcdf_out, aCell_basin)
-
-    #sFilename = os.path.splitext(sFilename_netcdf_out)[0]
-    #filename_netcdf_ocean_out = sFilename + '_w_ocean_buffer.nc'
-
-    #extract_mosart_by_cellid(sFilenamae_mosart_in, #filename_netcdf_ocean_out, aCell_basin_w_ocean_buffer)
-
-
     
 
 
