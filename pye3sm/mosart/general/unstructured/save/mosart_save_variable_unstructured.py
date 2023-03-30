@@ -10,7 +10,7 @@ from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist
 
 from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
-def mosart_save_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
+def mosart_save_variable_unstructured( oCase_in, sVariable_in=None):
 
     #read the actual data
    

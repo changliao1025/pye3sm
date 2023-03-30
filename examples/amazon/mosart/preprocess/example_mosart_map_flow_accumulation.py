@@ -1,6 +1,6 @@
 import os
 
-from pye3sm.mosart.map.mosart_map_flow_accumulation import mosart_create_flow_accumulation_map
+from pye3sm.mosart.map.structured.mosart_map_structured_parameter import mosart_create_flow_accumulation_map
 
 
 sFilename_netcdf = '/compyfs/inputdata/rof/mosart/MOSART_Global_half_20210616.nc'

@@ -1,14 +1,15 @@
 import os
-import numpy
+from pathlib import Path
 import numpy as np
 import netCDF4 as nc
 #import shapefile
 from osgeo import ogr
-from osgeo import gdal, osr
+from osgeo import osr
 import cartopy.crs as ccrs
+from pyearth.system.define_global_variables import *
 from pyearth.visual.map.vector.map_vector_polyline_data import map_vector_polyline_data
 
-def mosart_map_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out, sFilename_png):
+def mosart_map_unstructured_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out):
 
     if os.path.exists(sFilename_parameter_in):
         print("Yep, I can read that file!")
@@ -33,7 +34,6 @@ def mosart_map_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFile
         #print(sKey, aValue)
         print(aValue.datatype)
         print( aValue.dimensions)
-
         if sKey == 'ID':
             aID =  (aValue[:]).data
         if sKey == 'dnID':
@@ -56,18 +56,13 @@ def mosart_map_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFile
     pLayer = pDataset.CreateLayer('flowdir', pSrs, ogr.wkbLineString)
     # Add one attribute
     pLayer.CreateField(ogr.FieldDefn('id', ogr.OFTInteger))
-    pLayer.CreateField(ogr.FieldDefn('dAccu', ogr.OFTReal))
+    pLayer.CreateField(ogr.FieldDefn('drainage', ogr.OFTReal))
 
     pLayerDefn = pLayer.GetLayerDefn()
-    pFeature = ogr.Feature(pLayerDefn)
-
-    
-    print(type(aID))
-    print(type(aID[0]))
+    pFeature = ogr.Feature(pLayerDefn)    
 
     nPoint = aID.size
     for i in np.arange(0, nPoint, 1):
-
         lID = aID[i]
         dAccu = aAccu[i]
         lID_down = aDnID[i]
@@ -82,14 +77,12 @@ def mosart_map_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFile
                 y_end = aLatitude[dummy_index]
                 pLine = ogr.Geometry(ogr.wkbLineString)
                 pLine.AddPoint(x_start, y_start)
-                pLine.AddPoint(x_end, y_end)
-                print(x_start, y_start, x_end, y_end)
+                pLine.AddPoint(x_end, y_end)                
                 pFeature.SetGeometry(pLine)
                 pFeature.SetField("id", lID)
-                pFeature.SetField("dAccu", dAccu)
+                pFeature.SetField("drainage", dAccu)
                 pLayer.CreateFeature(pFeature)
-            else:
-                print(aDn_index)
+            else:                
                 pass
         else:
             pass
@@ -97,20 +90,24 @@ def mosart_map_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFile
     #Save and close everything
 
     pDataset = pLayer = pFeature  = None
-    pProjection = ccrs.PlateCarree()
+  
     aLegend=list()
-    aLegend.append(r'Region: Amazon')
-    aLegend.append(r'Resolution: $0.5^{\circ}$')
+    aLegend.append(r'Susquehanna River Basin')
+    #aLegend.append(r'Resolution: $0.5^{\circ}$')
     sColormap = 'Spectral_r'
-    map_vector_polyline_data(2,
+    sFolder = os.path.dirname(sFilename_geojson_out)
+       
+    sBasename = Path(sFilename_geojson_out).stem
+    sFilename_png =  sFolder + slash + sBasename + '_flow_direction' + '.png'        
+    map_vector_polyline_data(1,
                              sFilename_geojson_out, 
                              sFilename_png,
                              iFlag_thickness_in =1,
-                             sField_thickness_in='dAccu',
+                             sField_thickness_in='drainage',
                              aExtent_in = None, 
                              iFlag_scientific_notation_colorbar_in=None,
                              sColormap_in = sColormap,
-                             sTitle_in = 'River network', 
+                             sTitle_in = 'Flow direction', 
                              iDPI_in = None,
                              dMissing_value_in=None,
                              dData_max_in = None, 
@@ -118,4 +115,4 @@ def mosart_map_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFile
                              sExtend_in =None,
                              sUnit_in=None,
                              aLegend_in = aLegend,
-                             pProjection_map_in = pProjection)
+                             pProjection_map_in = None)

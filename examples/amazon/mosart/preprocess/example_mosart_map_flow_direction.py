@@ -1,6 +1,6 @@
 import os
 
-from pye3sm.mosart.map.mosart_map_flow_direction import mosart_map_flow_direction
+from pye3sm.mosart.map.structured.mosart_map_structured_flow_direction import mosart_map_flow_direction
 
 
 
