@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 
 class pycase(object):
     __metaclass__ = ABCMeta   
-    iFlag_debug = 0
+    iFlag_debug_case = 0
     
 
     iFlag_atm = 0
@@ -76,8 +76,8 @@ class pycase(object):
         #self.aParameter = aParameter
 
         #required with default variables
-        if 'iFlag_debug' in aParameter:
-            self.iFlag_debug             = int(aParameter[ 'iFlag_debug'])
+        if 'iFlag_debug_case' in aParameter:
+            self.iFlag_debug_case             = int(aParameter[ 'iFlag_debug_case'])
         #atm
         if 'iFlag_atm' in aParameter:
             self.iFlag_atm             = int(aParameter[ 'iFlag_atm'])

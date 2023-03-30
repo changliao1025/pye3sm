@@ -6,7 +6,7 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file_multiple_band
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
-from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
+from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_case_dimension_info 
 
 from pye3sm.tools.mosart.gsim.read_gsim_data import read_gsim_data
 from pye3sm.mosart.general.structured.twod.retrieve.mosart_retrieve_variable_2d import mosart_retrieve_variable_2d

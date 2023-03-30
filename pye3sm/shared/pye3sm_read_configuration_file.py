@@ -94,6 +94,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     return config
 
 def pye3sm_read_case_configuration_file(sFilename_configuration_in,
+                                        iFlag_debug_case_in = None,
                                         iFlag_same_grid_in= None,
                                         iFlag_atm_in= None,
                                         iFlag_datm_in = None,
@@ -139,6 +140,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
 
     sModel = config['sModel']
     sRegion = config['sRegion']
+
+    if iFlag_debug_case_in is not None:
+        iFlag_debug_case = iFlag_debug_case_in
+    else:
+        iFlag_debug_case = 0
 
     if iFlag_atm_in is not None:
         iFlag_atm = iFlag_atm_in
@@ -259,6 +265,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         sLabel_y = sLabel_y_in
     else:
         sLabel_y = ''
+
+    config['iFlag_debug_case'] =  "{:01d}".format(iFlag_debug_case)
 
     config['iFlag_atm'] =  "{:01d}".format(iFlag_atm)
     config['iFlag_datm'] =  "{:01d}".format(iFlag_datm)

@@ -1,17 +1,16 @@
 import os
 import numpy as np
 from scipy.interpolate import griddata #generate grid
-from netCDF4 import Dataset #read netcdf
+import netCDF4 as nc #read netcdf
 from osgeo import  osr #the default operator
 from pyearth.system.define_global_variables import *    
 from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_multiple_band
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
-from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
+from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_structured_case_dimension_info 
 
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
 
-def mosart_save_variable_2d(oE3SM_in, oCase_in):
+
+def mosart_save_variable_structured(oE3SM_in, oCase_in, sVariable_in = None):
 
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
@@ -22,7 +21,11 @@ def mosart_save_variable_2d(oE3SM_in, oCase_in):
     
         
     dConversion = oCase_in.dConversion   
-    sVariable  = oCase_in.sVariable
+    
+    if sVariable_in is not None:
+        sVariable = sVariable_in
+    else:
+        sVariable = oCase_in.sVariable
     #for the sake of simplicity, all directory will be the same, no matter on mac or cluster
    
     sCase = oCase_in.sCase
@@ -36,9 +39,9 @@ def mosart_save_variable_2d(oE3SM_in, oCase_in):
         os.makedirs(sWorkspace_analysis_case)    
 
     #new approach
-    aLon, aLat , aMask_ll= mosart_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ul= mosart_retrieve_structured_case_dimension_info(oCase_in)
     #dimension
-    aMask_ul = np.flip(aMask_ll, 0)
+    aMask_ll = np.flip(aMask_ul, 0)
     nrow = np.array(aMask_ll).shape[0]
     ncolumn = np.array(aMask_ll).shape[1]
     aMask_index_ll = np.where(aMask_ll==0)
@@ -89,7 +92,7 @@ def mosart_save_variable_2d(oE3SM_in, oCase_in):
         
     sFilename_output = sWorkspace_variable_netcdf + slash + sVariable +  sExtension_netcdf
     #should we use the same netcdf format? 
-    pFile = Dataset(sFilename_output, 'w', format = 'NETCDF4') 
+    pFile = nc.Dataset(sFilename_output, 'w', format = 'NETCDF4') 
     pDimension_longitude = pFile.createDimension('lon', ncolumn) 
     pDimension_latitude = pFile.createDimension('lat', nrow) 
 
@@ -115,7 +118,7 @@ def mosart_save_variable_2d(oE3SM_in, oCase_in):
                 print("Nope, the path doesn't reach your file. Go research filepath in python")
                 return
     
-            aDatasets = Dataset(sFilename)
+            aDatasets = nc.Dataset(sFilename)
     
             for sKey, aValue in aDatasets.variables.items():
             

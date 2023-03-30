@@ -4,7 +4,7 @@ from netCDF4 import Dataset #read netcdf
 from pyearth.system.define_global_variables import *    
 from pyearth.toolbox.date.day_in_month import day_in_month
 from pyearth.toolbox.date.leap_year import  leap_year
-from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info 
+from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_case_dimension_info 
 import getpass
 from datetime import datetime
 

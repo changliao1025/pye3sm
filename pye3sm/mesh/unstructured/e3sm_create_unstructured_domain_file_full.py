@@ -125,7 +125,7 @@ def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_re
             #unstructured mesh
             if aArea_in is None:
                 for i in range(nrow):
-                    print('check dimension')
+                    #print('check dimension')
                     aLongitude_in = aLonV_region[ i,0,: ].flatten()
                     aLatitude_in = aLatV_region[i,0,:].flatten()
                     aLongitude_in = aLongitude_in[np.where(aLongitude_in !=-9999)]
