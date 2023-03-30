@@ -7,7 +7,9 @@ from osgeo import gdal, ogr
 from pyearth.system.define_global_variables import *  
 
 from pyearth.visual.map.vector.map_vector_polygon_data import map_vector_polygon_data
+from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
 
+from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
 def mosart_map_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
 
@@ -28,7 +30,10 @@ def mosart_map_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
     
         
     dConversion = oCase_in.dConversion   
-    sVariable  = oCase_in.sVariable
+    if sVariable_in is None:
+        sVariable  = oCase_in.sVariable
+    else:
+        sVariable = sVariable_in.lower()
 
 
     sVar = sVariable_in[0:4].lower()
@@ -50,7 +55,22 @@ def mosart_map_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
     sWorkspace_case_aux = oCase_in.sWorkspace_case_aux
 
     sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain_mpas.nc'
+    if not os.path.exists(sFilename_domain):
+        print(sFilename_domain + ' does not existin')
+        print("Nope, the path doesn't reach your file. We will use mosart parameter to reconstruct domain file")
 
+        sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc' 
+        if not os.path.exists(sFilename_domain):
+            sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
+            aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
+            sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
+            mosart_create_domain_1d(sFilename_mosart_parameter, sFilename_domain, 1.0/16, 1.0/16)
+        else:
+            pass
+
+    else:
+        #this is a mpas mesh case
+        pass
     #read the domain file
     pDatasets_domain = nc.Dataset(sFilename_domain, 'r')
 

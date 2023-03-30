@@ -9,17 +9,17 @@ from pyearth.system.define_global_variables import *
 from pyearth.gis.location.convert_lat_lon_range import convert_180_to_360
 
 
-from pye3sm.elm.grid.create_customized_elm_domain import create_customized_elm_domain
+from pye3sm.elm.mesh.create_customized_elm_domain import create_customized_elm_domain
 
 from pye3sm.case.e3sm_create_case import e3sm_create_case
 from pye3sm.shared.e3sm import pye3sm
 from pye3sm.shared.case import pycase
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
-from pye3sm.mosart.grid.create_customized_mosart_domain import create_customized_mosart_domain
+from pye3sm.mosart.mesh.create_customized_mosart_domain import create_customized_mosart_domain
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file
 
-from pye3sm.elm.grid.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
+from pye3sm.elm.mesh.elm_extract_grid_latlon_from_mosart import elm_extract_grid_latlon_from_mosart
 sModel = 'e3sm'
 #sRegion ='site'
 sRegion ='amazon'

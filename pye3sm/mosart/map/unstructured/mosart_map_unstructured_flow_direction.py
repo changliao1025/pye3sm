@@ -8,7 +8,7 @@ from osgeo import gdal, osr
 import cartopy.crs as ccrs
 from pyearth.visual.map.vector.map_vector_polyline_data import map_vector_polyline_data
 
-def mosart_map_flow_direction(sFilename_parameter_in, sFilename_geojson_out, sFilename_png):
+def mosart_map_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out, sFilename_png):
 
     if os.path.exists(sFilename_parameter_in):
         print("Yep, I can read that file!")
@@ -61,11 +61,7 @@ def mosart_map_flow_direction(sFilename_parameter_in, sFilename_geojson_out, sFi
     pLayerDefn = pLayer.GetLayerDefn()
     pFeature = ogr.Feature(pLayerDefn)
 
-    aID=np.ravel(aID)
-    aDnID=np.ravel(aDnID)
-    aAccu=np.ravel(aAccu)
-    aLongitude=np.ravel(aLongitude)
-    aLatitude=np.ravel(aLatitude)
+    
     print(type(aID))
     print(type(aID[0]))
 

@@ -1,4 +1,5 @@
 import os
+from shutil import copyfile
 import numpy as np
 
 import netCDF4 as nc #read netcdf
@@ -31,7 +32,7 @@ def mosart_save_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
     if sVariable_in is None:
         sVariable  = oCase_in.sVariable
     else:
-        sVariable = sVariable_in
+        sVariable = sVariable_in.lower()
 
 
     sVar = sVariable[0:4].lower()
@@ -55,15 +56,22 @@ def mosart_save_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
         os.makedirs(sWorkspace_case_aux)
 
     sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain_mpas.nc'
-
+    sFilename_parameter = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_parameter_mpas.nc' 
     if not os.path.exists(sFilename_domain):
         print(sFilename_domain + ' does not existin')
         print("Nope, the path doesn't reach your file. We will use mosart parameter to reconstruct domain file")
-        sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
-        aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
-        sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
-        sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc'        
-        mosart_create_domain_1d(sFilename_mosart_parameter, sFilename_domain, 1.0/16, 1.0/16)
+        sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc' 
+        sFilename_parameter = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_parameter.nc' 
+        if not os.path.exists(sFilename_domain) or not os.path.exists(sFilename_parameter):
+            sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
+            aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
+            sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
+            #maybe also generate a copy for this parameter?            
+            copyfile(sFilename_mosart_parameter, sFilename_parameter)
+            mosart_create_domain_1d(sFilename_parameter, sFilename_domain, 1.0/16, 1.0/16)
+            
+        else:
+            pass
 
     else:
         #this is a mpas mesh case
