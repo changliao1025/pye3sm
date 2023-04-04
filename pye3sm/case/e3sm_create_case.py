@@ -1,23 +1,16 @@
-import os, sys, stat
+import os
+import stat
 import subprocess
 from pyearth.system.define_global_variables import *
 
-def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
-                     iFlag_replace_dlnd_forcing=None,
-                     iFlag_replace_drof_forcing = None,
-                     iYear_data_end_in = None, 
-                     iYear_data_start_in = None):
+def e3sm_create_case(oE3SM_in,   
+                     oCase_in):
     """
-    create an E3SM case
+    create an E3SM case 
 
     Args:
         oE3SM_in (_type_): _description_
-        oCase_in (_type_): _description_
-        iFlag_replace_datm_forcing (_type_, optional): _description_. Defaults to None.
-        iFlag_replace_dlnd_forcing (_type_, optional): _description_. Defaults to None.
-        iFlag_replace_drof_forcing (_type_, optional): _description_. Defaults to None.
-        iYear_data_end_in (_type_, optional): _description_. Defaults to None.
-        iYear_data_start_in (_type_, optional): _description_. Defaults to None.
+        oCase_in (_type_): _description_      
     """
     
     #e3sm attributes
@@ -44,13 +37,16 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     
     iFlag_atm = oCase_in.iFlag_atm
     iFlag_datm = oCase_in.iFlag_datm
+    iFlag_replace_datm_forcing = oCase_in.iFlag_replace_datm_forcing
 
     iFlag_lnd = oCase_in.iFlag_lnd
     iFlag_dlnd = oCase_in.iFlag_dlnd
     iFlag_lnd_spinup=oCase_in.iFlag_lnd_spinup
+    iFlag_replace_dlnd_forcing = oCase_in.iFlag_replace_dlnd_forcing
 
     iFlag_rof = oCase_in.iFlag_rof
     iFlag_drof = oCase_in.iFlag_drof
+    iFlag_replace_drof_forcing = oCase_in.iFlag_replace_drof_forcing
     
     #start
     #currently we only need to calibrate H2SC so I will not use advanced I/O
@@ -76,11 +72,13 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
     sFilename_drof_namelist = oCase_in.sFilename_drof_namelist  
     sFilename_r2l_mapping = oCase_in.sFilename_r2l_mapping
 
-    sFilename_user_datm_prec = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Precip_parflow'
-    sFilename_user_datm_solar = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.Solar_parflow'
-    sFilename_user_datm_temp = '/compyfs/liao313/04model/e3sm/amazon/user_datm.streams.txt.CLMGSWP3v1.TPQW_parflow'    
-    sFilename_user_dlnd = '/qfs/people/liao313/data/e3sm/sag/mosart/dlnd.streams.txt.lnd.gpcc'
-    sFilename_user_drof_gage_height= '/compyfs/liao313/04model/e3sm/amazon/user_drof.streams.txt.MOSART.gage_height'
+    #this part should be moved to the case class    
+
+    sFilename_user_datm_prec = oCase_in.sFilename_user_datm_prec
+    sFilename_user_datm_solar = oCase_in.sFilename_user_datm_solar
+    sFilename_user_datm_temp = oCase_in.sFilename_user_datm_temp
+    sFilename_user_dlnd_runoff = oCase_in.sFilename_user_dlnd_runoff
+    sFilename_user_drof_gage_height = oCase_in.sFilename_user_drof_gage_height
     #GIT_HASH=`git log -n 1 --format=%h`
 
     sCasename = sDirectory_case + slash + sCase
@@ -111,9 +109,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
         sQueue = 'slurm'
         sWalltime = '6:00:00'
         sNtask = '1'
-        sNtask = '-3'
-        sNtask = '3'
-        sYear = '30'
+        #sNtask = '-3'
         pass
 
     iFlag_create_newcase =1
@@ -345,7 +341,7 @@ def e3sm_create_case(oE3SM_in,   oCase_in,    iFlag_replace_datm_forcing=None,
                 pass
             else:
                 if iFlag_replace_dlnd_forcing==1:
-                    sLine = 'cp ' + sFilename_user_dlnd + ' ./user_dlnd.streams.txt.lnd.gpcc' + '\n'
+                    sLine = 'cp ' + sFilename_user_dlnd_runoff + ' ./user_dlnd.streams.txt.lnd.gpcc' + '\n'
                     sLine = sLine.lstrip()
                     ofs.write(sLine) 
                 else:

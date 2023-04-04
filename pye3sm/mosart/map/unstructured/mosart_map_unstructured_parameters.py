@@ -9,7 +9,10 @@ from pyearth.system.define_global_variables import *
 from pyearth.visual.map.vector.map_vector_polygon_data import map_vector_polygon_data
 
 
-def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out, aVariable_parameter, aVariable_short):
+def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out, aVariable_parameter, aVariable_short,
+                                       iFlag_scientific_notation_colorbar_in=None):
+
+    iFlag_global_id = 0 #only mpas mesh has global id
     
     if os.path.exists(sFilename_parameter_in):
         print("Yep, I can read that file!")
@@ -24,7 +27,12 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
         print(sFilename_domain_in)
 
     nParameter = len(aVariable_parameter)
-    iFlag_create_geojson = 0
+    if os.path.exists(sFilename_geojson_out):
+        iFlag_create_geojson = 1
+    else:
+        iFlag_create_geojson = 1
+
+    iFlag_map_geojson = 1
 
     if iFlag_create_geojson == 1:
         if os.path.exists(sFilename_geojson_out):
@@ -47,11 +55,11 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
         print(sFilename_parameter_in)
         aDatasets = nc.Dataset(sFilename_parameter_in)    
         netcdf_format = aDatasets.file_format
-        print(netcdf_format)
-        print("Print dimensions:")
-        print(aDatasets.dimensions.keys())
-        print("Print variables:")
-        print(aDatasets.variables.keys() )        
+        #print(netcdf_format)
+        #print("Print dimensions:")
+        #print(aDatasets.dimensions.keys())
+        #print("Print variables:")
+        #print(aDatasets.variables.keys() )        
         # Copy variables
         aaData_variable=list()
         aParameter_table =list()
@@ -62,6 +70,9 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
     
             # Copy variable attributes
             #outVar.setncatts({k: aValue.getncattr(k) for k in aValue.ncattrs()})
+            if sKey == 'CellID':
+                aCellID =  (aValue[:]).data
+                iFlag_global_id = 1
             if sKey == 'ID':
                 aID =  (aValue[:]).data
             if sKey == 'dnID':
@@ -89,6 +100,7 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
        
         pLayer = pDataset.CreateLayer('cell', pSpatial_reference_gcs, ogr.wkbPolygon)
         pLayer.CreateField(ogr.FieldDefn('id', ogr.OFTInteger64))
+        pLayer.CreateField(ogr.FieldDefn('cellid', ogr.OFTInteger64))
         for s in range(nParameter):
             sVariable_parameter = aVariable_parameter[s]
             sVariable_short = aVariable_short[s]        
@@ -117,11 +129,15 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
             pFeature.SetGeometry(pPolygon)
     
             lID = aID[i]
+            if iFlag_global_id == 1:
+                lCellID= aCellID[i]
             
             lID_down = aDnID[i]      
             if(lID_down != -9999):
                 #define id first
                 pFeature.SetField('id', lID ) 
+                if iFlag_global_id == 1:
+                    pFeature.SetField('cellid', lCellID )
                 #define the other fields
                 for s in range(nParameter):
                     sVariable_short = aVariable_short[s]
@@ -139,7 +155,9 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
         
         pDataset = pLayer = pFeature  = None      
     else:
-        
+        pass
+    
+    if iFlag_map_geojson == 1:    
         #call pyearth function to plot the geojson file
         #get folder that contain this file
         sFolder = os.path.dirname(sFilename_geojson_out)
@@ -154,7 +172,7 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
                                 sFilename_geojson_out, 
                                 sVariable_in = sVariable_short,
                                 sFilename_output_in=sFilename_png_out,
-                                iFlag_scientific_notation_colorbar_in=None,
+                                iFlag_scientific_notation_colorbar_in=iFlag_scientific_notation_colorbar_in,
                                 sColormap_in = None,
                                 sTitle_in = sVariable_short, 
                                 iDPI_in = None,

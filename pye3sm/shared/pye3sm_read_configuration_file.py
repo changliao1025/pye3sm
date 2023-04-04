@@ -98,11 +98,14 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
                                         iFlag_same_grid_in= None,
                                         iFlag_atm_in= None,
                                         iFlag_datm_in = None,
+                                        iFlag_replace_datm_forcing_in = None,
                                         iFlag_lnd_in =None,
                                         iFlag_dlnd_in =None,
                                         iFlag_lnd_spinup_in = None,
+                                        iFlag_replace_dlnd_forcing_in = None,
                                         iFlag_rof_in = None,
                                         iFlag_drof_in = None,
+                                        iFlag_replace_drof_forcing_in = None,
                                         iCase_index_in = None,
                                         iYear_start_in = None,
                                         iYear_end_in = None,
@@ -120,17 +123,23 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
                                         sFilename_atm_domain_in = None,
                                         sFilename_datm_namelist_in = None,
                                         sFilename_a2r_mapping_in = None,
+                                        sFilename_user_datm_prec_in = None,
+                                        sFilename_user_datm_temp_in = None,
+                                        sFilename_user_datm_solar_in = None,
                                         sFilename_lnd_namelist_in = None,
                                         sFilename_lnd_domain_in=None,
                                         sFilename_dlnd_namelist_in = None,
                                         sFilename_l2r_mapping_in = None,
+                                        sFilename_user_dlnd_runoff_in = None,
                                         sFilename_rof_namelist_in = None,
                                         sFilename_rof_domain_in=None,
                                         sFilename_rof_parameter_in=None,
                                         sFilename_drof_namelist_in = None,
                                         sFilename_r2l_mapping_in = None,
+                                        sFilename_user_drof_gage_height_in = None,
                                         sWorkspace_data_in = None,
                                         sWorkspace_scratch_in=None):
+    
     #read the default configuration
     if not os.path.exists(sFilename_configuration_in):
         print('The configuration file does not exist!')
@@ -155,6 +164,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         iFlag_datm = iFlag_datm_in
     else:
         iFlag_datm = 0
+    
+    if iFlag_replace_datm_forcing_in is not None:
+        iFlag_replace_datm_forcing = iFlag_replace_datm_forcing_in
+    else:
+        iFlag_replace_datm_forcing = 0
 
     if iFlag_lnd_in is not None:
         iFlag_lnd = iFlag_lnd_in
@@ -165,6 +179,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         iFlag_dlnd = iFlag_dlnd_in
     else:
         iFlag_dlnd = 1
+
+    if iFlag_replace_dlnd_forcing_in is not None:
+        iFlag_replace_dlnd_forcing = iFlag_replace_dlnd_forcing_in
+    else:
+        iFlag_replace_dlnd_forcing = 0
 
     if iFlag_lnd_spinup_in is not None:
         iFlag_lnd_spinup = iFlag_lnd_spinup_in
@@ -181,7 +200,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     else:
         iFlag_drof = 0
 
-
+    if iFlag_replace_drof_forcing_in is not None:
+        iFlag_replace_drof_forcing = iFlag_replace_drof_forcing_in
+    else:
+        iFlag_replace_drof_forcing = 0
 
     if sDate_in is not None:
         sDate = sDate_in
@@ -270,10 +292,15 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
 
     config['iFlag_atm'] =  "{:01d}".format(iFlag_atm)
     config['iFlag_datm'] =  "{:01d}".format(iFlag_datm)
+    config['iFlag_replace_datm_forcing'] =  "{:01d}".format(iFlag_replace_datm_forcing)
+
     config['iFlag_lnd'] =  "{:01d}".format(iFlag_lnd)
     config['iFlag_dlnd'] =  "{:01d}".format(iFlag_dlnd)
+    config['iFlag_replace_dlnd_forcing'] =  "{:01d}".format(iFlag_replace_dlnd_forcing)
+
     config['iFlag_rof'] =  "{:01d}".format(iFlag_rof)
     config['iFlag_drof'] =  "{:01d}".format(iFlag_drof)
+    config['iFlag_replace_drof_forcing'] =  "{:01d}".format(iFlag_replace_drof_forcing)
 
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
@@ -347,6 +374,14 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         else:
             print('A default datm namelist was not found, it may be created.' )
 
+    if sFilename_user_datm_prec_in is not None:
+        sFilename_user_datm_prec = sFilename_user_datm_prec_in
+    
+    if sFilename_user_datm_temp_in is not None:
+        sFilename_user_datm_temp = sFilename_user_datm_temp_in
+    
+    if sFilename_user_datm_solar_in is not None:
+        sFilename_user_datm_solar = sFilename_user_datm_solar_in
 
     if sFilename_atm_domain_in is not None:
         sFilename_atm_domain = sFilename_atm_domain_in
@@ -357,9 +392,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         sFilename_a2r_mapping = None
 
     if sFilename_lnd_domain_in is not None:
-        sFilename_lnd_domain = sFilename_lnd_domain_in
-    
-    
+        sFilename_lnd_domain = sFilename_lnd_domain_in  
 
     #several namelist maybe used if we need to change parameters
     if sFilename_lnd_namelist_in is not None:
@@ -384,6 +417,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         sFilename_l2r_mapping= sFilename_l2r_mapping_in
     else:
         sFilename_l2r_mapping = None
+
+    if sFilename_user_dlnd_runoff_in is not None:
+        sFilename_user_dlnd_runoff = sFilename_user_dlnd_runoff_in
+
 
     #update mask if region changes
 
@@ -410,6 +447,9 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         sFilename_r2l_mapping= sFilename_r2l_mapping_in
     else:
         sFilename_r2l_mapping = None
+    
+    if sFilename_user_drof_gage_height_in is not None:
+        sFilename_user_drof_gage_height = sFilename_user_drof_gage_height_in
 
 
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
@@ -441,12 +481,16 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     config['sFilename_atm_domain'] = sFilename_atm_domain
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
     config['sFilename_a2r_mapping'] = sFilename_a2r_mapping
+    config['sFilename_user_datm_prec']=sFilename_user_datm_prec
+    config['sFilename_user_datm_temp'] = sFilename_user_datm_temp
+    config['sFilename_user_datm_solar'] = sFilename_user_datm_solar
 
     #lnd
     config['sFilename_lnd_domain'] = sFilename_lnd_domain
     config['sFilename_lnd_namelist'] = sFilename_lnd_namelist
     config['sFilename_dlnd_namelist'] = sFilename_dlnd_namelist
     config['sFilename_l2r_mapping'] = sFilename_l2r_mapping
+    config['sFilename_user_dlnd_runoff']=sFilename_user_dlnd_runoff
 
     #rof
     config['sFilename_rof_domain'] = sFilename_rof_domain
@@ -454,6 +498,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     config['sFilename_r2l_mapping'] = sFilename_r2l_mapping
 
     config['sFilename_rof_input'] = sFilename_rof_input
+    config['sFilename_user_drof_gage_height']=sFilename_user_drof_gage_height
     return config
 
 if __name__ == '__main__':

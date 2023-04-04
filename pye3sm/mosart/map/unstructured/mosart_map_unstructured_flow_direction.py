@@ -19,21 +19,27 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in, sFilename_parame
 
 
     print(sFilename_parameter_in)
+
+    iFlag_debug = 0
+    if iFlag_debug == 1:
+        #replace the parameter file with a corrected one
+        sFilename_parameter_in = "/compyfs/icom/liao-etal_2023_mosart_joh/code/matlab/inputdata/MOSART_SUS_16th_c230330.nc"
+    
     aDatasets = nc.Dataset(sFilename_parameter_in)
 
     netcdf_format = aDatasets.file_format
-    print(netcdf_format)
-    print("Print dimensions:")
-    print(aDatasets.dimensions.keys())
-    print("Print variables:")
-    print(aDatasets.variables.keys() )
+    #print(netcdf_format)
+    #print("Print dimensions:")
+    #print(aDatasets.dimensions.keys())
+    #print("Print variables:")
+    #print(aDatasets.variables.keys() )
     #output file
 
     # Copy variables
     for sKey, aValue in aDatasets.variables.items():
         #print(sKey, aValue)
-        print(aValue.datatype)
-        print( aValue.dimensions)
+        #print(aValue.datatype)
+        #print( aValue.dimensions)
         if sKey == 'ID':
             aID =  (aValue[:]).data
         if sKey == 'dnID':

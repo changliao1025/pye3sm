@@ -11,29 +11,23 @@ from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist
 
 from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
-def mosart_map_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
+def mosart_map_variable_unstructured(oCase_in, sVariable_in=None, sUnit_in = None, sTitle_in = None, iFlag_scientific_notation_colorbar_in=None):
 
-    #read the actual data
-   
-
-    pDriver_geojson = ogr.GetDriverByName('GeoJSON')     
+    #read the actual data     
     pSpatial_reference_gcs = osr.SpatialReference()  
     pSpatial_reference_gcs.ImportFromEPSG(4326)    # WGS84 lat/lon  
-    
-
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
     iYear_start = oCase_in.iYear_start        
     iYear_end = oCase_in.iYear_end          
    
-    print('The following model is processed: ', sModel)
-    
+    print('The following model is processed: ', sModel)    
         
     dConversion = oCase_in.dConversion   
     if sVariable_in is None:
         sVariable  = oCase_in.sVariable
     else:
-        sVariable = sVariable_in.lower()
+        sVariable = sVariable_in.lower()  
 
 
     sVar = sVariable_in[0:4].lower()
@@ -85,14 +79,8 @@ def mosart_map_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
         if (sKey == 'xc'):                    
             aXC = (aValue[:]).data
             continue
-
-
    
-    iFlag_optional = 1 
 
-    #save geojson file
-    sWorkspace_variable = sWorkspace_analysis_case + slash \
-        + sVariable 
     
     sWorkspace_variable_geojson = sWorkspace_analysis_case + slash \
         + sVariable + slash + 'geojson'
@@ -129,8 +117,8 @@ def mosart_map_variable_unstructured(oE3SM_in, oCase_in, sVariable_in=None):
                 print("Nope, the path doesn't reach your file. Go research filepath in python")
                 return
     
-            map_vector_polygon_data(1, sFilename,sFilename_output_in=sFilename_output_in, sVariable_in='rive', \
-                                     dMissing_value_in = -9999, dData_max_in=100, dData_min_in=0, sTitle_in='River Flow', sUnit_in='m3/s')    
+            map_vector_polygon_data(1, sFilename,sFilename_output_in=sFilename_output_in, sVariable_in=sVar, \
+                                     dMissing_value_in = -9999,  sTitle_in=sTitle_in, sUnit_in=sUnit_in, iFlag_scientific_notation_colorbar_in=iFlag_scientific_notation_colorbar_in)    
     
     
 

@@ -5,7 +5,7 @@ from netCDF4 import Dataset #read netcdf
 from pyearth.system.define_global_variables import *
 
 
-from pyearth.visual.map.plot_time_series_vertical_data import plot_time_series_vertical_data
+from pyearth.visual.timeseries.plot_time_series_vertical_data import plot_time_series_vertical_data
 
 def elm_tsplot_variable_singlegrid_1d(oE3SM_in, \
                                                      oCase_in, \
