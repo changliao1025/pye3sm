@@ -376,12 +376,18 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
 
     if sFilename_user_datm_prec_in is not None:
         sFilename_user_datm_prec = sFilename_user_datm_prec_in
+    else:
+        sFilename_user_datm_prec=''
     
     if sFilename_user_datm_temp_in is not None:
         sFilename_user_datm_temp = sFilename_user_datm_temp_in
+    else:
+        sFilename_user_datm_temp=''
     
     if sFilename_user_datm_solar_in is not None:
         sFilename_user_datm_solar = sFilename_user_datm_solar_in
+    else:
+        sFilename_user_datm_solar=''
 
     if sFilename_atm_domain_in is not None:
         sFilename_atm_domain = sFilename_atm_domain_in
@@ -420,6 +426,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
 
     if sFilename_user_dlnd_runoff_in is not None:
         sFilename_user_dlnd_runoff = sFilename_user_dlnd_runoff_in
+    else:
+        sFilename_user_dlnd_runoff=''
 
 
     #update mask if region changes
@@ -450,6 +458,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     
     if sFilename_user_drof_gage_height_in is not None:
         sFilename_user_drof_gage_height = sFilename_user_drof_gage_height_in
+    else:
+        sFilename_user_drof_gage_height=''
 
 
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
