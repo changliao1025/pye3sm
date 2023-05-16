@@ -8,7 +8,7 @@ from pyearth.system.define_global_variables import *
 
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
 
-def elm_tsplot_variable_singlegrid(oCase_in,
+def elm_tsplot_variable_singlecell(oCase_in,
                                    iFlag_scientific_notation_in=None,
                                    iFlag_log_y_in=None,
                                    iReverse_y_in = None,
@@ -108,7 +108,7 @@ def elm_tsplot_variable_singlegrid(oCase_in,
 
     aTime = np.array([aDate_subset])
     aData = np.array([aData_out])
-    plot_time_series_data( aTime , aData,
+    plot_time_series_data( aTime, aData,
                            sFilename_out,
                            iFlag_scientific_notation_in=iFlag_scientific_notation_in,
                            iReverse_y_in = iReverse_y_in,

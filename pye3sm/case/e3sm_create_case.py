@@ -3,8 +3,7 @@ import stat
 import subprocess
 from pyearth.system.define_global_variables import *
 
-def e3sm_create_case(oE3SM_in,   
-                     oCase_in):
+def e3sm_create_case(oE3SM_in,  oCase_in):
     """
     create an E3SM case 
 
@@ -16,10 +15,12 @@ def e3sm_create_case(oE3SM_in,
     #e3sm attributes
     iFlag_branch = oE3SM_in.iFlag_branch
     iFlag_debug = oE3SM_in.iFlag_debug
+    iFlag_large_cache= oE3SM_in.iFlag_large_cache
     
     iFlag_continue = oE3SM_in.iFlag_continue
     iFlag_resubmit = oE3SM_in.iFlag_resubmit
     iFlag_short = oE3SM_in.iFlag_short
+    nTask = oE3SM_in.nTask
 
     RES = oE3SM_in.RES
     COMPSET = oE3SM_in.COMPSET
@@ -28,6 +29,8 @@ def e3sm_create_case(oE3SM_in,
     sCIME_directory = oE3SM_in.sCIME_directory
     sEmail = oE3SM_in.sEmail
     iFlag_debug_case = oCase_in.iFlag_debug_case #without submit
+    nSubmit = oE3SM_in.nSubmit
+
     sRegion = oCase_in.sRegion
     #case attributes
     sDirectory_case = oCase_in.sDirectory_case
@@ -95,8 +98,12 @@ def e3sm_create_case(oE3SM_in,
     sYear =  "{:0d}".format(nYear)
     sYear_start = "{:04d}".format(oCase_in.iYear_start)
     sYear_end = "{:04d}".format(oCase_in.iYear_end)
-    sYear_data_start = "{:04d}".format(oCase_in.iYear_data_start)
-    sYear_data_end = "{:04d}".format(oCase_in.iYear_data_end)
+    sYear_data_datm_start = "{:04d}".format(oCase_in.iYear_data_datm_start)
+    sYear_data_datm_end = "{:04d}".format(oCase_in.iYear_data_datm_end)
+    sYear_data_dlnd_start = "{:04d}".format(oCase_in.iYear_data_dlnd_start)
+    sYear_data_dlnd_end = "{:04d}".format(oCase_in.iYear_data_dlnd_end)
+
+    sSubmit = "{:0d}".format(nSubmit)
 
     if (iFlag_short == 1 ):
         sQueue = 'short'
@@ -108,8 +115,8 @@ def e3sm_create_case(oE3SM_in,
     else:
         sQueue = 'slurm'
         sWalltime = '6:00:00'
-        sNtask = '1'
-        #sNtask = '-3'
+        sNtask = "{:0d}".format(nTask)
+        #sNtask = '5'
         pass
 
     iFlag_create_newcase =1
@@ -123,7 +130,7 @@ def e3sm_create_case(oE3SM_in,
             p.wait()
             pass
         
-        #remove bld directory
+        #remove bld directory, yes
         if (os.path.exists(sBldname)):
             sCommand = 'rm -rf '  + sBldname
             print(sCommand)
@@ -131,7 +138,7 @@ def e3sm_create_case(oE3SM_in,
             p.wait()
             pass
         
-        #remove run directory
+        #remove run directory? No
         if (os.path.exists(sRunname)):
             sCommand = 'rm -rf '  + sRunname
             print(sCommand)
@@ -240,13 +247,13 @@ def e3sm_create_case(oE3SM_in,
             pass
         else:
             if iFlag_datm ==1:
-                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=' + sYear_data_start + '\n'
+                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_START=' + sYear_data_datm_start + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
-                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_END=' + sYear_data_end + '\n'
+                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_END=' + sYear_data_datm_end + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
-                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_start + '\n' #sYear_start
+                sLine = sPython + ' ./xmlchange DATM_CLMNCEP_YR_ALIGN=' + sYear_data_datm_start + '\n' #sYear_start
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
                 sLine =  ' ./xmlchange DATM_MODE=CLMGSWP3v1' + '\n'
@@ -283,6 +290,7 @@ def e3sm_create_case(oE3SM_in,
                     sLine =  ' ./xmlchange ATM2ROF_SMAPNAME=' +  sFilename_a2r_mapping + '\n'
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
+        
         if iFlag_lnd == 1:
             sLine =  ' ./xmlchange LND_DOMAIN_FILE=' +  os.path.basename(sFilename_lnd_domain) +    '\n'
             sLine = sLine.lstrip()
@@ -312,13 +320,13 @@ def e3sm_create_case(oE3SM_in,
                 #sLine =  ' ./xmlchange CLM_USRDAT_NAME=test_r05_r05 '   + '\n'
                 #sLine = sLine.lstrip()
                 #ofs.write(sLine)          
-                sLine =  ' ./xmlchange DLND_CPLHIST_YR_START=' +  sYear_data_start + '\n'
+                sLine =  ' ./xmlchange DLND_CPLHIST_YR_START=' +  sYear_data_dlnd_start + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
-                sLine =  ' ./xmlchange DLND_CPLHIST_YR_END=' +  sYear_data_end + '\n'
+                sLine =  ' ./xmlchange DLND_CPLHIST_YR_END=' +  sYear_data_dlnd_end + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
-                sLine =  ' ./xmlchange DLND_CPLHIST_YR_ALIGN=' +  sYear_data_start + '\n'
+                sLine =  ' ./xmlchange DLND_CPLHIST_YR_ALIGN=' +  sYear_data_dlnd_start + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
                 if sFilename_l2r_mapping is not None:
@@ -353,13 +361,13 @@ def e3sm_create_case(oE3SM_in,
                 ofs.write(sLine)
         else:
             if iFlag_drof ==1:
-                sLine =  ' ./xmlchange DROF_MOSART_YR_START=' +  sYear_data_start + '\n'
+                sLine =  ' ./xmlchange DROF_MOSART_YR_START=' +  sYear_data_dlnd_start + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
-                sLine =  ' ./xmlchange DROF_MOSART_YR_END=' +  sYear_data_end + '\n'
+                sLine =  ' ./xmlchange DROF_MOSART_YR_END=' +  sYear_data_dlnd_end + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
-                sLine =  ' ./xmlchange DROF_MOSART_YR_ALIGN=' +  sYear_data_start + '\n'
+                sLine =  ' ./xmlchange DROF_MOSART_YR_ALIGN=' +  sYear_data_dlnd_start + '\n'
                 sLine = sLine.lstrip()
                 ofs.write(sLine)
                 sLine =  ' ./xmlchange DROF_MODE=MOSART' + '\n'
@@ -398,11 +406,23 @@ def e3sm_create_case(oE3SM_in,
 
         sLine =  ' ./xmlchange --file env_run.xml --id INFO_DBUG --val 2' + '\n'
         sLine = sLine.lstrip()
+
         ofs.write(sLine)    
         if (iFlag_debug == 1):            
             sLine = ' ./xmlchange --file env_build.xml DEBUG=TRUE' + '\n'
             sLine = sLine.lstrip()  
             ofs.write(sLine)  
+        
+        if iFlag_resubmit ==1:
+            sLine = sPython + ' ./xmlchange RESUBMIT=' + sSubmit  + '\n'
+            sLine = sLine.lstrip()
+            ofs.write(sLine)
+
+        #increase the PIO buffer size
+        if iFlag_large_cache ==1:
+            sLine = sPython + ' ./xmlchange PIO_BUFFER_SIZE_LIMIT=536870912'   + '\n'
+            sLine = sLine.lstrip()
+            ofs.write(sLine)
 
         sLine = ' ./case.setup' + '\n'
         sLine = sLine.lstrip()
@@ -414,9 +434,10 @@ def e3sm_create_case(oE3SM_in,
         
         sLine = ' ./case.build' + '\n'
         sLine = sLine.lstrip()
-        ofs.write(sLine)        
+        ofs.write(sLine) 
+                
    
-        if (iFlag_debug == 1):#create the timing.checkpoints folder for debug
+        if (iFlag_debug_case == 1):#create the timing.checkpoints folder for debug
             sLine = 'cd ' + sRunname  + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)  
@@ -432,9 +453,9 @@ def e3sm_create_case(oE3SM_in,
             sLine =  " mkdir checkpoints" + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)  
-
             pass
-         
+
+        
         sLine = 'cd $sCasename' +  '\n' 
         ofs.write(sLine)
         
@@ -481,6 +502,24 @@ def e3sm_create_case(oE3SM_in,
                             pass
 
                         ofs.write(sLine)
+
+            sLine = 'cd ' + sRunname  + '\n'
+            sLine = sLine.lstrip()
+            ofs.write(sLine)  
+
+            sLine =  ' mkdir timing' + '\n'
+            sLine = sLine.lstrip()
+            ofs.write(sLine)  
+
+            sLine =  " cd timing " + '\n'
+            sLine = sLine.lstrip()
+            ofs.write(sLine)  
+
+            sLine =  " mkdir checkpoints" + '\n'
+            sLine = sLine.lstrip()
+            ofs.write(sLine)  
+
+            pass
             ofs.close()
             os.chmod(sFilename_debug, stat.S_IREAD | stat.S_IWRITE | stat.S_IXUSR)
 

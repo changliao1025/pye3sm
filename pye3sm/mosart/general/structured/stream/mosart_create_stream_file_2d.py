@@ -8,7 +8,7 @@ from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_inf
 import getpass
 from datetime import datetime
 
-def mosart_create_stream_file_2d( oCase_in):
+def mosart_create_stream_file_2d(oCase_in, sWorkspace_stream_in):
     """
     Generate the stream file for the drof compset
 
@@ -64,14 +64,15 @@ def mosart_create_stream_file_2d( oCase_in):
     grid_x, grid_y = np.meshgrid(longitude, latitude)
    
     #where should we save the stream file?
-    sWorkspace_stream = '/compyfs/liao313/00raw/drof'
-    if not os.path.exists(sWorkspace_stream):
-        os.makedirs(sWorkspace_stream)
+    #
+    sWorkspace_stream_in = '/compyfs/liao313/00raw/drof'
+    if not os.path.exists(sWorkspace_stream_in):
+        os.makedirs(sWorkspace_stream_in)
    
     i=0
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
-        sFilename_output = sWorkspace_stream + slash + 'drof_'+ sYear +  sExtension_netcdf
+        sFilename_output = sWorkspace_stream_in + slash + 'drof_'+ sYear +  sExtension_netcdf
 
         if leap_year(iYear):
             nday_in_year = 366 #no leap year
@@ -102,8 +103,6 @@ def mosart_create_stream_file_2d( oCase_in):
                     #print("Yep, I can read that file: " + sFilename)                
                     pass
                 else:
-                    
-
                     iFlag_found = 0
                     nmax_search = 10
 

@@ -10,7 +10,8 @@ from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_
 from pye3sm.mosart.general.unstructured.retrieve.mosart_retrieve_variable_unstructured import mosart_retrieve_variable_unstructured
 
 
-def mosart_tsplot_variable_unstructured(oCase_in,
+def mosart_tsplot_variable_unstructured_singlecell(oCase_in,
+                                                   lCellID_in,
                                         iFlag_log_in = None,
                                         iFlag_scientific_notation_in=None,
                                         iFlag_daily_in = None,
@@ -106,6 +107,32 @@ def mosart_tsplot_variable_unstructured(oCase_in,
 
    
 
+    #for unstructured mesh, we need to use the domain file to get the dimension
+    #get the aux folder
+    sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
+    aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
+    sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
+
+    
+    #read the parameter file
+    pDataset_parameter = nc.Dataset(sFilename_mosart_parameter, 'r')
+
+    netcdf_format = pDataset_parameter.file_format    
+    print(netcdf_format)
+    for sKey, aValue in pDataset_parameter.variables.items():                  
+        if "ID" == sKey:
+            aID = (aValue[:]).data
+        if "dnID" == sKey:
+            aMask = (aValue[:]).data
+        if "longxy" == sKey:
+            aLon = (aValue[:]).data       
+        if "latixy" == sKey:
+            aLat = (aValue[:]).data   
+
+    lIndex_id = np.where(aID == lCellID_in)[0]
+
+    
+
     nmonth = (iYear_end - iYear_start +1) * 12
     dates = list()
     dates_year=list()
@@ -130,10 +157,8 @@ def mosart_tsplot_variable_unstructured(oCase_in,
             aImage = aData_ret[i]
             ncell = aImage.size
             dummy1 = np.reshape(aImage, ncell)
-            good_index = np.where(dummy1 != -9999)
-            dummy1=dummy1[good_index]
-            #dummy1 = remove_outliers(dummy1, 0.05)
-            aDataTs[i] = np.nanmean(dummy1)
+            dummy2 = dummy1[lIndex_id]            
+            aDataTs[i] = dummy2
 
         if iFlag_log  == 1:
             aDataTs = np.log10(aDataTs)
@@ -142,7 +167,7 @@ def mosart_tsplot_variable_unstructured(oCase_in,
             aDataTs[bad_index] = dMin_y_in
 
         sFilename_out = sWorkspace_variable_tsplot + slash \
-            + sVariable + '_tsplot_monthly' +'.png'
+            + sVariable + '_tsplot_monthly_singlecell' +'.png'
 
         aDate_all = [dates]
         aData_all = [aDataTs]
@@ -158,8 +183,8 @@ def mosart_tsplot_variable_unstructured(oCase_in,
                               dMin_y_in = dMin_y_in,
                               dSpace_y_in = dSpace_y_in, 
                               sTitle_in = sTitle_in, 
-                              sLabel_y_in= sLabel_y_in,
-                              sFormat_y_in= '%.2f' ,
+                              sLabel_y_in = sLabel_y_in,
+                              sFormat_y_in = '{:.2f}', #'%.2f' , #'{:.3f}'
                               aLabel_legend_in = aLabel_legend, 
                               aColor_in = ['black'],
                               aMarker_in = ['o'],

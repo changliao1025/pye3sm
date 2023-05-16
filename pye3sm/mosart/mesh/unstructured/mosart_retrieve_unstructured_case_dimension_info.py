@@ -5,10 +5,10 @@ from pyearth.system.define_global_variables import *
 from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
 
 def mosart_retrieve_unstructured_case_dimension_info_by_parameter_file(sFilename_mosart_parameter_in):
-    aDatasets = nc.Dataset(sFilename_mosart_parameter_in)
-    netcdf_format = aDatasets.file_format    
+    pDatasets = nc.Dataset(sFilename_mosart_parameter_in)
+    netcdf_format = pDatasets.file_format    
     print(netcdf_format)
-    for sKey, aValue in aDatasets.variables.items():                  
+    for sKey, aValue in pDatasets.variables.items():                  
         if "dnID" == sKey:
             aMask = (aValue[:]).data
         if "longxy" == sKey:

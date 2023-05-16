@@ -1,24 +1,19 @@
-import os, sys
+import os
 import numpy as np
-
 import datetime
-
 from pyearth.system.define_global_variables import *
-
-
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
 from pyearth.visual.timeseries.plot_time_series_data_w_variation import plot_time_series_data_w_variation
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
 from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
-
 from pye3sm.elm.general.structured.retrieve.elm_retrieve_variable_2d import elm_retrieve_variable_2d
 
-def elm_tsplot_variable_structured(oE3SM_in,
-                                   oCase_in,
+def elm_tsplot_variable_structured(oCase_in,
                                    iReverse_y_in=None,
                                    iFlag_log_in = None,
                                    iFlag_scientific_notation_in=None,
+                                   iFlag_daily_in = None,
                                    iFlag_monthly_in = None,
                                    iFlag_annual_mean_in = None,
                                    iFlag_annual_total_in = None,
@@ -28,6 +23,24 @@ def elm_tsplot_variable_structured(oE3SM_in,
                                    sLabel_x_in=None,
                                    sLabel_y_in = None,
                                    sTitle_in =None):
+    """
+    Plot a time series of a variable for a given case
+
+    Args:
+        oCase_in (_type_): _description_
+        iReverse_y_in (_type_, optional): _description_. Defaults to None.
+        iFlag_log_in (_type_, optional): _description_. Defaults to None.
+        iFlag_scientific_notation_in (_type_, optional): _description_. Defaults to None.
+        iFlag_monthly_in (_type_, optional): _description_. Defaults to None.
+        iFlag_annual_mean_in (_type_, optional): _description_. Defaults to None.
+        iFlag_annual_total_in (_type_, optional): _description_. Defaults to None.
+        dMax_y_in (_type_, optional): _description_. Defaults to None.
+        dMin_y_in (_type_, optional): _description_. Defaults to None.
+        dSpace_y_in (_type_, optional): _description_. Defaults to None.
+        sLabel_x_in (_type_, optional): _description_. Defaults to None.
+        sLabel_y_in (_type_, optional): _description_. Defaults to None.
+        sTitle_in (_type_, optional): _description_. Defaults to None.
+    """
 
     if iFlag_log_in is not None:
         iFlag_log = iFlag_log_in

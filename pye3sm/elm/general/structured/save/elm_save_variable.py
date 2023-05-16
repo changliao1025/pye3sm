@@ -10,8 +10,6 @@ from pyearth.gis.gdal.write.gdal_write_envi_file import gdal_write_envi_file_mul
 from pyearth.gis.gdal.write.gdal_write_geotiff_file import gdal_write_geotiff_file_multiple_band
 from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 
-from pye3sm.shared.e3sm import pye3sm
-from pye3sm.shared.case import pycase
 
 def elm_save_variable_2d(oE3SM_in, oCase_in):
 
@@ -45,12 +43,12 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
         os.makedirs(sWorkspace_analysis_case)    
 
     #new approach
-    aLon, aLat , aMask_ll= elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat, aMask_ul= elm_retrieve_case_dimension_info(oCase_in)
     #dimension
-    aMask_ul = np.flip(aMask_ll, 0)
-    nrow = np.array(aMask_ll).shape[0]
-    ncolumn = np.array(aMask_ll).shape[1]
-    aMask_index_ll = np.where(aMask_ll==0)
+    
+    nrow = np.array(aMask_ul).shape[0]
+    ncolumn = np.array(aMask_ul).shape[1]
+    
     aMask_index_ul = np.where(aMask_ul==0)
 
     #resolution
@@ -143,14 +141,15 @@ def elm_save_variable_2d(oE3SM_in, oCase_in):
             for sKey, aValue in aDatasets.variables.items():
                 if sVariable == sKey.lower():
                                    
-                    aData_ll = (aValue[:]).data                                    
-                    missing_value1 = np.max(aData_ll)  
-                    aData_ll = aData_ll.reshape(nrow, ncolumn)                          
-                    dummy_index = np.where( aData_ll == missing_value1 ) 
-                    aData_ll[dummy_index] = missing_value
+                    aData_ll = (aValue[:]).data              
+                    aData_ul = np.flip(aData_ll, 0)                       
+                    missing_value1 = np.max(aData_ul)  
+                    aData_ul = aData_ul.reshape(nrow, ncolumn)                          
+                    dummy_index = np.where( aData_ul == missing_value1 ) 
+                    aData_ul[dummy_index] = missing_value
                     
-                    aData_ll[aMask_index_ll] = missing_value
-                    aData_ul = np.flip(aData_ll, 0)   
+                    aData_ul[aMask_index_ul] = missing_value
+                     
                     #save output
                     
 

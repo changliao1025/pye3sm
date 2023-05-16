@@ -1,4 +1,4 @@
-import os
+
 import numpy as np
 
 from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_case_dimension_info

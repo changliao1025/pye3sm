@@ -11,7 +11,29 @@ from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist
 
 from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
-def mosart_map_variable_unstructured(oCase_in, sVariable_in=None, sUnit_in = None, sTitle_in = None, iFlag_scientific_notation_colorbar_in=None):
+def mosart_map_variable_unstructured(oCase_in, 
+                                     iFlag_create_domain_in = None,
+                                     iFlag_scientific_notation_colorbar_in=None, 
+                                     iFlag_resolution=1, dResolution_in=1/8.0,
+                                     dData_max_in = None, 
+                                     dData_min_in = None,
+                                     sVariable_in=None, 
+                                     sUnit_in = None, 
+                                     sTitle_in = None):
+    
+    if iFlag_resolution is None:
+        iFlag_resolution = 0
+    else:
+        iFlag_resolution = 1
+    
+    if iFlag_resolution == 1:
+
+        if dResolution_in is None:
+            dResolution = 1/16.0
+        else:
+            dResolution= dResolution_in
+    else:
+        dResolution = 1/16.0
 
     #read the actual data     
     pSpatial_reference_gcs = osr.SpatialReference()  
@@ -50,16 +72,16 @@ def mosart_map_variable_unstructured(oCase_in, sVariable_in=None, sUnit_in = Non
 
     sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain_mpas.nc'
     if not os.path.exists(sFilename_domain):
-        print(sFilename_domain + ' does not existin')
-        print("Nope, the path doesn't reach your file. We will use mosart parameter to reconstruct domain file")
-
+        print(sFilename_domain + ' does not exist.')        
         sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc' 
         if not os.path.exists(sFilename_domain):
             sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
             aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
             sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
-            mosart_create_domain_1d(sFilename_mosart_parameter, sFilename_domain, 1.0/16, 1.0/16)
+            mosart_create_domain_1d(sFilename_mosart_parameter, sFilename_domain, dResolution, dResolution)
         else:
+            #maybe check? this should be done in save the result
+            
             pass
 
     else:
@@ -90,22 +112,27 @@ def mosart_map_variable_unstructured(oCase_in, sVariable_in=None, sUnit_in = Non
         + sVariable + slash + 'png'
     if not os.path.exists(sWorkspace_variable_png):
         os.makedirs(sWorkspace_variable_png)    
+    sWorkspace_variable_ps = sWorkspace_analysis_case + slash \
+        + sVariable + slash + 'ps'
+    if not os.path.exists(sWorkspace_variable_ps):
+        os.makedirs(sWorkspace_variable_ps)    
     
 
     nmonth = (iYear_end - iYear_start +1) * 12
     
     i=0
+    iMonth_start = 1
+    iMonth_end = 12
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
     
         for iMonth in range(iMonth_start, iMonth_end + 1):
             sMonth = str(iMonth).zfill(2)
-
-            sDate = sYear + sMonth
-    
+            sDate = sYear + sMonth   
             
             sFilename= sWorkspace_variable_geojson + slash +  sDate + '.geojson' 
             sFilename_output_in = sWorkspace_variable_png + slash +  sDate + '.png' 
+            #sFilename_output_in = sWorkspace_variable_ps + slash +  sDate + '.ps' 
     
             #read before modification
     
@@ -115,10 +142,17 @@ def mosart_map_variable_unstructured(oCase_in, sVariable_in=None, sUnit_in = Non
             else:
                 print(sFilename + ' is missing')
                 print("Nope, the path doesn't reach your file. Go research filepath in python")
-                return
+                continue
     
-            map_vector_polygon_data(1, sFilename,sFilename_output_in=sFilename_output_in, sVariable_in=sVar, \
-                                     dMissing_value_in = -9999,  sTitle_in=sTitle_in, sUnit_in=sUnit_in, iFlag_scientific_notation_colorbar_in=iFlag_scientific_notation_colorbar_in)    
+            map_vector_polygon_data(1, sFilename, 
+                                     iFlag_scientific_notation_colorbar_in=iFlag_scientific_notation_colorbar_in,
+                                     dData_max_in= dData_max_in,
+                                     dData_min_in= dData_min_in,
+                                    sFilename_output_in=sFilename_output_in, 
+                                    sVariable_in=sVar, 
+                                     dMissing_value_in = -9999,  
+                                     sTitle_in=sTitle_in, 
+                                     sUnit_in=sUnit_in)    
     
     
 

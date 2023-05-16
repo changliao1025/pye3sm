@@ -10,12 +10,15 @@ from pye3sm.shared.case import pycase
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
-def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
+def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,
                                         iFlag_branch_in = None, 
+                                        iFlag_large_cache_in = None,
                                         iFlag_continue_in = None, 
                                         iFlag_debug_in = None, 
                                         iFlag_short_in =None,
                                         iFlag_resubmit_in = None,
+                                        nTask_in = None,
+                                        nSubmit_in = None,
                                         RES_in = None,
                                         COMPSET_in= None,
                                         Project_in = None,
@@ -42,6 +45,11 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_debug = iFlag_debug_in
     else:
         iFlag_debug = 0
+    
+    if iFlag_large_cache_in is not None:
+        iFlag_large_cache = iFlag_large_cache_in
+    else:
+        iFlag_large_cache = 0
 
     if iFlag_resubmit_in is not None:
         iFlag_resubmit = iFlag_resubmit_in
@@ -52,6 +60,16 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_short = iFlag_short_in
     else:
         iFlag_short = 0
+
+    if nSubmit_in is not None:
+        nSubmit = nSubmit_in
+    else:
+        nSubmit = 0
+    
+    if nTask_in is not None:
+        nTask = nTask_in
+    else:
+        nTask = 1
 
     if RES_in is not None:
         RES = RES_in
@@ -84,8 +102,11 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     config['iFlag_branch'] = "{:01d}".format(iFlag_branch)
     config['iFlag_continue'] = "{:01d}".format(iFlag_continue)
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
+    config['iFlag_large_cache'] = "{:01d}".format(iFlag_large_cache)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
+    config['nSubmit'] = nSubmit
+    config['nTask'] = nTask
     config['RES'] = RES
     config['COMPSET'] = COMPSET
     config['PROJECT'] = Project
@@ -109,8 +130,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
                                         iCase_index_in = None,
                                         iYear_start_in = None,
                                         iYear_end_in = None,
-                                        iYear_data_start_in = None,
-                                        iYear_data_end_in = None,
+                                        iYear_data_datm_start_in = None,
+                                        iYear_data_datm_end_in = None,
+                                        iYear_data_dlnd_start_in = None,
+                                        iYear_data_dlnd_end_in = None,
                                         iYear_subset_start_in = None,
                                         iYear_subset_end_in = None,
                                         dConversion_in = None,
@@ -255,15 +278,25 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     else:
         iYear_subset_end = int(config['iYear_end'])
 
-    if iYear_data_start_in is not None:
-        iYear_data_start = iYear_data_start_in
+    if iYear_data_datm_start_in is not None:
+        iYear_data_datm_start = iYear_data_datm_start_in
     else:
-        iYear_data_start = int(config['iYear_data_start'])
+        iYear_data_datm_start = int(config['iYear_data_datm_start'])
 
-    if iYear_data_end_in is not None:
-        iYear_data_end = iYear_data_end_in
+    if iYear_data_datm_end_in is not None:
+        iYear_data_datm_end = iYear_data_datm_end_in
     else:
-        iYear_data_end = int(config['iYear_data_end'])
+        iYear_data_datm_end = int(config['iYear_data_datm_end'])
+
+    if iYear_data_dlnd_start_in is not None:
+        iYear_data_dlnd_start = iYear_data_dlnd_start_in
+    else:
+        iYear_data_dlnd_start = int(config['iYear_data_dlnd_start'])
+    
+    if iYear_data_dlnd_end_in is not None:
+        iYear_data_dlnd_end = iYear_data_dlnd_end_in
+    else:
+        iYear_data_dlnd_end = int(config['iYear_data_dlnd_end'])
 
     #the conversion for the variable of interest
     if dConversion_in is not None:
@@ -306,8 +339,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     config['iYear_end'] =  "{:04d}".format(iYear_end)
     config['iYear_subset_start'] =  "{:04d}".format(iYear_subset_start)
     config['iYear_subset_end'] =  "{:04d}".format(iYear_subset_end)
-    config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
-    config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
+    config['iYear_data_datm_start'] =  "{:04d}".format(iYear_data_datm_start)
+    config['iYear_data_datm_end'] =  "{:04d}".format(iYear_data_datm_end)
+    
+    config['iYear_data_dlnd_start'] =  "{:04d}".format(iYear_data_dlnd_start)
+    config['iYear_data_dlnd_end'] =  "{:04d}".format(iYear_data_dlnd_end)
 
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
     config['iFlag_lnd_spinup'] = "{:01d}".format(iFlag_lnd_spinup)

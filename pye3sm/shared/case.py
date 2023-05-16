@@ -26,8 +26,12 @@ class pycase(object):
     iCase_index=0
     iYear_start=0
     iYear_end=0
-    iYear_data_start=0
-    iYear_data_end=0
+    iYear_data_datm_start=0
+    iYear_data_datm_end=0
+
+    iYear_data_dlnd_start=0
+    iYear_data_dlnd_end=0
+
     iYear_subset_start = 0
     iYear_subset_end= 0
     iFlag_same_grid=1
@@ -129,11 +133,17 @@ class pycase(object):
         if 'iYear_end' in aParameter:
             self.iYear_end             = int(aParameter[ 'iYear_end'])
 
-        if 'iYear_data_start' in aParameter:
-            self.iYear_data_start             = int(aParameter[ 'iYear_data_start'])
+        if 'iYear_data_datm_start' in aParameter:
+            self.iYear_data_datm_start             = int(aParameter[ 'iYear_data_datm_start'])
 
-        if 'iYear_data_end' in aParameter:
-            self.iYear_data_end             = int(aParameter[ 'iYear_data_end'])
+        if 'iYear_data_datm_end' in aParameter:
+            self.iYear_data_datm_end             = int(aParameter[ 'iYear_data_datm_end'])
+
+        if 'iYear_data_dlnd_start' in aParameter:
+            self.iYear_data_dlnd_start             = int(aParameter[ 'iYear_data_dlnd_start'])
+        
+        if 'iYear_data_dlnd_end' in aParameter:
+            self.iYear_data_dlnd_end             = int(aParameter[ 'iYear_data_dlnd_end'])
 
         if 'iYear_subset_start' in aParameter:
             self.iYear_subset_start             = int(aParameter[ 'iYear_subset_start'])

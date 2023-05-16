@@ -1,5 +1,5 @@
 import numpy as np
-from netCDF4 import Dataset #read netcdf
+import netCDF4 as nc #read netcdf
 
 from pyearth.system.define_global_variables import *     
 from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
@@ -20,7 +20,7 @@ def elm_retrieve_case_dimension_info(oCase_in):
 
     aParameter_lnd = convert_namelist_to_dict(sFilename_lnd_in)
     sFilename_domain = aParameter_lnd['fatmlndfrc']
-    aDatasets = Dataset(sFilename_domain)
+    aDatasets = nc.Dataset(sFilename_domain)
     netcdf_format = aDatasets.file_format    
     print(netcdf_format)
     for sKey, aValue in aDatasets.variables.items():

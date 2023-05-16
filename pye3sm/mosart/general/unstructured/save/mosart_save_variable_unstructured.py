@@ -10,7 +10,7 @@ from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist
 
 from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
-def mosart_save_variable_unstructured( oCase_in, sVariable_in=None):
+def mosart_save_variable_unstructured( oCase_in, sVariable_in=None, iFlag_resolution=None, dResolution_in = None):
     """
     Save the netcdf file as geosjon files
 
@@ -18,6 +18,20 @@ def mosart_save_variable_unstructured( oCase_in, sVariable_in=None):
         oCase_in (_type_): _description_
         sVariable_in (_type_, optional): _description_. Defaults to None.
     """   
+    if iFlag_resolution is None:
+        iFlag_resolution = 0
+    else:
+        iFlag_resolution = 1
+    
+    if iFlag_resolution == 1:
+
+        if dResolution_in is None:
+            dResolution = 1/16.0
+        else:
+            dResolution= dResolution_in
+    else:
+        dResolution = 1/16.0
+
 
     pDriver_geojson = ogr.GetDriverByName('GeoJSON')     
     pSpatial_reference_gcs = osr.SpatialReference()  
@@ -58,14 +72,18 @@ def mosart_save_variable_unstructured( oCase_in, sVariable_in=None):
         print("Nope, the path doesn't reach your file. We will use mosart parameter to reconstruct domain file")
         sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc' 
         sFilename_parameter = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_parameter.nc' 
+
         if not os.path.exists(sFilename_domain) or not os.path.exists(sFilename_parameter):
             sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
             aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
             sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
             #maybe also generate a copy for this parameter?            
             copyfile(sFilename_mosart_parameter, sFilename_parameter)
-            mosart_create_domain_1d(sFilename_parameter, sFilename_domain, 1.0/16, 1.0/16)            
+            mosart_create_domain_1d(sFilename_parameter, sFilename_domain, dResolution, dResolution)            
         else:
+            #maybe need to check the domain file    
+            print("Re-generating the domain file")
+            mosart_create_domain_1d(sFilename_parameter, sFilename_domain, dResolution, dResolution)     
             pass
 
     else:
@@ -120,25 +138,14 @@ def mosart_save_variable_unstructured( oCase_in, sVariable_in=None):
             else:
                 print(sFilename + ' is missing')
                 print("Nope, the path doesn't reach your file. Go research filepath in python")
-                return
+                continue
     
-            aDatasets = nc.Dataset(sFilename)
+            pDatasets = nc.Dataset(sFilename)
     
-            for sKey, aValue in aDatasets.variables.items():
+            #get the variable  
             
-                if (sKey == 'lon'):                   
-                    aLongitude = (aValue[:]).data
-                    continue
-                if (sKey == 'lat'):                    
-                    aLatitude = (aValue[:]).data
-                    continue
-            
-            #quality control the longitude data
-            dummy_index = np.where(aLongitude > 180)
-            aLongitude[dummy_index] = aLongitude[dummy_index] - 360.0    
-            
-            for sKey, aValue in aDatasets.variables.items():
-                if sKey.lower() == sVariable_in.lower() :                                   
+            for sKey, aValue in pDatasets.variables.items():
+                if sKey.lower() == sVariable.lower() :                                   
                     aData_variable = (aValue[:]).data  
                     #get fillvalue 
                     dFillvalue = float(aValue._FillValue )

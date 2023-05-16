@@ -1,9 +1,9 @@
 
-
+import os
 import getpass
 from datetime import datetime
 import numpy as np
-from netCDF4 import Dataset
+import netCDF4 as nc
 from pyearth.gis.location.calculate_polygon_area import calculate_polygon_area
 
 def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_domain_file_out, aArea_in = None):
@@ -25,8 +25,12 @@ def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_re
     print('  domain: ' + sFilename_domain_file_out)
 
     # Check if the file is available   
+    sFolder = os.path.dirname(sFilename_domain_file_out)
+    if not os.path.exists(sFolder):
+        os.makedirs(sFolder)
+        pass
     
-    pDatasets_out = Dataset(sFilename_domain_file_out, 'w',format="NETCDF3_CLASSIC")
+    pDatasets_out = nc.Dataset(sFilename_domain_file_out, 'w',format="NETCDF3_CLASSIC")
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #
@@ -131,6 +135,8 @@ def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_re
                     aLongitude_in = aLongitude_in[np.where(aLongitude_in !=-9999)]
                     aLatitude_in = aLatitude_in[np.where(aLatitude_in !=-9999)]
                     data[i] = calculate_polygon_area(aLongitude_in, aLatitude_in,  iFlag_radius =1)
+                    
+           
             else:
                 radius= 6378137.0                      
                 dummy_data = np.array(aArea_in ) #m^2

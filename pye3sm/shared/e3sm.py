@@ -7,6 +7,7 @@ class pye3sm(object):
     iFlag_branch =0
     iFlag_continue=0
     iFlag_resubmit=0
+    iFlag_large_cache=0
     iFlag_short=0    
     RES=''
     COMPSET=''
@@ -15,6 +16,8 @@ class pye3sm(object):
     sCIME_directory=''   
     sWorkspace_forcing=''    
     sEmail=''
+    nSubmit=0 #resubmit times
+    nTask =1
 
     def __init__(self, aParameter):
         print('pye3sm model is being initialized')
@@ -33,7 +36,15 @@ class pye3sm(object):
             self.iFlag_resubmit             = int(aParameter[ 'iFlag_resubmit'])
         if 'iFlag_short' in aParameter:
             self.iFlag_short             = int(aParameter[ 'iFlag_short'])
+
+        if 'iFlag_large_cache'  in aParameter:
+            self.iFlag_large_cache             = int(aParameter[ 'iFlag_large_cache'])
       
+        if 'nSubmit' in aParameter:
+            self.nSubmit             = int(aParameter[ 'nSubmit'])
+        
+        if 'nTask' in aParameter:
+            self.nTask             = int(aParameter[ 'nTask'])
      
         if 'RES' in aParameter:
             self.RES = aParameter['RES']
