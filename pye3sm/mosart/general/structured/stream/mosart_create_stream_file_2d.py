@@ -4,7 +4,7 @@ from netCDF4 import Dataset #read netcdf
 from pyearth.system.define_global_variables import *    
 from pyearth.toolbox.date.day_in_month import day_in_month
 from pyearth.toolbox.date.leap_year import  leap_year
-from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_case_dimension_info 
+from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_structured_case_dimension_info 
 import getpass
 from datetime import datetime
 
@@ -40,7 +40,7 @@ def mosart_create_stream_file_2d(oCase_in, sWorkspace_stream_in):
         os.makedirs(sWorkspace_analysis_case)    
 
     #new approach
-    aLon, aLat , aMask_ul= mosart_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ul= mosart_retrieve_structured_case_dimension_info(oCase_in)
     #dimension
     aMask_ll = np.flip(aMask_ul, 0)
     nrow = np.array(aMask_ul).shape[0]
@@ -65,7 +65,7 @@ def mosart_create_stream_file_2d(oCase_in, sWorkspace_stream_in):
    
     #where should we save the stream file?
     #
-    sWorkspace_stream_in = '/compyfs/liao313/00raw/drof'
+    
     if not os.path.exists(sWorkspace_stream_in):
         os.makedirs(sWorkspace_stream_in)
    
@@ -74,10 +74,11 @@ def mosart_create_stream_file_2d(oCase_in, sWorkspace_stream_in):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
         sFilename_output = sWorkspace_stream_in + slash + 'drof_'+ sYear +  sExtension_netcdf
 
-        if leap_year(iYear):
-            nday_in_year = 366 #no leap year
-        else:
-            nday_in_year = 365 #no leap year
+        #if leap_year(iYear):
+        #    nday_in_year = 366 #no leap year
+        #else:
+        nday_in_year = 365 #no leap year
+
         aGrid_stack= np.full((nday_in_year, nrow, ncolumn), -9999.0, dtype= float)
         #should we use the same netcdf format? 
         pFile = Dataset(sFilename_output, 'w', format = 'NETCDF3_CLASSIC')  #,format="NETCDF3_CLASSIC"
@@ -90,6 +91,8 @@ def mosart_create_stream_file_2d(oCase_in, sWorkspace_stream_in):
             sMonth = str(iMonth).zfill(2)
 
             nday_in_month = day_in_month(iYear, iMonth)
+            if iMonth==2:
+                nday_in_month=28
 
             for iDay in range(1, nday_in_month +1, 1):
                 sDay = str(iDay).zfill(2)
@@ -146,7 +149,7 @@ def mosart_create_stream_file_2d(oCase_in, sWorkspace_stream_in):
                 aLongitude[dummy_index] = aLongitude[dummy_index] - 360.0
         
                 #read the actual data
-                sVariable_discharge  = 'RIVER_DISCHARGE_OVER_LAND_LIQ'
+                #sVariable_discharge  = 'RIVER_DISCHARGE_OVER_LAND_LIQ'
                 sVariable_discharge  = 'Main_Channel_Water_Depth_LIQ'
                 for sKey, aValue in aDatasets.variables.items():
                     if sKey.lower() == sVariable_discharge.lower() :                                       
@@ -187,7 +190,7 @@ def mosart_create_stream_file_2d(oCase_in, sWorkspace_stream_in):
 
         sDummy = 'time'
         pVar = pFile.createVariable( sDummy , 'f4', ('time'),fill_value=-9999) 
-        aTime = np.arange(nday_in_year) + 1
+        aTime = np.arange(nday_in_year) # it is also possible to use + 1
         pVar[:] = aTime
         pVar.standard_name = sDummy
         pVar.long_name = sDummy

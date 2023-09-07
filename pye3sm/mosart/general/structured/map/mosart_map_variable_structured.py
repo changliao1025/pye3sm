@@ -11,8 +11,7 @@ from pye3sm.tools.namelist.convert_namelist_to_dict import convert_namelist_to_d
 
 from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
-def mosart_map_variable_unstructured(oCase_in, 
-                                     iFlag_remap_in = None,
+def mosart_map_variable_structured(oCase_in, 
                                      iFlag_create_domain_in = None,
                                      iFlag_scientific_notation_colorbar_in=None, 
                                      iFlag_resolution=1, dResolution_in=1/8.0,
@@ -26,11 +25,6 @@ def mosart_map_variable_unstructured(oCase_in,
         iFlag_resolution = 0
     else:
         iFlag_resolution = 1
-    
-    if iFlag_remap_in is None:
-        iFlag_remap= 0
-    else:
-        iFlag_remap = 1
     
     if iFlag_resolution == 1:
 
@@ -74,35 +68,48 @@ def mosart_map_variable_unstructured(oCase_in,
     #for unstructured mesh, we need to use the domain file to get the dimension
     #get the aux folder
 
-    sWorkspace_case_aux = oCase_in.sWorkspace_case_aux
-    
-    if iFlag_remap == 1:
-        sWorkspace_variable_geojson = sWorkspace_analysis_case + slash + 'remap' + slash \
-            + sVariable + slash + 'geojson'
-        if not os.path.exists(sWorkspace_variable_geojson):
-            os.makedirs(sWorkspace_variable_geojson)     
-        sWorkspace_variable_png = sWorkspace_analysis_case + slash + 'remap' + slash  \
-            + sVariable + slash + 'png'
-        if not os.path.exists(sWorkspace_variable_png):
-            os.makedirs(sWorkspace_variable_png)    
-        sWorkspace_variable_ps = sWorkspace_analysis_case + slash + 'remap' + slash \
-            + sVariable + slash + 'ps'
-        if not os.path.exists(sWorkspace_variable_ps):
-            os.makedirs(sWorkspace_variable_ps)    
-        pass
+    sWorkspace_case_aux = oCase_in.sWorkspace_case_aux         
+    sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc' 
+    if not os.path.exists(sFilename_domain):
+        sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
+        aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
+        sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
+        mosart_create_domain_1d(sFilename_mosart_parameter, sFilename_domain, dResolution, dResolution)
     else:
-        sWorkspace_variable_geojson = sWorkspace_analysis_case + slash \
-            + sVariable + slash + 'geojson'
-        if not os.path.exists(sWorkspace_variable_geojson):
-            os.makedirs(sWorkspace_variable_geojson)     
-        sWorkspace_variable_png = sWorkspace_analysis_case + slash \
-            + sVariable + slash + 'png'
-        if not os.path.exists(sWorkspace_variable_png):
-            os.makedirs(sWorkspace_variable_png)    
-        sWorkspace_variable_ps = sWorkspace_analysis_case + slash \
-            + sVariable + slash + 'ps'
-        if not os.path.exists(sWorkspace_variable_ps):
-            os.makedirs(sWorkspace_variable_ps)    
+        #maybe check? this should be done in save the result
+        
+        pass
+
+    
+    #read the domain file
+    pDatasets_domain = nc.Dataset(sFilename_domain, 'r')
+
+    pDimension = pDatasets_domain.dimensions.keys()
+    for sKey, aValue in pDatasets_domain.variables.items():            
+        if (sKey == 'xv'):                   
+            aXV = (aValue[:]).data
+            continue
+        if (sKey == 'yv'):                    
+            aYV = (aValue[:]).data
+            continue
+        if (sKey == 'xc'):                    
+            aXC = (aValue[:]).data
+            continue
+   
+
+    
+    sWorkspace_variable_geojson = sWorkspace_analysis_case + slash \
+        + sVariable + slash + 'geojson'
+    if not os.path.exists(sWorkspace_variable_geojson):
+        os.makedirs(sWorkspace_variable_geojson)     
+    sWorkspace_variable_png = sWorkspace_analysis_case + slash \
+        + sVariable + slash + 'png'
+    if not os.path.exists(sWorkspace_variable_png):
+        os.makedirs(sWorkspace_variable_png)    
+    sWorkspace_variable_ps = sWorkspace_analysis_case + slash \
+        + sVariable + slash + 'ps'
+    if not os.path.exists(sWorkspace_variable_ps):
+        os.makedirs(sWorkspace_variable_ps)    
     
 
     nmonth = (iYear_end - iYear_start +1) * 12

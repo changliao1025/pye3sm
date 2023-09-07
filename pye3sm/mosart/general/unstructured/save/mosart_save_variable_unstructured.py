@@ -6,11 +6,16 @@ import netCDF4 as nc #read netcdf
 from osgeo import  osr #the default operator
 from osgeo import gdal, ogr
 from pyearth.system.define_global_variables import *    
-from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
+from pye3sm.tools.namelist.convert_namelist_to_dict import convert_namelist_to_dict
 
 from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
-def mosart_save_variable_unstructured( oCase_in, sVariable_in=None, iFlag_resolution=None, dResolution_in = None):
+def mosart_save_variable_unstructured(oCase_in, 
+                                      iFlag_remap_in = None,
+                                      sVariable_in=None, 
+                                      iFlag_resolution=None, 
+                                      dResolution_in = None,
+                                      sFilename_domain_file_in = None,):
     """
     Save the netcdf file as geosjon files
 
@@ -22,6 +27,11 @@ def mosart_save_variable_unstructured( oCase_in, sVariable_in=None, iFlag_resolu
         iFlag_resolution = 0
     else:
         iFlag_resolution = 1
+    
+    if iFlag_remap_in is None:
+        iFlag_remap= 0
+    else:
+        iFlag_remap = 1
     
     if iFlag_resolution == 1:
 
@@ -65,30 +75,14 @@ def mosart_save_variable_unstructured( oCase_in, sVariable_in=None, iFlag_resolu
     if not os.path.exists(sWorkspace_case_aux):
         os.makedirs(sWorkspace_case_aux)
 
-    sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain_mpas.nc'
-    sFilename_parameter = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_parameter_mpas.nc' 
-    if not os.path.exists(sFilename_domain):
-        print(sFilename_domain + ' does not existin')
-        print("Nope, the path doesn't reach your file. We will use mosart parameter to reconstruct domain file")
-        sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc' 
-        sFilename_parameter = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_parameter.nc' 
-
-        if not os.path.exists(sFilename_domain) or not os.path.exists(sFilename_parameter):
-            sFilename_mosart_in = sWorkspace_simulation_case_run + slash + 'mosart_in'
-            aParameter_mosart = convert_namelist_to_dict(sFilename_mosart_in)
-            sFilename_mosart_parameter = aParameter_mosart['frivinp_rtm']
-            #maybe also generate a copy for this parameter?            
-            copyfile(sFilename_mosart_parameter, sFilename_parameter)
-            mosart_create_domain_1d(sFilename_parameter, sFilename_domain, dResolution, dResolution)            
-        else:
-            #maybe need to check the domain file    
-            print("Re-generating the domain file")
-            mosart_create_domain_1d(sFilename_parameter, sFilename_domain, dResolution, dResolution)     
-            pass
-
+    if iFlag_remap == 1:
+        sFilename_domain = sFilename_domain_file_in
     else:
-        #this is a mpas mesh case
-        pass
+        sFilename_domain = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_domain.nc'
+        sFilename_parameter = sWorkspace_case_aux + slash + '/mosart_'+ oCase_in.sRegion + '_parameter.nc' 
+    if not os.path.exists(sFilename_domain):
+        print( "The domain file does not exit!" )
+        return    
 
     #read the domain file
     pDatasets_domain = nc.Dataset(sFilename_domain, 'r')
@@ -106,10 +100,18 @@ def mosart_save_variable_unstructured( oCase_in, sVariable_in=None, iFlag_resolu
    
     iFlag_optional = 1 
     #save geojson file
-    sWorkspace_variable_geojson = sWorkspace_analysis_case + slash \
-        + sVariable + slash + 'geojson'
-    if not os.path.exists(sWorkspace_variable_geojson):
-        os.makedirs(sWorkspace_variable_geojson)           
+    if iFlag_remap == 1:
+        sWorkspace_variable_geojson = sWorkspace_analysis_case + slash + 'remap' + slash \
+            + sVariable + slash + 'geojson'
+        if not os.path.exists(sWorkspace_variable_geojson):
+            os.makedirs(sWorkspace_variable_geojson)  
+        pass
+    else:
+
+        sWorkspace_variable_geojson = sWorkspace_analysis_case + slash \
+            + sVariable + slash + 'geojson'
+        if not os.path.exists(sWorkspace_variable_geojson):
+            os.makedirs(sWorkspace_variable_geojson)           
 
     nmonth = (iYear_end - iYear_start +1) * 12
     
@@ -121,24 +123,45 @@ def mosart_save_variable_unstructured( oCase_in, sVariable_in=None, iFlag_resolu
             sMonth = str(iMonth).zfill(2)
 
             sDate = sYear + sMonth
-    
-            sDummy = '.mosart.h0.' + sYear + '-' + sMonth + sExtension_netcdf
-            sFilename = sWorkspace_simulation_case_run + slash + sCase + sDummy
-    
-            #read before modification
-    
-            if os.path.exists(sFilename):
-                #print("Yep, I can read that file: " + sFilename)      
 
-                sFilename_output_in= sWorkspace_variable_geojson + slash +  sDate + '.geojson' 
-                if os.path.exists(sFilename_output_in):
-                    os.remove(sFilename_output_in)    
-                  
+            if iFlag_remap == 1:
+                #for the remapped output
+                sFilename = sWorkspace_analysis_case + slash + 'remap' + slash + 'netcdf'  +  slash  + sCase + sDate + '.nc'
+                #read before modification
+
+                if os.path.exists(sFilename):
+                    #print("Yep, I can read that file: " + sFilename)      
+
+                    sFilename_output_in= sWorkspace_variable_geojson + slash + sDate + '.geojson' 
+                    if os.path.exists(sFilename_output_in):
+                        os.remove(sFilename_output_in)    
+
+                    pass
+                else:
+                    print(sFilename + ' is missing')
+                    print("Nope, the path doesn't reach your file. Go research filepath in python")
+                    continue
                 pass
             else:
-                print(sFilename + ' is missing')
-                print("Nope, the path doesn't reach your file. Go research filepath in python")
-                continue
+                #for the original output
+    
+                sDummy = '.mosart.h0.' + sYear + '-' + sMonth + sExtension_netcdf
+                sFilename = sWorkspace_simulation_case_run + slash + sCase + sDummy
+
+                #read before modification
+
+                if os.path.exists(sFilename):
+                    #print("Yep, I can read that file: " + sFilename)      
+
+                    sFilename_output_in= sWorkspace_variable_geojson + slash +  sDate + '.geojson' 
+                    if os.path.exists(sFilename_output_in):
+                        os.remove(sFilename_output_in)    
+
+                    pass
+                else:
+                    print(sFilename + ' is missing')
+                    print("Nope, the path doesn't reach your file. Go research filepath in python")
+                    continue
     
             pDatasets = nc.Dataset(sFilename)
     

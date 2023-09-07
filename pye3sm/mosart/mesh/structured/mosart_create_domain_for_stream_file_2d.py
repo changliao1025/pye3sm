@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_case_dimension_info
+from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_structured_case_dimension_info
 
 from pye3sm.mesh.structured.e3sm_create_structured_domain_file import e3sm_create_structured_domain_file
 
@@ -14,7 +14,7 @@ def mosart_create_domain_for_stream_file_2d(oCase_in, sFilename_domain_file_out)
         sFilename_domain_file_out (_type_): _description_
     """
     
-    aLon, aLat , aMask_ul= mosart_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ul= mosart_retrieve_structured_case_dimension_info(oCase_in)
     #dimension
     aMask_ul = np.flip(aMask_ul, 0)
     nrow = np.array(aMask_ul).shape[0]

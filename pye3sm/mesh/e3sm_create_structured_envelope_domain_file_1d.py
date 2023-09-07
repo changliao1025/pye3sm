@@ -5,7 +5,8 @@ import netCDF4 as nc
 
 from pye3sm.mesh.unstructured.e3sm_create_unstructured_domain_file_full import e3sm_create_unstructured_domain_file_full
 
-def e3sm_create_structured_envelope_domain_file_1d( sFilename_unstructured_domain_file_in, sFilename_structured_domain_file_out_1d, 
+def e3sm_create_structured_envelope_domain_file_1d( sFilename_unstructured_domain_file_in, 
+                                                   sFilename_structured_domain_file_out_1d, 
                                                 dResolution_x_in, dResolution_y_in):
     """This function uses a MPAS mesh domain file to generate a larger domain file that convers the MPAS domain
 
@@ -21,7 +22,7 @@ def e3sm_create_structured_envelope_domain_file_1d( sFilename_unstructured_domai
     if os.path.exists(sFilename_unstructured_domain_file_in):
         pass
     else:
-        print(sFilename_unstructured_domain_file_in)
+        print('File does not exist: ', sFilename_unstructured_domain_file_in)
         return
     
     aDatasets = nc.Dataset(sFilename_unstructured_domain_file_in)
@@ -65,8 +66,8 @@ def e3sm_create_structured_envelope_domain_file_1d( sFilename_unstructured_domai
     nleft  = np.floor(  (dLon_min - (-180)) /(dResolution_x_in)  )
     nright = np.ceil(  (dLon_max - (-180)) /(dResolution_x_in)  )
 
-    ntop  = np.floor(  (90 - dLat_max) /(dResolution_x_in)  )
-    nbot = np.ceil(  (90 - dLat_min) /(dResolution_x_in)  )
+    ntop  = np.floor(  (90 - dLat_max) /(dResolution_y_in)  )
+    nbot = np.ceil(  (90 - dLat_min) /(dResolution_y_in)  )
 
     nrow = int(nbot-ntop)
     ncolumn = int(nright - nleft)

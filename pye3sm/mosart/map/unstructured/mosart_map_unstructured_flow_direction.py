@@ -9,7 +9,10 @@ import cartopy.crs as ccrs
 from pyearth.system.define_global_variables import *
 from pyearth.visual.map.vector.map_vector_polyline_data import map_vector_polyline_data
 
-def mosart_map_unstructured_flow_direction(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out):
+def mosart_map_unstructured_flow_direction(sFilename_domain_in, 
+                                           sFilename_parameter_in, 
+                                           sFilename_geojson_out, 
+                                           sLengend_in=None):
 
     if os.path.exists(sFilename_parameter_in):
         print("Yep, I can read that file!")
@@ -19,6 +22,11 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in, sFilename_parame
 
 
     print(sFilename_parameter_in)
+
+    if sLengend_in is None:
+        sLengend = ''
+    else:   
+        sLengend = sLengend_in
 
     iFlag_debug = 0
     if iFlag_debug == 1:
@@ -98,7 +106,7 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in, sFilename_parame
     pDataset = pLayer = pFeature  = None
   
     aLegend=list()
-    aLegend.append(r'Susquehanna River Basin')
+    aLegend.append(sLengend)
     #aLegend.append(r'Resolution: $0.5^{\circ}$')
     sColormap = 'Spectral_r'
     sFolder = os.path.dirname(sFilename_geojson_out)

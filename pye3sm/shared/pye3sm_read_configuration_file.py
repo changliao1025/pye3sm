@@ -292,6 +292,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
         iYear_data_dlnd_start = iYear_data_dlnd_start_in
     else:
         iYear_data_dlnd_start = int(config['iYear_data_dlnd_start'])
+        
     
     if iYear_data_dlnd_end_in is not None:
         iYear_data_dlnd_end = iYear_data_dlnd_end_in
@@ -487,6 +488,12 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     if sFilename_rof_namelist_in is not None:
         sFilename_rof_namelist = sFilename_rof_namelist_in
 
+    if sFilename_drof_namelist_in is not None:
+        sFilename_drof_namelist = sFilename_drof_namelist_in
+    else:
+        sFilename_drof_namelist=''
+        pass
+
     if sFilename_r2l_mapping_in is not None:
         sFilename_r2l_mapping= sFilename_r2l_mapping_in
     else:
@@ -541,6 +548,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,
     #rof
     config['sFilename_rof_domain'] = sFilename_rof_domain
     config['sFilename_rof_namelist'] = sFilename_rof_namelist
+    config['sFilename_drof_namelist'] = sFilename_drof_namelist
     config['sFilename_r2l_mapping'] = sFilename_r2l_mapping
 
     config['sFilename_rof_input'] = sFilename_rof_input

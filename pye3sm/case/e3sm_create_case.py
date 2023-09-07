@@ -114,7 +114,7 @@ def e3sm_create_case(oE3SM_in,  oCase_in):
 
     else:
         sQueue = 'slurm'
-        sWalltime = '6:00:00'
+        sWalltime = '10:00:00'
         sNtask = "{:0d}".format(nTask)
         #sNtask = '5'
         pass
@@ -394,7 +394,21 @@ def e3sm_create_case(oE3SM_in,  oCase_in):
                     sLine =  ' ./xmlchange ROF2LND_FMAPNAME=' +  sFilename_r2l_mapping + '\n'
                     sLine = sLine.lstrip()
                     ofs.write(sLine)
+                
+                sLine = 'cp ' + sFilename_drof_namelist + ' ./user_nl_drof' + '\n'
+                sLine = sLine.lstrip()
+                ofs.write(sLine)
             pass 
+
+        #=======================================================================
+        #add a section for the coupler output
+        #sLine =  ' ./xmlchange HIST_OPTION=ndays ' + '\n'
+        #sLine = sLine.lstrip()
+        #ofs.write(sLine)
+        #sLine =  ' ./xmlchange HIST_N=1' + '\n'
+        #sLine = sLine.lstrip()
+        #ofs.write(sLine)
+        #=======================================================================
 
         sLine =  ' ./xmlchange CALENDAR=NO_LEAP' + '\n'
         sLine = sLine.lstrip()
@@ -423,6 +437,11 @@ def e3sm_create_case(oE3SM_in,  oCase_in):
             sLine = sPython + ' ./xmlchange PIO_BUFFER_SIZE_LIMIT=536870912'   + '\n'
             sLine = sLine.lstrip()
             ofs.write(sLine)
+
+        #use pnetcdf for all the io
+        sLine = sPython + ' ./xmlchange PIO_TYPENAME=pnetcdf'   + '\n'
+        sLine = sLine.lstrip()
+        ofs.write(sLine)
 
         sLine = ' ./case.setup' + '\n'
         sLine = sLine.lstrip()

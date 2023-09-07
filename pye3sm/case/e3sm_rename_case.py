@@ -7,8 +7,14 @@ from pye3sm.shared.case import pycase
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def e3sm_rename_case(sFilename_configuration_in, sDate,sWorkspace_original_in,     
-           iCase_index_in = None, sModel_in = None, sRegion_in = None):
+def e3sm_rename_case(sFilename_configuration_in, 
+                     sDate,
+                     sWorkspace_original_in,     
+           iCase_index_in = None,
+           iYear_start_in = None,
+           iYear_end_in = None,
+             sModel_in = None, 
+             sRegion_in = None):
     """
     This function is used to rename a e3sm case
 
@@ -22,9 +28,13 @@ def e3sm_rename_case(sFilename_configuration_in, sDate,sWorkspace_original_in,
     """
     
 
-    aParameter_case = pye3sm_read_case_configuration_file(sFilename_configuration_in,\
+    aParameter_case = pye3sm_read_case_configuration_file(sFilename_configuration_in,
         sDate_in=sDate, \
-        iCase_index_in = iCase_index_in, sModel_in = sModel_in, sRegion_in = sRegion_in)
+        iCase_index_in = iCase_index_in,
+        iYear_start_in = iYear_start_in,
+        iYear_end_in = iYear_end_in,
+          sModel_in = sModel_in,
+            sRegion_in = sRegion_in)
 
     oCase = pycase(aParameter_case)
     sCase = oCase.sCase
@@ -61,20 +71,44 @@ def e3sm_rename_case(sFilename_configuration_in, sDate,sWorkspace_original_in,
     
         #extract information from the original case
         #list of information needed: prefix
-    
-        sPattern =  '*'+'.mosart.h0.'+'*'        
-        sFilepaths = sWorkspace_simulation_run_original + slash + sPattern
-        aFilenames =  glob.glob(sFilepaths, recursive = False)
-        iCount = len(aFilenames)
-        if iCount > 0 :
-            for f in range(iCount):
-                old_file = aFilenames[f]
+        month_pattern = '.mosart.h0.'
+        daily_pattern = '.mosart.h1.'
+        iFlag_monthly = 0
+        iFlag_daily = 1
+        if iFlag_monthly == 1:
+            for iYear in range(iYear_start_in, iYear_end_in+1):
+                sYear = "{:04d}".format(iYear)
+                sPattern =  '*' + month_pattern  + sYear    +'*'              
+                sFilepaths = sWorkspace_simulation_run_original + slash + sPattern
+                aFilenames =  glob.glob(sFilepaths, recursive = False)
+                iCount = len(aFilenames)
+                if iCount > 0 :
+                    for f in range(iCount):
+                        old_file = aFilenames[f]
+                        #extract the date
+                        sDate_sub =old_file[-10:-3]
+                        new_file = sWorkspace_simulation_case_run + slash + sCase + month_pattern + sDate_sub + '.nc'
+                        print(new_file)
+                        shutil.copyfile(old_file, new_file) 
 
-                #extract the date
-                sDate_sub =old_file[-10:-3]
-                new_file = sWorkspace_simulation_case_run + slash + sCase + '.mosart.h0.' + sDate_sub + '.nc'
-                print(new_file)
-                shutil.copyfile(old_file, new_file) 
+        if iFlag_daily == 1: 
+            for iYear in range(iYear_start_in, iYear_end_in+1):
+                sYear = "{:04d}".format(iYear)
+                sPattern =  '*'+   daily_pattern  + sYear    +'*'           
+                sFilepaths = sWorkspace_simulation_run_original + slash + sPattern
+                aFilenames =  glob.glob(sFilepaths, recursive = False)
+                iCount = len(aFilenames)
+                if iCount > 0 :
+                    for f in range(iCount):
+                        old_file = aFilenames[f]    
+                        #extract the date
+                        sDate_sub =old_file[-19:-3]
+                        new_file = sWorkspace_simulation_case_run + slash + sCase + daily_pattern + sDate_sub + '.nc'
+                        print(new_file)
+                        shutil.copyfile(old_file, new_file) 
+
+        
+
 
    
 

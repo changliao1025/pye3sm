@@ -84,7 +84,7 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
             if sKey == 'longxy':
                 aLongitude = (aValue[:]).data
             if sKey == 'areaTotal2':
-                aAccu = (aValue[:]).data / 1.0e+6
+                aAccu = (aValue[:]).data  #/ 1.0e+6
     
             if sKey.lower() in aVariable_parameter:
                 aData_variable = (aValue[:]).data
@@ -101,6 +101,8 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
         pLayer = pDataset.CreateLayer('cell', pSpatial_reference_gcs, ogr.wkbPolygon)
         pLayer.CreateField(ogr.FieldDefn('id', ogr.OFTInteger64))
         pLayer.CreateField(ogr.FieldDefn('cellid', ogr.OFTInteger64))
+        pLayer.CreateField(ogr.FieldDefn('dnID', ogr.OFTInteger64))
+        pLayer.CreateField(ogr.FieldDefn('drain', ogr.OFTReal))
         for s in range(nParameter):
             sVariable_parameter = aVariable_parameter[s]
             sVariable_short = aVariable_short[s]        
@@ -133,23 +135,27 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
                 lCellID= aCellID[i]
             
             lID_down = aDnID[i]      
-            if(lID_down != -9999):
+
+
+            #if(lID_down != -9999):
                 #define id first
-                pFeature.SetField('id', lID ) 
-                if iFlag_global_id == 1:
-                    pFeature.SetField('cellid', lCellID )
-                #define the other fields
-                for s in range(nParameter):
-                    sVariable_short = aVariable_short[s]
-                    sVariable_parameter = aVariable_parameter[s]
-                    dummy_index = aParameter_table.index(sVariable_parameter)
-                    aData_variable = aaData_variable[dummy_index]
-                    pFeature.SetField( sVariable_short, float(aData_variable[i]) ) 
-                #now create the feature
-                pLayer.CreateFeature(pFeature)               
+            pFeature.SetField('id', lID ) 
+            if iFlag_global_id == 1:
+                pFeature.SetField('cellid', lCellID )
+            pFeature.SetField( 'dnID', aDnID[i] ) 
+            pFeature.SetField( 'drain', aAccu[i] ) 
+            #define the other fields
+            for s in range(nParameter):
+                sVariable_short = aVariable_short[s]
+                sVariable_parameter = aVariable_parameter[s]
+                dummy_index = aParameter_table.index(sVariable_parameter)
+                aData_variable = aaData_variable[dummy_index]
+                pFeature.SetField( sVariable_short, float(aData_variable[i]) ) 
+            #now create the feature
+            pLayer.CreateFeature(pFeature)               
                 
-            else:
-                pass
+            #else:
+            #    pass
             
         #Save and close everything
         

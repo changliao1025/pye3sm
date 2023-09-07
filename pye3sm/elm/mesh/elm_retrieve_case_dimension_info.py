@@ -2,7 +2,7 @@ import numpy as np
 import netCDF4 as nc #read netcdf
 
 from pyearth.system.define_global_variables import *     
-from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
+from pye3sm.tools.namelist.convert_namelist_to_dict import convert_namelist_to_dict
 
 def elm_retrieve_case_dimension_info(oCase_in):
     """

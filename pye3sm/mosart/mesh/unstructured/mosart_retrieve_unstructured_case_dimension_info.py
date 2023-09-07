@@ -2,7 +2,7 @@ import numpy as np
 import netCDF4 as nc #read netcdf
 
 from pyearth.system.define_global_variables import *     
-from pye3sm.tools.mpas.namelist.convert_namelist_to_dict import convert_namelist_to_dict
+from pye3sm.tools.namelist.convert_namelist_to_dict import convert_namelist_to_dict
 
 def mosart_retrieve_unstructured_case_dimension_info_by_parameter_file(sFilename_mosart_parameter_in):
     pDatasets = nc.Dataset(sFilename_mosart_parameter_in)
