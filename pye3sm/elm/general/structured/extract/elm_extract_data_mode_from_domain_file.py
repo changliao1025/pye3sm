@@ -166,11 +166,11 @@ def elm_extract_data_mode_from_domain_file(sFilename_data_model_origin,
 
     elems = root.findall('./domainInfo/filePath')
     for elem in elems:
-        elem.txt = sWorkspace_output_region
+        elem.text = sWorkspace_output_region
 
     elems = root.findall('./fieldInfo/filePath')
     for elem in elems:
-        elem.txt = sWorkspace_output_region
+        elem.text = sWorkspace_output_region
     
     tree.write(sFilenama_data_model_new)
 
