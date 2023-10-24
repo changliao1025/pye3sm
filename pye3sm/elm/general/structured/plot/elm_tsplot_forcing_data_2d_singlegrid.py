@@ -1,30 +1,26 @@
-import os, sys
+import os
 import numpy as np
-import numpy.ma as ma
 import datetime
 import glob
 from netCDF4 import Dataset #read netcdf
-
 from pyearth.system.define_global_variables import *
-from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
-from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 from pyearth.toolbox.date.day_in_month import day_in_month
-
 from pyearth.visual.timeseries.plot_time_series_data import plot_time_series_data
-
-from pyearth.toolbox.data.remove_outliers import remove_outliers
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
+from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pye3sm.atm.general.atm_retrieve_forcing_data_info import atm_retrieve_forcing_data_info
 
-def elm_tsplot_forcing_data_2d_singlegrid(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
-                                          dData_max_in = None,\
+def elm_tsplot_forcing_data_2d_singlegrid( oCase_in, 
+                                          sVariable_forcing_in, 
+                                          dLongitude_in,
+                                          dLatitude_in,
+                                          iFlag_scientific_notation_colorbar_in =None,                                             
+                                          dData_max_in = None,
                                           dData_min_in = None,
-                                         sUnit_in=None,\
+                                         sUnit_in=None,
                                           sTitle_in =None):
     
-    dLon = -58.65
-    dLat = -10.88
+    #dLon = -58.65
+    #dLat = -10.88
 
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
 
@@ -86,9 +82,7 @@ def elm_tsplot_forcing_data_2d_singlegrid(oE3SM_in, oCase_in, sVariable_forcing_
         sYear =  "{:04d}".format(iYear)
         #get the file by year
         for iMonth in range(1, 12 + 1, 1):
-            sMonth =  "{:02d}".format(iMonth)
-
-            
+            sMonth =  "{:02d}".format(iMonth)            
             sDate = sYear + '-' + sMonth
             dummy = '*'+sDate+'*'
             sRegex = os.path.join( sFolder, dummy )

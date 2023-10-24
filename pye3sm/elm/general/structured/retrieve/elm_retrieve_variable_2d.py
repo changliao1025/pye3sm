@@ -10,9 +10,9 @@ from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_d
  
 
 
-def elm_retrieve_variable_2d(  oCase_in,\
-                                            iFlag_monthly_in = None,\
-                                            iFlag_annual_mean_in = None,\
+def elm_retrieve_variable_2d(  oCase_in,
+                                            iFlag_monthly_in = None,
+                                            iFlag_annual_mean_in = None,
                                                 iFlag_annual_total_in = None          ):
     if iFlag_monthly_in is None:
         iFlag_monthly  = 0

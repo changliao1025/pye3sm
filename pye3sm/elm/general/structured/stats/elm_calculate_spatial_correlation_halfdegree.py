@@ -2,7 +2,6 @@ import os, sys
 import numpy as np
 import datetime
 
-sSystem_paths = os.environ['PATH'].split(os.pathsep)
  
 
 from pyearth.system.define_global_variables import *
@@ -11,7 +10,7 @@ from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multip
 
  
 from pye3sm.shared import oE3SM
-from pye3sm.shared.e3sm_read_configuration_file import e3sm_read_configuration_file
+from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_configuration_file
 
 def elm_calculate_spatial_correlation_halfdegree(sFilename_configuration_x_in,\
                                     sFilename_configuration_y_in, \
@@ -26,7 +25,7 @@ def elm_calculate_spatial_correlation_halfdegree(sFilename_configuration_x_in,\
                                        ):
 
     #extract information
-    e3sm_read_configuration_file(sFilename_configuration_x_in,\
+    pye3sm_read_configuration_file(sFilename_configuration_x_in,\
                                  iCase_index_in = iCase_index, \
                                  iYear_start_in = iYear_start_in,\
                                  iYear_end_in = iYear_end_in,\

@@ -2,7 +2,7 @@ import numpy as np
 from netCDF4 import Dataset #read netcdf
 from pyearth.system.define_global_variables import *
 from pyearth.toolbox.reader.text_reader_string import text_reader_string
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
+from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info 
 
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 

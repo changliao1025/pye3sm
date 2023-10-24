@@ -5,9 +5,9 @@ import getpass
 import netCDF4 as nc
 from pye3sm.elm.mesh.unstructured.PerformFractionCoverCheck import PerformFractionCoverCheck
 
-def elm_create_unstructured_customized_surface_file( aLon_region, aLat_region, \
-    sFilename_surface_data_in, \
-    sFilename_surface_data_out, \
+def elm_create_unstructured_customized_surface_file( aLon_region, aLat_region, 
+    sFilename_surface_data_in, 
+    sFilename_surface_data_out, 
     set_natural_veg_frac_to_one):
 
     print('  surface_dataset: ' + sFilename_surface_data_out)

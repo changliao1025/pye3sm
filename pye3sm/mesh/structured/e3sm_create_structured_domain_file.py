@@ -51,11 +51,11 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     else:
         return
        
-    dimname = 'nrow'
+    dimname = 'ni'
     pDatasets_out.createDimension(dimname, nrow)
-    dimname = 'ncolumn'
+    dimname = 'nj'
     pDatasets_out.createDimension(dimname,ncolumn)    
-    dimname = 'nvertex'
+    dimname = 'nv'
     pDatasets_out.createDimension(dimname,nvertex)
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -64,14 +64,14 @@ def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, a
     #
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     aDimension_list0=list()    
-    aDimension_list0.append('nrow')
-    aDimension_list0.append('ncolumn') 
+    aDimension_list0.append('ni')
+    aDimension_list0.append('nj') 
     aDimension_tuple0 = tuple(aDimension_list0)
 
     aDimension_list1=list()
-    aDimension_list1.append('nrow')
-    aDimension_list1.append('ncolumn') 
-    aDimension_list1.append('nvertex')
+    aDimension_list1.append('ni')
+    aDimension_list1.append('nj') 
+    aDimension_list1.append('nv')
     aDimension_tuple1 = tuple(aDimension_list1)
 
  

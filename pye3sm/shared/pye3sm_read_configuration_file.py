@@ -10,15 +10,18 @@ from pye3sm.shared.case import pycase
 pDate = datetime.datetime.today()
 sDate_default = "{:04d}".format(pDate.year) + "{:02d}".format(pDate.month) + "{:02d}".format(pDate.day)
 
-def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
-                                        iFlag_branch_in = None, \
-                                        iFlag_continue_in = None, \
-                                        iFlag_debug_in = None, \
-                                        iFlag_short_in =None,\
-                                        iFlag_resubmit_in = None,\
-                                            RES_in = None,\
-                                            COMPSET_in= None,\
-                                                Project_in = None,\
+def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,
+                                        iFlag_branch_in = None, 
+                                        iFlag_large_cache_in = None,
+                                        iFlag_continue_in = None, 
+                                        iFlag_debug_in = None, 
+                                        iFlag_short_in =None,
+                                        iFlag_resubmit_in = None,
+                                        nTask_in = None,
+                                        nSubmit_in = None,
+                                        RES_in = None,
+                                        COMPSET_in= None,
+                                        Project_in = None,
                                         sCIME_directory_in = None ):
 
     #read the default configuration
@@ -42,6 +45,11 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         iFlag_debug = iFlag_debug_in
     else:
         iFlag_debug = 0
+    
+    if iFlag_large_cache_in is not None:
+        iFlag_large_cache = iFlag_large_cache_in
+    else:
+        iFlag_large_cache = 1
 
     if iFlag_resubmit_in is not None:
         iFlag_resubmit = iFlag_resubmit_in
@@ -53,6 +61,16 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
     else:
         iFlag_short = 0
 
+    if nSubmit_in is not None:
+        nSubmit = nSubmit_in
+    else:
+        nSubmit = 0
+    
+    if nTask_in is not None:
+        nTask = nTask_in
+    else:
+        nTask = 1
+
     if RES_in is not None:
         RES = RES_in
     else:
@@ -61,7 +79,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
         COMPSET = COMPSET_in
     else:
         COMPSET = 'IELM'
-    
+
     if Project_in is not None:
         Project = Project_in
     else:
@@ -78,14 +96,17 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
             print(sLine)
         else:
             print('A default E3SM CIME was not found, you will not be able to submit E3SM case without specifying it first.' )
-            
+
 
     #update these controls
     config['iFlag_branch'] = "{:01d}".format(iFlag_branch)
     config['iFlag_continue'] = "{:01d}".format(iFlag_continue)
     config['iFlag_debug'] = "{:01d}".format(iFlag_debug)
+    config['iFlag_large_cache'] = "{:01d}".format(iFlag_large_cache)
     config['iFlag_resubmit'] = "{:01d}".format(iFlag_resubmit)
     config['iFlag_short'] = "{:01d}".format(iFlag_short)
+    config['nSubmit'] = nSubmit
+    config['nTask'] = nTask
     config['RES'] = RES
     config['COMPSET'] = COMPSET
     config['PROJECT'] = Project
@@ -93,41 +114,55 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,\
 
     return config
 
-def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
-                                       
-                                        iFlag_same_grid_in= None,\
-                                            iFlag_atm_in= None,\
-                                                iFlag_datm_in = None,
-                                            iFlag_lnd_in =None,\
-                                                 iFlag_dlnd_in =None,\
-                                                 iFlag_lnd_spinup_in = None, \
-                                                iFlag_rof_in = None,\
-                                            iFlag_drof_in = None,\
-                                        iCase_index_in = None, \
-                                        iYear_start_in = None,\
-                                        iYear_end_in = None, \
-                                        iYear_data_start_in = None,\
-                                        iYear_data_end_in = None, \
-                                        iYear_subset_start_in = None, \
-                                        iYear_subset_end_in = None, \
-                                        dConversion_in = None, \
-                                            dOffset_in = None, \
-                                        sDate_in = None,\
-                                            sModel_in = None,\
-                                                sRegion_in = None,\
-                                        sLabel_y_in = None, \
-                                        sVariable_in = None, \
-                                           sFilename_atm_domain_in = None, 
-                                           sFilename_datm_namelist_in = None, \
-                                        sFilename_lnd_namelist_in = None,\
-                                         sFilename_lnd_domain_in=None,\
-                                            sFilename_dlnd_namelist_in = None, \
-                                     sFilename_rof_namelist_in = None,\
-                                                sFilename_rof_domain_in=None,\
-                                                sFilename_rof_parameter_in=None,
-                                                sFilename_drof_namelist_in = None, \
-                                        sWorkspace_data_in = None,\
+def pye3sm_read_case_configuration_file(sFilename_configuration_in,
+                                        iFlag_debug_case_in = None,
+                                        iFlag_same_grid_in= None,
+                                        iFlag_atm_in= None,
+                                        iFlag_datm_in = None,
+                                        iFlag_replace_datm_forcing_in = None,
+                                        iFlag_lnd_in =None,
+                                        iFlag_dlnd_in =None,
+                                        iFlag_lnd_spinup_in = None,
+                                        iFlag_replace_dlnd_forcing_in = None,
+                                        iFlag_rof_in = None,
+                                        iFlag_drof_in = None,
+                                        iFlag_replace_drof_forcing_in = None,
+                                        iCase_index_in = None,
+                                        iYear_start_in = None,
+                                        iYear_end_in = None,
+                                        iYear_data_datm_start_in = None,
+                                        iYear_data_datm_end_in = None,
+                                        iYear_data_dlnd_start_in = None,
+                                        iYear_data_dlnd_end_in = None,
+                                        iYear_subset_start_in = None,
+                                        iYear_subset_end_in = None,
+                                        dConversion_in = None,
+                                        dOffset_in = None,
+                                        sDate_in = None,
+                                        sModel_in = None,
+                                        sRegion_in = None,
+                                        sLabel_y_in = None,
+                                        sVariable_in = None,
+                                        sFilename_atm_domain_in = None,
+                                        sFilename_datm_namelist_in = None,
+                                        sFilename_a2r_mapping_in = None,
+                                        sFilename_user_datm_prec_in = None,
+                                        sFilename_user_datm_temp_in = None,
+                                        sFilename_user_datm_solar_in = None,
+                                        sFilename_lnd_namelist_in = None,
+                                        sFilename_lnd_domain_in=None,
+                                        sFilename_dlnd_namelist_in = None,
+                                        sFilename_l2r_mapping_in = None,
+                                        sFilename_user_dlnd_runoff_in = None,
+                                        sFilename_rof_namelist_in = None,
+                                        sFilename_rof_domain_in=None,
+                                        sFilename_rof_parameter_in=None,
+                                        sFilename_drof_namelist_in = None,
+                                        sFilename_r2l_mapping_in = None,
+                                        sFilename_user_drof_gage_height_in = None,
+                                        sWorkspace_data_in = None,
                                         sWorkspace_scratch_in=None):
+    
     #read the default configuration
     if not os.path.exists(sFilename_configuration_in):
         print('The configuration file does not exist!')
@@ -138,16 +173,26 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sModel = config['sModel']
     sRegion = config['sRegion']
 
+    if iFlag_debug_case_in is not None:
+        iFlag_debug_case = iFlag_debug_case_in
+    else:
+        iFlag_debug_case = 0
+
     if iFlag_atm_in is not None:
         iFlag_atm = iFlag_atm_in
     else:
         iFlag_atm = 0
-    
+
     if iFlag_datm_in is not None:
         iFlag_datm = iFlag_datm_in
     else:
         iFlag_datm = 0
     
+    if iFlag_replace_datm_forcing_in is not None:
+        iFlag_replace_datm_forcing = iFlag_replace_datm_forcing_in
+    else:
+        iFlag_replace_datm_forcing = 0
+
     if iFlag_lnd_in is not None:
         iFlag_lnd = iFlag_lnd_in
     else:
@@ -157,6 +202,11 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         iFlag_dlnd = iFlag_dlnd_in
     else:
         iFlag_dlnd = 1
+
+    if iFlag_replace_dlnd_forcing_in is not None:
+        iFlag_replace_dlnd_forcing = iFlag_replace_dlnd_forcing_in
+    else:
+        iFlag_replace_dlnd_forcing = 0
 
     if iFlag_lnd_spinup_in is not None:
         iFlag_lnd_spinup = iFlag_lnd_spinup_in
@@ -173,7 +223,10 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         iFlag_drof = 0
 
-    
+    if iFlag_replace_drof_forcing_in is not None:
+        iFlag_replace_drof_forcing = iFlag_replace_drof_forcing_in
+    else:
+        iFlag_replace_drof_forcing = 0
 
     if sDate_in is not None:
         sDate = sDate_in
@@ -187,13 +240,13 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     if sModel_in is not None:
         sModel = sModel_in
-    
+
 
     if sRegion_in is not None:
         sRegion = sRegion_in
 
     sCase_index = "{:03d}".format(iCase_index)
-   
+
     config['iCase_index'] = "{:03d}".format(iCase_index)
     sCase = sModel + sDate + sCase_index
     config['sDate'] = sDate
@@ -225,23 +278,34 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     else:
         iYear_subset_end = int(config['iYear_end'])
 
-    if iYear_data_start_in is not None:
-        iYear_data_start = iYear_data_start_in
+    if iYear_data_datm_start_in is not None:
+        iYear_data_datm_start = iYear_data_datm_start_in
     else:
-        iYear_data_start = int(config['iYear_data_start'])
+        iYear_data_datm_start = int(config['iYear_data_datm_start'])
 
-    if iYear_data_end_in is not None:
-        iYear_data_end = iYear_data_end_in
+    if iYear_data_datm_end_in is not None:
+        iYear_data_datm_end = iYear_data_datm_end_in
     else:
-        iYear_data_end = int(config['iYear_data_end'])
+        iYear_data_datm_end = int(config['iYear_data_datm_end'])
+
+    if iYear_data_dlnd_start_in is not None:
+        iYear_data_dlnd_start = iYear_data_dlnd_start_in
+    else:
+        iYear_data_dlnd_start = int(config['iYear_data_dlnd_start'])
+        
+    
+    if iYear_data_dlnd_end_in is not None:
+        iYear_data_dlnd_end = iYear_data_dlnd_end_in
+    else:
+        iYear_data_dlnd_end = int(config['iYear_data_dlnd_end'])
 
     #the conversion for the variable of interest
     if dConversion_in is not None:
         dConversion = dConversion_in
     else:
         dConversion = 1.0
-    
-   
+
+
     if dOffset_in is not None:
         dOffset = dOffset_in
     else:
@@ -251,26 +315,36 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         sVariable = sVariable_in
     else:
         sVariable=''
-    
+
 
     if sLabel_y_in is not None:
         sLabel_y = sLabel_y_in
     else:
         sLabel_y = ''
 
+    config['iFlag_debug_case'] =  "{:01d}".format(iFlag_debug_case)
+
     config['iFlag_atm'] =  "{:01d}".format(iFlag_atm)
     config['iFlag_datm'] =  "{:01d}".format(iFlag_datm)
+    config['iFlag_replace_datm_forcing'] =  "{:01d}".format(iFlag_replace_datm_forcing)
+
     config['iFlag_lnd'] =  "{:01d}".format(iFlag_lnd)
     config['iFlag_dlnd'] =  "{:01d}".format(iFlag_dlnd)
+    config['iFlag_replace_dlnd_forcing'] =  "{:01d}".format(iFlag_replace_dlnd_forcing)
+
     config['iFlag_rof'] =  "{:01d}".format(iFlag_rof)
     config['iFlag_drof'] =  "{:01d}".format(iFlag_drof)
+    config['iFlag_replace_drof_forcing'] =  "{:01d}".format(iFlag_replace_drof_forcing)
 
     config['iYear_start'] =  "{:04d}".format(iYear_start)
     config['iYear_end'] =  "{:04d}".format(iYear_end)
     config['iYear_subset_start'] =  "{:04d}".format(iYear_subset_start)
     config['iYear_subset_end'] =  "{:04d}".format(iYear_subset_end)
-    config['iYear_data_start'] =  "{:04d}".format(iYear_data_start)
-    config['iYear_data_end'] =  "{:04d}".format(iYear_data_end)
+    config['iYear_data_datm_start'] =  "{:04d}".format(iYear_data_datm_start)
+    config['iYear_data_datm_end'] =  "{:04d}".format(iYear_data_datm_end)
+    
+    config['iYear_data_dlnd_start'] =  "{:04d}".format(iYear_data_dlnd_start)
+    config['iYear_data_dlnd_end'] =  "{:04d}".format(iYear_data_dlnd_end)
 
     config['iFlag_same_grid'] = "{:01d}".format(iFlag_same_grid)
     config['iFlag_lnd_spinup'] = "{:01d}".format(iFlag_lnd_spinup)
@@ -284,7 +358,7 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
 
     config['sModel'] = sModel
     config['sRegion'] = sRegion
-    
+
     config['sVariable'] = sVariable.lower()
     config['sLabel_y'] = sLabel_y
 
@@ -299,29 +373,29 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sFilename_rof_namelist= config['sFilename_rof_namelist']
     sFilename_rof_input= config['sFilename_rof_input']
 
-    
+
     if sWorkspace_data_in is not None:
         sWorkspace_data = sWorkspace_data_in
         if os.path.exists(sWorkspace_data):
-            sLine = 'The workspace data will be used as : ' + sWorkspace_data 
+            sLine = 'The workspace data will be used as : ' + sWorkspace_data
             print(sLine)
         else:
             print('The provided data workspace does not exist.')
-    else:        
+    else:
         sWorkspace_data = sWorkspace_home + slash + 'data'
-        sLine = 'The default workspace data will be used: ' + sWorkspace_data 
+        sLine = 'The default workspace data will be used: ' + sWorkspace_data
         print(sLine)
 
     if sWorkspace_scratch_in is not None:
         sWorkspace_scratch = sWorkspace_scratch_in
         if os.path.exists(sWorkspace_scratch):
-            sLine = 'The workspace scratch will be used as : ' + sWorkspace_scratch 
+            sLine = 'The workspace scratch will be used as : ' + sWorkspace_scratch
             print(sLine)
         else:
             print('The provided scratch does not exist.')
-    else:        
-        
-        sLine = 'The default workspace scratch will be used: ' + sWorkspace_scratch 
+    else:
+
+        sLine = 'The default workspace scratch will be used: ' + sWorkspace_scratch
         print(sLine)
 
 
@@ -337,13 +411,31 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
         else:
             print('A default datm namelist was not found, it may be created.' )
 
- 
+    if sFilename_user_datm_prec_in is not None:
+        sFilename_user_datm_prec = sFilename_user_datm_prec_in
+    else:
+        sFilename_user_datm_prec=''
+    
+    if sFilename_user_datm_temp_in is not None:
+        sFilename_user_datm_temp = sFilename_user_datm_temp_in
+    else:
+        sFilename_user_datm_temp=''
+    
+    if sFilename_user_datm_solar_in is not None:
+        sFilename_user_datm_solar = sFilename_user_datm_solar_in
+    else:
+        sFilename_user_datm_solar=''
+
     if sFilename_atm_domain_in is not None:
         sFilename_atm_domain = sFilename_atm_domain_in
-        
+
+    if sFilename_a2r_mapping_in is not None:
+        sFilename_a2r_mapping= sFilename_a2r_mapping_in
+    else:
+        sFilename_a2r_mapping = None
 
     if sFilename_lnd_domain_in is not None:
-        sFilename_lnd_domain = sFilename_lnd_domain_in
+        sFilename_lnd_domain = sFilename_lnd_domain_in  
 
     #several namelist maybe used if we need to change parameters
     if sFilename_lnd_namelist_in is not None:
@@ -357,6 +449,22 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
             print(sLine)
         else:
             print('A default LND namelist was not found, you will not be able to use it without specifying it first.' )
+
+    if sFilename_dlnd_namelist_in is not None:
+        sFilename_dlnd_namelist = sFilename_dlnd_namelist_in
+    else:
+        sFilename_dlnd_namelist=''
+        pass
+
+    if sFilename_l2r_mapping_in is not None:
+        sFilename_l2r_mapping= sFilename_l2r_mapping_in
+    else:
+        sFilename_l2r_mapping = None
+
+    if sFilename_user_dlnd_runoff_in is not None:
+        sFilename_user_dlnd_runoff = sFilename_user_dlnd_runoff_in
+    else:
+        sFilename_user_dlnd_runoff=''
 
 
     #update mask if region changes
@@ -376,14 +484,31 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
             print(sLine)
         else:
             print('A default MOSART mask was not found, you will not be able to use it without specifying it first.' )
-   
+
     if sFilename_rof_namelist_in is not None:
-        sFilename_rof_namelist = sFilename_rof_namelist_in    
+        sFilename_rof_namelist = sFilename_rof_namelist_in
+
+    if sFilename_drof_namelist_in is not None:
+        sFilename_drof_namelist = sFilename_drof_namelist_in
+    else:
+        sFilename_drof_namelist=''
+        pass
+
+    if sFilename_r2l_mapping_in is not None:
+        sFilename_r2l_mapping= sFilename_r2l_mapping_in
+    else:
+        sFilename_r2l_mapping = None
     
+    if sFilename_user_drof_gage_height_in is not None:
+        sFilename_user_drof_gage_height = sFilename_user_drof_gage_height_in
+    else:
+        sFilename_user_drof_gage_height=''
+
+
     sWorkspace_analysis = sWorkspace_scratch + slash + '04model' + slash \
         + sModel + slash + sRegion + slash + 'analysis'
     Path(sWorkspace_analysis).mkdir(parents=True, exist_ok=True)
-    
+
     config['sWorkspace_analysis'] = sWorkspace_analysis
 
     #case setting
@@ -392,7 +517,8 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     sDirectory_case_aux = sWorkspace_scratch + '/04model/' + sModel + slash \
         + sRegion + '/cases_aux/'
     config['sWorkspace_cases'] = sDirectory_case
-    sDirectory_run = sWorkspace_scratch +  slash +'e3sm_scratch'
+    sDirectory_run = sWorkspace_scratch +  slash +'e3sm_scratch'+  slash + sRegion
+    Path(sDirectory_run).mkdir(parents=True, exist_ok=True)
 
     config['sDirectory_case'] = sDirectory_case
     config['sDirectory_case_aux'] = sDirectory_case_aux
@@ -405,17 +531,28 @@ def pye3sm_read_case_configuration_file(sFilename_configuration_in,\
     config['sWorkspace_analysis_case'] = sWorkspace_analysis + slash + sCase
 
     #atm
-    config['sFilename_atm_domain'] = sFilename_atm_domain   
+    config['sFilename_atm_domain'] = sFilename_atm_domain
     config['sFilename_datm_namelist'] = sFilename_datm_namelist
+    config['sFilename_a2r_mapping'] = sFilename_a2r_mapping
+    config['sFilename_user_datm_prec']=sFilename_user_datm_prec
+    config['sFilename_user_datm_temp'] = sFilename_user_datm_temp
+    config['sFilename_user_datm_solar'] = sFilename_user_datm_solar
+
     #lnd
     config['sFilename_lnd_domain'] = sFilename_lnd_domain
     config['sFilename_lnd_namelist'] = sFilename_lnd_namelist
-    
+    config['sFilename_dlnd_namelist'] = sFilename_dlnd_namelist
+    config['sFilename_l2r_mapping'] = sFilename_l2r_mapping
+    config['sFilename_user_dlnd_runoff']=sFilename_user_dlnd_runoff
+
     #rof
     config['sFilename_rof_domain'] = sFilename_rof_domain
-    config['sFilename_rof_namelist'] = sFilename_rof_namelist 
-    
+    config['sFilename_rof_namelist'] = sFilename_rof_namelist
+    config['sFilename_drof_namelist'] = sFilename_drof_namelist
+    config['sFilename_r2l_mapping'] = sFilename_r2l_mapping
+
     config['sFilename_rof_input'] = sFilename_rof_input
+    config['sFilename_user_drof_gage_height']=sFilename_user_drof_gage_height
     return config
 
 if __name__ == '__main__':

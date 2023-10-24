@@ -11,12 +11,12 @@ from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb
 from pyearth.visual.map.map_raster_data import map_raster_data
 
 from pyearth.toolbox.data.remove_outliers import remove_outliers
-from pye3sm.mosart.grid.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info
+from pye3sm.mosart.mesh.mosart_retrieve_case_dimension_info import mosart_retrieve_case_dimension_info
  
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_e3sm_configuration_file
 from pye3sm.shared.pye3sm_read_configuration_file import pye3sm_read_case_configuration_file
 
-def mosart_map_variable_2d(oE3SM_in, \
+def mosart_map_variable_structured(oE3SM_in, \
                                           oCase_in,\
                                         iFlag_scientific_notation_colorbar_in =None,   \
                                              iFlag_monthly_in = None,\

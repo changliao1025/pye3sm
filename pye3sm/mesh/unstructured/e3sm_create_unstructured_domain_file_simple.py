@@ -43,19 +43,19 @@ def e3sm_create_unstructured_domain_file_simple(aLon_region, aLat_region, aLonV_
        
     nrow,  = aLon_region.shape
     nrow, nvertex  = aLonV_region.shape           
-    dimname = 'nrow'
+    dimname = 'ni'
     pDatasets_out.createDimension(dimname, nrow)
-    dimname = 'nvertex'
+    dimname = 'nv'
     pDatasets_out.createDimension(dimname,nvertex)
 
 
     aDimension_list0=list()    
-    aDimension_list0.append('nrow')
+    aDimension_list0.append('ni')
     aDimension_tuple0 = tuple(aDimension_list0)
 
     aDimension_list1=list()
-    aDimension_list1.append('nrow')
-    aDimension_list1.append('nvertex')
+    aDimension_list1.append('ni')
+    aDimension_list1.append('nv')
     aDimension_tuple1 = tuple(aDimension_list1)
       
 
