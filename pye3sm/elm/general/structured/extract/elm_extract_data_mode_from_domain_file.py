@@ -21,7 +21,7 @@ def elm_extract_data_mode_from_domain_file(sFilename_data_model_origin,
     else:
         iYear_end = iYear_end_in
 
-    sFilename_domain,aField_domain, sFolder, aField, aFilename = parse_xml_file_lnd(sFilename_data_model_origin)
+    sFilename_domain, aField_domain, sFolder, aField, aFilename = parse_xml_file_lnd(sFilename_data_model_origin)
     #read the data model file to obtain the domain file and the list of data file
 
     #there are possibly two scenarios: an independent domain file or a domain file for each data file built in the data model file

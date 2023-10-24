@@ -12,7 +12,10 @@ from pyearth.visual.map.vector.map_vector_polyline_data import map_vector_polyli
 def mosart_map_unstructured_flow_direction(sFilename_domain_in, 
                                            sFilename_parameter_in, 
                                            sFilename_geojson_out, 
-                                           sLengend_in=None):
+                                           sLengend_in=None,
+                                           iSize_x_in = None,
+                                           iSize_y_in = None,
+                                           aExtent_in=None):
 
     if os.path.exists(sFilename_parameter_in):
         print("Yep, I can read that file!")
@@ -118,15 +121,17 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in,
                              sFilename_png,
                              iFlag_thickness_in =1,
                              sField_thickness_in='drainage',
-                             aExtent_in = None, 
                              iFlag_scientific_notation_colorbar_in=None,
                              sColormap_in = sColormap,
                              sTitle_in = 'Flow direction', 
                              iDPI_in = None,
+                             iSize_x_in = iSize_x_in,
+                                iSize_y_in = iSize_y_in,
                              dMissing_value_in=None,
                              dData_max_in = None, 
                              dData_min_in = None,
-                             sExtend_in =None,
+                             sExtend_in = None,
                              sUnit_in=None,
                              aLegend_in = aLegend,
+                             aExtent_in = aExtent_in,
                              pProjection_map_in = None)

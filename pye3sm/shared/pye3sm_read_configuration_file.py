@@ -49,7 +49,7 @@ def pye3sm_read_e3sm_configuration_file(sFilename_configuration_in,
     if iFlag_large_cache_in is not None:
         iFlag_large_cache = iFlag_large_cache_in
     else:
-        iFlag_large_cache = 0
+        iFlag_large_cache = 1
 
     if iFlag_resubmit_in is not None:
         iFlag_resubmit = iFlag_resubmit_in

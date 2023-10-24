@@ -133,8 +133,32 @@ def elm_tsplot_variable_singlecell(oCase_in,
         sFilename_out = sWorkspace_analysis_case_variable + slash \
             +  sVariable + '_monthly_tsplot' + sExtension_png
 
+        aIndex_nan = np.isnan(aData_monthly_out)        
+        aData_monthly_out[aIndex_nan] = np.interp(np.flatnonzero(aIndex_nan), np.flatnonzero(~aIndex_nan), aData_monthly_out[~aIndex_nan])
+        
+        
         aTime = np.array([aDate_monthly])
-        aData = np.array([aData_monthly_out])
+        if sVariable == 'wt_hillslope':            
+            aData = 38 - np.array([aData_monthly_out]) 
+        else:
+            aData = np.array([aData_monthly_out])
+        
+        print(np.nanmin(aData))
+        print(np.nanmax(aData))
+        
+        plot_time_series_data( aTime, aData,
+                           sFilename_out,
+                           iFlag_scientific_notation_in=iFlag_scientific_notation_in,
+                           iReverse_y_in = iReverse_y_in,
+                           sTitle_in = sTitle_in,
+                           sFormat_y_in = sFormat_y_in,
+                           sLabel_y_in= sLabel_y_in,
+                           dMax_y_in = dMax_y_in,
+                           dMin_y_in = dMin_y_in,
+                           aColor_in = ['blue'] ,
+                           aLabel_legend_in=aLabel_legend_in,
+                           iSize_x_in = 12,
+                           iSize_y_in = 5)
 
     if iFlag_daily == 1:
         for iYear in range(iYear_start, iYear_end + 1):
@@ -177,18 +201,25 @@ def elm_tsplot_variable_singlecell(oCase_in,
             #delete the file handle
             aDatasets.close()
 
-        sFilename_out = sWorkspace_analysis_case_variable + slash \
-            +  sVariable + '_daily_tsplot.csv' 
+        sFilename_out = sWorkspace_analysis_case_variable + slash  +  sVariable + '_daily_tsplot.csv' 
         np.savetxt(sFilename_out, aData_daily_out, delimiter=",")
-        sFilename_out = sWorkspace_analysis_case_variable + slash \
-            +  sVariable + '_daily_tsplot' + sExtension_png
+        sFilename_out = sWorkspace_analysis_case_variable + slash  +  sVariable + '_daily_tsplot' + sExtension_png
 
-
+        #remove nan using nearest neighbor
+        #find the nan index
+        aIndex_nan = np.isnan(aData_daily_out)        
+        aData_daily_out[aIndex_nan] = np.interp(np.flatnonzero(aIndex_nan), np.flatnonzero(~aIndex_nan), aData_daily_out[~aIndex_nan])
+        
         aTime = np.array([aDate_daily])
-        aData = np.array([aData_daily_out])
+        if sVariable == 'wt_hillslope': 
+            aData = 38 - np.array([aData_daily_out]) 
+        else:
+            aData = np.array([aData_daily_out])
     
-    print(np.nanmax(aData))
-    plot_time_series_data( aTime, aData,
+        print(np.nanmin(aData))
+        print(np.nanmax(aData))
+        
+        plot_time_series_data( aTime, aData,
                            sFilename_out,
                            iFlag_scientific_notation_in=iFlag_scientific_notation_in,
                            iReverse_y_in = iReverse_y_in,

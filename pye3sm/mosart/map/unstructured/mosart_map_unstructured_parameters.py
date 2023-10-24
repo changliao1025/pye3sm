@@ -9,8 +9,9 @@ from pyearth.system.define_global_variables import *
 from pyearth.visual.map.vector.map_vector_polygon_data import map_vector_polygon_data
 
 
-def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out, aVariable_parameter, aVariable_short,
-                                       iFlag_scientific_notation_colorbar_in=None):
+def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_in, sFilename_geojson_out,
+                                        aData_max_in=None,
+                                       iSize_x_in = None, iSize_y_in = None , aExtent_in = None):
 
     iFlag_global_id = 0 #only mpas mesh has global id
     
@@ -25,6 +26,20 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
     else:   
         print("Nope, the path doesn't reach your file. Go research filepath in python")
         print(sFilename_domain_in)
+
+    aVariable_parameter= ['nh','nt','rdep','rlen', 'rwid','rslp','twid','tslp','hslp','gxr']
+    aVariable_short= ['nh','nt','rdep', 'rlen', 'rwid', 'rslp', 'twid','tslp','hslp','gxr']
+    aTitle = ['Manning roughness coefficient', 'Manning roughness coefficient', 'Main channel depth', 'Main channel Length',
+     'Main channel width', 'Main channel slope', 'Tributary channel width', 'Tributary channel slope', 'Hillslope Slope', 'Drainage density']
+    aFlag_scientific_notation_colorbar = [0,0,0,1,0,0,0,0,0,1]
+    aData_min = [0, 0, 0, 0, 0,  0, 0, 0, 0, 0]
+    #only the max can be set for different domain
+    if aData_max_in is None:
+        aData_max = [None, None, None, None, None, None, None, None, None, None]
+    else:
+        aData_max = aData_max_in
+
+    aUnit = ['', '', 'Unit: m', 'Unit: m',  'Unit: m', 'Unit: percent', 'Unit: m', 'Unit: percent', 'Unit: percent', '' ]
 
     nParameter = len(aVariable_parameter)
     if os.path.exists(sFilename_geojson_out):
@@ -55,11 +70,7 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
         print(sFilename_parameter_in)
         aDatasets = nc.Dataset(sFilename_parameter_in)    
         netcdf_format = aDatasets.file_format
-        #print(netcdf_format)
-        #print("Print dimensions:")
-        #print(aDatasets.dimensions.keys())
-        #print("Print variables:")
-        #print(aDatasets.variables.keys() )        
+           
         # Copy variables
         aaData_variable=list()
         aParameter_table =list()
@@ -173,22 +184,25 @@ def mosart_map_unstructured_parameters(sFilename_domain_in, sFilename_parameter_
         for s in range(nParameter):
             sVariable_parameter = aVariable_parameter[s]
             sVariable_short = aVariable_short[s]    
-            sFilename_png_out =  sFolder + slash + sBasename + '_' + sVariable_short + '.png'        
+            sFilename_png_out =  sFolder + slash + sBasename + '_' + sVariable_short + '.png'    
+            iFlag_scientific_notation_colorbar_in = aFlag_scientific_notation_colorbar[s]    
             map_vector_polygon_data(1,
                                 sFilename_geojson_out, 
                                 sVariable_in = sVariable_short,
                                 sFilename_output_in=sFilename_png_out,
                                 iFlag_scientific_notation_colorbar_in=iFlag_scientific_notation_colorbar_in,
                                 sColormap_in = None,
-                                sTitle_in = sVariable_short, 
+                                sTitle_in = aTitle[s],
                                 iDPI_in = None,
+                                iSize_x_in = iSize_x_in,
+                                iSize_y_in = iSize_y_in,
                                 dMissing_value_in=None,
-                                dData_max_in = None, 
-                                dData_min_in = None,
+                                dData_max_in = aData_max[s],
+                                dData_min_in = aData_min[s],
                                 sExtend_in =None,
-                                sUnit_in=None,
+                                sUnit_in=aUnit[s],
                                 aLegend_in = None,
-                                aExtent_in = None,
+                                aExtent_in = aExtent_in,
                                 pProjection_map_in=None)   
 
             pass
