@@ -12,7 +12,9 @@ from pye3sm.tools.namelist.convert_namelist_to_dict import convert_namelist_to_d
 from pye3sm.mosart.mesh.structured.mosart_create_domain_1d import mosart_create_domain_1d
 
 def mosart_merge_variable_unstructured(oCase_in, 
-                                       aVariable_in,sVariable_out,                                   
+                                       aVariable_in,sVariable_out,    
+                                       iFlag_daily_in = None,
+                                       iFlag_monthly_in = None,                               
                                      dData_max_in = None, 
                                      dData_min_in = None,    
                                      sUnit_in = None, 
@@ -20,6 +22,15 @@ def mosart_merge_variable_unstructured(oCase_in,
    
 
     #read the actual data     
+    if iFlag_daily_in is None:
+        iFlag_daily = 0
+    else:
+        iFlag_daily = 1
+    
+    if iFlag_monthly_in is None:
+        iFlag_monthly = 0
+    else:
+        iFlag_monthly = 1
 
     sModel  = oCase_in.sModel
     sRegion = oCase_in.sRegion               
@@ -51,33 +62,62 @@ def mosart_merge_variable_unstructured(oCase_in,
 
     
     i=0
-    iMonth_start = 1
-    iMonth_end = 12
-    for iYear in range(iYear_start, iYear_end + 1):
-        sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
-    
-        for iMonth in range(iMonth_start, iMonth_end + 1):
-            sMonth = str(iMonth).zfill(2)
-            sDate = sYear + sMonth   
+    if iFlag_daily == 1:
+        for iYear in range(iYear_start, iYear_end + 1):
+            sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
 
-            sFilename_output_in= sWorkspace_variable_geojson + slash +  sDate + '.geojson' 
-            if os.path.exists(sFilename_output_in):
-                os.remove(sFilename_output_in)    
+            for iDay in range(1, 365 + 1):
+                sDay = str(iDay).zfill(3)
+                sDate = sYear + sDay   
 
-            aFilename = list()
-            for sVariable in aVariable_in:
-                sVariable = sVariable.lower()
+                sFilename_output_in= sWorkspace_variable_geojson + slash +  sDate + '.geojson' 
+                if os.path.exists(sFilename_output_in):
+                    os.remove(sFilename_output_in)    
 
-                sWorkspace_variable_in_geojson = sWorkspace_analysis_case + slash \
-                    + sVariable + slash + 'geojson'
-                sFilename = sWorkspace_variable_in_geojson + slash + sDate + '.geojson'
-                aFilename.append(sFilename)
-            
-            merge_vector_polygon_data(1,
-                             aFilename,
-                             aVariable_in,
-                             sFilename_output_in,    
-                             sVariable_out)
+                aFilename = list()
+                for sVariable in aVariable_in:
+                    sVariable = sVariable.lower()
+
+                    sWorkspace_variable_in_geojson = sWorkspace_analysis_case + slash \
+                        + sVariable + slash + 'geojson'
+                    sFilename = sWorkspace_variable_in_geojson + slash + sDate + '.geojson'
+                    aFilename.append(sFilename)
+
+                merge_vector_polygon_data(1,
+                                 aFilename,
+                                 aVariable_in,
+                                 sFilename_output_in,    
+                                 sVariable_out)
+
+        pass
+    if iFlag_monthly == 1:
+        iMonth_start = 1
+        iMonth_end = 12
+        for iYear in range(iYear_start, iYear_end + 1):
+            sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
+
+            for iMonth in range(iMonth_start, iMonth_end + 1):
+                sMonth = str(iMonth).zfill(2)
+                sDate = sYear + sMonth   
+
+                sFilename_output_in= sWorkspace_variable_geojson + slash +  sDate + '.geojson' 
+                if os.path.exists(sFilename_output_in):
+                    os.remove(sFilename_output_in)    
+
+                aFilename = list()
+                for sVariable in aVariable_in:
+                    sVariable = sVariable.lower()
+
+                    sWorkspace_variable_in_geojson = sWorkspace_analysis_case + slash \
+                        + sVariable + slash + 'geojson'
+                    sFilename = sWorkspace_variable_in_geojson + slash + sDate + '.geojson'
+                    aFilename.append(sFilename)
+
+                merge_vector_polygon_data(1,
+                                 aFilename,
+                                 aVariable_in,
+                                 sFilename_output_in,    
+                                 sVariable_out)
                 
 
     print("finished")

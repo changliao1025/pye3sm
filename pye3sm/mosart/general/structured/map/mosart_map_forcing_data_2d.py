@@ -12,14 +12,13 @@ from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb
 from pyearth.toolbox.date.day_in_month import day_in_month
 from pyearth.visual.map.raster.map_raster_data import map_raster_data
 
-from pyearth.toolbox.data.remove_outliers import remove_outliers
-from pye3sm.mesh.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
-from pye3sm.atm.general.atm_retrieve_forcing_data_info import atm_retrieve_forcing_data_info
+from pye3sm.mosart.mesh.structured.mosart_retrieve_structured_case_dimension_info import mosart_retrieve_structured_case_dimension_info
 
-def elm_map_forcing_data_2d(oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
-                                          dData_max_in = None,\
+
+def mosart_map_forcing_data_2d(oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
+                                          dData_max_in = None,
                                           dData_min_in = None,
-                                         sUnit_in=None,\
+                                         sUnit_in=None,
                                           sTitle_in =None):
 
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case
@@ -33,7 +32,7 @@ def elm_map_forcing_data_2d(oCase_in, sVariable_forcing_in, iFlag_scientific_not
         os.makedirs(sWorkspace_analysis_case_region)
         pass
 
-    aLon, aLat , aMask_ll= elm_retrieve_case_dimension_info(oCase_in)
+    aLon, aLat , aMask_ll= mosart_retrieve_structured_case_dimension_info(oCase_in)
     aLon = np.flip(aLon, 0) 
     aLat = np.flip(aLat, 0) 
     aMask = np.flip(aMask_ll, 0) 

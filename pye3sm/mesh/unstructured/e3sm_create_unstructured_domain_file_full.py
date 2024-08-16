@@ -4,7 +4,8 @@ import getpass
 from datetime import datetime
 import numpy as np
 import netCDF4 as nc
-from pyearth.gis.location.calculate_polygon_area import calculate_polygon_area
+from pyearth.system.define_global_variables import *
+from pyearth.gis.geometry.calculate_polygon_area import calculate_polygon_area
 
 def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_region, aLatV_region, sFilename_domain_file_out, aArea_in = None):
     """
@@ -134,13 +135,16 @@ def e3sm_create_unstructured_domain_file_full(aLon_region, aLat_region, aLonV_re
                     aLatitude_in = aLatV_region[i,0,:].flatten()
                     aLongitude_in = aLongitude_in[np.where(aLongitude_in !=-9999)]
                     aLatitude_in = aLatitude_in[np.where(aLatitude_in !=-9999)]
-                    data[i] = calculate_polygon_area(aLongitude_in, aLatitude_in,  iFlag_radius =1)
+                    aLongitude_in = np.deg2rad(aLongitude_in)
+                    aLatitude_in = np.deg2rad(aLatitude_in)
+                    data[i] = calculate_polygon_area(aLongitude_in, aLatitude_in, iFlag_radian=1)
                     
            
             else:
-                radius= 6378137.0                      
+
+                #radius= earth_radius                     
                 dummy_data = np.array(aArea_in ) #m^2
-                data  = dummy_data / ( 4*np.pi*(radius**2) )
+                data  = dummy_data / (earth_radius**2) 
         
             pass
            

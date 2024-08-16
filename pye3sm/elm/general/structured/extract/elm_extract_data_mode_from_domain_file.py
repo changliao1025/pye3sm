@@ -4,7 +4,7 @@ import shutil
 import numpy as np
 import netCDF4 as nc
 import xml.etree.ElementTree as ET
-from pyearth.toolbox.reader.parse_xml_file import parse_xml_file, parse_xml_file_lnd
+from pyearth.toolbox.reader.beta.parse_xml_file_e3sm import parse_xml_file_lnd
 def elm_extract_data_mode_from_domain_file(sFilename_data_model_origin, 
                                            sFilename_regional_domain, 
                                            sWorkspace_output_region, 

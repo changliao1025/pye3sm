@@ -130,20 +130,20 @@ def e3sm_create_case(oE3SM_in,  oCase_in):
             p.wait()
             pass
         
-        #remove bld directory, yes
+        #remove bld directory, No
         if (os.path.exists(sBldname)):
             sCommand = 'rm -rf '  + sBldname
             print(sCommand)
-            p = subprocess.Popen(sCommand, shell= True)
-            p.wait()
+            #p = subprocess.Popen(sCommand, shell= True)
+            #p.wait()
             pass
         
         #remove run directory? No
         if (os.path.exists(sRunname)):
             sCommand = 'rm -rf '  + sRunname
             print(sCommand)
-            p = subprocess.Popen(sCommand, shell= True)
-            p.wait()
+            #p = subprocess.Popen(sCommand, shell= True)
+            #p.wait()
             pass
         #generate bash script
         sFilename_bash = sDirectory_case_aux + slash + sCase \
@@ -546,3 +546,4 @@ def e3sm_create_case(oE3SM_in,  oCase_in):
     
 
     print('Finished case: ' + sCasename)
+    print('Case aux: ' + sDirectory_case_aux)

@@ -1,25 +1,19 @@
 import os, sys
 import numpy as np
-import numpy.ma as ma
-import datetime
 import glob
 from netCDF4 import Dataset #read netcdf
 
 from pyearth.system.define_global_variables import *
-from pyearth.gis.gdal.read.gdal_read_geotiff_file import gdal_read_geotiff_file
-from pyearth.gis.gdal.read.gdal_read_envi_file import gdal_read_envi_file_multiple_band
-from pyearth.visual.color.create_diverge_rgb_color_hex import create_diverge_rgb_color_hex
 from pyearth.toolbox.date.day_in_month import day_in_month
-from pyearth.visual.map.map_raster_data import map_raster_data
+from pyearth.visual.map.raster.map_raster_data import map_raster_data
 
-from pyearth.toolbox.data.remove_outliers import remove_outliers
-from pye3sm.elm.grid.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
+from pye3sm.elm.mesh.elm_retrieve_case_dimension_info import elm_retrieve_case_dimension_info
 from pye3sm.atm.general.atm_retrieve_forcing_data_info import atm_retrieve_forcing_data_info
 
-def map_forcing_data_2d(oE3SM_in, oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
+def atm_map_forcing_data_2d(oCase_in, sVariable_forcing_in, iFlag_scientific_notation_colorbar_in =None,   \
                                           dData_max_in = None,\
                                           dData_min_in = None,
-                                         sUnit_in=None,\
+                                          sUnit_in=None,\
                                           sTitle_in =None):
 
     sWorkspace_analysis_case = oCase_in.sWorkspace_analysis_case

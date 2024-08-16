@@ -7,11 +7,11 @@ from osgeo import ogr
 from osgeo import osr
 import cartopy.crs as ccrs
 from pyearth.system.define_global_variables import *
-from pyearth.visual.map.vector.map_vector_polyline_data import map_vector_polyline_data
+from pyearth.visual.map.vector.map_vector_polyline_file import map_vector_polyline_file
 
-def mosart_map_unstructured_flow_direction(sFilename_domain_in, 
-                                           sFilename_parameter_in, 
-                                           sFilename_geojson_out, 
+def mosart_map_unstructured_flow_direction(sFilename_domain_in,
+                                           sFilename_parameter_in,
+                                           sFilename_geojson_out,
                                            sLengend_in=None,
                                            iSize_x_in = None,
                                            iSize_y_in = None,
@@ -28,14 +28,14 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in,
 
     if sLengend_in is None:
         sLengend = ''
-    else:   
+    else:
         sLengend = sLengend_in
 
     iFlag_debug = 0
     if iFlag_debug == 1:
         #replace the parameter file with a corrected one
         sFilename_parameter_in = "/compyfs/icom/liao-etal_2023_mosart_joh/code/matlab/inputdata/MOSART_SUS_16th_c230330.nc"
-    
+
     aDatasets = nc.Dataset(sFilename_parameter_in)
 
     netcdf_format = aDatasets.file_format
@@ -63,8 +63,10 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in,
         if sKey == 'longxy':
             aLongitude = (aValue[:]).data
         if sKey == 'areaTotal2':
-            aAccu = (aValue[:]).data / 1.0e+6
+            aAccu = (aValue[:]).data / 1.0E6
 
+    if os.path.exists(sFilename_geojson_out):
+        os.remove(sFilename_geojson_out)
 
     pDriver = ogr.GetDriverByName('GeoJSON')
     pDataset = pDriver.CreateDataSource(sFilename_geojson_out)
@@ -76,7 +78,7 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in,
     pLayer.CreateField(ogr.FieldDefn('drainage', ogr.OFTReal))
 
     pLayerDefn = pLayer.GetLayerDefn()
-    pFeature = ogr.Feature(pLayerDefn)    
+    pFeature = ogr.Feature(pLayerDefn)
 
     nPoint = aID.size
     for i in np.arange(0, nPoint, 1):
@@ -94,12 +96,12 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in,
                 y_end = aLatitude[dummy_index]
                 pLine = ogr.Geometry(ogr.wkbLineString)
                 pLine.AddPoint(x_start, y_start)
-                pLine.AddPoint(x_end, y_end)                
+                pLine.AddPoint(x_end, y_end)
                 pFeature.SetGeometry(pLine)
                 pFeature.SetField("id", lID)
                 pFeature.SetField("drainage", dAccu)
                 pLayer.CreateFeature(pFeature)
-            else:                
+            else:
                 pass
         else:
             pass
@@ -107,28 +109,30 @@ def mosart_map_unstructured_flow_direction(sFilename_domain_in,
     #Save and close everything
 
     pDataset = pLayer = pFeature  = None
-  
+
     aLegend=list()
     aLegend.append(sLengend)
     #aLegend.append(r'Resolution: $0.5^{\circ}$')
-    sColormap = 'Spectral_r'
+    sColormap = 'Spectral_r' #YlOrBr
     sFolder = os.path.dirname(sFilename_geojson_out)
-       
+
     sBasename = Path(sFilename_geojson_out).stem
-    sFilename_png =  sFolder + slash + sBasename + '_flow_direction' + '.png'        
-    map_vector_polyline_data(1,
-                             sFilename_geojson_out, 
-                             sFilename_png,
+    sFilename_png =  sFolder + slash + sBasename + '.png'
+    map_vector_polyline_file(1,
+                             sFilename_geojson_out,
+                             sFilename_output_in = sFilename_png,
                              iFlag_thickness_in =1,
                              sField_thickness_in='drainage',
+                             iFlag_color_in = 1,
                              iFlag_scientific_notation_colorbar_in=None,
+                             iFlag_zebra_in= 1,
                              sColormap_in = sColormap,
-                             sTitle_in = 'Flow direction', 
+                             sTitle_in = 'Flow direction',
                              iDPI_in = None,
                              iSize_x_in = iSize_x_in,
-                                iSize_y_in = iSize_y_in,
+                             iSize_y_in = iSize_y_in,
                              dMissing_value_in=None,
-                             dData_max_in = None, 
+                             dData_max_in = None,
                              dData_min_in = None,
                              sExtend_in = None,
                              sUnit_in=None,
