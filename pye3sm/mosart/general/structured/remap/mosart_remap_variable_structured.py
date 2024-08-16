@@ -40,6 +40,8 @@ def mosart_remap_variable_structured(oE3SM_in, oCase_in, sFilename_mapping_file_
     if not os.path.exists(sWorkspace_variable_remap):
         os.makedirs(sWorkspace_variable_remap)
         
+
+    #monly output    
     for iYear in range(iYear_start, iYear_end + 1):
         sYear = "{:04d}".format(iYear) #str(iYear).zfill(4)
     

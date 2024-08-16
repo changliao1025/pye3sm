@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/338111150.svg)](https://zenodo.org/badge/latestdoi/338111150)
 
-PyE3SM: a Python library to assist E3SM model simulation.
+PyE3SM: a Python package to assist E3SM model simulation.
 
 Currently, it only supports the `land` and `river` components.
 
@@ -12,7 +12,7 @@ Currently, it only supports the `land` and `river` components.
 
 ### Acknowledgment
 
-This research was supported as part of the Next Generation Ecosystem Experiments-Tropics, funded by the U.S. Department of Energy, Office of Science, Office of Biological and Environmental Research at Pacific Northwest National Laboratory. The study was also partly supported by U.S. Department of Energy Office of Science Biological and Environmental Research through the Earth and Environmental System Modeling program as part of the Energy Exascale Earth System Model (E3SM) project. 
+This research was supported as part of the Next Generation Ecosystem Experiments-Tropics, funded by the U.S. Department of Energy, Office of Science, Office of Biological and Environmental Research at Pacific Northwest National Laboratory. The study was also partly supported by U.S. Department of Energy Office of Science Biological and Environmental Research through the Earth and Environmental System Modeling program as part of the Energy Exascale Earth System Model (E3SM) project.
 
 ### License
 
@@ -32,7 +32,7 @@ Copyright © 2022, Battelle Memorial Institute
 
 Several publications describe the algorithms used in `PyE3SM` in detail. If you make use of `PyE3SM` in your work, please consider including a reference to the following:
 
-Liao, Chang. (2022). PyE3SM: a Python library to assist E3SM model simulation (0.1.22). Zenodo. https://doi.org/10.5281/zenodo.7591982
+Liao, Chang. (2022). PyE3SM: a Python package to assist E3SM model simulation (0.1.22). Zenodo. https://doi.org/10.5281/zenodo.7591981
 
 
 

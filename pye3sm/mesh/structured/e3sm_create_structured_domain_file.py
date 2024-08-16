@@ -5,7 +5,7 @@ from datetime import datetime
 import numpy as np
 import netCDF4 as nc
 
-from pyearth.gis.location.calculate_polygon_area import calculate_polygon_area
+from pyearth.gis.geometry.calculate_polygon_area import calculate_polygon_area
 def e3sm_create_structured_domain_file(aLon_region, aLat_region, aLonV_region, aLatV_region, 
                                        sFilename_domain_file_out, aArea_in = None):
     """
